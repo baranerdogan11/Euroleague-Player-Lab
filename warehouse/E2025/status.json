@@ -1,0 +1,13 @@
+{
+ "season": "E2025",
+ "checked_at": "2026-09-23T12:51:37Z",
+ "clubs": 20,
+ "players": 374,
+ "games": 402,
+ "shots": 51750,
+ "box_lines": 9540,
+ "tests": 23,
+ "failures": 0,
+ "warnings": 0,
+ "ok": true
+}

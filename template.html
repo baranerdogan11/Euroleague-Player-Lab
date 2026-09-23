@@ -87,6 +87,12 @@ select:focus{outline:2px solid var(--orange);outline-offset:1px}
 .legend i{display:inline-block;width:11px;height:11px;border-radius:50%;vertical-align:-1px;margin-right:6px}
 .legend i.m{background:var(--orange)} .legend i.x{border:2px solid var(--miss)}
 .splits{display:grid;gap:10px;margin-bottom:16px}
+.xfg-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 0 16px}
+.xfg-row>div{background:var(--bg2);border:1px solid var(--line);border-radius:6px;padding:10px 12px}
+.xfg-row b{display:block;font-family:var(--disp);font-weight:800;font-size:26px;line-height:1;font-variant-numeric:tabular-nums}
+.xfg-row b i{font-style:normal;font-size:14px;color:var(--muted);margin:0 2px}
+.xfg-row span{display:block;font-size:11px;color:var(--muted);margin-top:5px;line-height:1.25}
+.xfg-row .up b{color:var(--good)} .xfg-row .down b{color:#ff7b7b}
 .split{display:grid;grid-template-columns:52px 1fr 90px;align-items:center;gap:10px;font-variant-numeric:tabular-nums}
 .split .k{font-family:var(--disp);font-weight:700;font-size:15px;letter-spacing:.08em;color:var(--ink2)}
 .split .bar{height:10px;background:var(--bg2);border-radius:5px;overflow:hidden;border:1px solid var(--line)}
@@ -160,6 +166,7 @@ td.w{color:var(--good)} td.l{color:#ff7b7b}
     <section class="panel">
       <h3>Season stats</h3>
       <div class="splits" id="splits"></div>
+      <div id="xfg"></div>
       <table id="zones"><thead><tr><th>Zone</th><th>FGM / FGA</th><th>FG%</th><th>Share</th></tr></thead><tbody></tbody></table>
     </section>
   </div>
@@ -257,14 +264,16 @@ function renderPlayer(){
   $('#facts').innerHTML = [p.height ? `<span><b>${p.height} cm</b></span>` : '', a ? `<span><b>${a}</b> yrs</span>` : '', p.country ? `<span>${p.country}</span>` : '',
     played ? `<span><b>${tot.gp}</b> games · <b>${f1(tot.min / gp)}</b> min</span>` : `<span><b>0</b> games</span>`].join('');
   const tiles = [['pts', 'PTS', 1], ['reb', 'REB', 0], ['ast', 'AST', 0], ['stl', 'STL', 0], ['blk', 'BLK', 0], ['tov', 'TOV', 0], ['pir', 'PIR', 1]];
+  const xf = d.xfg;
   $('#tiles').innerHTML = tiles.map(([k, l, o]) => `<div class="tile ${o ? 'o' : ''} ${played ? '' : 'na'}"><b>${played ? f1(tot[k] / gp) : '–'}</b><span>${l}</span></div>`).join('');
+  $('#xfg').innerHTML = xf ? `<div class="xfg-row"><div><b>${(100 * xf.xfg).toFixed(1)}%</b><span>Expected FG% on his shots (xFG)</span></div><div><b>${((xf.pts / xf.att) || 0).toFixed(2)} <i>vs</i> ${(xf.xpts / xf.att).toFixed(2)}</b><span>Points per attempt, actual vs expected</span></div><div class="${xf.pts - xf.xpts >= 0 ? 'up' : 'down'}"><b>${xf.pts - xf.xpts >= 0 ? '+' : ''}${(xf.pts - xf.xpts).toFixed(1)}</b><span>Points above expectation, ${xf.att} attempts</span></div></div>` : '';
   const fga = tot.fga2 + tot.fga3, ts = (fga + 0.44 * tot.fta) ? tot.pts / (2 * (fga + 0.44 * tot.fta)) : 0;
   const rows = [['2P', tot.fgm2, tot.fga2, tot.fga2 ? tot.fgm2 / tot.fga2 : 0], ['3P', tot.fgm3, tot.fga3, tot.fga3 ? tot.fgm3 / tot.fga3 : 0], ['FT', tot.ftm, tot.fta, tot.fta ? tot.ftm / tot.fta : 0], ['TS', null, null, ts]];
   $('#splits').innerHTML = rows.map(([k, m, at, v]) => `<div class="split"><span class="k">${k}%</span><div class="bar"><i style="width:${played ? Math.min(100, v * 100) : 0}%"></i></div><div class="v"><b>${played ? (v * 100).toFixed(1) : '–'}</b>${m !== null && played ? `${m}/${at}` : ''}</div></div>`).join('');
   const lg = $('#log tbody');
   lg.innerHTML = d.log.map(r => { const g = d.games[r[0]], l = gameLabel(g); return `<tr><td class="k">${g.round}</td><td>${fmtDate(g.date)}</td><td>${l.home ? 'vs' : '@'} ${l.opp}</td><td class="${l.res === 'W' ? 'w' : 'l'}">${l.res} ${l.score}</td><td>${r[1]}</td><td class="k">${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td><td>${r[5]}</td><td>${r[6]}</td><td>${r[7]}</td><td>${r[8]}/${r[9]}</td><td>${r[10]}/${r[11]}</td><td>${r[12]}/${r[13]}</td><td>${r[14]}</td><td>${r[15] ?? ''}</td></tr>`; }).join('');
   $('#log-none').hidden = d.log.length > 0; $('#log-panel .scroll').hidden = d.log.length === 0;
-  const st = META.status; $('#foot-l').textContent = `${CLUBS[t.code].name} · ${t.games_played} ${META.label} games played · updated ${META.built}` + (st ? ` · pipeline ${st.ok ? 'OK' : 'FAILED'}: ${st.games} games, ${st.shots.toLocaleString()} shots checked` : '');
+  const st = META.status; $('#foot-l').textContent = `${CLUBS[t.code].name} · ${t.games_played} ${META.label} games played · updated ${META.built}` + (st ? ` · pipeline ${st.ok ? 'OK' : 'FAILED'}: ${st.games} games, ${st.shots.toLocaleString()} shots checked` : '') + (META.model ? ` · xFG model ${META.model.version} (trained on ${META.model.trained_on.replace('E','').replace(/(\d{4})/, (m,y)=>y+'-'+(+y+1).toString().slice(2))}, ${META.model.n_shots.toLocaleString()} shots, log loss ${META.model.logloss})` : '');
   renderChart(true);
 }
 function zoneStats(shots){
@@ -314,7 +323,7 @@ function renderChart(animate){
       el.setAttribute('class', 'shot');
       el.innerHTML = s[3] ? `<circle class="made" cx="${x}" cy="${y}" r="17"/>` : `<circle class="miss" cx="${x}" cy="${y}" r="15"/><line class="missx" x1="${x - 7}" y1="${y - 7}" x2="${x + 7}" y2="${y + 7}"/><line class="missx" x1="${x + 7}" y1="${y - 7}" x2="${x - 7}" y2="${y + 7}"/>`;
       const g = games[s[0]], l = gameLabel(g);
-      el.addEventListener('mousemove', e => showTip(e, `<b>${s[3] ? 'Made' : 'Missed'} ${s[4]}PT · ${ZONES[zoneOf(s[1], s[2], s[4])]}</b><br>${l.txt} · Q${s[5] > 40 ? 'OT' : Math.ceil(s[5] / 10)} · ${(Math.hypot(s[1], s[2]) / 100).toFixed(1)} m${s[7] ? ' · fast break' : ''}${s[8] ? ' · second chance' : ''}`));
+      el.addEventListener('mousemove', e => showTip(e, `<b>${s[3] ? 'Made' : 'Missed'} ${s[4]}PT · ${ZONES[zoneOf(s[1], s[2], s[4])]}</b><br>${l.txt} · Q${s[5] > 40 ? 'OT' : Math.ceil(s[5] / 10)} · ${(Math.hypot(s[1], s[2]) / 100).toFixed(1)} m${s[9] != null ? ' · xFG ' + (100 * s[9]).toFixed(0) + '%' : ''}${s[7] ? ' · fast break' : ''}${s[8] ? ' · second chance' : ''}`));
       el.addEventListener('mouseleave', hideTip);
       layer.appendChild(el);
       if (step) capEl.textContent = `${l.txt} · ${i + 1} / ${shots.length}`;

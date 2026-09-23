@@ -1,0 +1,11 @@
+{
+ "season": "E2025",
+ "tables": {
+  "clubs": 20,
+  "players": 374,
+  "roster_stints": 383,
+  "games": 402,
+  "box": 9540,
+  "shots": 51750
+ }
+}

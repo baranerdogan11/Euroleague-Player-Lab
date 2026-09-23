@@ -35,12 +35,32 @@ of the day, and can be started by hand from the Actions tab. Each run:
 6. runs 23 SQL assertions over the warehouse (`warehouse_tests.py`): key uniqueness, referential integrity,
    schedule completeness, and per player per game reconciliation of plotted attempts and makes with the box score;
    any failure stops the run before anything is published
-7. builds the site from the warehouse with SQL (`build.py`, the gold layer) and commits it; GitHub Pages deploys within a minute
+7. scores every shot with the xFG model (`model/score.py`), see below
+8. builds the site from the warehouse with SQL (`build.py`, the gold layer) and commits it; GitHub Pages deploys within a minute
 
 The assertions write `teams/E2026/status.json` (games, shots, box lines, tests, failures, time) and the page footer
 shows the last verdict. A failed run leaves the previous good build live and uploads the status report as a
 workflow artifact. Roster stints mean a player who changes club mid-season keeps his full season under his
 current club.
+
+## Expected field goal model (xFG)
+
+`model/xfg.py` trains a gradient-boosted classifier on a past season's warehouse to estimate the probability
+that a shot goes in from its context: location, distance, angle, shot value, zone, quarter and clock, score
+margin, home court, fast break, second chance, points off turnover. Shooter quality is a separate, leak-free
+feature: each shooter's shrunk running residual (made minus xFG) over his earlier shots only, so the model never
+sees the outcome it predicts. Validation is time-based (the last quarter of the season's games held out) against
+constant, zone-average and distance-bin baselines; metrics, calibration by decile and permutation importance are
+written to `model/model_card.json`.
+
+Trained on 2025-26 (51,750 shots, 329 shooters), held-out log loss 0.630 against 0.645 for zone-average FG%
+and 0.692 for a constant, AUC 0.67, calibrated within 1.5 points in every decile. Distance dominates; the shooter
+term adds a small, real gain. A first version scored 0.497 and was discarded: the feed's fast-break,
+second-chance and points-off-turnover flags are only set on made shots, and the running score includes the
+basket just made, so both leaked the label. They are excluded and the margin is taken before the shot.
+`model/score.py` scores the current season nightly, carrying last season's
+shooter effects forward as decayed priors. The page shows each player's xFG, actual versus expected points per
+attempt, and points above expectation; every shot's tooltip carries its xFG.
 
 ## Data layers
 

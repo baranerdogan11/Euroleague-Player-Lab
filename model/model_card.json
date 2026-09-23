@@ -1,0 +1,155 @@
+{
+ "model": "xFG (expected field goal)",
+ "version": "2026-09-23",
+ "trained_on": "E2025",
+ "n_shots": 51750,
+ "n_shooters": 329,
+ "split": "time-based, test = games after 2026-03-12 (12782 shots)",
+ "features": [
+  "dist",
+  "angle",
+  "x",
+  "y",
+  "clock_sec",
+  "minute",
+  "margin",
+  "quarter",
+  "three",
+  "home",
+  "zone",
+  "shooter"
+ ],
+ "chosen": "xfg_context_plus_shooter",
+ "metrics_test": {
+  "constant": {
+   "logloss": 0.6919,
+   "brier": 0.2494,
+   "auc": 0.5
+  },
+  "zone_fg": {
+   "logloss": 0.6447,
+   "brier": 0.2277,
+   "auc": 0.6455
+  },
+  "distance_bins": {
+   "logloss": 0.6459,
+   "brier": 0.227,
+   "auc": 0.6522
+  },
+  "xfg_context": {
+   "logloss": 0.6317,
+   "brier": 0.2219,
+   "auc": 0.6703
+  },
+  "xfg_context_plus_shooter": {
+   "logloss": 0.6303,
+   "brier": 0.2213,
+   "auc": 0.6734
+  }
+ },
+ "calibration_test": [
+  {
+   "n": 1279,
+   "pred": 0.297,
+   "actual": 0.303
+  },
+  {
+   "n": 1278,
+   "pred": 0.353,
+   "actual": 0.341
+  },
+  {
+   "n": 1278,
+   "pred": 0.372,
+   "actual": 0.335
+  },
+  {
+   "n": 1279,
+   "pred": 0.389,
+   "actual": 0.406
+  },
+  {
+   "n": 1277,
+   "pred": 0.406,
+   "actual": 0.414
+  },
+  {
+   "n": 1278,
+   "pred": 0.427,
+   "actual": 0.412
+  },
+  {
+   "n": 1278,
+   "pred": 0.479,
+   "actual": 0.469
+  },
+  {
+   "n": 1278,
+   "pred": 0.565,
+   "actual": 0.557
+  },
+  {
+   "n": 1278,
+   "pred": 0.659,
+   "actual": 0.64
+  },
+  {
+   "n": 1279,
+   "pred": 0.86,
+   "actual": 0.873
+  }
+ ],
+ "permutation_importance": [
+  [
+   "dist",
+   0.1145
+  ],
+  [
+   "y",
+   0.0017
+  ],
+  [
+   "shooter",
+   0.0016
+  ],
+  [
+   "x",
+   0.0014
+  ],
+  [
+   "clock_sec",
+   0.0011
+  ],
+  [
+   "zone",
+   0.0004
+  ],
+  [
+   "angle",
+   0.0003
+  ],
+  [
+   "minute",
+   0.0002
+  ],
+  [
+   "quarter",
+   0.0
+  ],
+  [
+   "three",
+   0.0
+  ],
+  [
+   "home",
+   0.0
+  ],
+  [
+   "margin",
+   -0.0001
+  ]
+ ],
+ "shooter_shrinkage_k": 150.0,
+ "algorithm": "sklearn HistGradientBoostingClassifier, early stopping",
+ "notes": "Shooter effect is a sequential shrunk residual computed from earlier shots only; no leakage."
+}

@@ -33,6 +33,7 @@ jobs:
         run: |
           python tests/test_checks.py
           python tests/test_warehouse.py
+          python tests/test_model.py
 
       - name: Restore feed cache
         uses: actions/cache@v4
@@ -52,6 +53,9 @@ jobs:
 
       - name: Warehouse assertions
         run: python warehouse_tests.py $SEASON
+
+      - name: Score shots with the xFG model
+        run: python model/score.py $SEASON
 
       - name: Build site (gold)
         run: python build.py $SEASON

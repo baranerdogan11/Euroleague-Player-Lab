@@ -80,7 +80,8 @@ for path in sorted(glob.glob(os.path.join(CACHE, "box_*.json"))):
                         "fd": p["FoulsReceived"], "pir": p["Valuation"], "plusminus": p.get("Plusminus")})
 for path in sorted(glob.glob(os.path.join(CACHE, "points_*.json"))):
     gc = int(os.path.basename(path)[7:-5])
-    for i, r in enumerate(json.load(open(path)).get("Rows", [])):
+    pts = json.load(open(path)); pts = pts.get("Rows", []) if isinstance(pts, dict) else pts   # cached as a bare row list; fixtures hold the full response
+    for i, r in enumerate(pts):
         act = r["ID_ACTION"].strip()
         if act not in ("2FGM", "2FGA", "3FGM", "3FGA"):
             continue
