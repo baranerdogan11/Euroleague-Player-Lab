@@ -20,7 +20,7 @@ jobs:
           cache: pip
       - run: pip install -r requirements.txt
       - name: Generate and judge notes for the fixed evaluation set
-        run: python model/notes_eval.py
+        run: python -u model/notes_eval.py
       - name: Commit the report and the annotated set
         run: |
           git config user.name "euroleague-shot-profiles-bot"

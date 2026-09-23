@@ -43,8 +43,8 @@ Return JSON matching the schema."""
 
 SCHEMA = {"type": "object", "properties": {
     "note": {"type": "string", "description": "2-3 sentences, at most 70 words"},
-    "key_numbers": {"type": "array", "items": {"type": "object", "properties": {"label": {"type": "string"}, "value": {"type": "string"}},
-                                               "required": ["label", "value"], "additionalProperties": False}, "maxItems": 4},
+    "key_numbers": {"type": "array", "description": "up to four of the numbers cited, label and value", "items": {"type": "object", "properties": {"label": {"type": "string"}, "value": {"type": "string"}},
+                                               "required": ["label", "value"], "additionalProperties": False}},
     "sample_caveat": {"type": "boolean", "description": "true when the note mentions a small sample"},
     "confidence": {"type": "string", "enum": ["low", "medium", "high"]}},
     "required": ["note", "key_numbers", "sample_caveat", "confidence"], "additionalProperties": False}
@@ -120,16 +120,29 @@ def fact_sheets(season):
     return sheets, names
 
 
-def generate(client, sheet):
-    from anthropic import BadRequestError  # noqa: F401
-    msgs = [{"role": "user", "content": "Fact sheet:\n" + json.dumps(sheet["facts"], ensure_ascii=False)}]
-    resp = client.beta.messages.create(model=MODEL, max_tokens=600, system=SYSTEM, messages=msgs,
-                                       output_config={"effort": "low", "format": {"type": "json_schema", "schema": SCHEMA}},
-                                       betas=["server-side-fallback-2026-07-01"], fallbacks="default")
+def structured(client, system, user, schema, max_tokens=600):
+    """One structured-output call. Tries the refusal-fallback beta first; if the account or SDK rejects it,
+    falls back to the plain endpoint. API errors surface with their body so a failed run is diagnosable."""
+    import anthropic
+    msgs = [{"role": "user", "content": user}]
+    fmt = {"effort": "low", "format": {"type": "json_schema", "schema": schema}}
+    try:
+        resp = client.beta.messages.create(model=MODEL, max_tokens=max_tokens, system=system, messages=msgs, output_config=fmt,
+                                           betas=["server-side-fallback-2026-07-01"], fallbacks="default")
+    except (anthropic.BadRequestError, TypeError) as e:
+        msg = str(e).lower()
+        if "fallback" in msg or "beta" in msg or "unexpected keyword" in msg:
+            resp = client.messages.create(model=MODEL, max_tokens=max_tokens, system=system, messages=msgs, output_config=fmt)
+        else:
+            raise
     if resp.stop_reason == "refusal":
         return None, resp.usage
     text = next(b.text for b in resp.content if b.type == "text")
     return json.loads(text), resp.usage
+
+
+def generate(client, sheet):
+    return structured(client, SYSTEM, "Fact sheet:\n" + json.dumps(sheet["facts"], ensure_ascii=False), SCHEMA)
 
 
 def main():

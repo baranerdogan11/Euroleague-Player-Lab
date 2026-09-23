@@ -28,7 +28,7 @@ Score two things from 1 (poor) to 5 (excellent):
 - faithfulness: every claim and number is supported by the fact sheet; no invented context, no unsupported comparisons.
 - usefulness: a basketball reader learns the most informative things in the sheet, stated clearly.
 List every claim that the fact sheet does not support (empty list if none). Return JSON matching the schema."""
-JUDGE_SCHEMA = {"type": "object", "properties": {"faithfulness": {"type": "integer", "minimum": 1, "maximum": 5}, "usefulness": {"type": "integer", "minimum": 1, "maximum": 5},
+JUDGE_SCHEMA = {"type": "object", "properties": {"faithfulness": {"type": "integer", "enum": [1, 2, 3, 4, 5]}, "usefulness": {"type": "integer", "enum": [1, 2, 3, 4, 5]},
                                                  "unsupported_claims": {"type": "array", "items": {"type": "string"}}},
                 "required": ["faithfulness", "usefulness", "unsupported_claims"], "additionalProperties": False}
 
@@ -57,11 +57,9 @@ def run():
         if out is None:
             results.append({"player": it["player"], "name": it["name"], "note": None, "auto_ok": False, "auto_reasons": ["refused"]}); continue
         ok, reasons = check_note(out["note"], it["facts"], it["name"], other_names=names)
-        resp = client.beta.messages.create(model=JUDGE_MODEL, max_tokens=500, system=JUDGE_SYSTEM,
-                                           messages=[{"role": "user", "content": f"Fact sheet:\n{json.dumps(it['facts'], ensure_ascii=False)}\n\nNote:\n{out['note']}"}],
-                                           output_config={"effort": "low", "format": {"type": "json_schema", "schema": JUDGE_SCHEMA}},
-                                           betas=["server-side-fallback-2026-07-01"], fallbacks="default")
-        judge = json.loads(next(b.text for b in resp.content if b.type == "text")) if resp.stop_reason != "refusal" else None
+        notes.MODEL = JUDGE_MODEL
+        judge, _ = notes.structured(client, JUDGE_SYSTEM, f"Fact sheet:\n{json.dumps(it['facts'], ensure_ascii=False)}\n\nNote:\n{out['note']}", JUDGE_SCHEMA, max_tokens=500)
+        notes.MODEL = os.environ.get("NOTES_MODEL", "claude-opus-5")
         it["note"] = out["note"]
         results.append({"player": it["player"], "name": it["name"], "note": out["note"], "confidence": out["confidence"], "auto_ok": ok, "auto_reasons": reasons,
                         "judge": judge, "human_ok": it.get("human_ok")})
@@ -89,4 +87,13 @@ if __name__ == "__main__":
     if "--build" in sys.argv:
         build(sys.argv[sys.argv.index("--build") + 1])
     else:
-        run()
+        try:
+            run()
+        except Exception as e:
+            import traceback
+            body = getattr(e, "body", None) or getattr(getattr(e, "response", None), "text", None)
+            msg = f"notes_eval failed: {type(e).__name__}: {e}\n{body if body else ''}\n{traceback.format_exc()}"
+            print(msg)
+            if os.environ.get("GITHUB_STEP_SUMMARY"):
+                open(os.environ["GITHUB_STEP_SUMMARY"], "a").write("### Scouting notes evaluation failed\n```\n" + msg[-3000:] + "\n```\n")
+            sys.exit(1)
