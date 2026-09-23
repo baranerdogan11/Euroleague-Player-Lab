@@ -21,7 +21,24 @@ in order.
 - Before a club's first game the page shows the roster and the date of the opener; stats and charts fill in as games are played
 - Deep links: `#ULK`, `#ULK/P007200`, `#ULK/P007200/zones` (club code, player id, optional zones view)
 
-## Update after each round
+## How it runs
+
+A GitHub Actions workflow (`.github/workflows/update.yml`) runs every night at 02:30 UTC, after the last game
+of the day, and can be started by hand from the Actions tab. Each run:
+
+1. restores the feed cache, so only new games are downloaded
+2. runs the gate's own tests (`tests/test_checks.py`), which prove the checks catch what they should
+3. fetches new games, roster changes and photos (`fetch_season.py`)
+4. runs the data-quality gate (`checks.py`): 20 clubs with plausible rosters, no duplicate or future games,
+   every played game scored, every shot inside the court, and for every player in every game the plotted
+   attempts reconcile exactly with the box-score attempts; any failure stops the run before anything is published
+5. builds the site (`build.py`) and commits it; GitHub Pages deploys within a minute
+
+The gate writes `teams/E2026/status.json` (games, shots, box lines reconciled, failures, warnings, time) and the
+page footer shows the last verdict. A failed run leaves the previous good build live and uploads the status
+report as a workflow artifact.
+
+## Update by hand
 
 ```bash
 pip install -r requirements.txt

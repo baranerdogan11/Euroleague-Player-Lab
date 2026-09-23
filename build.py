@@ -96,8 +96,13 @@ for path in sorted(glob.glob(os.path.join(DATA, "*.json"))):
     json.dump(team, open(os.path.join(OUT, f"{d['club']}.json"), "w"), separators=(",", ":"), ensure_ascii=False)
     summary.append((d["club"], len(players), n_prev, len(d["games"]), len(d["shots"])))
 
+status_path = os.path.join(DATA, "status.json")
+status = json.load(open(status_path)) if os.path.exists(status_path) else None
+if status:
+    json.dump(status, open(os.path.join(OUT, "status.json"), "w"), indent=1)
 meta = {"season": SEASON, "label": label(SEASON), "clubs": club_list,
-        "built": datetime.date.today().isoformat(), "path": f"teams/{SEASON}/"}
+        "built": datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC"), "path": f"teams/{SEASON}/",
+        "status": {k: status[k] for k in ("checked_at", "games", "shots", "players", "ok", "failures", "warnings")} if status else None}
 json.dump(meta, open(os.path.join(OUT, "index.json"), "w"), ensure_ascii=False)
 tpl = open(os.path.join(ROOT, "template.html"), encoding="utf-8").read()
 open(os.path.join(ROOT, "index.html"), "w", encoding="utf-8").write(tpl.replace("/*META*/", json.dumps(meta, ensure_ascii=False)))

@@ -264,7 +264,7 @@ function renderPlayer(){
   const lg = $('#log tbody');
   lg.innerHTML = d.log.map(r => { const g = d.games[r[0]], l = gameLabel(g); return `<tr><td class="k">${g.round}</td><td>${fmtDate(g.date)}</td><td>${l.home ? 'vs' : '@'} ${l.opp}</td><td class="${l.res === 'W' ? 'w' : 'l'}">${l.res} ${l.score}</td><td>${r[1]}</td><td class="k">${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td><td>${r[5]}</td><td>${r[6]}</td><td>${r[7]}</td><td>${r[8]}/${r[9]}</td><td>${r[10]}/${r[11]}</td><td>${r[12]}/${r[13]}</td><td>${r[14]}</td><td>${r[15] ?? ''}</td></tr>`; }).join('');
   $('#log-none').hidden = d.log.length > 0; $('#log-panel .scroll').hidden = d.log.length === 0;
-  $('#foot-l').textContent = `${CLUBS[t.code].name} · ${t.games_played} ${META.label} games played · updated ${META.built}`;
+  const st = META.status; $('#foot-l').textContent = `${CLUBS[t.code].name} · ${t.games_played} ${META.label} games played · updated ${META.built}` + (st ? ` · pipeline ${st.ok ? 'OK' : 'FAILED'}: ${st.games} games, ${st.shots.toLocaleString()} shots checked` : '');
   renderChart(true);
 }
 function zoneStats(shots){

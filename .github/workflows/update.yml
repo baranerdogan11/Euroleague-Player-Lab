@@ -1,0 +1,69 @@
+name: Update data
+
+on:
+  schedule:
+    - cron: "30 2 * * *"        # 02:30 UTC nightly: every Euroleague game of the day has finished
+  workflow_dispatch:            # run by hand from the Actions tab
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-data
+  cancel-in-progress: false
+
+env:
+  SEASON: E2026
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - name: Gate self-test
+        run: python tests/test_checks.py
+
+      - name: Restore feed cache
+        uses: actions/cache@v4
+        with:
+          path: cache
+          key: feeds-${{ env.SEASON }}-${{ github.run_id }}
+          restore-keys: feeds-${{ env.SEASON }}-
+
+      - name: Fetch new games, rosters and photos
+        run: python fetch_season.py $SEASON
+
+      - name: Data-quality gate
+        run: python checks.py $SEASON
+
+      - name: Build site
+        run: python build.py $SEASON
+
+      - name: Commit and publish
+        run: |
+          git config user.name "euroleague-shot-profiles-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes."
+          else
+            git commit -m "Nightly update $(date -u +%Y-%m-%d): $(python -c "import json;s=json.load(open('data/$SEASON/status.json'));print(f\"{s['games']} games, {s['shots']} shots\")")"
+            git push
+          fi
+
+      - name: Upload status report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: status-${{ github.run_id }}
+          path: data/${{ env.SEASON }}/status.json
+          if-no-files-found: ignore
