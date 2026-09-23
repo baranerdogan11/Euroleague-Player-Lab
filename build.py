@@ -94,7 +94,7 @@ for path in sorted(glob.glob(os.path.join(DATA, "*.json"))):
     json.dump(team, open(os.path.join(OUT, f"{d['club']}.json"), "w"), separators=(",", ":"), ensure_ascii=False)
     summary.append((d["club"], len(players), n_prev, len(d["games"]), len(d["shots"])))
 
-meta = {"season": SEASON, "label": label(SEASON), "prev_label": label(PREV) if prev_games else None, "clubs": club_list,
+meta = {"season": SEASON, "label": label(SEASON), "clubs": club_list,
         "built": datetime.date.today().isoformat(), "path": f"teams/{SEASON}/"}
 json.dump(meta, open(os.path.join(OUT, "index.json"), "w"), ensure_ascii=False)
 tpl = open(os.path.join(ROOT, "template.html"), encoding="utf-8").read()
