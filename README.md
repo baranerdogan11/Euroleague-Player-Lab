@@ -28,22 +28,35 @@ of the day, and can be started by hand from the Actions tab. Each run:
 
 1. restores the feed cache, so only new games are downloaded
 2. runs the gate's own tests (`tests/test_checks.py`), which prove the checks catch what they should
-3. fetches new games, roster changes and photos (`fetch_season.py`)
-4. runs the data-quality gate (`checks.py`): 20 clubs with plausible rosters, no duplicate or future games,
-   every played game scored, every shot inside the court, and for every player in every game the plotted
-   attempts reconcile exactly with the box-score attempts; any failure stops the run before anything is published
-5. builds the site (`build.py`) and commits it; GitHub Pages deploys within a minute
+3. fetches new games, roster changes (re-pulled every night, with start and end dates) and photos (`fetch_season.py`)
+4. runs the raw-feed gate (`checks.py`)
+5. builds the warehouse (`warehouse.py`): six Parquet tables under `warehouse/E2026/`, the silver layer;
+   see [`warehouse/SCHEMA.md`](warehouse/SCHEMA.md)
+6. runs 23 SQL assertions over the warehouse (`warehouse_tests.py`): key uniqueness, referential integrity,
+   schedule completeness, and per player per game reconciliation of plotted attempts and makes with the box score;
+   any failure stops the run before anything is published
+7. builds the site from the warehouse with SQL (`build.py`, the gold layer) and commits it; GitHub Pages deploys within a minute
 
-The gate writes `teams/E2026/status.json` (games, shots, box lines reconciled, failures, warnings, time) and the
-page footer shows the last verdict. A failed run leaves the previous good build live and uploads the status
-report as a workflow artifact.
+The assertions write `teams/E2026/status.json` (games, shots, box lines, tests, failures, time) and the page footer
+shows the last verdict. A failed run leaves the previous good build live and uploads the status report as a
+workflow artifact. Roster stints mean a player who changes club mid-season keeps his full season under his
+current club.
+
+## Data layers
+
+| Layer | Where | Produced by | Tests |
+|---|---|---|---|
+| Bronze | `cache/E2026/` (raw feed JSON, not committed) | `fetch_season.py` | `checks.py` |
+| Silver | `warehouse/E2026/*.parquet` | `warehouse.py` | `warehouse_tests.py` (23 assertions), `tests/test_warehouse.py` (real-game fixture) |
+| Gold | `teams/E2026/*.json`, `index.html` | `build.py` | rendered site |
 
 ## Update by hand
 
 ```bash
 pip install -r requirements.txt
 python fetch_season.py E2026   # clubs, crests, rosters, photos, then shots and box scores for new games
-python build.py E2026          # writes index.html and teams/E2026/*.json
+python checks.py E2026 && python warehouse.py E2026 && python warehouse_tests.py E2026
+python build.py E2026          # writes index.html and teams/E2026/*.json from the warehouse
 git add -A && git commit -m "Update after round" && git push   # GitHub Pages redeploys in about a minute
 ```
 
@@ -54,7 +67,8 @@ git add -A && git commit -m "Update after round" && git push   # GitHub Pages re
 - `index.html`: the page (loads a club's JSON when it is selected)
 - `teams/E2026/index.json`, `teams/E2026/<CLUB>.json`: compact per-club data (stats, game log, shots)
 - `photos/<player>.webp`, `logos/<CLUB>.png`: media-day photos and crests
-- `fetch_season.py`, `build.py`, `template.html`: the pipeline and page source
+- `warehouse/E2026/*.parquet`: the queryable season warehouse (schema in `warehouse/SCHEMA.md`)
+- `fetch_season.py`, `checks.py`, `warehouse.py`, `warehouse_tests.py`, `build.py`, `template.html`: the pipeline and page source
 
 The page fetches its data files, so serve the folder over HTTP to run it locally
 (`python -m http.server 8000`, then open http://localhost:8000/); opening `index.html` directly from disk will not load data.

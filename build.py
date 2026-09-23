@@ -1,9 +1,8 @@
-"""Build the site: index.html from template.html, plus one compact JSON per club under teams/<season>/.
+"""Gold layer: per-club site files and index.html, produced by SQL over the warehouse (warehouse/<season>/).
 
-Photos (photos/*.webp) and crests (logos/*.png) are referenced by path, not embedded, so the page stays
-small and each club's data loads when it is selected. If data/<previous season>/ exists, every current
-player also carries his previous-season games and shots (from whichever club he played for), so profiles
-are populated before the current season's games. Run after fetch_season.py.
+A club's page lists its active roster stints; each player's games, box lines and shots come from every club
+he played for this season, so a mid-season move keeps his full record under his current club.
+Photos (photos/*.webp) and crests (logos/*.png) are referenced by path. Run after warehouse.py.
 
 usage: python build.py E2026
 """
@@ -12,100 +11,63 @@ import glob
 import json
 import os
 import sys
+import duckdb
 
 SEASON = sys.argv[1] if len(sys.argv) > 1 else "E2026"
-PREV = f"E{int(SEASON[1:]) - 1}"
 ROOT = os.path.dirname(os.path.abspath(__file__))
-DATA = os.path.join(ROOT, "data", SEASON)
-PREV_DATA = os.path.join(ROOT, "data", PREV)
+W = os.path.join(ROOT, "warehouse", SEASON)
 OUT = os.path.join(ROOT, "teams", SEASON)
 os.makedirs(OUT, exist_ok=True)
-for stale in glob.glob(os.path.join(OUT, "*.json")):   # outputs are regenerated in full; clubs that no longer exist must not linger
+for stale in glob.glob(os.path.join(OUT, "*.json")):
     os.remove(stale)
-STAT_KEYS = ["pts", "fgm2", "fga2", "fgm3", "fga3", "ftm", "fta", "oreb", "dreb", "reb", "ast", "stl", "tov", "blk", "blka", "pf", "fd", "pir"]
 label = lambda s: f"{s[1:]}-{str(int(s[1:]) + 1)[2:]}"
+STAT_KEYS = ["pts", "fgm2", "fga2", "fgm3", "fga3", "ftm", "fta", "oreb", "dreb", "reb", "ast", "stl", "tov", "blk", "blka", "pf", "fd", "pir"]
 
+con = duckdb.connect()
+for t in ["clubs", "players", "roster_stints", "games", "box", "shots"]:
+    con.execute(f"create view {t} as select * from read_parquet('{os.path.join(W, t + '.parquet')}')")
+rows = lambda q, *a: [dict(zip([d[0] for d in con.description], r)) for r in con.execute(q, a).fetchall()]
 
-def minutes(s):
-    if not s or ":" not in str(s):
-        return 0.0
-    m, sec = str(s).split(":")
-    return int(m) + int(sec) / 60
-
-
-def gkey(g):
-    return (g["date"], g["code"])
-
-
-def player_season(pid, box, shots, games_by_code, own_by_game):
-    """Season totals, per-game log and compact shots for one player; game index is local to this player."""
-    lines = sorted([b for b in box if b["pid"] == pid and minutes(b["min"]) > 0], key=lambda b: gkey(games_by_code[b["game"]]))
-    if not lines:
-        return None
-    codes = [b["game"] for b in lines]
-    gidx = {c: i for i, c in enumerate(codes)}
-    tot = {k: sum(b[k] for b in lines) for k in STAT_KEYS}
-    tot["min"] = round(sum(minutes(b["min"]) for b in lines), 1)
-    tot["gp"] = len(lines)
-    log = [[gidx[b["game"]], round(minutes(b["min"]), 1), b["pts"], b["reb"], b["ast"], b["stl"], b["blk"], b["tov"], b["fgm2"], b["fga2"], b["fgm3"], b["fga3"], b["ftm"], b["fta"], b["pir"], b["plusminus"]] for b in lines]
-    sh = [[gidx[s["game"]], s["x"], s["y"], 1 if s["made"] else 0, s["pts"], s["q"], s["zone"], 1 if s["fastbreak"] else 0, 1 if s["second_chance"] else 0]
-          for s in sorted([s for s in shots if s["pid"] == pid and s["game"] in gidx], key=lambda s: (gidx[s["game"]], s["q"], s["clock"]))]
-    games = [dict(games_by_code[c], own=own_by_game[c]) for c in codes]
-    return {"tot": tot, "log": log, "shots": sh, "games": games}
-
-
-# ---- previous season, pooled across clubs (players move)
-prev_box, prev_shots, prev_games, prev_own = [], [], {}, {}
-if os.path.isdir(PREV_DATA):
-    for path in glob.glob(os.path.join(PREV_DATA, "*.json")):
-        if path.endswith("clubs.json"):
-            continue
-        d = json.load(open(path))
-        for g in d["games"]:
-            prev_games[g["code"]] = g
-        for b in d["box"]:
-            prev_box.append(b); prev_own[(b["pid"], b["game"])] = d["club"]
-        prev_shots.extend(d["shots"])
-    print(f"previous season {PREV}: {len(prev_games)} games, {len(prev_box)} box lines, {len(prev_shots)} shots pooled")
-
-clubs = json.load(open(os.path.join(DATA, "clubs.json")))
-club_list = list(clubs["clubs"])
+clubs = rows("select * from clubs order by name")
+for c in clubs:
+    c["logo"] = f"logos/{c['club']}.png" if os.path.exists(os.path.join(ROOT, "logos", f"{c['club']}.png")) else None
 summary = []
-for path in sorted(glob.glob(os.path.join(DATA, "*.json"))):
-    if path.endswith(("clubs.json", "status.json")):
-        continue
-    d = json.load(open(path))
-    if d.get("club_meta"):
-        club_list = [c for c in club_list if c["code"] != d["club"]] + [dict(d["club_meta"], demo=True)]
-    games_by_code = {g["code"]: g for g in d["games"]}
-    own = {g["code"]: d["club"] for g in d["games"]}
+for c in clubs:
+    code = c["club"]
+    roster = rows("""select s.player, p.name, s.dorsal, s.position, p.height_cm, p.birth_date, p.country
+                     from roster_stints s join players p using (player) where s.club = ? and s.active
+                     order by try_cast(s.dorsal as integer) nulls last, p.name""", code)
     players = []
-    n_prev = 0
-    for p in sorted(d["players"], key=lambda p: (int(p["dorsal"]) if str(p["dorsal"]).isdigit() else 99, p["name"])):
-        cur = player_season(p["pid"], d["box"], d["shots"], games_by_code, own) or {"tot": {**{k: 0 for k in STAT_KEYS}, "min": 0, "gp": 0}, "log": [], "shots": [], "games": []}
-        rec = {"pid": p["pid"], "name": p["name"], "dorsal": p["dorsal"], "position": p["position"], "height": p["height"], "birth": p["birth"],
-               "country": p["country"], "photo": p["photo"], "cur": cur}
-        if prev_games:
-            pv = player_season(p["pid"], prev_box, prev_shots, prev_games, {g: c for (pid, g), c in prev_own.items() if pid == p["pid"]})
-            if pv:
-                rec["prev"] = pv; n_prev += 1
-        players.append(rec)
-    team = {"code": d["club"], "season": SEASON, "label": label(SEASON), "prev_label": label(PREV) if prev_games else None,
-            "games_played": len(d["games"]), "upcoming": d.get("upcoming", []), "players": players,
-            "real_code": (d.get("club_meta") or {}).get("real_code", d["club"])}
-    json.dump(team, open(os.path.join(OUT, f"{d['club']}.json"), "w"), separators=(",", ":"), ensure_ascii=False)
-    summary.append((d["club"], len(players), n_prev, len(d["games"]), len(d["shots"])))
+    for r in roster:
+        lines = rows("""select b.*, g.round, g.phase, g.date, g.home, g.away, g.home_score, g.away_score
+                        from box b join games g using (game) where b.player = ? and b.minutes > 0 order by g.date, g.game""", r["player"])
+        gidx = {b["game"]: i for i, b in enumerate(lines)}
+        tot = {k: sum(b[k] or 0 for b in lines) for k in STAT_KEYS}
+        tot["min"] = round(sum(b["minutes"] for b in lines), 1); tot["gp"] = len(lines)
+        log = [[gidx[b["game"]], round(b["minutes"], 1), b["pts"], b["reb"], b["ast"], b["stl"], b["blk"], b["tov"], b["fgm2"], b["fga2"], b["fgm3"], b["fga3"], b["ftm"], b["fta"], b["pir"], b["plusminus"]] for b in lines]
+        sh = rows("select game, x, y, made, pts, minute, zone, fastbreak, second_chance from shots where player = ? order by game, minute, seq", r["player"])
+        shots = [[gidx[s["game"]], s["x"], s["y"], int(s["made"]), s["pts"], s["minute"], s["zone"], int(s["fastbreak"]), int(s["second_chance"])] for s in sh if s["game"] in gidx]
+        games = [{"code": b["game"], "round": b["round"], "date": str(b["date"]), "home": b["home"], "away": b["away"], "hs": b["home_score"], "as": b["away_score"], "phase": b["phase"], "own": b["club"]} for b in lines]
+        players.append({"pid": "P" + r["player"], "name": r["name"], "dorsal": r["dorsal"], "position": r["position"], "height": r["height_cm"],
+                        "birth": str(r["birth_date"]) if r["birth_date"] else None, "country": r["country"],
+                        "photo": f"photos/{r['player']}.webp" if os.path.exists(os.path.join(ROOT, "photos", f"{r['player']}.webp")) else None,
+                        "cur": {"tot": tot, "log": log, "shots": shots, "games": games}})
+    played = con.execute("select count(*) from games where played and ? in (home, away)", [code]).fetchone()[0]
+    upcoming = rows("select game as code, round, cast(date as varchar) as date, home, away, phase from games where not played and ? in (home, away) order by date limit 3", code)
+    json.dump({"code": code, "season": SEASON, "label": label(SEASON), "games_played": played, "upcoming": upcoming, "players": players, "real_code": code},
+              open(os.path.join(OUT, f"{code}.json"), "w"), separators=(",", ":"), ensure_ascii=False)
+    summary.append((code, len(players), played, sum(len(p["cur"]["shots"]) for p in players)))
 
-status_path = os.path.join(DATA, "status.json")
+status_path = os.path.join(W, "status.json")
 status = json.load(open(status_path)) if os.path.exists(status_path) else None
 if status:
     json.dump(status, open(os.path.join(OUT, "status.json"), "w"), indent=1)
-meta = {"season": SEASON, "label": label(SEASON), "clubs": club_list,
+meta = {"season": SEASON, "label": label(SEASON), "clubs": [{"code": c["club"], "name": c["name"], "short": c["short"], "country": c["country"], "city": c["city"], "logo": c["logo"]} for c in clubs],
         "built": datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC"), "path": f"teams/{SEASON}/",
         "status": {k: status[k] for k in ("checked_at", "games", "shots", "players", "ok", "failures", "warnings")} if status else None}
 json.dump(meta, open(os.path.join(OUT, "index.json"), "w"), ensure_ascii=False)
 tpl = open(os.path.join(ROOT, "template.html"), encoding="utf-8").read()
 open(os.path.join(ROOT, "index.html"), "w", encoding="utf-8").write(tpl.replace("/*META*/", json.dumps(meta, ensure_ascii=False)))
 for s in summary:
-    print("%-4s players %2d  with %s data %2d  games %2d  shots %4d" % (s[0], s[1], label(PREV), s[2], s[3], s[4]))
-print("index.html + teams/%s/*.json written" % SEASON)
+    print("%-4s players %2d  games %2d  shots %4d" % s)
+print("index.html + teams/%s/*.json written from warehouse" % SEASON)

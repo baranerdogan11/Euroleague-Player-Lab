@@ -102,7 +102,9 @@ for club in index:
     code = club["code"]
     print(f"\n== {club['name']} ({code})")
     # roster + photos
-    roster = cached(f"roster_{code}.json", lambda: (lambda j: j["data"] if isinstance(j, dict) else j)(get(f"{FEEDS}/{SEASON}/clubs/{code}/people", {"personType": "J"})))
+    # rosters are re-pulled every run so registrations, departures and end dates stay current
+    roster = (lambda j: j["data"] if isinstance(j, dict) else j)(get(f"{FEEDS}/{SEASON}/clubs/{code}/people", {"personType": "J"}))
+    json.dump(roster, open(os.path.join(CACHE, f"roster_{code}.json"), "w"))
     players = []
     for p in roster:
         if p.get("type") != "J":

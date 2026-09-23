@@ -29,8 +29,10 @@ jobs:
 
       - run: pip install -r requirements.txt
 
-      - name: Gate self-test
-        run: python tests/test_checks.py
+      - name: Gate and warehouse self-tests
+        run: |
+          python tests/test_checks.py
+          python tests/test_warehouse.py
 
       - name: Restore feed cache
         uses: actions/cache@v4
@@ -42,10 +44,16 @@ jobs:
       - name: Fetch new games, rosters and photos
         run: python fetch_season.py $SEASON
 
-      - name: Data-quality gate
+      - name: Raw-feed gate
         run: python checks.py $SEASON
 
-      - name: Build site
+      - name: Build warehouse (silver)
+        run: python warehouse.py $SEASON
+
+      - name: Warehouse assertions
+        run: python warehouse_tests.py $SEASON
+
+      - name: Build site (gold)
         run: python build.py $SEASON
 
       - name: Commit and publish
@@ -56,7 +64,7 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes."
           else
-            git commit -m "Nightly update $(date -u +%Y-%m-%d): $(python -c "import json;s=json.load(open('data/$SEASON/status.json'));print(f\"{s['games']} games, {s['shots']} shots\")")"
+            git commit -m "Nightly update $(date -u +%Y-%m-%d): $(python -c "import json;s=json.load(open('warehouse/$SEASON/status.json'));print(f\"{s['games']} games, {s['shots']} shots\")")"
             git push
           fi
 
@@ -65,5 +73,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: status-${{ github.run_id }}
-          path: data/${{ env.SEASON }}/status.json
+          path: warehouse/${{ env.SEASON }}/status.json
           if-no-files-found: ignore
