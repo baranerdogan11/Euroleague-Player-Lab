@@ -1,5 +1,7 @@
 # Euroleague Shot Profiles
 
+**Live app:** https://baranerdogan11.github.io/Euroleague-Shot-Profiles/
+
 Player stats and animated shot charts for every Euroleague player, updated game by game from the league's
 official feeds. Pick a team, pick a player: season numbers, shooting splits, accuracy by zone of the floor,
 and every field-goal attempt of the season plotted on a half court, made and missed, played back in order.
