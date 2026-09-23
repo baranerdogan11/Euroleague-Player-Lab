@@ -38,7 +38,8 @@ of the day, and can be started by hand from the Actions tab. Each run:
 7. scores every shot with the xFG model (`model/score.py`), see below
 8. builds shooting profiles, shot quality versus shooting skill with shrinkage (`model/profile.py`)
 9. writes validated scouting notes with Claude for players whose facts changed (`model/notes.py`, needs the `ANTHROPIC_API_KEY` secret)
-10. builds the site from the warehouse with SQL (`build.py`, the gold layer) and commits it; GitHub Pages deploys within a minute
+10. builds the site from the warehouse with SQL (`build.py`, the gold layer)
+11. writes the monitoring snapshot (`model/monitor.py`) and commits everything; GitHub Pages deploys within a minute
 
 The assertions write `teams/E2026/status.json` (games, shots, box lines, tests, failures, time) and the page footer
 shows the last verdict. A failed run leaves the previous good build live and uploads the status report as a
@@ -103,6 +104,17 @@ unsupported claim in 30 notes (a league-wide superlative built from a 95th-perce
 The automated check initially rejected 47%, almost all false alarms from its own strictness (deficits written as
 magnitudes, numbers inside string facts such as "5/12"); once fixed it passes 28 of 30, rejecting exactly the
 two superlative notes, and the prompt now forbids league-wide claims.
+
+## Monitoring
+
+[`monitor.html`](https://baranerdogan11.github.io/Euroleague-Shot-Profiles/monitor.html) is the system's status page,
+fed by `teams/E2026/monitor.json` which `model/monitor.py` writes at the end of every nightly run (and an append-only
+`warehouse/E2026/run_history.jsonl`). It shows: pipeline result and run history; data freshness against the
+schedule (games played per round, days since the last game); the xFG model's log loss and Brier per round on
+this season's shots against a constant baseline and the training season, plus predicted versus actual make rate
+and season-to-date calibration by decile; shooter-effect coverage; scouting-note acceptance and the latest
+evaluation scores; the serving API's reachability, latency and served model hash checked against the registry.
+Orange crossing grey on the calibration chart is the retrain signal.
 
 ## xFG as a service
 

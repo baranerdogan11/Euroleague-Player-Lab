@@ -38,6 +38,7 @@ jobs:
           python tests/test_profile.py
           python tests/test_service.py
           python tests/test_notes.py
+          python tests/test_monitor.py
 
       - name: Restore feed cache
         uses: actions/cache@v4
@@ -69,6 +70,9 @@ jobs:
 
       - name: Build site (gold)
         run: python build.py $SEASON
+
+      - name: Monitoring snapshot
+        run: python model/monitor.py $SEASON
 
       - name: Commit and publish
         run: |

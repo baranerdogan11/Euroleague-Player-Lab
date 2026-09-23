@@ -19,7 +19,8 @@ W = os.path.join(ROOT, "warehouse", SEASON)
 OUT = os.path.join(ROOT, "teams", SEASON)
 os.makedirs(OUT, exist_ok=True)
 for stale in glob.glob(os.path.join(OUT, "*.json")):
-    os.remove(stale)
+    if os.path.basename(stale) not in ("monitor.json",):      # club files are regenerated; the monitoring snapshot is owned by monitor.py
+        os.remove(stale)
 label = lambda s: f"{s[1:]}-{str(int(s[1:]) + 1)[2:]}"
 STAT_KEYS = ["pts", "fgm2", "fga2", "fgm3", "fga3", "ftm", "fta", "oreb", "dreb", "reb", "ast", "stl", "tov", "blk", "blka", "pf", "fd", "pir"]
 
