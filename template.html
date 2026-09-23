@@ -210,7 +210,7 @@ td.w{color:var(--good)} td.l{color:#ff7b7b}
     <p class="none" id="log-none" hidden>No games played yet.</p>
   </details>
 
-  <div class="foot"><span id="foot-l"></span><span><a href="monitor.html" style="color:var(--orange);text-decoration:none;font-family:var(--disp);font-weight:700;letter-spacing:.12em;text-transform:uppercase;font-size:11px">System status</a> · Data: Euroleague official feeds · Photos: Euroleague media days</span></div>
+  <div class="foot"><span></span><span><a href="monitor.html" style="color:var(--orange);text-decoration:none;font-family:var(--disp);font-weight:700;letter-spacing:.12em;text-transform:uppercase;font-size:11px">System status</a> · Data: Euroleague official feeds · Photos: Euroleague media days</span></div>
 </div>
 <div class="tip" id="tip"></div>
 <script>
@@ -309,7 +309,6 @@ function renderPlayer(){
   renderProfile(p, d);
   const nt = d.note, nb = $('#note');
   if (nt && nt.text) { nb.hidden = false; $('#note-text').textContent = nt.text; $('#note-keys').innerHTML = (nt.key_numbers || []).map(k => `<b>${k.value}</b> ${k.label}`).join(' · '); $('#note-src').textContent = `Scouting note written by Claude from the numbers on this page, ${nt.generated_at} · checked for numeric consistency`; } else nb.hidden = true;
-  const st = META.status; $('#foot-l').textContent = `${CLUBS[t.code].name} · ${t.games_played} ${META.label} games played · updated ${META.built}` + (st ? ` · pipeline ${st.ok ? 'OK' : 'FAILED'}: ${st.games} games, ${st.shots.toLocaleString()} shots checked` : '') + (META.model ? ` · xFG model ${META.model.version} (trained on ${META.model.trained_on.replace('E','').replace(/(\d{4})/, (m,y)=>y+'-'+(+y+1).toString().slice(2))}, ${META.model.n_shots.toLocaleString()} shots, log loss ${META.model.logloss})` : '');
   renderChart(true);
 }
 function renderProfile(p, d){
