@@ -1,8 +1,8 @@
-fastapi>=0.110
+fastapi==0.128.8
 uvicorn[standard]>=0.29
-pydantic>=2.5
-scikit-learn>=1.3
-joblib>=1.3
-pandas>=2.0
-numpy>=1.24
-pyarrow>=14
+pydantic==2.13.0
+scikit-learn==1.6.1
+joblib==1.5.2
+pandas==2.3.3
+numpy==2.0.2
+pyarrow==17.0.0
