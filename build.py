@@ -20,6 +20,8 @@ DATA = os.path.join(ROOT, "data", SEASON)
 PREV_DATA = os.path.join(ROOT, "data", PREV)
 OUT = os.path.join(ROOT, "teams", SEASON)
 os.makedirs(OUT, exist_ok=True)
+for stale in glob.glob(os.path.join(OUT, "*.json")):   # outputs are regenerated in full; clubs that no longer exist must not linger
+    os.remove(stale)
 STAT_KEYS = ["pts", "fgm2", "fga2", "fgm3", "fga3", "ftm", "fta", "oreb", "dreb", "reb", "ast", "stl", "tov", "blk", "blka", "pf", "fd", "pir"]
 label = lambda s: f"{s[1:]}-{str(int(s[1:]) + 1)[2:]}"
 
