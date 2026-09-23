@@ -156,7 +156,10 @@ def main():
             try:
                 out, usage = generate(client, s)
             except Exception as e:
-                checks = [f"api error: {type(e).__name__}: {str(e)[:120]}"]; break
+                name = type(e).__name__
+                if name in ("AuthenticationError", "PermissionDeniedError") or "api_key" in str(e).lower() or "credential" in str(e).lower():
+                    print(f"notes: no usable Anthropic credentials ({name}); skipping without changes"); return 0
+                checks = [f"api error: {name}: {str(e)[:120]}"]; break
             usage_in += usage.input_tokens; usage_out += usage.output_tokens
             if out is None:
                 checks = ["refused"]; break
