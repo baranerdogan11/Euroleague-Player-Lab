@@ -231,7 +231,7 @@ function renderPlayer(){
   $('#pos').textContent = `#${p.dorsal} · ${p.position}`; $('#nm').innerHTML = `${n.first}<br>${n.sur}`;
   const a = age(p.birth);
   $('#facts').innerHTML = [p.height ? `<span><b>${p.height} cm</b></span>` : '', a ? `<span><b>${a}</b> yrs</span>` : '', p.country ? `<span>${p.country}</span>` : '',
-    `<span><b>${tot.gp}</b> games · <b>${f1(tot.min / gp)}</b> min</span>`, `<span class="chip ${p.photo_src === '2026-27 media day' ? 'o' : ''}">${p.photo_src === '2026-27 media day' ? '2026-27 media day photo' : 'Left the club · 2025-26 photo'}</span>`].join('');
+    `<span><b>${tot.gp}</b> games · <b>${f1(tot.min / gp)}</b> min</span>`].join('');
   const tiles = [['pts','PTS',1],['reb','REB',0],['ast','AST',0],['stl','STL',0],['blk','BLK',0],['tov','TOV',0],['pir','PIR',1],['fd','FD',0]];
   $('#tiles').innerHTML = tiles.map(([k, l, o]) => `<div class="tile ${o ? 'o' : ''}"><b>${f1(tot[k] / gp)}</b><span>${l}</span></div>`).join('');
   const fga = tot.fga2 + tot.fga3, fgm = tot.fgm2 + tot.fgm3, efg = fga ? (fgm + 0.5 * tot.fgm3) / fga : 0, ts = (fga + 0.44 * tot.fta) ? tot.pts / (2 * (fga + 0.44 * tot.fta)) : 0;
