@@ -1,0 +1,469 @@
+{
+ "n": 30,
+ "generator": "claude-opus-5",
+ "judge": "claude-opus-5",
+ "auto_pass_rate": 0.533,
+ "judge_faithfulness_mean": 4.97,
+ "judge_usefulness_mean": 4.1,
+ "judge_faithful_5_rate": 0.967,
+ "unsupported_claims_total": 1,
+ "human_labelled": 0,
+ "human_pass_rate": null,
+ "judge_human_agreement": null,
+ "results": [
+  {
+   "player": "009005",
+   "name": "DECK, GABRIEL",
+   "note": "Deck converts at an elite clip for his shot diet: 66.9% on twos, 90.2% at the rim and a .651 true shooting mark across 41 games. His shot quality sits in the 24th percentile (1.05 expected points per attempt), yet he is 34.6 points above expectation, with a shooting skill estimate of +7.6 per 100 attempts (93rd percentile). He adds 7.1 points and 3.5 rebounds in 20.4 minutes.",
+   "confidence": "high",
+   "auto_ok": true,
+   "auto_reasons": [],
+   "judge": {
+    "faithfulness": 5,
+    "usefulness": 4,
+    "unsupported_claims": []
+   },
+   "human_ok": null
+  },
+  {
+   "player": "013403",
+   "name": "WALKER IV, LONNIE",
+   "note": "Walker averages 15.2 points in 22.7 minutes over 28 games with a 12.6 PIR, but his shooting sits below expectation: 29.0 points fewer than expected on 330 attempts, with a -4.9 per-100 skill estimate (15th percentile). Volume comes from above-the-break threes, where he hits 33.5% on 188 tries; 55.0% true shooting overall. He scored 24 in the last game.",
+   "confidence": "high",
+   "auto_ok": false,
+   "auto_reasons": [
+    "untraceable number: 29"
+   ],
+   "judge": {
+    "faithfulness": 5,
+    "usefulness": 4,
+    "unsupported_claims": []
+   },
+   "human_ok": null
+  },
+  {
+   "player": "004866",
+   "name": "KALINIC, NIKOLA",
+   "note": "Kalinic shot 40% from three on 90 attempts and 50% on twos across 39 games, finishing 8.6 points above expectation on 176 shots for a 57.5% true shooting mark. His shot quality sits in the 30th percentile at 1.06 expected points per attempt, yet his shooting skill estimate of +1.9 per 100 ranks in the 69th percentile. He averaged 5.8 points and 3.5 rebounds in 23.2 minutes.",
+   "confidence": "medium",
+   "auto_ok": true,
+   "auto_reasons": [],
+   "judge": {
+    "faithfulness": 5,
+    "usefulness": 4,
+    "unsupported_claims": []
+   },
+   "human_ok": null
+  },
+  {
+   "player": "014123",
+   "name": "DOWTIN JR, JEFFREY",
+   "note": "Dowtin Jr takes a very tough shot diet: his 0.99 expected points per attempt ranks in the 4th percentile, yet he is 3.4 points above expectation on 127 attempts with a 53.7% true shooting mark. He hits 40% from three (22/55) and 43.1% on twos, averaging 8.1 points and 2.4 assists in 17.1 minutes. Shooting skill of +0.9 per 100 sits in the 58th percentile.",
+   "confidence": "medium",
+   "auto_ok": true,
+   "auto_reasons": [],
+   "judge": {
+    "faithfulness": 5,
+    "usefulness": 4,
+    "unsupported_claims": []
+   },
+   "human_ok": null
+  },
+  {
+   "player": "014026",
+   "name": "FRISCH, CLEMENT",
+   "note": "Frisch has been a highly efficient complementary scorer in 12.1 minutes a night, posting a 67.7% true shooting mark on 4.3 points per game. He hit 42.4% from three (28/66) and 70.8% inside the arc, finishing 17 of 20 at the rim and scoring 27.5 points above expectation on 114 attempts. His shooting skill of +7.3 per 100 ranks in the 92nd percentile on average shot quality (51st).",
+   "confidence": "medium",
+   "auto_ok": true,
+   "auto_reasons": [],
+   "judge": {
+    "faithfulness": 5,
+    "usefulness": 4,
+    "unsupported_claims": []
+   },
+   "human_ok": null
+  },
+  {
+   "player": "013384",
+   "name": "BROOKS, ARMONI",
+   "note": "Brooks hit 41.6% from three on 245 attempts and posted a .604 true shooting mark, scoring 13.1 points in 22.5 minutes across 38 games. His shooting skill of +6.3 points per 100 attempts sits in the 88th percentile despite shot quality of 1.07 points per attempt (35th percentile), worth 40.8 points above expectation on 388 shots.",
+   "confidence": "high",
+   "auto_ok": true,
+   "auto_reasons": [],
+   "judge": {
+    "faithfulness": 5,
+    "usefulness": 4,
+    "unsupported_claims": []
+   },
+   "human_ok": null
+  },
+  {
+   "player": "011927",
+   "name": "SLEVA, DUSTIN",
+   "note": "Sleva's shooting splits are lopsided: 40.8% from three on 120 attempts against 43.1% inside the arc, with 68.8% at the rim but just 24.2% on 33 mid-range tries. Over 222 attempts he sits 3.1 points below expectation, with a shooting skill estimate of -0.7 per 100 (43rd percentile) and shot quality of 1.07 points per attempt. He averages 6.7 points and 3.4 rebounds in 18.3 minutes.",
+   "confidence": "medium",
+   "auto_ok": false,
+   "auto_reasons": [
+    "untraceable number: 3.1"
+   ],
+   "judge": {
+    "faithfulness": 5,
+    "usefulness": 4,
+    "unsupported_claims": []
+   },
+   "human_ok": null
+  },
+  {
+   "player": "011284",
+   "name": "FARIED, KENNETH",
+   "note": "Faried takes the easiest shots in the league — a 1.3 shot quality ranks in the 95th percentile, with 84 of his 135 attempts coming at the rim. He converts 61.2% of twos and 70.2% at the rim, but that's below the 65.7% expected on his shot diet, leaving him 13.7 points under expectation and in the 26th percentile for shooting skill. Averages 5.8 points and 3.9 rebounds in 13.1 minutes.",
+   "confidence": "high",
+   "auto_ok": false,
+   "auto_reasons": [
+    "untraceable number: 13.7"
+   ],
+   "judge": {
+    "faithfulness": 4,
+    "usefulness": 4,
+    "unsupported_claims": [
+     "\"takes the easiest shots in the league\" — the sheet only supports a 95th-percentile shot quality, not league-best"
+    ]
+   },
+   "human_ok": null
+  },
+  {
+   "player": "014012",
+   "name": "LEAF, TJ",
+   "note": "Leaf scores 9.1 points in 18.2 minutes on 67.3% true shooting, finishing 63.1% inside the arc and 78.8% at the rim. His shot quality of 1.18 expected points per attempt ranks in the 83rd percentile, and he is 10.8 points above expectation on 142 attempts. The three-point sample is small at 12 attempts (41.7%).",
+   "confidence": "medium",
+   "auto_ok": true,
+   "auto_reasons": [],
+   "judge": {
+    "faithfulness": 5,
+    "usefulness": 4,
+    "unsupported_claims": []
+   },
+   "human_ok": null
+  },
+  {
+   "player": "010391",
+   "name": "WEILER-BABB, NICK",
+   "note": "Across 37 games Weiler-Babb has been a distributor first, averaging 4.8 assists with 7.7 points and 3.4 rebounds in 28.8 minutes for an 11.0 PIR. His shooting leans on above-break threes (51/136, 37.5%) and rim finishes (68.8%), though mid-range attempts have fallen at 24%. On 225 attempts he sits 6.3 points below expectation, with shooting skill of -1.3 per 100 (36th percentile).",
+   "confidence": "medium",
+   "auto_ok": false,
+   "auto_reasons": [
+    "untraceable number: 6.3"
+   ],
+   "judge": {
+    "faithfulness": 5,
+    "usefulness": 4,
+    "unsupported_claims": []
+   },
+   "human_ok": null
+  },
+  {
+   "player": "013667",
+   "name": "FERNANDO, BRUNO",
+   "note": "Fernando lives at the rim: his 1.30 expected points per attempt ranks in the 97th percentile for shot quality, and he hit 75.5% of 106 attempts at the rim on the way to 63.1% on twos and a 66.9% true shooting mark. The finishing skill estimate is slightly negative (-2.1 points per 100 attempts, 31st percentile), with 9.1 points below expectation on 178 shots. He averages 7.8 points and 4.3 rebounds in 17.3 minutes.",
+   "confidence": "high",
+   "auto_ok": false,
+   "auto_reasons": [
+    "untraceable number: 9.1"
+   ],
+   "judge": {
+    "faithfulness": 5,
+    "usefulness": 5,
+    "unsupported_claims": []
+   },
+   "human_ok": null
+  },
+  {
+   "player": "013699",
+   "name": "CLARK III, JIMMY",
+   "note": "Clark averages 9.5 points and 4.3 assists in 19.7 minutes over 37 games, but the shooting lags: 50.3% on twos, 30.8% from three and a 51.4% true shooting mark. Across 318 attempts he is 25.3 points below expectation, with shot quality of 1.05 points per attempt (25th percentile) and a -4.3 per-100 skill estimate (19th percentile). He scored 11 on 5/12 in the last game.",
+   "confidence": "high",
+   "auto_ok": false,
+   "auto_reasons": [
+    "untraceable number: 25.3",
+    "untraceable number: 12"
+   ],
+   "judge": {
+    "faithfulness": 5,
+    "usefulness": 4,
+    "unsupported_claims": []
+   },
+   "human_ok": null
+  },
+  {
+   "player": "004088",
+   "name": "OSMAN, CEDI",
+   "note": "Osman averages 12.9 points in 27.3 minutes with a 62.2% true shooting mark, built on 55.8% inside the arc and 38.1% from three on 168 attempts. He finishes at the rim at 72.2% and adds 8.2 points above expectation on 340 shots, with shot quality in the 59th percentile and shooting skill of +1.4 per 100 (63rd percentile). He has scored 15.3 per game over his last three.",
+   "confidence": "high",
+   "auto_ok": true,
+   "auto_reasons": [],
+   "judge": {
+    "faithfulness": 5,
+    "usefulness": 4,
+    "unsupported_claims": []
+   },
+   "human_ok": null
+  },
+  {
+   "player": "007993",
+   "name": "M'BAYE, AMATH",
+   "note": "M'Baye scored 7.6 points in 17.3 minutes across 34 games with 58.1% true shooting, converting 52.6% inside the arc and 35.4% from three. His shot quality of 1.02 expected points per attempt sits in the 15th percentile, yet he finished 7.6 points above expectation on 191 attempts, with a shooting skill estimate of +1.7 per 100 (65th percentile).",
+   "confidence": "medium",
+   "auto_ok": true,
+   "auto_reasons": [],
+   "judge": {
+    "faithfulness": 5,
+    "usefulness": 4,
+    "unsupported_claims": []
+   },
+   "human_ok": null
+  },
+  {
+   "player": "012774",
+   "name": "NUNN, KENDRICK",
+   "note": "Nunn scores 18.3 points per game on 61.3% true shooting, finishing 52.2 points above expectation on 508 attempts. His shooting skill of +6.8 points per 100 attempts sits in the 90th percentile despite shot quality of 1.06 points per attempt (30th percentile). He shoots 58.4% on twos, 38% from three and 88.9% at the line.",
+   "confidence": "high",
+   "auto_ok": true,
+   "auto_reasons": [],
+   "judge": {
+    "faithfulness": 5,
+    "usefulness": 4,
+    "unsupported_claims": []
+   },
+   "human_ok": null
+  },
+  {
+   "player": "005985",
+   "name": "JAMES, MIKE",
+   "note": "James averages 16.4 points and 6.5 assists in 29.9 minutes over 39 games, with a 19.1 PIR. His shot diet is the issue: 0.98 expected points per attempt ranks in the 2nd percentile, driven by 103 mid-range and 143 non-rim paint tries, and he sits 6.7 points below expectation on 473 attempts. Accuracy is roughly neutral (-0.9 per 100, 40th percentile), buoyed by 86% free throws.",
+   "confidence": "high",
+   "auto_ok": false,
+   "auto_reasons": [
+    "untraceable number: 6.7"
+   ],
+   "judge": {
+    "faithfulness": 5,
+    "usefulness": 5,
+    "unsupported_claims": []
+   },
+   "human_ok": null
+  },
+  {
+   "player": "011981",
+   "name": "JONES, TYRIQUE",
+   "note": "Jones takes the shots almost nobody else gets: a shot quality of 1.38 expected points per attempt ranks in the 99th percentile, and he converts 67.3% from two with 75.8% at the rim. The finishing itself is merely fine \ntimes \n, at 1.9 points per 100 attempts below average (34th percentile) and 8.2 points below expectation. True shooting sits at 69.0% over 19.4 minutes a game.",
+   "confidence": "medium",
+   "auto_ok": false,
+   "auto_reasons": [
+    "untraceable number: 1.9",
+    "untraceable number: 8.2"
+   ],
+   "judge": {
+    "faithfulness": 5,
+    "usefulness": 3,
+    "unsupported_claims": []
+   },
+   "human_ok": null
+  },
+  {
+   "player": "003108",
+   "name": "HEZONJA, MARIO",
+   "note": "Hezonja averages 13.3 points in 22.6 minutes with a 12.4 PIR, but his shooting sits well below expectation: 44.3 points under on 502 attempts, with a shooting skill of -5.8 per 100 (12th percentile). He finishes at the rim (75.5% on 110 attempts) yet hits just 30.6% from three; his last outing brought 19 points on 7/14.",
+   "confidence": "high",
+   "auto_ok": false,
+   "auto_reasons": [
+    "untraceable number: 44.3",
+    "untraceable number: 7",
+    "untraceable number: 14"
+   ],
+   "judge": {
+    "faithfulness": 5,
+    "usefulness": 4,
+    "unsupported_claims": []
+   },
+   "human_ok": null
+  },
+  {
+   "player": "007527",
+   "name": "BADIO, BRANCOU",
+   "note": "Badio averages 11.2 points in 20.5 minutes with a 56.0% true shooting mark, finishing well at the rim (50/69, 72.5%) and from the corners (15/31, 48.4%). His shot diet is good (1.12 expected points per attempt, 65th percentile), but conversion lags: 27.7 points below expectation on 366 attempts, with shooting skill at -4.4 per 100 (18th percentile), driven by 31.1% on above-break threes.",
+   "confidence": "high",
+   "auto_ok": false,
+   "auto_reasons": [
+    "untraceable number: 27.7"
+   ],
+   "judge": {
+    "faithfulness": 5,
+    "usefulness": 5,
+    "unsupported_claims": []
+   },
+   "human_ok": null
+  },
+  {
+   "player": "011078",
+   "name": "THOMPSON, DARIUS",
+   "note": "Thompson scored 9.0 points in 18.8 minutes across 44 games with a 60.7% true shooting mark, adding 3.1 assists and a 9.9 PIR. He hit 40.2% from three (68/169), led by 41.7% on above-break attempts, and 55.6% inside, finishing 21.2 points above expectation on 304 shots. Shot quality sits at 1.09 (52nd percentile) with shooting skill of +3.8 per 100 (78th percentile).",
+   "confidence": "high",
+   "auto_ok": true,
+   "auto_reasons": [],
+   "judge": {
+    "faithfulness": 5,
+    "usefulness": 4,
+    "unsupported_claims": []
+   },
+   "human_ok": null
+  },
+  {
+   "player": "000925",
+   "name": "VESELY, JAN",
+   "note": "Vesely converted 58.3% of his two-pointers and finished 80.8% at the rim, scoring 30.1 points above expectation on 264 attempts. That came despite a shot quality of 1.02 expected points per attempt, only the 12th percentile, with his shooting skill of +5.7 per 100 in the 85th percentile. His 58.6% true shooting came with 8.7 points and 3.3 rebounds in 21.2 minutes.",
+   "confidence": "high",
+   "auto_ok": true,
+   "auto_reasons": [],
+   "judge": {
+    "faithfulness": 5,
+    "usefulness": 5,
+    "unsupported_claims": []
+   },
+   "human_ok": null
+  },
+  {
+   "player": "011201",
+   "name": "HAZER, SEHMUS",
+   "note": "Hazer's finishing has lagged his shot diet: on 164 attempts he scored 27.3 points below expectation, with a shooting skill estimate of -6.4 per 100 attempts (8th percentile) despite average shot quality (52nd percentile, 1.09 expected points per shot). He converts 68.2% at the rim but just 29.5% from three, leaving a 50.6% true shooting mark across 5.6 points in 13.2 minutes.",
+   "confidence": "medium",
+   "auto_ok": false,
+   "auto_reasons": [
+    "untraceable number: 27.3"
+   ],
+   "judge": {
+    "faithfulness": 5,
+    "usefulness": 4,
+    "unsupported_claims": []
+   },
+   "human_ok": null
+  },
+  {
+   "player": "012788",
+   "name": "OTURU, DAN",
+   "note": "Oturu converts 71% of his two-point attempts and 78.7% at the rim, with a 71.1% true shooting mark. His shot quality of 1.32 expected points per attempt ranks in the 97th percentile, and he has scored 33 points above expectation on 356 attempts, with shooting skill of +5.3 per 100 (83rd percentile). Free throws lag at 64.3%.",
+   "confidence": "high",
+   "auto_ok": true,
+   "auto_reasons": [],
+   "judge": {
+    "faithfulness": 5,
+    "usefulness": 4,
+    "unsupported_claims": []
+   },
+   "human_ok": null
+  },
+  {
+   "player": "003526",
+   "name": "LIGHTY, DAVID",
+   "note": "Lighty scored 4.2 points in 18.6 minutes across 33 games, with a 51.5% true shooting mark held down by finishing 13.6 points below expectation on 128 attempts. His shot selection is around average (shot quality 1.1 points per attempt, 53rd percentile), but the conversion lags: 28.9% on above-break threes and 22.2% in the non-rim paint, against 77.8% at the rim.",
+   "confidence": "medium",
+   "auto_ok": false,
+   "auto_reasons": [
+    "untraceable number: 13.6"
+   ],
+   "judge": {
+    "faithfulness": 5,
+    "usefulness": 4,
+    "unsupported_claims": []
+   },
+   "human_ok": null
+  },
+  {
+   "player": "000229",
+   "name": "JACKSON, EDWIN",
+   "note": "Jackson takes some of the toughest shots in the league: his 0.98 expected points per attempt ranks in the 3rd percentile, yet he is 5.3 points above expectation on 121 attempts. He hits 41% from three (25/61), including 42.6% above the break, while mid-range shots fall at just 31%. Overall 52.6% true shooting on 6.5 points in 15.7 minutes.",
+   "confidence": "medium",
+   "auto_ok": true,
+   "auto_reasons": [],
+   "judge": {
+    "faithfulness": 5,
+    "usefulness": 4,
+    "unsupported_claims": []
+   },
+   "human_ok": null
+  },
+  {
+   "player": "008173",
+   "name": "SPAGNOLO, MATTEO",
+   "note": "Spagnolo scored 8.8 points above expectation on 150 attempts despite a shot diet in the 4th percentile for quality (0.99 expected points per attempt). He shot 52.3% on twos and 34.1% from three for a 57.3% true shooting mark, with his shooting skill estimate of +2.1 per 100 landing in the 71st percentile. He averaged 5.4 points and 1.9 assists in 15.5 minutes across 37 games.",
+   "confidence": "medium",
+   "auto_ok": true,
+   "auto_reasons": [],
+   "judge": {
+    "faithfulness": 5,
+    "usefulness": 4,
+    "unsupported_claims": []
+   },
+   "human_ok": null
+  },
+  {
+   "player": "002329",
+   "name": "ULANOVAS, EDGARAS",
+   "note": "Ulanovas scores 5.5 points in 18.6 minutes across 42 games with a 60.9% true shooting mark, helped by 41.3% from three (26/63) and 80.7% free throws. His shot quality sits at 1.1 expected points per attempt (53rd percentile), but he is 5.7 points below expectation on 151 attempts, with a shooting skill estimate of -1.4 per 100 (36th percentile). He scored 15 on 5/7 against ULK.",
+   "confidence": "medium",
+   "auto_ok": false,
+   "auto_reasons": [
+    "untraceable number: 5"
+   ],
+   "judge": {
+    "faithfulness": 5,
+    "usefulness": 4,
+    "unsupported_claims": []
+   },
+   "human_ok": null
+  },
+  {
+   "player": "007109",
+   "name": "SMITS, ROLANDS",
+   "note": "Smits gets high-value looks: his 1.18 expected points per attempt ranks in the 84th percentile, and he converts 62.1% inside the arc, including 70.7% at the rim. The finishing skill estimate is slightly negative (-2.0 per 100, 33rd percentile), with 8.9 points below expectation on 176 attempts. Above-break threes lag at 27.6% versus 53.3% from the corners; 6.7 points in 19.0 minutes.",
+   "confidence": "medium",
+   "auto_ok": false,
+   "auto_reasons": [
+    "untraceable number: 8.9"
+   ],
+   "judge": {
+    "faithfulness": 5,
+    "usefulness": 4,
+    "unsupported_claims": []
+   },
+   "human_ok": null
+  },
+  {
+   "player": "007032",
+   "name": "LO, MAODO",
+   "note": "Lo scored 7.0 points in 18.0 minutes across 41 games with 2.4 assists and a 58.5% true shooting mark, built on 39.1% from three (45/115) and 80% at the line. His shot quality of 1.12 points per attempt ranks in the 62nd percentile, but he finished 6.0 points below expectation, with shooting skill at -1.2 per 100 (37th percentile).",
+   "confidence": "medium",
+   "auto_ok": true,
+   "auto_reasons": [],
+   "judge": {
+    "faithfulness": 5,
+    "usefulness": 4,
+    "unsupported_claims": []
+   },
+   "human_ok": null
+  },
+  {
+   "player": "011194",
+   "name": "PETRUSEV, FILIP",
+   "note": "Petrusev scores 11.6 points in 23.5 minutes with a 65.0% true shooting mark, built on 57.0% inside the arc and 78.4% finishing at the rim (80/102). His shot quality of 1.13 expected points per attempt sits in the 68th percentile, while his shooting skill of +0.4 points per 100 attempts is essentially average (52nd percentile). He also hits 81.3% from the line.",
+   "confidence": "high",
+   "auto_ok": true,
+   "auto_reasons": [],
+   "judge": {
+    "faithfulness": 5,
+    "usefulness": 4,
+    "unsupported_claims": []
+   },
+   "human_ok": null
+  }
+ ]
+}
