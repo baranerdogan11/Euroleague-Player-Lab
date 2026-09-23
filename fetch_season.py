@@ -50,14 +50,12 @@ def save_image(url, out_path, height=None, fmt="WEBP"):
     """Download once, downscale, write as webp (photos) or png (crests)."""
     if os.path.exists(out_path):
         return True
-    raw_path = os.path.join(CACHE, "img_" + os.path.basename(out_path) + ".bin")
-    if not os.path.exists(raw_path):
-        try:
-            open(raw_path, "wb").write(get(url, as_json=False))
-        except Exception as e:
-            print("   image failed:", url, e)
-            return False
-    im = Image.open(raw_path).convert("RGBA")
+    try:
+        raw = get(url, as_json=False)
+    except Exception as e:
+        print("   image failed:", url, e)
+        return False
+    im = Image.open(io.BytesIO(raw)).convert("RGBA")
     if height and im.height > height:
         im = im.resize((int(im.width * height / im.height), height), Image.LANCZOS)
     if fmt == "WEBP":
