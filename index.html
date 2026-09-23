@@ -23,7 +23,6 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font
 .controls{display:grid;grid-template-columns:auto 1fr 1fr auto auto;gap:14px;padding:18px 0;align-items:end}
 .seg.season button{padding:12px 14px;font-size:15px}
 .seg.season button:disabled{opacity:.4;cursor:default}
-.season-note{display:inline-block;font-family:var(--disp);font-weight:700;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#0a1731;background:var(--orange);padding:3px 8px;border-radius:3px}
 .crest{width:58px;height:58px;display:flex;align-items:center;justify-content:center;background:var(--panel);border:1px solid var(--line2);border-radius:8px}
 .crest img{max-width:44px;max-height:44px}
 .field label{display:block;font-family:var(--disp);font-weight:700;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
@@ -261,8 +260,7 @@ function renderPlayer(){
   $('#pos').textContent = `${p.dorsal ? '#' + p.dorsal + ' · ' : ''}${p.position || ''}`; $('#nm').innerHTML = `${n.first}<br>${n.sur}`;
   const a = age(p.birth);
   $('#facts').innerHTML = [p.height ? `<span><b>${p.height} cm</b></span>` : '', a ? `<span><b>${a}</b> yrs</span>` : '', p.country ? `<span>${p.country}</span>` : '',
-    played ? `<span><b>${tot.gp}</b> games · <b>${f1(tot.min / gp)}</b> min</span>` : `<span><b>0</b> games</span>`,
-    state.season === 'prev' ? `<span class="season-note">${META.prev_label} season${p.cur.tot.gp === 0 ? ' · no ' + META.label + ' games yet' : ''}</span>` : ''].join('');
+    played ? `<span><b>${tot.gp}</b> games · <b>${f1(tot.min / gp)}</b> min</span>` : `<span><b>0</b> games</span>`].join('');
   const tiles = [['pts', 'PTS', 1], ['reb', 'REB', 0], ['ast', 'AST', 0], ['stl', 'STL', 0], ['blk', 'BLK', 0], ['tov', 'TOV', 0], ['pir', 'PIR', 1]];
   $('#tiles').innerHTML = tiles.map(([k, l, o]) => `<div class="tile ${o ? 'o' : ''} ${played ? '' : 'na'}"><b>${played ? f1(tot[k] / gp) : '–'}</b><span>${l}</span></div>`).join('');
   const fga = tot.fga2 + tot.fga3, ts = (fga + 0.44 * tot.fta) ? tot.pts / (2 * (fga + 0.44 * tot.fta)) : 0;
