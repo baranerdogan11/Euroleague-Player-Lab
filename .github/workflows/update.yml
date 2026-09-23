@@ -14,6 +14,7 @@ concurrency:
 
 env:
   SEASON: E2026
+  ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
 
 jobs:
   update:
@@ -36,6 +37,7 @@ jobs:
           python tests/test_model.py
           python tests/test_profile.py
           python tests/test_service.py
+          python tests/test_notes.py
 
       - name: Restore feed cache
         uses: actions/cache@v4
@@ -61,6 +63,9 @@ jobs:
 
       - name: Shooting profiles (quality vs skill, shrunk)
         run: python model/profile.py $SEASON
+
+      - name: Scouting notes (Claude, validated; skipped without ANTHROPIC_API_KEY)
+        run: python model/notes.py $SEASON
 
       - name: Build site (gold)
         run: python build.py $SEASON

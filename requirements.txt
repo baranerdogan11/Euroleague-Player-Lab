@@ -8,3 +8,4 @@ pandas==2.3.3
 numpy==2.0.2
 fastapi==0.128.8
 httpx>=0.27
+anthropic>=1.0

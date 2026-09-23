@@ -37,7 +37,8 @@ of the day, and can be started by hand from the Actions tab. Each run:
    any failure stops the run before anything is published
 7. scores every shot with the xFG model (`model/score.py`), see below
 8. builds shooting profiles, shot quality versus shooting skill with shrinkage (`model/profile.py`)
-9. builds the site from the warehouse with SQL (`build.py`, the gold layer) and commits it; GitHub Pages deploys within a minute
+9. writes validated scouting notes with Claude for players whose facts changed (`model/notes.py`, needs the `ANTHROPIC_API_KEY` secret)
+10. builds the site from the warehouse with SQL (`build.py`, the gold layer) and commits it; GitHub Pages deploys within a minute
 
 The assertions write `teams/E2026/status.json` (games, shots, box lines, tests, failures, time) and the page footer
 shows the last verdict. A failed run leaves the previous good build live and uploads the status report as a
@@ -78,6 +79,24 @@ percentiles against last season's players and a season curve of the skill estima
 A first version measured skill against the shooter-aware xFG and found zero between-player variance, which is
 what should happen when the expectation already contains the shooter; quality and skill must be measured
 against the context-only expectation.
+
+## Scouting notes (Claude, validated)
+
+`model/notes.py` writes a two-to-three-sentence note per player each night. Input is a fact sheet built from
+the warehouse and the model outputs (season line, shooting splits, zone accuracy, xFG and points above
+expectation, shot quality and skill with percentiles, last game); the prompt allows only those numbers, no
+speculation, no other players, and the response is constrained to a JSON schema. Before a note is stored it
+passes deterministic checks (`model/notes_checks.py`): every number cited traces to the fact sheet at its own
+precision (rates may be written as percentages), length within bounds, no banned vocabulary (injuries,
+contracts, character), no other player named. A failing note is retried once and otherwise rejected and not
+shown. Only players whose fact sheet changed are regenerated, so a nightly run costs a few cents per changed
+player. The page shows the note under the player's facts with its generation date and provenance.
+
+`model/notes_eval.py` evaluates the generator on a fixed set of 30 fact sheets from 2025-26
+(`model/notes_eval_set.jsonl`): automated pass rate, an LLM judge (separate prompt) scoring faithfulness and
+usefulness 1-5 and listing unsupported claims, and agreement with human labels where the jsonl's `human_ok`
+field has been filled in. `.github/workflows/notes-eval.yml` runs it on demand and commits
+`model/notes_eval.json`. The offline validator tests are in `tests/test_notes.py`.
 
 ## xFG as a service
 

@@ -36,9 +36,22 @@ if os.path.exists(prof_path):
     pf = pd.read_parquet(prof_path)
     if "att" in pf.columns and len(pf):
         PROFILES = {r.player: r for r in pf.itertuples(index=False)}
+notes_path = os.path.join(W, "notes.parquet")
+NOTES = {}
+if os.path.exists(notes_path):
+    import pandas as pd
+    nf = pd.read_parquet(notes_path)
+    NOTES = {r.player: r for r in nf.itertuples(index=False) if r.status == "ok"}
 priors_path = os.path.join(ROOT, "model", "shooting_priors.json")
 PRIORS = json.load(open(priors_path)) if os.path.exists(priors_path) else None
 rows = lambda q, *a: [dict(zip([d[0] for d in con.description], r)) for r in con.execute(q, a).fetchall()]
+
+def note_of(player):
+    n = NOTES.get(player)
+    if n is None:
+        return None
+    return {"text": n.note, "generated_at": n.generated_at[:10], "model": n.model, "confidence": n.confidence, "key_numbers": json.loads(n.key_numbers) if n.key_numbers else []}
+
 
 def profile_of(player, gidx):
     pr = PROFILES.get(player)
@@ -76,7 +89,7 @@ for c in clubs:
         players.append({"pid": "P" + r["player"], "name": r["name"], "dorsal": r["dorsal"], "position": r["position"], "height": r["height_cm"],
                         "birth": str(r["birth_date"]) if r["birth_date"] else None, "country": r["country"],
                         "photo": f"photos/{r['player']}.webp" if os.path.exists(os.path.join(ROOT, "photos", f"{r['player']}.webp")) else None,
-                        "cur": {"tot": tot, "log": log, "shots": shots, "games": games, "xfg": xfg, "profile": profile_of(r["player"], gidx)}})
+                        "cur": {"tot": tot, "log": log, "shots": shots, "games": games, "xfg": xfg, "profile": profile_of(r["player"], gidx), "note": note_of(r["player"])}})
     played = con.execute("select count(*) from games where played and ? in (home, away)", [code]).fetchone()[0]
     upcoming = rows("select game as code, round, cast(date as varchar) as date, home, away, phase from games where not played and ? in (home, away) order by date limit 3", code)
     json.dump({"code": code, "season": SEASON, "label": label(SEASON), "games_played": played, "upcoming": upcoming, "players": players, "real_code": code},

@@ -1,0 +1,35 @@
+name: Scouting notes evaluation
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Generate and judge notes for the fixed evaluation set
+        run: python model/notes_eval.py
+      - name: Commit the report and the annotated set
+        run: |
+          git config user.name "euroleague-shot-profiles-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add model/notes_eval.json model/notes_eval_set.jsonl
+          git diff --cached --quiet || (git commit -m "Notes evaluation $(date -u +%Y-%m-%d)" && git push)
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: notes-eval-${{ github.run_id }}
+          path: model/notes_eval.json
+          if-no-files-found: ignore
