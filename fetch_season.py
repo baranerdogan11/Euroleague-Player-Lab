@@ -46,15 +46,21 @@ def cached(name, fetch):
     return data
 
 
+SOURCES = os.path.join(PHOTOS, "sources.json")   # image file -> feed URL it was built from
+sources = json.load(open(SOURCES)) if os.path.exists(SOURCES) else {}
+
+
 def save_image(url, out_path, height=None, fmt="WEBP"):
-    """Download once, downscale, write as webp (photos) or png (crests)."""
-    if os.path.exists(out_path):
+    """Download, downscale, write as webp (photos) or png (crests). Skipped while the feed still points at the
+    same URL; a new URL (this season's media-day photo replacing last season's) is fetched again."""
+    key = os.path.relpath(out_path, ROOT)
+    if os.path.exists(out_path) and sources.get(key) == url:
         return True
     try:
         raw = get(url, as_json=False)
     except Exception as e:
         print("   image failed:", url, e)
-        return False
+        return os.path.exists(out_path)
     im = Image.open(io.BytesIO(raw)).convert("RGBA")
     if height and im.height > height:
         im = im.resize((int(im.width * height / im.height), height), Image.LANCZOS)
@@ -62,6 +68,8 @@ def save_image(url, out_path, height=None, fmt="WEBP"):
         im.save(out_path, "WEBP", quality=80, method=6)
     else:
         im.save(out_path, "PNG", optimize=True)
+    sources[key] = url
+    json.dump(sources, open(SOURCES, "w"), indent=0, sort_keys=True)
     return True
 
 
