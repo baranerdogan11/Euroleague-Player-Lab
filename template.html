@@ -109,6 +109,10 @@ th:first-child,td:first-child{text-align:left}
 td.k{font-weight:600}
 tr:hover td{background:var(--panel2)}
 .zone-bar{display:inline-block;height:8px;background:var(--orange);border-radius:4px;vertical-align:middle;margin-left:6px}
+#zones tr.grp td{font-family:var(--disp);font-weight:700;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);text-align:left;padding:14px 8px 6px;border-bottom:1px solid var(--line2)}
+#zones tr.grp:hover td{background:none}
+#zones tr.sub td:first-child{padding-left:20px;font-weight:500}
+#zones tr.tot td{font-weight:700;border-top:1px solid var(--line2)}
 .prof{margin-top:18px}
 .prof-grid{display:grid;grid-template-columns:200px 200px 1fr;gap:18px;align-items:start}
 .prof-stat .k{display:block;font-family:var(--disp);font-weight:700;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
@@ -347,7 +351,11 @@ function renderChart(animate){
   const t = team(), d = ds(), games = d.games, shots = playerShots();
   const layer = svg.querySelector('#shots-layer'), zl = svg.querySelector('#zones-layer');
   const zs = zoneStats(shots), total = shots.length || 1;
-  $('#zones tbody').innerHTML = Object.entries(ZONES).map(([k, l]) => { const v = zs[k]; const share = v.a / total; return `<tr><td class="k">${l}</td><td>${v.a ? `${v.m} / ${v.a}` : '–'}</td><td class="k">${pct(v.m, v.a)}</td><td>${v.a ? (share * 100).toFixed(0) + '%' : '–'}<span class="zone-bar" style="width:${Math.round(share * 60)}px"></span></td></tr>`; }).join('');
+  const zoneRow = (l, v, cls = '') => { const share = v.a / total; return `<tr class="${cls}"><td class="k">${l}</td><td>${v.a ? `${v.m} / ${v.a}` : '–'}</td><td class="k">${pct(v.m, v.a)}</td><td>${v.a ? (share * 100).toFixed(0) + '%' : '–'}<span class="zone-bar" style="width:${Math.round(share * 60)}px"></span></td></tr>`; };
+  const threes = {m: zs.c3.m + zs.a3.m, a: zs.c3.a + zs.a3.a};
+  $('#zones tbody').innerHTML = ['rim', 'paint', 'mid'].map(k => zoneRow(ZONES[k], zs[k])).join('')
+    + `<tr class="grp"><td colspan="4">3 point shooting</td></tr>`
+    + zoneRow(ZONES.c3, zs.c3, 'sub') + zoneRow(ZONES.a3, zs.a3, 'sub') + zoneRow('All 3s', threes, 'tot');
   const empty = $('#empty');
   const is3d = state.view === '3d';
   $('#court').style.display = is3d ? 'none' : ''; $('#court3d').hidden = !is3d;
