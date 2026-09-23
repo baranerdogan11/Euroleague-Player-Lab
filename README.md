@@ -98,6 +98,12 @@ usefulness 1-5 and listing unsupported claims, and agreement with human labels w
 field has been filled in. `.github/workflows/notes-eval.yml` runs it on demand and commits
 `model/notes_eval.json`. The offline validator tests are in `tests/test_notes.py`.
 
+First evaluation (30 players, Claude Opus 5 as generator and judge): judge faithfulness 4.97/5 with one
+unsupported claim in 30 notes (a league-wide superlative built from a 95th-percentile figure), usefulness 4.1/5.
+The automated check initially rejected 47%, almost all false alarms from its own strictness (deficits written as
+magnitudes, numbers inside string facts such as "5/12"); once fixed it passes 28 of 30, rejecting exactly the
+two superlative notes, and the prompt now forbids league-wide claims.
+
 ## xFG as a service
 
 `service/app.py` serves the deployed model with FastAPI:

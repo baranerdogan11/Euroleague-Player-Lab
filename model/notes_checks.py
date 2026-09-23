@@ -31,7 +31,12 @@ def allowed_numbers(facts):
     def add(v):
         if v is None or isinstance(v, bool):
             return
+        if isinstance(v, str):                    # numbers embedded in strings: "5/12", "W 84-80", "R12"
+            for n in numbers_in(v):
+                add(n)
+            return
         if isinstance(v, (int, float)):
+            v = abs(v)                            # "29.0 points below expectation" cites -29.0 as a magnitude
             for r in (v, round(v, 1), round(v, 0), round(v, 2)):
                 allowed.add(round(r, 3))
             if 0 <= v <= 1.0:                     # a rate: also allow its percentage form
@@ -56,6 +61,11 @@ def allowed_numbers(facts):
 def check_note(note, facts, subject_name, other_names=()):
     """Returns (ok, list of failure reasons)."""
     reasons = []
+    if "\n" in note.strip() or "  " in note:
+        reasons.append("formatting: line breaks or double spaces inside the note")
+    for phrase in ("in the league", "in europe", "league-best", "league-worst", "best in", "worst in"):
+        if phrase in note.lower():
+            reasons.append(f"unsupported league-wide claim: '{phrase}'")
     words = len(note.split())
     if words > MAX_WORDS:
         reasons.append(f"too long: {words} words > {MAX_WORDS}")
@@ -67,7 +77,8 @@ def check_note(note, facts, subject_name, other_names=()):
             reasons.append(f"banned term: '{b}'")
     allowed = allowed_numbers(facts)
     for n in numbers_in(note):
-        if not any(abs(n - a) <= max(0.051, 0.006 * abs(a)) for a in allowed):
+        m = abs(n)                                # signs are carried by the prose ("below expectation")
+        if not any(abs(m - a) <= max(0.051, 0.006 * abs(a)) for a in allowed):
             reasons.append(f"untraceable number: {n:g}")
     sur = subject_name.split(",")[0].strip().lower() if subject_name else ""
     for name in other_names:

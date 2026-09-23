@@ -34,7 +34,10 @@ Rules, all strict:
 - Use only the numbers in the fact sheet. Every number you write must appear there, at the sheet's precision or rounded.
   Rates in the sheet are fractions; you may write them as percentages (0.523 -> 52.3%).
 - Describe what the numbers show. Do not speculate about injuries, contracts, effort, character, minutes decisions or
-  anything not in the sheet. Do not mention other players. Do not use superlatives unless a percentile supports them.
+  anything not in the sheet. Do not mention other players. Percentiles rank a player among last season's players:
+  say "95th percentile", never "best in the league" or any league-wide or Europe-wide claim.
+- Negative values are deficits: write "29.0 points below expectation", not a negative sign in prose.
+- One paragraph, no line breaks.
 - "shot_quality" is the expected points per attempt of the shots he takes; "shooting_skill_per100" is points per 100
   attempts above what a league-average shooter would score on the same shots (a skill estimate, shrunk toward zero).
   When attempts are under 100, say the sample is small.
@@ -176,6 +179,7 @@ def main():
             usage_in += usage.input_tokens; usage_out += usage.output_tokens
             if out is None:
                 checks = ["refused"]; break
+            out["note"] = " ".join(out["note"].split())          # normalise whitespace before checking
             ok, reasons = check_note(out["note"], s["facts"], s["name"], other_names=names)
             if ok:
                 status, note, checks = "ok", out, []; break

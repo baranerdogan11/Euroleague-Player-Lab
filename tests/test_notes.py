@@ -11,7 +11,7 @@ from notes_checks import check_note, numbers_in  # noqa: E402
 
 facts = {"player": "VEZENKOV, SASHA", "club": "Olympiacos", "games": 34, "minutes_per_game": 29.4, "points_per_game": 16.8,
          "three_point": {"made": 68, "att": 172, "pct": 0.395}, "two_point": {"made": 121, "att": 214, "pct": 0.565}, "true_shooting_pct": 0.631,
-         "expected": {"attempts": 386, "xfg_pct": 0.467, "points_above_expectation": 37.4},
+         "expected": {"attempts": 386, "xfg_pct": 0.467, "points_above_expectation": 37.4, "deficit_example": -12.5, "skill_example": -3.2},
          "profile": {"attempts": 386, "shot_quality": 1.1, "shot_quality_percentile": 58, "shooting_skill_per100": 8.0, "shooting_skill_sd_per100": 4.3, "shooting_skill_percentile": 95},
          "last_game": {"round": 12, "opponent": "MAD", "result": "W 84-80", "points": 22, "field_goals": "8/13"}}
 others = ["VEZENKOV, SASHA", "WALKUP, THOMAS", "MIROTIC, NIKOLA"]
@@ -24,6 +24,9 @@ cases = {
     "other player mention is rejected": ("Like Mirotic, he scores 16.8 points per game over 34 games and hits 39.5% of his threes.", False),
     "too long is rejected": (" ".join(["He scores 16.8 points per game over 34 games."] * 12), False),
     "too short is rejected": ("Good shooter, 39.5% from three.", False),
+    "magnitude of a negative fact passes": ("He sits 12.5 points below expectation on 386 attempts, with a shooting skill of -3.2 per 100 (12th percentile), scoring 16.8 per game over 34 games.", True),
+    "number inside a string fact passes": ("In round 12 against MAD he scored 22 points on 8/13 shooting in an 84-80 win, in line with 16.8 per game over 34 games.", True),
+    "league-wide superlative is rejected": ("He takes the easiest shots in the league, 1.1 expected points per attempt at the 58th percentile, scoring 16.8 per game over 34 games.", False),
 }
 ok_all = True
 for name, (note, want) in cases.items():
