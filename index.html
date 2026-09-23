@@ -105,6 +105,24 @@ th:first-child,td:first-child{text-align:left}
 td.k{font-weight:600}
 tr:hover td{background:var(--panel2)}
 .zone-bar{display:inline-block;height:8px;background:var(--orange);border-radius:4px;vertical-align:middle;margin-left:6px}
+.prof{margin-top:18px}
+.prof-grid{display:grid;grid-template-columns:200px 200px 1fr;gap:18px;align-items:start}
+.prof-stat .k{display:block;font-family:var(--disp);font-weight:700;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.prof-stat b{display:block;font-family:var(--disp);font-weight:800;font-size:42px;line-height:1;margin:4px 0 2px;font-variant-numeric:tabular-nums}
+.prof-stat b small{font-size:16px;color:var(--muted);font-weight:600;margin-left:4px}
+.prof-stat .u{display:block;font-size:11.5px;color:var(--muted);line-height:1.3;min-height:30px}
+.pbar{height:8px;background:var(--bg2);border:1px solid var(--line);border-radius:4px;margin-top:8px;overflow:hidden}
+.pbar i{display:block;height:100%;background:var(--orange);border-radius:4px}
+.prof-stat .pct{display:block;font-size:11.5px;color:var(--ink2);margin-top:5px}
+.prof-chart svg{width:100%;height:auto;display:block}
+.prof-chart .ax{stroke:var(--line2);stroke-width:1}
+.prof-chart .zero{stroke:var(--muted);stroke-width:1;stroke-dasharray:4 4}
+.prof-chart .band{fill:var(--orange);fill-opacity:.16}
+.prof-chart .ln{fill:none;stroke:var(--orange);stroke-width:2.5;stroke-linejoin:round}
+.prof-chart .raw{fill:none;stroke:var(--miss);stroke-width:1.5;stroke-dasharray:3 3}
+.prof-chart text{font-family:var(--body);font-size:11px;fill:var(--muted)}
+.prof-chart .end{fill:var(--orange)}
+@media (max-width:900px){.prof-grid{grid-template-columns:1fr 1fr}.prof-chart{grid-column:1/-1}}
 .log{margin-top:18px}
 .log summary{cursor:pointer;font-family:var(--disp);font-weight:800;font-size:22px;letter-spacing:.04em;text-transform:uppercase;list-style:none;display:flex;align-items:center;gap:10px}
 .log summary::before{content:"";width:0;height:0;border-left:8px solid var(--orange);border-top:6px solid transparent;border-bottom:6px solid transparent;transition:transform .2s}
@@ -171,6 +189,16 @@ td.w{color:var(--good)} td.l{color:#ff7b7b}
     </section>
   </div>
 
+  <section class="panel prof" id="prof-panel" hidden>
+    <h3>Shot quality vs shooting skill</h3>
+    <p class="sub" id="prof-sub"></p>
+    <div class="prof-grid">
+      <div class="prof-stat"><span class="k">Shot quality</span><b id="pq"></b><span class="u">expected points per attempt on his shots</span><div class="pbar"><i id="pq-bar"></i></div><span class="pct" id="pq-pct"></span></div>
+      <div class="prof-stat"><span class="k">Shooting skill</span><b id="ps"></b><span class="u">points per 100 attempts above a league-average shooter, shrunk</span><div class="pbar"><i id="ps-bar"></i></div><span class="pct" id="ps-pct"></span></div>
+      <div class="prof-chart"><svg id="curve" viewBox="0 0 640 220" role="img" aria-label="Season curve of shooting skill"></svg><div class="legend" id="curve-legend"></div></div>
+    </div>
+  </section>
+
   <details class="log panel" id="log-panel">
     <summary>Game log</summary>
     <div class="scroll"><table id="log"><thead><tr><th>Rd</th><th>Date</th><th>Opponent</th><th>Result</th><th>Min</th><th>Pts</th><th>Reb</th><th>Ast</th><th>Stl</th><th>Blk</th><th>Tov</th><th>2P</th><th>3P</th><th>FT</th><th>PIR</th><th>+/-</th></tr></thead><tbody></tbody></table></div>
@@ -181,7 +209,7 @@ td.w{color:var(--good)} td.l{color:#ff7b7b}
 </div>
 <div class="tip" id="tip"></div>
 <script>
-const META = {"season": "E2026", "label": "2026-27", "model": {"version": "2026-09-23", "trained_on": "E2025", "logloss": 0.6303, "auc": 0.6734, "n_shots": 51750}, "clubs": [{"code": "IST", "name": "Anadolu Efes Istanbul", "short": "Anadolu Efes", "country": "Turkiye", "city": "ISTANBUL", "logo": "logos/IST.png"}, {"code": "MIL", "name": "Armani Olimpia Milan", "short": "Milan", "country": "Italy", "city": "Milan", "logo": "logos/MIL.png"}, {"code": "BES", "name": "Besiktas Istanbul", "short": "Besiktas", "country": "Turkiye", "city": "ISTANBUL", "logo": "logos/BES.png"}, {"code": "RED", "name": "Crvena Zvezda Meridianbet Belgrade", "short": "Crvena Zvezda", "country": "Serbia", "city": "BELGRADE", "logo": "logos/RED.png"}, {"code": "DUB", "name": "Dubai Basketball", "short": "Dubai", "country": "United Arab Emirates", "city": "Dubai", "logo": "logos/DUB.png"}, {"code": "BAR", "name": "FC Barcelona", "short": "FC Barcelona", "country": "Spain", "city": "BARCELONA", "logo": "logos/BAR.png"}, {"code": "MUN", "name": "FC Bayern Munich", "short": "Bayern Munich", "country": "Germany", "city": "Munich", "logo": "logos/MUN.png"}, {"code": "ULK", "name": "Fenerbahce Tarfin Istanbul", "short": "Fenerbahce", "country": "Turkiye", "city": "Istanbul", "logo": "logos/ULK.png"}, {"code": "HTA", "name": "Hapoel IBI Tel Aviv", "short": "Hapoel TLV", "country": "Israel", "city": "Tel Aviv", "logo": "logos/HTA.png"}, {"code": "BAS", "name": "Kosner Baskonia Vitoria-Gasteiz", "short": "Baskonia", "country": "Spain", "city": "VITORIA-GASTEIZ", "logo": "logos/BAS.png"}, {"code": "ASV", "name": "LDLC ASVEL Villeurbanne", "short": "LDLC ASVEL", "country": "France", "city": "Lyon", "logo": "logos/ASV.png"}, {"code": "TEL", "name": "Maccabi Rapyd Tel Aviv", "short": "Maccabi", "country": "Israel", "city": "Tel Aviv", "logo": "logos/TEL.png"}, {"code": "OLY", "name": "Olympiacos Piraeus", "short": "Olympiacos", "country": "Greece", "city": "PIRAEUS", "logo": "logos/OLY.png"}, {"code": "PAN", "name": "Panathinaikos AKTOR Athens", "short": "Panathinaikos", "country": "Greece", "city": "ATHENS", "logo": "logos/PAN.png"}, {"code": "PRS", "name": "Paris Basketball", "short": "Paris", "country": "France", "city": "Paris", "logo": "logos/PRS.png"}, {"code": "PAR", "name": "Partizan Mozzart Bet Belgrade", "short": "Partizan", "country": "Serbia", "city": "BELGRADE", "logo": "logos/PAR.png"}, {"code": "MAD", "name": "Real Madrid", "short": "Real Madrid", "country": "Spain", "city": "Madrid", "logo": "logos/MAD.png"}, {"code": "PAM", "name": "Valencia Basket", "short": "Valencia", "country": "Spain", "city": "VALENCIA", "logo": "logos/PAM.png"}, {"code": "VIR", "name": "Virtus Bologna", "short": "Virtus Bologna", "country": "Italy", "city": "BOLOGNA", "logo": "logos/VIR.png"}, {"code": "ZAL", "name": "Zalgiris Kaunas", "short": "Zalgiris", "country": "Lithuania", "city": "Kaunas", "logo": "logos/ZAL.png"}], "built": "2026-09-23 12:54 UTC", "path": "teams/E2026/", "status": {"checked_at": "2026-09-23T12:19:51Z", "games": 0, "shots": 0, "players": 317, "ok": true, "failures": 0, "warnings": 0}};
+const META = {"season": "E2026", "label": "2026-27", "model": {"version": "2026-09-23", "trained_on": "E2025", "logloss": 0.6303, "auc": 0.6734, "n_shots": 51750}, "clubs": [{"code": "IST", "name": "Anadolu Efes Istanbul", "short": "Anadolu Efes", "country": "Turkiye", "city": "ISTANBUL", "logo": "logos/IST.png"}, {"code": "MIL", "name": "Armani Olimpia Milan", "short": "Milan", "country": "Italy", "city": "Milan", "logo": "logos/MIL.png"}, {"code": "BES", "name": "Besiktas Istanbul", "short": "Besiktas", "country": "Turkiye", "city": "ISTANBUL", "logo": "logos/BES.png"}, {"code": "RED", "name": "Crvena Zvezda Meridianbet Belgrade", "short": "Crvena Zvezda", "country": "Serbia", "city": "BELGRADE", "logo": "logos/RED.png"}, {"code": "DUB", "name": "Dubai Basketball", "short": "Dubai", "country": "United Arab Emirates", "city": "Dubai", "logo": "logos/DUB.png"}, {"code": "BAR", "name": "FC Barcelona", "short": "FC Barcelona", "country": "Spain", "city": "BARCELONA", "logo": "logos/BAR.png"}, {"code": "MUN", "name": "FC Bayern Munich", "short": "Bayern Munich", "country": "Germany", "city": "Munich", "logo": "logos/MUN.png"}, {"code": "ULK", "name": "Fenerbahce Tarfin Istanbul", "short": "Fenerbahce", "country": "Turkiye", "city": "Istanbul", "logo": "logos/ULK.png"}, {"code": "HTA", "name": "Hapoel IBI Tel Aviv", "short": "Hapoel TLV", "country": "Israel", "city": "Tel Aviv", "logo": "logos/HTA.png"}, {"code": "BAS", "name": "Kosner Baskonia Vitoria-Gasteiz", "short": "Baskonia", "country": "Spain", "city": "VITORIA-GASTEIZ", "logo": "logos/BAS.png"}, {"code": "ASV", "name": "LDLC ASVEL Villeurbanne", "short": "LDLC ASVEL", "country": "France", "city": "Lyon", "logo": "logos/ASV.png"}, {"code": "TEL", "name": "Maccabi Rapyd Tel Aviv", "short": "Maccabi", "country": "Israel", "city": "Tel Aviv", "logo": "logos/TEL.png"}, {"code": "OLY", "name": "Olympiacos Piraeus", "short": "Olympiacos", "country": "Greece", "city": "PIRAEUS", "logo": "logos/OLY.png"}, {"code": "PAN", "name": "Panathinaikos AKTOR Athens", "short": "Panathinaikos", "country": "Greece", "city": "ATHENS", "logo": "logos/PAN.png"}, {"code": "PRS", "name": "Paris Basketball", "short": "Paris", "country": "France", "city": "Paris", "logo": "logos/PRS.png"}, {"code": "PAR", "name": "Partizan Mozzart Bet Belgrade", "short": "Partizan", "country": "Serbia", "city": "BELGRADE", "logo": "logos/PAR.png"}, {"code": "MAD", "name": "Real Madrid", "short": "Real Madrid", "country": "Spain", "city": "Madrid", "logo": "logos/MAD.png"}, {"code": "PAM", "name": "Valencia Basket", "short": "Valencia", "country": "Spain", "city": "VALENCIA", "logo": "logos/PAM.png"}, {"code": "VIR", "name": "Virtus Bologna", "short": "Virtus Bologna", "country": "Italy", "city": "BOLOGNA", "logo": "logos/VIR.png"}, {"code": "ZAL", "name": "Zalgiris Kaunas", "short": "Zalgiris", "country": "Lithuania", "city": "Kaunas", "logo": "logos/ZAL.png"}], "priors": {"league_quality": 1.0998, "k_skill": 262.7, "k_quality": 9.9, "reference_season": "E2025", "tau_skill": 0.0714}, "built": "2026-09-23 15:32 UTC", "path": "teams/E2026/", "status": {"checked_at": "2026-09-23T12:19:51Z", "games": 0, "shots": 0, "players": 317, "ok": true, "failures": 0, "warnings": 0}};
 const $ = s => document.querySelector(s);
 const CLUBS = Object.fromEntries(META.clubs.map(c => [c.code, c]));
 const shortName = code => (CLUBS[code] && CLUBS[code].short) || code;
@@ -273,8 +301,34 @@ function renderPlayer(){
   const lg = $('#log tbody');
   lg.innerHTML = d.log.map(r => { const g = d.games[r[0]], l = gameLabel(g); return `<tr><td class="k">${g.round}</td><td>${fmtDate(g.date)}</td><td>${l.home ? 'vs' : '@'} ${l.opp}</td><td class="${l.res === 'W' ? 'w' : 'l'}">${l.res} ${l.score}</td><td>${r[1]}</td><td class="k">${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td><td>${r[5]}</td><td>${r[6]}</td><td>${r[7]}</td><td>${r[8]}/${r[9]}</td><td>${r[10]}/${r[11]}</td><td>${r[12]}/${r[13]}</td><td>${r[14]}</td><td>${r[15] ?? ''}</td></tr>`; }).join('');
   $('#log-none').hidden = d.log.length > 0; $('#log-panel .scroll').hidden = d.log.length === 0;
+  renderProfile(p, d);
   const st = META.status; $('#foot-l').textContent = `${CLUBS[t.code].name} · ${t.games_played} ${META.label} games played · updated ${META.built}` + (st ? ` · pipeline ${st.ok ? 'OK' : 'FAILED'}: ${st.games} games, ${st.shots.toLocaleString()} shots checked` : '') + (META.model ? ` · xFG model ${META.model.version} (trained on ${META.model.trained_on.replace('E','').replace(/(\d{4})/, (m,y)=>y+'-'+(+y+1).toString().slice(2))}, ${META.model.n_shots.toLocaleString()} shots, log loss ${META.model.logloss})` : '');
   renderChart(true);
+}
+function renderProfile(p, d){
+  const pr = d.profile, panel = $('#prof-panel');
+  if (!pr || !META.priors) { panel.hidden = true; return; }
+  panel.hidden = false;
+  const P = META.priors, per100 = v => (100 * v).toFixed(1);
+  $('#prof-sub').textContent = `Shot quality is the value of the shots he takes (a league-average shooter would score this much per attempt on them). Shooting skill is what he scores on top of that. Both are shrunk toward the league (skill: ${Math.round(P.k_skill)} attempts of prior weight, so ${pr.att} attempts carry ${(100 * pr.att / (pr.att + P.k_skill)).toFixed(0)}% of the estimate). Percentiles are against ${P.reference_season.replace('E','').replace(/(\d{4})/, (m,y)=>y+'-'+(+y+1).toString().slice(2))} players with 100+ attempts.`;
+  $('#pq').innerHTML = `${pr.quality_shrunk.toFixed(2)}<small>lg ${P.league_quality.toFixed(2)}</small>`; $('#pq-bar').style.width = (pr.quality_pct ?? 0) + '%'; $('#pq-pct').textContent = pr.quality_pct != null ? `${pr.quality_pct.toFixed(0)}th percentile · raw ${pr.quality.toFixed(2)} on ${pr.att} attempts` : '';
+  const sgn = pr.skill_shrunk >= 0 ? '+' : '';
+  $('#ps').innerHTML = `${sgn}${per100(pr.skill_shrunk)}<small>± ${per100(pr.skill_sd)}</small>`; $('#ps-bar').style.width = (pr.skill_pct ?? 0) + '%'; $('#ps-pct').textContent = pr.skill_pct != null ? `${pr.skill_pct.toFixed(0)}th percentile · raw ${pr.skill >= 0 ? '+' : ''}${per100(pr.skill)} · ${pr.pae >= 0 ? '+' : ''}${pr.pae.toFixed(1)} points above expectation` : '';
+  // season curve of shrunk skill with ±1 sd band, x = attempts
+  const c = pr.curve, W = 640, H = 220, L = 46, R = 16, T = 14, B = 30;
+  if (!c.length) { $('#curve').innerHTML = ''; return; }
+  const maxA = Math.max(c[c.length - 1][1], 50), lim = Math.max(0.12, ...c.map(r => Math.abs(r[3]) + r[4]));
+  const x = a => L + (a / maxA) * (W - L - R), y = v => T + (1 - (v + lim) / (2 * lim)) * (H - T - B);
+  let s = `<line class="ax" x1="${L}" x2="${W - R}" y1="${H - B}" y2="${H - B}"/><line class="ax" x1="${L}" x2="${L}" y1="${T}" y2="${H - B}"/><line class="zero" x1="${L}" x2="${W - R}" y1="${y(0)}" y2="${y(0)}"/>`;
+  [lim, lim / 2, 0, -lim / 2, -lim].forEach(v => s += `<text x="${L - 6}" y="${y(v) + 4}" text-anchor="end">${v > 0 ? '+' : ''}${(100 * v).toFixed(0)}</text>`);
+  [0, 0.25, 0.5, 0.75, 1].forEach(f => s += `<text x="${x(f * maxA)}" y="${H - 10}" text-anchor="middle">${Math.round(f * maxA)}</text>`);
+  s += `<text x="${W - R}" y="${T + 2}" text-anchor="end">pts / 100 attempts above expectation</text><text x="${L}" y="${H - 10}" text-anchor="start" style="font-size:10px"></text>`;
+  const pts = c.map(r => [x(r[1]), y(r[3])]), up = c.map(r => [x(r[1]), y(r[3] + r[4])]), lo = c.map(r => [x(r[1]), y(r[3] - r[4])]);
+  s += `<path class="band" d="M${[...up, ...lo.slice().reverse()].map(q => q.join(' ')).join(' L')} Z"/>`;
+  s += `<path class="ln" d="M${pts.map(q => q.join(' ')).join(' L')}"/>`;
+  const last = pts[pts.length - 1]; s += `<circle class="end" cx="${last[0]}" cy="${last[1]}" r="4"/>`;
+  $('#curve').innerHTML = s;
+  $('#curve-legend').innerHTML = `<span><i style="width:18px;height:3px;background:var(--orange);display:inline-block;vertical-align:middle;margin-right:6px"></i>shrunk estimate by attempt</span><span><i style="width:18px;height:10px;background:var(--orange);opacity:.2;display:inline-block;vertical-align:middle;margin-right:6px"></i>± 1 sd</span>`;
 }
 function zoneStats(shots){
   const z = {}; Object.keys(ZONES).forEach(k => z[k] = {m: 0, a: 0});

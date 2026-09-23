@@ -26,7 +26,7 @@ model, feats, k = bundle["model"], bundle["features"], bundle["k_shrink"]
 out_path = os.path.join(W, "shots_xfg.parquet")
 raw = load_shots(SEASON)
 if raw.empty:
-    pd.DataFrame({"game": pd.Series(dtype="int32"), "seq": pd.Series(dtype="int32"), "player": pd.Series(dtype=str), "xfg": pd.Series(dtype=float)}).to_parquet(out_path, index=False)
+    pd.DataFrame({"game": pd.Series(dtype="int32"), "seq": pd.Series(dtype="int32"), "player": pd.Series(dtype=str), "xfg": pd.Series(dtype=float), "xfg_ctx": pd.Series(dtype=float)}).to_parquet(out_path, index=False)
     print(f"{SEASON}: no shots yet; wrote empty shots_xfg.parquet")
     sys.exit(0)
 df = featurize(raw)
@@ -56,7 +56,9 @@ if "shooter" in feats:
 else:
     xfg = model.predict_proba(df[feats])[:, 1]
 
-out = pd.DataFrame({"game": df.game.values, "seq": df.seq.values, "player": df.player.values, "xfg": np.round(xfg, 4)})
+# context-only expectation: the same shot taken by a league-average shooter (shooter term at its prior of zero)
+xfg_ctx = model.predict_proba(df.assign(shooter=0.0)[feats])[:, 1] if "shooter" in feats else xfg
+out = pd.DataFrame({"game": df.game.values, "seq": df.seq.values, "player": df.player.values, "xfg": np.round(xfg, 4), "xfg_ctx": np.round(xfg_ctx, 4)})
 out.to_parquet(out_path, index=False)
 made = df.made.mean()
 print(f"{SEASON}: scored {len(out)} shots; mean xFG {xfg.mean():.3f} vs actual {made:.3f}")

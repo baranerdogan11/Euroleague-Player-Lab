@@ -29,7 +29,25 @@ for t in ["clubs", "players", "roster_stints", "games", "box", "shots"]:
 xfg_path = os.path.join(W, "shots_xfg.parquet")
 HAS_XFG = os.path.exists(xfg_path)
 con.execute(f"create view shots_xfg as select * from read_parquet('{xfg_path}')" if HAS_XFG else "create view shots_xfg as select null::int game, null::int seq, null::varchar player, null::double xfg where false")
+prof_path = os.path.join(W, "player_shooting.parquet")
+PROFILES = {}
+if os.path.exists(prof_path):
+    import pandas as pd
+    pf = pd.read_parquet(prof_path)
+    if "att" in pf.columns and len(pf):
+        PROFILES = {r.player: r for r in pf.itertuples(index=False)}
+priors_path = os.path.join(ROOT, "model", "shooting_priors.json")
+PRIORS = json.load(open(priors_path)) if os.path.exists(priors_path) else None
 rows = lambda q, *a: [dict(zip([d[0] for d in con.description], r)) for r in con.execute(q, a).fetchall()]
+
+def profile_of(player, gidx):
+    pr = PROFILES.get(player)
+    if pr is None:
+        return None
+    curve = [[gidx[c[0]], c[1], c[2], c[3], c[4]] for c in pr.curve if c[0] in gidx]
+    return {"att": int(pr.att), "quality": pr.quality, "quality_shrunk": pr.quality_shrunk, "quality_pct": pr.quality_pct,
+            "skill": pr.skill, "skill_shrunk": pr.skill_shrunk, "skill_sd": pr.skill_sd, "skill_pct": pr.skill_pct, "pae": pr.pae, "curve": curve}
+
 
 clubs = rows("select * from clubs order by name")
 for c in clubs:
@@ -58,7 +76,7 @@ for c in clubs:
         players.append({"pid": "P" + r["player"], "name": r["name"], "dorsal": r["dorsal"], "position": r["position"], "height": r["height_cm"],
                         "birth": str(r["birth_date"]) if r["birth_date"] else None, "country": r["country"],
                         "photo": f"photos/{r['player']}.webp" if os.path.exists(os.path.join(ROOT, "photos", f"{r['player']}.webp")) else None,
-                        "cur": {"tot": tot, "log": log, "shots": shots, "games": games, "xfg": xfg}})
+                        "cur": {"tot": tot, "log": log, "shots": shots, "games": games, "xfg": xfg, "profile": profile_of(r["player"], gidx)}})
     played = con.execute("select count(*) from games where played and ? in (home, away)", [code]).fetchone()[0]
     upcoming = rows("select game as code, round, cast(date as varchar) as date, home, away, phase from games where not played and ? in (home, away) order by date limit 3", code)
     json.dump({"code": code, "season": SEASON, "label": label(SEASON), "games_played": played, "upcoming": upcoming, "players": players, "real_code": code},
@@ -73,6 +91,8 @@ card_path = os.path.join(ROOT, "model", "model_card.json")
 card = json.load(open(card_path)) if os.path.exists(card_path) else None
 meta = {"season": SEASON, "label": label(SEASON), "model": {"version": card["version"], "trained_on": card["trained_on"], "logloss": card["metrics_test"][card["chosen"]]["logloss"],
                                                            "auc": card["metrics_test"][card["chosen"]]["auc"], "n_shots": card["n_shots"]} if card else None, "clubs": [{"code": c["club"], "name": c["name"], "short": c["short"], "country": c["country"], "city": c["city"], "logo": c["logo"]} for c in clubs],
+        "priors": {"league_quality": PRIORS["league_quality"], "k_skill": PRIORS["k_skill"], "k_quality": PRIORS["k_quality"], "reference_season": PRIORS["reference_season"],
+                   "tau_skill": PRIORS["tau_skill"]} if PRIORS else None,
         "built": datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC"), "path": f"teams/{SEASON}/",
         "status": {k: status[k] for k in ("checked_at", "games", "shots", "players", "ok", "failures", "warnings")} if status else None}
 json.dump(meta, open(os.path.join(OUT, "index.json"), "w"), ensure_ascii=False)

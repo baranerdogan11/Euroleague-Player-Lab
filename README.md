@@ -36,7 +36,8 @@ of the day, and can be started by hand from the Actions tab. Each run:
    schedule completeness, and per player per game reconciliation of plotted attempts and makes with the box score;
    any failure stops the run before anything is published
 7. scores every shot with the xFG model (`model/score.py`), see below
-8. builds the site from the warehouse with SQL (`build.py`, the gold layer) and commits it; GitHub Pages deploys within a minute
+8. builds shooting profiles, shot quality versus shooting skill with shrinkage (`model/profile.py`)
+9. builds the site from the warehouse with SQL (`build.py`, the gold layer) and commits it; GitHub Pages deploys within a minute
 
 The assertions write `teams/E2026/status.json` (games, shots, box lines, tests, failures, time) and the page footer
 shows the last verdict. A failed run leaves the previous good build live and uploads the status report as a
@@ -61,6 +62,22 @@ basket just made, so both leaked the label. They are excluded and the margin is 
 `model/score.py` scores the current season nightly, carrying last season's
 shooter effects forward as decayed priors. The page shows each player's xFG, actual versus expected points per
 attempt, and points above expectation; every shot's tooltip carries its xFG.
+
+## Shot quality vs shooting skill
+
+With a context-only expectation for every shot (the same shot taken by a league-average shooter), a player's
+scoring splits into shot quality (expected points per attempt on the shots he takes) and shooting skill
+(what he scores on top of that, per attempt). Both are noisy over a few games, so `model/profile.py` shrinks
+them toward the league with empirical-Bayes weights estimated from 2025-26 by variance decomposition:
+skill needs 263 attempts before a player's own record outweighs the prior (between-player spread 7 points per
+100 attempts), shot quality only 10 (it is a stable trait of role and position). Split-half validation on
+197 players: shrinking first-half skill cuts the error in predicting the second half from 0.153 to 0.128
+points per attempt, and beats predicting zero for everyone (0.135). The page shows both figures with
+percentiles against last season's players and a season curve of the skill estimate with its ±1 sd band.
+
+A first version measured skill against the shooter-aware xFG and found zero between-player variance, which is
+what should happen when the expectation already contains the shooter; quality and skill must be measured
+against the context-only expectation.
 
 ## Data layers
 
