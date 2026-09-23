@@ -13,7 +13,8 @@ import numpy as np
 import pandas as pd
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from xfg import featurize, load_shots  # noqa: E402
+from features import featurize  # noqa: E402
+from xfg import load_shots  # noqa: E402
 
 SEASON = sys.argv[1] if len(sys.argv) > 1 else "E2026"
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

@@ -1,0 +1,44 @@
+name: xFG service
+
+on:
+  push:
+    branches: [main]
+    paths: ["service/**", "model/**", "Dockerfile", ".dockerignore", "tests/test_service.py", ".github/workflows/service.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  test-and-publish:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install -r requirements.txt -r service/requirements.txt httpx
+      - name: Contract tests
+        run: python tests/test_service.py
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and push image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/euroleague-xfg:latest
+            ghcr.io/${{ github.repository_owner }}/euroleague-xfg:${{ github.sha }}
+      - name: Smoke test the published image
+        run: |
+          docker run -d --rm -p 8000:8000 --name xfg ghcr.io/${{ github.repository_owner }}/euroleague-xfg:${{ github.sha }}
+          for i in $(seq 1 20); do curl -sf http://localhost:8000/health && break || sleep 2; done
+          curl -sf -X POST http://localhost:8000/predict -H 'content-type: application/json' -d '{"shots":[{"x":0,"y":700,"pts":3}]}'
+          docker stop xfg

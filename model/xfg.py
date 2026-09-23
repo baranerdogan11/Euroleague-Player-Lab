@@ -14,6 +14,7 @@ import os
 import sys
 import duckdb
 import joblib
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import numpy as np
 import pandas as pd
 from sklearn.ensemble import HistGradientBoostingClassifier
@@ -26,10 +27,7 @@ OUT = os.path.join(ROOT, "model")
 K_SHRINK = 150.0       # attempts at which a shooter's own record gets half the weight of the league prior
 SEED = 7
 
-NUMERIC = ["dist", "angle", "x", "y", "clock_sec", "minute", "margin", "quarter"]
-BINARY = ["three", "home"]   # fastbreak / second_chance / points_off_tov are excluded: the feed annotates them on made shots only (label leakage)
-CATEG = ["zone"]
-FEATURES = NUMERIC + BINARY + CATEG
+from features import NUMERIC, BINARY, CATEG, FEATURES, featurize  # noqa: E402
 
 
 def load_shots(season):
@@ -41,25 +39,6 @@ def load_shots(season):
     from read_parquet('{w}/shots.parquet') s join read_parquet('{w}/games.parquet') g using (game)
     order by g.date, s.game, s.minute, s.seq"""
     return con.execute(q).df()
-
-
-def featurize(df):
-    d = df.copy()
-    d["dist"] = np.hypot(d.x, d.y) / 100
-    d["angle"] = np.degrees(np.arctan2(d.x.abs(), d.y.clip(lower=1)))
-    d["three"] = (d.pts == 3).astype(int)
-    d["quarter"] = np.where(d.minute > 40, 5, np.ceil(d.minute / 10)).astype(int)
-    mmss = d.clock.fillna("0:00").str.split(":", expand=True)
-    d["clock_sec"] = pd.to_numeric(mmss[0], errors="coerce").fillna(0) * 60 + pd.to_numeric(mmss[1], errors="coerce").fillna(0)
-    d["home"] = (d.club == d.home).astype(int)
-    own = np.where(d.home == 1, d.score_home, d.score_away); opp = np.where(d.home == 1, d.score_away, d.score_home)
-    # the feed reports the score after the play, so a made basket must be removed to get the pre-shot margin
-    d["margin"] = (pd.Series(own, index=d.index).fillna(0) - pd.Series(opp, index=d.index).fillna(0) - d.made.astype(int) * d.pts).astype(float)
-    for c in BINARY:
-        d[c] = d[c].astype(int)
-    d["zone"] = d.zone.fillna("?").astype("category")
-    d["made"] = d.made.astype(int)
-    return d
 
 
 def make_model(seed=SEED):

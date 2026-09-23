@@ -11,7 +11,7 @@ import pandas as pd
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, "model"))
-from xfg import featurize  # noqa: E402
+from features import featurize  # noqa: E402
 
 bundle = joblib.load(os.path.join(ROOT, "model", "xfg_model.joblib"))
 card = json.load(open(os.path.join(ROOT, "model", "model_card.json")))

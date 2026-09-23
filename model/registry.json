@@ -1,0 +1,36 @@
+{
+ "models": [
+  {
+   "name": "xfg",
+   "version": "2026-09-23",
+   "sha256": "0b6d67c1d6eddca35bf16c7959f219177e63e62f42a098a2812c8880edabec6d",
+   "registered_at": "2026-09-23T19:06:24Z",
+   "trained_on": "E2025",
+   "training_shots_sha256": "fba442f7228e45496f4f418ac75541d8ba144d6bdc49ecd8aff8218e99cffc34",
+   "n_shots": 51750,
+   "features": [
+    "dist",
+    "angle",
+    "x",
+    "y",
+    "clock_sec",
+    "minute",
+    "margin",
+    "quarter",
+    "three",
+    "home",
+    "zone",
+    "shooter"
+   ],
+   "chosen": "xfg_context_plus_shooter",
+   "metrics_test": {
+    "logloss": 0.6303,
+    "brier": 0.2213,
+    "auc": 0.6734
+   },
+   "baseline_zone_logloss": 0.6447,
+   "algorithm": "sklearn HistGradientBoostingClassifier, early stopping",
+   "stage": "production"
+  }
+ ]
+}

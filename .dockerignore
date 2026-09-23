@@ -1,0 +1,7 @@
+*
+!service/
+!model/features.py
+!model/xfg_model.joblib
+!model/model_card.json
+!model/registry.json
+!model/shooter_effects_E2025.parquet

@@ -79,6 +79,34 @@ A first version measured skill against the shooter-aware xFG and found zero betw
 what should happen when the expectation already contains the shooter; quality and skill must be measured
 against the context-only expectation.
 
+## xFG as a service
+
+`service/app.py` serves the deployed model with FastAPI:
+
+- `POST /predict`: up to 500 shots per call, each validated (coordinates inside the court, 2 or 3 points,
+  clock within a period); returns xFG, the context-only xFG for a league-average shooter, expected points and
+  distance per shot, plus the model version in the body and in an `x-model-version` header. An optional league
+  player code applies the shooter effect when the player is known.
+- `GET /health`: liveness, model version and file hash. `GET /model`: model card and registry entry.
+- Every request is logged as one JSON line (request id, path, status, latency, batch size, model version);
+  set `LOG_FILE` to also append to a file.
+
+`model/registry.json` records each trained model with its SHA-256, the SHA-256 of the training shots, metrics,
+features and stage (`production`, `candidate`, `archived`); `python model/register.py --activate` promotes the
+current model. The service reports which registry entry it is running.
+
+`tests/test_service.py` holds 14 contract tests (schema validation, monotonic sanity checks, version headers,
+shooter effect direction on average) and runs in both workflows. `.github/workflows/service.yml` runs them,
+builds the Docker image, publishes it to GitHub Container Registry as
+`ghcr.io/baranerdogan11/euroleague-xfg:latest` (and one tag per commit), then starts the published image and
+calls `/predict` as a smoke test. `render.yaml` deploys the same image to Render's free tier with a health check.
+
+```bash
+docker run -p 8000:8000 ghcr.io/baranerdogan11/euroleague-xfg:latest
+curl -X POST localhost:8000/predict -H 'content-type: application/json' \
+     -d '{"shots":[{"x":0,"y":700,"pts":3},{"x":10,"y":50,"pts":2,"minute":38,"clock":"00:20","home":false,"margin":-3,"player":"002100"}]}'
+```
+
 ## Data layers
 
 | Layer | Where | Produced by | Tests |
