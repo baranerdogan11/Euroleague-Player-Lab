@@ -26,11 +26,14 @@ def minutes(s):
 
 
 clubs = json.load(open(os.path.join(DATA, "clubs.json")))
+club_list = list(clubs["clubs"])
 summary = []
 for path in sorted(glob.glob(os.path.join(DATA, "*.json"))):
     if path.endswith("clubs.json"):
         continue
     d = json.load(open(path))
+    if d.get("club_meta"):                       # demo clubs carry their own dropdown entry
+        club_list = [c for c in club_list if c["code"] != d["club"]] + [dict(d["club_meta"], demo=True)]
     order = [g["code"] for g in sorted(d["games"], key=lambda g: (g["date"], g["code"]))]
     gidx = {c: i for i, c in enumerate(order)}
     players, pidx = [], {}
@@ -47,12 +50,12 @@ for path in sorted(glob.glob(os.path.join(DATA, "*.json"))):
     shots = [[gidx[s["game"]], pidx[s["pid"]], s["x"], s["y"], 1 if s["made"] else 0, s["pts"], s["q"], s["zone"], 1 if s["fastbreak"] else 0, 1 if s["second_chance"] else 0]
              for s in sorted(d["shots"], key=lambda s: (gidx[s["game"]], s["q"], s["clock"])) if s["pid"] in pidx]
     team = {"code": d["club"], "season": SEASON, "games": [g for g in sorted(d["games"], key=lambda g: (g["date"], g["code"]))],
-            "upcoming": d.get("upcoming", []), "players": players, "shots": shots}
+            "upcoming": d.get("upcoming", []), "players": players, "shots": shots, "real_code": (d.get("club_meta") or {}).get("real_code", d["club"])}
     json.dump(team, open(os.path.join(OUT, f"{d['club']}.json"), "w"), separators=(",", ":"), ensure_ascii=False)
     summary.append((d["club"], len(players), len(order), len(shots)))
 
 meta = {"season": SEASON, "label": SEASON.replace("E", "").replace(SEASON[1:], f"{SEASON[1:]}-{str(int(SEASON[1:]) + 1)[2:]}"),
-        "clubs": clubs["clubs"], "built": __import__("datetime").date.today().isoformat(), "path": f"teams/{SEASON}/"}
+        "clubs": club_list, "built": __import__("datetime").date.today().isoformat(), "path": f"teams/{SEASON}/"}
 json.dump(meta, open(os.path.join(OUT, "index.json"), "w"), ensure_ascii=False)
 tpl = open(os.path.join(ROOT, "template.html"), encoding="utf-8").read()
 open(os.path.join(ROOT, "index.html"), "w", encoding="utf-8").write(tpl.replace("/*META*/", json.dumps(meta, ensure_ascii=False)))

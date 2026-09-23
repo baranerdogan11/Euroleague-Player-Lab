@@ -10,6 +10,7 @@
   --disp:"Barlow Condensed","Arial Narrow",Impact,sans-serif;--body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
 }
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 html{color-scheme:dark}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:14px;line-height:1.45;-webkit-font-smoothing:antialiased}
 .app{max-width:1240px;margin:0 auto;padding:0 24px 64px}
@@ -71,6 +72,11 @@ select:focus{outline:2px solid var(--orange);outline-offset:1px}
 .shot{transform-box:fill-box;transform-origin:center;animation:pop .32s cubic-bezier(.2,1.4,.4,1) both}
 @keyframes pop{from{opacity:0;transform:scale(.2)}to{opacity:1;transform:scale(1)}}
 @media (prefers-reduced-motion:reduce){.shot{animation:none}}
+.court3d{position:relative;width:100%;aspect-ratio:4/3;background:#0a1731;border-radius:6px;overflow:hidden}
+.court3d canvas{display:block;width:100%;height:100%}
+.hud3d{position:absolute;left:10px;top:10px;right:10px;display:flex;justify-content:space-between;align-items:center;gap:10px;pointer-events:none}
+.hud3d .seg{pointer-events:auto;background:rgba(10,23,49,.75)}
+.hint3d{color:var(--muted);font-size:11.5px;background:rgba(10,23,49,.6);padding:4px 8px;border-radius:5px}
 .empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
 .empty div{background:rgba(10,23,49,.82);border:1px solid var(--line2);border-radius:8px;padding:18px 24px;text-align:center;max-width:320px}
 .empty b{display:block;font-family:var(--disp);font-weight:800;font-size:24px;letter-spacing:.04em;text-transform:uppercase}
@@ -138,11 +144,14 @@ td.w{color:var(--good)} td.l{color:#ff7b7b}
       <p class="sub">Every field-goal attempt, plotted where it was taken. Basket at the bottom.</p>
       <div class="toolbar">
         <div class="seg" id="f-result"><button aria-pressed="true" data-v="all">All</button><button aria-pressed="false" data-v="made">Made</button><button aria-pressed="false" data-v="miss">Missed</button></div>
-        <div class="seg" id="f-view"><button aria-pressed="true" data-v="dots">Shots</button><button aria-pressed="false" data-v="zones">Zones</button></div>
+        <div class="seg" id="f-view"><button aria-pressed="true" data-v="dots">Shots</button><button aria-pressed="false" data-v="zones">Zones</button><button aria-pressed="false" data-v="3d">3D</button></div>
         <select id="game" aria-label="Game"></select>
       </div>
       <div class="court-wrap">
         <svg class="court" id="court" viewBox="-30 0 1580 1440" role="img" aria-label="Half-court shot chart"></svg>
+        <div class="court3d" id="court3d" hidden>
+          <div class="hud3d"><div class="seg" id="f-cam"><button aria-pressed="true" data-v="broadcast">Broadcast</button><button aria-pressed="false" data-v="baseline">Behind rim</button><button aria-pressed="false" data-v="high">High</button></div><span class="hint3d">Drag to orbit · scroll to zoom</span></div>
+        </div>
         <div class="empty" id="empty" hidden><div><b>No games yet</b><span id="empty-sub"></span></div></div>
       </div>
       <div class="caption"><b id="cap"></b><div class="legend"><span><i class="m"></i>Made</span><span><i class="x"></i>Missed</span></div></div>
@@ -212,7 +221,8 @@ function playerShots(){
   const t = team(), p = state.player;
   return t.shots.filter(s => s[1] === p && (state.game === 'all' || s[0] === +state.game) && (state.result === 'all' || (state.result === 'made') === !!s[4]));
 }
-const gameLabel = g => { const t = team(), home = g.home === t.code, opp = home ? g.away : g.home, ts = home ? g.hs : g.as, os = home ? g.as : g.hs; return {opp: shortName(opp), home, res: ts > os ? 'W' : 'L', score: `${ts}-${os}`, txt: `R${g.round} · ${home ? 'vs' : '@'} ${shortName(opp)}`}; };
+const realCode = () => team().real_code || team().code;
+const gameLabel = g => { const t = team(), home = g.home === realCode(), opp = home ? g.away : g.home, ts = home ? g.hs : g.as, os = home ? g.as : g.hs; return {opp: shortName(opp), home, res: ts > os ? 'W' : 'L', score: `${ts}-${os}`, txt: `R${g.round} · ${home ? 'vs' : '@'} ${shortName(opp)}`}; };
 
 // ---- loading
 async function loadTeam(code){
@@ -269,9 +279,13 @@ function renderChart(animate){
   const zs = zoneStats(shots), total = shots.length || 1;
   $('#zones tbody').innerHTML = Object.entries(ZONES).map(([k, l]) => { const v = zs[k]; const share = v.a / total; return `<tr><td class="k">${l}</td><td>${v.a ? `${v.m} / ${v.a}` : '–'}</td><td class="k">${pct(v.m, v.a)}</td><td>${v.a ? (share * 100).toFixed(0) + '%' : '–'}<span class="zone-bar" style="width:${Math.round(share * 60)}px"></span></td></tr>`; }).join('');
   const empty = $('#empty');
+  const is3d = state.view === '3d';
+  $('#court').style.display = is3d ? 'none' : ''; $('#court3d').hidden = !is3d;
+  if (is3d) { empty.hidden = t.games.length > 0; if (!t.games.length) { $('#cap').textContent = 'Season not started'; return; } Shot3D.play(shots, s => gameLabel(t.games[s[0]])); return; }
+  Shot3D.stop();
   if (!t.games.length) {
     const nx = t.upcoming && t.upcoming[0];
-    const l = nx ? (nx.home === t.code ? `vs ${shortName(nx.away)}` : `@ ${shortName(nx.home)}`) : null;
+    const l = nx ? (nx.home === realCode() ? `vs ${shortName(nx.away)}` : `@ ${shortName(nx.home)}`) : null;
     $('#empty-sub').textContent = nx ? `First game: Round ${nx.round} ${l} · ${fmtDate(nx.date)}` : 'The season has not started.';
     empty.hidden = false; $('#cap').textContent = 'Season not started'; return;
   }
@@ -310,6 +324,124 @@ function renderChart(animate){
   if (step) state.timers.push(setTimeout(done, shots.length * step + 200)); else done();
 }
 
+// ---- 3D shot chart (Three.js, loaded on first use)
+const Shot3D = (() => {
+  let ready = null, R = null, running = false, raf = 0, last = 0;
+  const S = {list: [], labelOf: null, i: 0, timer: 0, seen: 0, made: 0, flights: [], playing: false};
+  const cam = {target: null, az: 0, el: 0.42, dist: 17, drift: true};
+  const PRESETS = {broadcast: {az: 0, el: 0.42, dist: 17}, baseline: {az: Math.PI, el: 0.36, dist: 11}, high: {az: 0, el: 1.1, dist: 20}};
+  function load(){
+    if (ready) return ready;
+    ready = new Promise((res, rej) => { const s = document.createElement('script'); s.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js'; s.onload = res; s.onerror = rej; document.head.appendChild(s); }).then(build);
+    return ready;
+  }
+  function courtTexture(){
+    const c = document.createElement('canvas'); c.width = 1500; c.height = 1400; const g = c.getContext('2d');
+    g.fillStyle = '#0d1a3a'; g.fillRect(0, 0, 1500, 1400);
+    const X = x => 750 + x * 100, Z = z => z * 100;
+    g.fillStyle = '#12224a'; g.fillRect(X(-2.45), Z(0), 490, 580);
+    g.strokeStyle = '#3a4a75'; g.lineWidth = 6; g.strokeRect(3, 3, 1494, 1394); g.strokeRect(X(-2.45), Z(0), 490, 580);
+    g.beginPath(); g.arc(X(0), Z(5.8), 180, 0, Math.PI * 2); g.stroke();
+    g.beginPath(); g.arc(X(0), Z(1.575), 125, 0, Math.PI, false); g.stroke();
+    g.beginPath(); g.moveTo(X(-6.6), Z(0)); g.lineTo(X(-6.6), Z(1.575 + 1.415)); g.arc(X(0), Z(1.575), 675, Math.PI - Math.asin(1.415 / 6.75), Math.asin(1.415 / 6.75), true); g.lineTo(X(6.6), Z(0)); g.stroke();
+    g.beginPath(); g.arc(X(0), Z(14), 180, Math.PI, Math.PI * 2); g.stroke();
+    g.strokeStyle = '#c9d2e8'; g.lineWidth = 8; g.beginPath(); g.moveTo(X(-0.9), Z(1.2)); g.lineTo(X(0.9), Z(1.2)); g.stroke();
+    const tx = new THREE.CanvasTexture(c); tx.encoding = THREE.sRGBEncoding; tx.anisotropy = 8; return tx;
+  }
+  function build(){
+    const host = $('#court3d');
+    const renderer = new THREE.WebGLRenderer({antialias: true}); renderer.setPixelRatio(Math.min(devicePixelRatio, 2)); renderer.outputEncoding = THREE.sRGBEncoding; renderer.shadowMap.enabled = true;
+    host.prepend(renderer.domElement);
+    const scene = new THREE.Scene(); scene.background = new THREE.Color(0x0a1731); scene.fog = new THREE.Fog(0x0a1731, 22, 46);
+    const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 100);
+    const RIM = new THREE.Vector3(0, 3.05, 1.575);
+    const floor = new THREE.Mesh(new THREE.PlaneGeometry(15, 14), new THREE.MeshStandardMaterial({map: courtTexture(), roughness: .92})); floor.rotation.x = -Math.PI / 2; floor.position.set(0, 0, 7); floor.receiveShadow = true; scene.add(floor);
+    const apron = new THREE.Mesh(new THREE.PlaneGeometry(60, 60), new THREE.MeshStandardMaterial({color: 0x08122a, roughness: 1})); apron.rotation.x = -Math.PI / 2; apron.position.set(0, -0.01, 7); apron.receiveShadow = true; scene.add(apron);
+    const rim = new THREE.Mesh(new THREE.TorusGeometry(0.225, 0.016, 12, 48), new THREE.MeshStandardMaterial({color: 0xf26f21, roughness: .4, metalness: .3})); rim.rotation.x = Math.PI / 2; rim.position.copy(RIM); rim.castShadow = true; scene.add(rim);
+    const net = new THREE.Mesh(new THREE.CylinderGeometry(0.225, 0.14, 0.42, 20, 1, true), new THREE.MeshStandardMaterial({color: 0xffffff, transparent: true, opacity: .28, side: THREE.DoubleSide, wireframe: true})); net.position.set(0, 2.84, 1.575); scene.add(net);
+    const board = new THREE.Mesh(new THREE.PlaneGeometry(1.8, 1.05), new THREE.MeshStandardMaterial({color: 0xdfe6f5, transparent: true, opacity: .22, side: THREE.DoubleSide, roughness: .1})); board.position.set(0, 3.5, 1.2); scene.add(board);
+    const frame = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.PlaneGeometry(1.8, 1.05)), new THREE.LineBasicMaterial({color: 0xffffff, transparent: true, opacity: .6})); frame.position.copy(board.position); scene.add(frame);
+    const sq = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.PlaneGeometry(0.59, 0.45)), new THREE.LineBasicMaterial({color: 0xffffff, transparent: true, opacity: .5})); sq.position.set(0, 3.275, 1.19); scene.add(sq);
+    const poleMat = new THREE.MeshStandardMaterial({color: 0x1f2b47, roughness: .8});
+    const pole = new THREE.Mesh(new THREE.BoxGeometry(0.16, 3.9, 0.16), poleMat); pole.position.set(0, 1.95, -0.9); pole.castShadow = true; scene.add(pole);
+    const arm = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.12, 2.1), poleMat); arm.position.set(0, 3.85, 0.15); scene.add(arm);
+    scene.add(new THREE.AmbientLight(0xffffff, .55));
+    const key = new THREE.DirectionalLight(0xffffff, .9); key.position.set(6, 12, 8); key.castShadow = true; key.shadow.mapSize.set(2048, 2048); Object.assign(key.shadow.camera, {left: -12, right: 12, top: 16, bottom: -6, near: 1, far: 40}); scene.add(key);
+    const fill = new THREE.DirectionalLight(0xf26f21, .18); fill.position.set(-8, 6, 14); scene.add(fill);
+    const markers = new THREE.Group(); scene.add(markers);
+    cam.target = new THREE.Vector3(0, 1.4, 4.5);
+    let drag = null;
+    renderer.domElement.addEventListener('pointerdown', e => { drag = {x: e.clientX, y: e.clientY}; cam.drift = false; renderer.domElement.setPointerCapture(e.pointerId); });
+    renderer.domElement.addEventListener('pointermove', e => { if (!drag) return; cam.az -= (e.clientX - drag.x) * 0.006; cam.el = Math.max(0.12, Math.min(1.45, cam.el + (e.clientY - drag.y) * 0.004)); drag = {x: e.clientX, y: e.clientY}; });
+    renderer.domElement.addEventListener('pointerup', () => drag = null);
+    renderer.domElement.addEventListener('wheel', e => { e.preventDefault(); cam.dist = Math.max(6, Math.min(34, cam.dist * (1 + e.deltaY * 0.0012))); }, {passive: false});
+    R = {renderer, scene, camera, RIM, markers, host, get drag(){ return drag; },
+         ballGeo: new THREE.SphereGeometry(0.123, 24, 18), ballMat: new THREE.MeshStandardMaterial({color: 0xf26f21, roughness: .55}),
+         missBall: new THREE.MeshStandardMaterial({color: 0x9aa5c0, roughness: .6}), madeMark: new THREE.MeshBasicMaterial({color: 0xf26f21}), missMark: new THREE.MeshBasicMaterial({color: 0x9aa5c0}),
+         markMade: new THREE.CircleGeometry(0.15, 24), markMiss: new THREE.RingGeometry(0.1, 0.16, 24)};
+    resize(); addEventListener('resize', resize);
+  }
+  function resize(){ if (!R) return; const w = R.host.clientWidth, h = R.host.clientHeight; if (!w || !h) return; R.renderer.setSize(w, h, false); R.camera.aspect = w / h; R.camera.updateProjectionMatrix(); }
+  function applyCam(){ const {target, az, el, dist} = cam; R.camera.position.set(target.x + dist * Math.cos(el) * Math.sin(az), target.y + dist * Math.sin(el), target.z + dist * Math.cos(el) * Math.cos(az)); R.camera.lookAt(target); }
+  const toWorld = s => new THREE.Vector3(s[2] / 100, 0, 1.575 + s[3] / 100);
+  function launch(s){
+    const start = toWorld(s), dist = Math.hypot(start.x, start.z - R.RIM.z);
+    const release = start.clone(); release.y = dist < 1.5 ? 2.4 : 2.05;
+    let end;
+    if (s[4]) end = R.RIM.clone();
+    else { const a = Math.atan2(start.z - R.RIM.z, start.x - R.RIM.x) + (Math.random() - 0.5) * 1.2; end = new THREE.Vector3(Math.cos(a) * 0.23, R.RIM.y + 0.02, R.RIM.z + Math.sin(a) * 0.23); }
+    const T = Math.max(0.75, Math.min(1.5, 0.55 + dist * 0.11)), apex = Math.max(1.0, Math.min(3.4, 0.6 + dist * 0.28));
+    const ball = new THREE.Mesh(R.ballGeo, R.ballMat); ball.castShadow = true; R.scene.add(ball);
+    const v = new THREE.Vector3(end.x, 0, end.z - R.RIM.z).normalize().multiplyScalar(1.6 + Math.random() * 1.4); v.y = 2.2 + Math.random() * 1.2; v.x += (Math.random() - 0.5) * 1.5; v.z += (Math.random() - 0.5) * 1.5;
+    S.flights.push({ball, s, release, end, T, apex, t: 0, phase: 0, v, post: 0});
+  }
+  function step(dt){
+    for (let k = S.flights.length - 1; k >= 0; k--) {
+      const f = S.flights[k];
+      if (f.phase === 0) {
+        f.t += dt / f.T; const u = Math.min(1, f.t);
+        f.ball.position.lerpVectors(f.release, f.end, u); f.ball.position.y = f.release.y + (f.end.y - f.release.y) * u + 4 * f.apex * u * (1 - u); f.ball.rotation.x += dt * 9;
+        if (f.t >= 1) {
+          f.phase = 1; const p = toWorld(f.s); const m = new THREE.Mesh(f.s[4] ? R.markMade : R.markMiss, f.s[4] ? R.madeMark : R.missMark);
+          m.rotation.x = -Math.PI / 2; m.position.set(p.x, 0.012 + R.markers.children.length * 0.00002, p.z); R.markers.add(m);
+          S.seen++; S.made += f.s[4]; if (!f.s[4]) f.ball.material = R.missBall;
+          const l = S.labelOf(f.s); $('#cap').textContent = `${l.txt} · ${S.seen} / ${S.list.length}`;
+        }
+      } else {
+        f.post += dt;
+        if (f.s[4]) { f.ball.position.y -= dt * 2.2; if (f.ball.position.y < 2.4) f.ball.position.y -= dt * 4; }
+        else { f.v.y -= 9.81 * dt; f.ball.position.addScaledVector(f.v, dt); if (f.ball.position.y < 0.12) { f.ball.position.y = 0.12; f.v.y = Math.abs(f.v.y) * 0.45; f.v.x *= 0.7; f.v.z *= 0.7; } }
+        if (f.post > (f.s[4] ? 0.55 : 1.3)) { R.scene.remove(f.ball); S.flights.splice(k, 1); }
+      }
+    }
+  }
+  function clear(){ if (!R) return; S.flights.forEach(f => R.scene.remove(f.ball)); S.flights.length = 0; while (R.markers.children.length) R.markers.remove(R.markers.children[0]); }
+  function frame(now){
+    if (!running) return;
+    const dt = Math.min(0.05, (now - last) / 1000); last = now;
+    if (S.playing) {
+      S.timer += dt; const iv = 0.16;
+      while (S.timer >= iv && S.i < S.list.length) { S.timer -= iv; launch(S.list[S.i++]); }
+      if (S.i >= S.list.length && !S.flights.length) { S.playing = false; $('#cap').textContent = `${S.made} / ${S.list.length} made · ${pct(S.made, S.list.length)}`; }
+    }
+    step(dt);
+    if (cam.drift && !R.drag) cam.az += dt * 0.05 * Math.sin(now / 9000);
+    applyCam(); R.renderer.render(R.scene, R.camera); raf = requestAnimationFrame(frame);
+  }
+  return {
+    async play(list, labelOf){
+      await load(); resize(); clear();
+      S.list = list; S.labelOf = labelOf; S.i = 0; S.timer = 0; S.seen = 0; S.made = 0; S.playing = true; cam.drift = true;
+      $('#cap').textContent = list.length ? `${list.length} attempts` : 'No attempts in this selection';
+      if (!running) { running = true; last = performance.now(); raf = requestAnimationFrame(frame); }
+    },
+    stop(){ running = false; cancelAnimationFrame(raf); S.playing = false; },
+    preset(name){ Object.assign(cam, PRESETS[name]); cam.drift = true; },
+    tick(dt){ if (!R) return {noRenderer: true}; S.timer += dt; while (S.timer >= 0.16 && S.i < S.list.length) { S.timer -= 0.16; launch(S.list[S.i++]); } step(dt); applyCam(); R.renderer.render(R.scene, R.camera); return {launched: S.i, seen: S.seen, inflight: S.flights.length, canvas: R.renderer.domElement.width + 'x' + R.renderer.domElement.height, markers: R.markers.children.length}; }
+  };
+})();
+$('#f-cam').querySelectorAll('button').forEach(b => b.addEventListener('click', () => { $('#f-cam').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b)); Shot3D.preset(b.dataset.v); }));
+
 // ---- wiring
 $('#tag-season').textContent = META.label;
 $('#team').innerHTML = META.clubs.map(c => `<option value="${c.code}">${c.name}</option>`).join('');
@@ -319,7 +451,7 @@ $('#game').addEventListener('change', e => { state.game = e.target.value; render
 $('#replay').addEventListener('click', () => renderChart(true));
 [['#f-result', 'result'], ['#f-view', 'view']].forEach(([sel, key]) => {
   $(sel).querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
-    $(sel).querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b)); state[key] = b.dataset.v; renderChart(key === 'view' ? false : true);
+    $(sel).querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b)); state[key] = b.dataset.v; renderChart(key === 'view' ? b.dataset.v === '3d' : true);
   }));
 });
 (async function(){
@@ -328,6 +460,8 @@ $('#replay').addEventListener('click', () => renderChart(true));
   $('#team').value = code;
   await loadTeam(code);
   if (h[1]) { const i = team().players.findIndex(p => p.pid === h[1]); if (i >= 0) { $('#player').value = i; state.player = i; renderPlayer(); } }
-  if (h[2] === 'zones') $('#f-view button[data-v="zones"]').click();
+  if (h[2] === 'zones' || h[2] === '3d') $(`#f-view button[data-v="${h[2]}"]`).click();
+  const dbg = +new URLSearchParams(location.search).get('debug3d');
+  if (dbg) { await new Promise(r => setTimeout(r, 5000)); for (let k = 0; k < dbg; k++) Shot3D.tick(0.05); }
 })();
 </script>
