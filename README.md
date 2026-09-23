@@ -17,7 +17,8 @@ in order.
 - Animated shot chart with made / missed filter, single-game filter, and a Zones view shading the floor by FG%
 - Hover any shot for the game, quarter, distance, fast break and second chance
 - Game log
-- Before a club's first game the page shows the roster and the date of the opener; stats fill in as games are played
+- 2D and 3D shot charts: the 3D view (Three.js, loaded on demand) replays every attempt as a ball in flight with camera presets and orbit
+- Season toggle: each player carries his 2025-26 Euroleague games and shots as well, shown automatically until he has 2026-27 games
 - Deep links: `#ULK`, `#ULK/P007200`, `#ULK/P007200/zones` (club code, player id, optional zones view)
 
 ## Update after each round
@@ -25,11 +26,12 @@ in order.
 ```bash
 pip install -r requirements.txt
 python fetch_season.py E2026   # clubs, crests, rosters, photos, then shots and box scores for new games
-python build.py E2026          # writes index.html and teams/E2026/*.json
+python build.py E2026          # writes index.html and teams/E2026/*.json (merges data/E2025 as last season if present)
 git add -A && git commit -m "Update after round" && git push   # GitHub Pages redeploys in about a minute
 ```
 
 `fetch_season.py` caches every game, roster and image under `cache/`, so a rerun only downloads what is new.
+The previous season is pulled once with `python fetch_season.py E2025 --no-photos`.
 
 ## Layout
 

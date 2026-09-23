@@ -13,6 +13,7 @@ import requests
 from PIL import Image
 
 SEASON = sys.argv[1] if len(sys.argv) > 1 else "E2026"
+NO_PHOTOS = "--no-photos" in sys.argv   # past seasons: stats and shots only
 ROOT = os.path.dirname(os.path.abspath(__file__))
 CACHE = os.path.join(ROOT, "cache", SEASON)
 DATA = os.path.join(ROOT, "data", SEASON)
@@ -71,7 +72,7 @@ clubs = cached("clubs.json", lambda: get(f"{FEEDS}/{SEASON}/clubs")["data"])
 index = []
 for c in clubs:
     crest = (c.get("images") or {}).get("crest")
-    ok = save_image(crest, os.path.join(LOGOS, f"{c['code']}.png"), height=160, fmt="PNG") if crest else False
+    ok = save_image(crest, os.path.join(LOGOS, f"{c['code']}.png"), height=160, fmt="PNG") if (crest and not NO_PHOTOS) else os.path.exists(os.path.join(LOGOS, f"{c['code']}.png"))
     index.append({"code": c["code"], "name": c["name"], "short": c.get("abbreviatedName") or c["name"], "country": (c.get("country") or {}).get("name"),
                   "city": c.get("city"), "logo": f"logos/{c['code']}.png" if ok else None})
 index.sort(key=lambda c: c["name"])
@@ -79,7 +80,7 @@ print(f"{SEASON}: {len(index)} clubs")
 
 # ---- fallback photos: previous seasons' rosters, for players whose media-day image is not published yet
 prev_photo = {}
-for back in (1, 2):
+for back in ((1, 2) if not NO_PHOTOS else ()):
     ps = f"E{int(SEASON[1:]) - back}"
     try:
         pclubs = cached(f"prev_clubs_{ps}.json", lambda: get(f"{FEEDS}/{ps}/clubs")["data"])
@@ -110,7 +111,7 @@ for club in index:
             continue
         pc = p["person"]["code"]
         url = (p.get("images") or {}).get("headshot") or (p.get("images") or {}).get("action") or prev_photo.get(pc)
-        has_photo = save_image(url, os.path.join(PHOTOS, f"{pc}.webp"), height=PHOTO_H) if url else False
+        has_photo = save_image(url, os.path.join(PHOTOS, f"{pc}.webp"), height=PHOTO_H) if (url and not NO_PHOTOS) else os.path.exists(os.path.join(PHOTOS, f"{pc}.webp"))
         players.append({"pid": "P" + pc, "code": pc, "name": p["person"]["name"], "dorsal": p.get("dorsal"), "position": p.get("positionName"),
                         "height": p["person"].get("height"), "birth": (p["person"].get("birthDate") or "")[:10],
                         "country": (p["person"].get("country") or {}).get("name"), "photo": f"photos/{pc}.webp" if has_photo else None})

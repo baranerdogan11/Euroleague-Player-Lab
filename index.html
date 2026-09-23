@@ -20,7 +20,10 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font
 .tag{align-self:flex-start;background:var(--orange);color:#0a1731;padding:10px 18px 10px 22px;clip-path:polygon(10px 0,100% 0,100% 100%,0 100%);text-align:right;min-width:190px}
 .tag b{display:block;font-family:var(--disp);font-weight:800;font-size:30px;line-height:1;letter-spacing:.02em}
 .tag span{display:block;font-family:var(--disp);font-weight:700;font-size:11px;letter-spacing:.2em;text-transform:uppercase;margin-top:4px}
-.controls{display:grid;grid-template-columns:auto 1fr 1fr auto;gap:14px;padding:18px 0;align-items:end}
+.controls{display:grid;grid-template-columns:auto 1fr 1fr auto auto;gap:14px;padding:18px 0;align-items:end}
+.seg.season button{padding:12px 14px;font-size:15px}
+.seg.season button:disabled{opacity:.4;cursor:default}
+.season-note{display:inline-block;font-family:var(--disp);font-weight:700;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#0a1731;background:var(--orange);padding:3px 8px;border-radius:3px}
 .crest{width:58px;height:58px;display:flex;align-items:center;justify-content:center;background:var(--panel);border:1px solid var(--line2);border-radius:8px}
 .crest img{max-width:44px;max-height:44px}
 .field label{display:block;font-family:var(--disp);font-weight:700;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
@@ -110,7 +113,7 @@ td.w{color:var(--good)} td.l{color:#ff7b7b}
 .tip b{font-family:var(--disp);font-size:14px;letter-spacing:.04em}
 .foot{margin-top:26px;color:var(--muted);font-size:12px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
 .loading{opacity:.45;pointer-events:none}
-@media (max-width:900px){.hero{grid-template-columns:220px 1fr}.tiles{grid-template-columns:repeat(4,1fr)}.main{grid-template-columns:1fr}.controls{grid-template-columns:auto 1fr;grid-auto-rows:auto}.controls .btn{grid-column:1/-1}.brand h1{font-size:40px}.who h2{padding-right:0}.hero .club{position:static;margin-bottom:8px}}
+@media (max-width:900px){.hero{grid-template-columns:220px 1fr}.tiles{grid-template-columns:repeat(4,1fr)}.main{grid-template-columns:1fr}.controls{grid-template-columns:auto 1fr 1fr;grid-auto-rows:auto}.controls .btn{grid-column:1/-1}.brand h1{font-size:40px}.who h2{padding-right:0}.hero .club{position:static;margin-bottom:8px}}
 @media (max-width:600px){.top{flex-wrap:wrap;gap:12px}.tag{min-width:0;padding:8px 14px 8px 18px}.tag b{font-size:22px}.brand h1{font-size:34px}.hero{grid-template-columns:1fr;padding:0 18px 18px}.photo{height:260px}.photo img{height:250px}.who h2{font-size:34px}.controls{grid-template-columns:auto 1fr}.tiles{gap:6px}.tile{padding:8px 4px 6px}.tile b{font-size:22px}.tile span{font-size:9.5px;letter-spacing:.12em}.app{padding:0 14px 48px}.panel{padding:14px 12px}}
 </style>
 <div class="app">
@@ -123,6 +126,7 @@ td.w{color:var(--good)} td.l{color:#ff7b7b}
     <div class="crest" id="crest"><img id="crest-img" alt=""></div>
     <div class="field"><label for="team">Team</label><select id="team"></select></div>
     <div class="field"><label for="player">Player</label><select id="player"></select></div>
+    <div class="field"><label>Season</label><div class="seg season" id="f-season"><button aria-pressed="true" data-v="cur"></button><button aria-pressed="false" data-v="prev"></button></div></div>
     <button class="btn" id="replay" type="button">Replay chart</button>
   </div>
 
@@ -174,12 +178,12 @@ td.w{color:var(--good)} td.l{color:#ff7b7b}
 </div>
 <div class="tip" id="tip"></div>
 <script>
-const META = {"season": "E2026", "label": "2026-27", "clubs": [{"code": "IST", "name": "Anadolu Efes Istanbul", "short": "Anadolu Efes", "country": "Turkiye", "city": "ISTANBUL", "logo": "logos/IST.png"}, {"code": "MIL", "name": "Armani Olimpia Milan", "short": "Milan", "country": "Italy", "city": "Milan", "logo": "logos/MIL.png"}, {"code": "BES", "name": "Besiktas Istanbul", "short": "Besiktas", "country": "Turkiye", "city": "ISTANBUL", "logo": "logos/BES.png"}, {"code": "RED", "name": "Crvena Zvezda Meridianbet Belgrade", "short": "Crvena Zvezda", "country": "Serbia", "city": "BELGRADE", "logo": "logos/RED.png"}, {"code": "DUB", "name": "Dubai Basketball", "short": "Dubai", "country": "United Arab Emirates", "city": "Dubai", "logo": "logos/DUB.png"}, {"code": "BAR", "name": "FC Barcelona", "short": "FC Barcelona", "country": "Spain", "city": "BARCELONA", "logo": "logos/BAR.png"}, {"code": "MUN", "name": "FC Bayern Munich", "short": "Bayern Munich", "country": "Germany", "city": "Munich", "logo": "logos/MUN.png"}, {"code": "ULK", "name": "Fenerbahce Tarfin Istanbul", "short": "Fenerbahce", "country": "Turkiye", "city": "Istanbul", "logo": "logos/ULK.png"}, {"code": "HTA", "name": "Hapoel IBI Tel Aviv", "short": "Hapoel TLV", "country": "Israel", "city": "Tel Aviv", "logo": "logos/HTA.png"}, {"code": "BAS", "name": "Kosner Baskonia Vitoria-Gasteiz", "short": "Baskonia", "country": "Spain", "city": "VITORIA-GASTEIZ", "logo": "logos/BAS.png"}, {"code": "ASV", "name": "LDLC ASVEL Villeurbanne", "short": "LDLC ASVEL", "country": "France", "city": "Lyon", "logo": "logos/ASV.png"}, {"code": "TEL", "name": "Maccabi Rapyd Tel Aviv", "short": "Maccabi", "country": "Israel", "city": "Tel Aviv", "logo": "logos/TEL.png"}, {"code": "OLY", "name": "Olympiacos Piraeus", "short": "Olympiacos", "country": "Greece", "city": "PIRAEUS", "logo": "logos/OLY.png"}, {"code": "PAN", "name": "Panathinaikos AKTOR Athens", "short": "Panathinaikos", "country": "Greece", "city": "ATHENS", "logo": "logos/PAN.png"}, {"code": "PRS", "name": "Paris Basketball", "short": "Paris", "country": "France", "city": "Paris", "logo": "logos/PRS.png"}, {"code": "PAR", "name": "Partizan Mozzart Bet Belgrade", "short": "Partizan", "country": "Serbia", "city": "BELGRADE", "logo": "logos/PAR.png"}, {"code": "MAD", "name": "Real Madrid", "short": "Real Madrid", "country": "Spain", "city": "Madrid", "logo": "logos/MAD.png"}, {"code": "PAM", "name": "Valencia Basket", "short": "Valencia", "country": "Spain", "city": "VALENCIA", "logo": "logos/PAM.png"}, {"code": "VIR", "name": "Virtus Bologna", "short": "Virtus Bologna", "country": "Italy", "city": "BOLOGNA", "logo": "logos/VIR.png"}, {"code": "ZAL", "name": "Zalgiris Kaunas", "short": "Zalgiris", "country": "Lithuania", "city": "Kaunas", "logo": "logos/ZAL.png"}, {"code": "DEMO", "name": "Demo · Fenerbahce Beko Istanbul 2025-26", "short": "Fenerbahce", "country": null, "city": null, "logo": "logos/ULK.png", "real_code": "ULK", "demo": true}], "built": "2026-09-23", "path": "teams/E2026/"};
+const META = {"season": "E2026", "label": "2026-27", "prev_label": "2025-26", "clubs": [{"code": "IST", "name": "Anadolu Efes Istanbul", "short": "Anadolu Efes", "country": "Turkiye", "city": "ISTANBUL", "logo": "logos/IST.png"}, {"code": "MIL", "name": "Armani Olimpia Milan", "short": "Milan", "country": "Italy", "city": "Milan", "logo": "logos/MIL.png"}, {"code": "BES", "name": "Besiktas Istanbul", "short": "Besiktas", "country": "Turkiye", "city": "ISTANBUL", "logo": "logos/BES.png"}, {"code": "RED", "name": "Crvena Zvezda Meridianbet Belgrade", "short": "Crvena Zvezda", "country": "Serbia", "city": "BELGRADE", "logo": "logos/RED.png"}, {"code": "DUB", "name": "Dubai Basketball", "short": "Dubai", "country": "United Arab Emirates", "city": "Dubai", "logo": "logos/DUB.png"}, {"code": "BAR", "name": "FC Barcelona", "short": "FC Barcelona", "country": "Spain", "city": "BARCELONA", "logo": "logos/BAR.png"}, {"code": "MUN", "name": "FC Bayern Munich", "short": "Bayern Munich", "country": "Germany", "city": "Munich", "logo": "logos/MUN.png"}, {"code": "ULK", "name": "Fenerbahce Tarfin Istanbul", "short": "Fenerbahce", "country": "Turkiye", "city": "Istanbul", "logo": "logos/ULK.png"}, {"code": "HTA", "name": "Hapoel IBI Tel Aviv", "short": "Hapoel TLV", "country": "Israel", "city": "Tel Aviv", "logo": "logos/HTA.png"}, {"code": "BAS", "name": "Kosner Baskonia Vitoria-Gasteiz", "short": "Baskonia", "country": "Spain", "city": "VITORIA-GASTEIZ", "logo": "logos/BAS.png"}, {"code": "ASV", "name": "LDLC ASVEL Villeurbanne", "short": "LDLC ASVEL", "country": "France", "city": "Lyon", "logo": "logos/ASV.png"}, {"code": "TEL", "name": "Maccabi Rapyd Tel Aviv", "short": "Maccabi", "country": "Israel", "city": "Tel Aviv", "logo": "logos/TEL.png"}, {"code": "OLY", "name": "Olympiacos Piraeus", "short": "Olympiacos", "country": "Greece", "city": "PIRAEUS", "logo": "logos/OLY.png"}, {"code": "PAN", "name": "Panathinaikos AKTOR Athens", "short": "Panathinaikos", "country": "Greece", "city": "ATHENS", "logo": "logos/PAN.png"}, {"code": "PRS", "name": "Paris Basketball", "short": "Paris", "country": "France", "city": "Paris", "logo": "logos/PRS.png"}, {"code": "PAR", "name": "Partizan Mozzart Bet Belgrade", "short": "Partizan", "country": "Serbia", "city": "BELGRADE", "logo": "logos/PAR.png"}, {"code": "MAD", "name": "Real Madrid", "short": "Real Madrid", "country": "Spain", "city": "Madrid", "logo": "logos/MAD.png"}, {"code": "PAM", "name": "Valencia Basket", "short": "Valencia", "country": "Spain", "city": "VALENCIA", "logo": "logos/PAM.png"}, {"code": "VIR", "name": "Virtus Bologna", "short": "Virtus Bologna", "country": "Italy", "city": "BOLOGNA", "logo": "logos/VIR.png"}, {"code": "ZAL", "name": "Zalgiris Kaunas", "short": "Zalgiris", "country": "Lithuania", "city": "Kaunas", "logo": "logos/ZAL.png"}], "built": "2026-09-23", "path": "teams/E2026/"};
 const $ = s => document.querySelector(s);
 const CLUBS = Object.fromEntries(META.clubs.map(c => [c.code, c]));
 const shortName = code => (CLUBS[code] && CLUBS[code].short) || code;
 const PLACEHOLDER = "data:image/svg+xml;utf8," + encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 360 480'><defs><linearGradient id='g' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='#2e3b5e'/><stop offset='1' stop-color='#121f38'/></linearGradient></defs><circle cx='180' cy='150' r='80' fill='url(#g)'/><path d='M40 480 C40 330 110 280 180 280 C250 280 320 330 320 480Z' fill='url(#g)'/></svg>`);
-const state = {team: null, data: null, player: 0, result: 'all', view: 'dots', game: 'all', timers: []};
+const state = {team: null, data: null, player: 0, season: 'cur', result: 'all', view: 'dots', game: 'all', timers: []};
 const cache = {};
 const tip = $('#tip');
 const showTip = (e, h) => { tip.innerHTML = h; tip.style.opacity = 1; moveTip(e); };
@@ -217,12 +221,13 @@ function courtBase(){
 
 const team = () => state.data;
 const player = () => team().players[state.player];
+const ds = () => player()[state.season] || player().cur;      // active season dataset: {tot, log, shots, games}
+const autoSeason = p => (p.cur.tot.gp === 0 && p.prev) ? 'prev' : 'cur';
 function playerShots(){
-  const t = team(), p = state.player;
-  return t.shots.filter(s => s[1] === p && (state.game === 'all' || s[0] === +state.game) && (state.result === 'all' || (state.result === 'made') === !!s[4]));
+  return ds().shots.filter(s => (state.game === 'all' || s[0] === +state.game) && (state.result === 'all' || (state.result === 'made') === !!s[3]));
 }
 const realCode = () => team().real_code || team().code;
-const gameLabel = g => { const t = team(), home = g.home === realCode(), opp = home ? g.away : g.home, ts = home ? g.hs : g.as, os = home ? g.as : g.hs; return {opp: shortName(opp), home, res: ts > os ? 'W' : 'L', score: `${ts}-${os}`, txt: `R${g.round} · ${home ? 'vs' : '@'} ${shortName(opp)}`}; };
+const gameLabel = g => { const t = team(), home = g.home === (g.own || realCode()), opp = home ? g.away : g.home, ts = home ? g.hs : g.as, os = home ? g.as : g.hs; return {opp: shortName(opp), home, res: ts > os ? 'W' : 'L', score: `${ts}-${os}`, txt: `R${g.round} · ${home ? 'vs' : '@'} ${shortName(opp)}`}; };
 
 // ---- loading
 async function loadTeam(code){
@@ -239,55 +244,58 @@ async function loadTeam(code){
 function renderPlayers(){
   const t = team(), sel = $('#player');
   sel.innerHTML = t.players.map((p, i) => { const n = nameOf(p.name); return `<option value="${i}">#${p.dorsal || '–'} ${n.first} ${n.sur}</option>`; }).join('');
-  const top = t.players.reduce((b, p, i) => p.tot.min > t.players[b].tot.min ? i : b, 0);
-  sel.value = top; state.player = top; state.game = 'all';
+  const mins = p => p.cur.tot.min || (p.prev ? p.prev.tot.min : 0);
+  const top = t.players.reduce((b, p, i) => mins(p) > mins(t.players[b]) ? i : b, 0);
+  sel.value = top; state.player = top; state.game = 'all'; state.season = autoSeason(t.players[top]);
   renderGames(); renderPlayer();
 }
 function renderGames(){
-  const t = team(), sel = $('#game');
-  sel.innerHTML = t.games.length ? `<option value="all">All games (${t.games.length})</option>` + t.games.map((g, i) => { const l = gameLabel(g); return `<option value="${i}">${l.txt} · ${l.res} ${l.score}</option>`; }).join('') : '<option value="all">No games yet</option>';
-  sel.disabled = !t.games.length;
+  const games = ds().games, sel = $('#game');
+  sel.innerHTML = games.length ? `<option value="all">All games (${games.length})</option>` + games.map((g, i) => { const l = gameLabel(g); return `<option value="${i}">${l.txt} · ${l.res} ${l.score}</option>`; }).join('') : '<option value="all">No games yet</option>';
+  sel.disabled = !games.length;
 }
 function renderPlayer(){
-  const p = player(), t = team(), n = nameOf(p.name), tot = p.tot, gp = tot.gp || 1, played = tot.gp > 0;
+  const p = player(), t = team(), n = nameOf(p.name), d = ds(), tot = d.tot, gp = tot.gp || 1, played = tot.gp > 0;
+  $('#f-season button[data-v="prev"]').disabled = !p.prev; $('#f-season').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.v === state.season));
   $('#photo').src = p.photo || PLACEHOLDER; $('#photo').alt = `${n.first} ${n.sur}`; $('#num').textContent = p.dorsal || '';
   $('#pos').textContent = `${p.dorsal ? '#' + p.dorsal + ' · ' : ''}${p.position || ''}`; $('#nm').innerHTML = `${n.first}<br>${n.sur}`;
   const a = age(p.birth);
   $('#facts').innerHTML = [p.height ? `<span><b>${p.height} cm</b></span>` : '', a ? `<span><b>${a}</b> yrs</span>` : '', p.country ? `<span>${p.country}</span>` : '',
-    played ? `<span><b>${tot.gp}</b> games · <b>${f1(tot.min / gp)}</b> min</span>` : `<span><b>0</b> games</span>`].join('');
+    played ? `<span><b>${tot.gp}</b> games · <b>${f1(tot.min / gp)}</b> min</span>` : `<span><b>0</b> games</span>`,
+    state.season === 'prev' ? `<span class="season-note">${META.prev_label} season${p.cur.tot.gp === 0 ? ' · no ' + META.label + ' games yet' : ''}</span>` : ''].join('');
   const tiles = [['pts', 'PTS', 1], ['reb', 'REB', 0], ['ast', 'AST', 0], ['stl', 'STL', 0], ['blk', 'BLK', 0], ['tov', 'TOV', 0], ['pir', 'PIR', 1]];
   $('#tiles').innerHTML = tiles.map(([k, l, o]) => `<div class="tile ${o ? 'o' : ''} ${played ? '' : 'na'}"><b>${played ? f1(tot[k] / gp) : '–'}</b><span>${l}</span></div>`).join('');
   const fga = tot.fga2 + tot.fga3, ts = (fga + 0.44 * tot.fta) ? tot.pts / (2 * (fga + 0.44 * tot.fta)) : 0;
   const rows = [['2P', tot.fgm2, tot.fga2, tot.fga2 ? tot.fgm2 / tot.fga2 : 0], ['3P', tot.fgm3, tot.fga3, tot.fga3 ? tot.fgm3 / tot.fga3 : 0], ['FT', tot.ftm, tot.fta, tot.fta ? tot.ftm / tot.fta : 0], ['TS', null, null, ts]];
   $('#splits').innerHTML = rows.map(([k, m, at, v]) => `<div class="split"><span class="k">${k}%</span><div class="bar"><i style="width:${played ? Math.min(100, v * 100) : 0}%"></i></div><div class="v"><b>${played ? (v * 100).toFixed(1) : '–'}</b>${m !== null && played ? `${m}/${at}` : ''}</div></div>`).join('');
   const lg = $('#log tbody');
-  lg.innerHTML = p.log.map(r => { const g = t.games[r[0]], l = gameLabel(g); return `<tr><td class="k">${g.round}</td><td>${fmtDate(g.date)}</td><td>${l.home ? 'vs' : '@'} ${l.opp}</td><td class="${l.res === 'W' ? 'w' : 'l'}">${l.res} ${l.score}</td><td>${r[1]}</td><td class="k">${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td><td>${r[5]}</td><td>${r[6]}</td><td>${r[7]}</td><td>${r[8]}/${r[9]}</td><td>${r[10]}/${r[11]}</td><td>${r[12]}/${r[13]}</td><td>${r[14]}</td><td>${r[15] ?? ''}</td></tr>`; }).join('');
-  $('#log-none').hidden = p.log.length > 0; $('#log-panel .scroll').hidden = p.log.length === 0;
-  $('#foot-l').textContent = `${CLUBS[t.code].name} · ${t.games.length} games played · ${t.shots.length.toLocaleString()} team shots · updated ${META.built}`;
+  lg.innerHTML = d.log.map(r => { const g = d.games[r[0]], l = gameLabel(g); return `<tr><td class="k">${g.round}</td><td>${fmtDate(g.date)}</td><td>${l.home ? 'vs' : '@'} ${l.opp}</td><td class="${l.res === 'W' ? 'w' : 'l'}">${l.res} ${l.score}</td><td>${r[1]}</td><td class="k">${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td><td>${r[5]}</td><td>${r[6]}</td><td>${r[7]}</td><td>${r[8]}/${r[9]}</td><td>${r[10]}/${r[11]}</td><td>${r[12]}/${r[13]}</td><td>${r[14]}</td><td>${r[15] ?? ''}</td></tr>`; }).join('');
+  $('#log-none').hidden = d.log.length > 0; $('#log-panel .scroll').hidden = d.log.length === 0;
+  $('#foot-l').textContent = `${CLUBS[t.code].name} · ${t.games_played} ${META.label} games played · updated ${META.built}`;
   renderChart(true);
 }
 function zoneStats(shots){
   const z = {}; Object.keys(ZONES).forEach(k => z[k] = {m: 0, a: 0});
-  shots.forEach(s => { const k = zoneOf(s[2], s[3], s[5]); z[k].a++; z[k].m += s[4]; });
+  shots.forEach(s => { const k = zoneOf(s[1], s[2], s[4]); z[k].a++; z[k].m += s[3]; });
   return z;
 }
 function renderChart(animate){
   state.timers.forEach(clearTimeout); state.timers = [];
   const svg = $('#court'); svg.innerHTML = courtBase();
-  const t = team(), shots = playerShots();
+  const t = team(), d = ds(), games = d.games, shots = playerShots();
   const layer = svg.querySelector('#shots-layer'), zl = svg.querySelector('#zones-layer');
   const zs = zoneStats(shots), total = shots.length || 1;
   $('#zones tbody').innerHTML = Object.entries(ZONES).map(([k, l]) => { const v = zs[k]; const share = v.a / total; return `<tr><td class="k">${l}</td><td>${v.a ? `${v.m} / ${v.a}` : '–'}</td><td class="k">${pct(v.m, v.a)}</td><td>${v.a ? (share * 100).toFixed(0) + '%' : '–'}<span class="zone-bar" style="width:${Math.round(share * 60)}px"></span></td></tr>`; }).join('');
   const empty = $('#empty');
   const is3d = state.view === '3d';
   $('#court').style.display = is3d ? 'none' : ''; $('#court3d').hidden = !is3d;
-  if (is3d) { empty.hidden = t.games.length > 0; if (!t.games.length) { $('#cap').textContent = 'Season not started'; return; } Shot3D.play(shots, s => gameLabel(t.games[s[0]])); return; }
+  if (is3d) { empty.hidden = games.length > 0; if (!games.length) { $('#cap').textContent = 'No games yet'; return; } Shot3D.play(shots, s => gameLabel(games[s[0]])); return; }
   Shot3D.stop();
-  if (!t.games.length) {
+  if (!games.length) {
     const nx = t.upcoming && t.upcoming[0];
     const l = nx ? (nx.home === realCode() ? `vs ${shortName(nx.away)}` : `@ ${shortName(nx.home)}`) : null;
     $('#empty-sub').textContent = nx ? `First game: Round ${nx.round} ${l} · ${fmtDate(nx.date)}` : 'The season has not started.';
-    empty.hidden = false; $('#cap').textContent = 'Season not started'; return;
+    empty.hidden = false; $('#cap').textContent = 'No games yet'; return;
   }
   empty.hidden = true;
   if (state.view === 'zones') {
@@ -308,19 +316,19 @@ function renderChart(animate){
   const capEl = $('#cap');
   shots.forEach((s, i) => {
     const draw = () => {
-      const x = X(s[2]), y = Y(s[3]);
+      const x = X(s[1]), y = Y(s[2]);
       const el = document.createElementNS('http://www.w3.org/2000/svg', 'g');
       el.setAttribute('class', 'shot');
-      el.innerHTML = s[4] ? `<circle class="made" cx="${x}" cy="${y}" r="17"/>` : `<circle class="miss" cx="${x}" cy="${y}" r="15"/><line class="missx" x1="${x - 7}" y1="${y - 7}" x2="${x + 7}" y2="${y + 7}"/><line class="missx" x1="${x + 7}" y1="${y - 7}" x2="${x - 7}" y2="${y + 7}"/>`;
-      const g = t.games[s[0]], l = gameLabel(g);
-      el.addEventListener('mousemove', e => showTip(e, `<b>${s[4] ? 'Made' : 'Missed'} ${s[5]}PT · ${ZONES[zoneOf(s[2], s[3], s[5])]}</b><br>${l.txt} · Q${s[6] > 40 ? 'OT' : Math.ceil(s[6] / 10)} · ${(Math.hypot(s[2], s[3]) / 100).toFixed(1)} m${s[8] ? ' · fast break' : ''}${s[9] ? ' · second chance' : ''}`));
+      el.innerHTML = s[3] ? `<circle class="made" cx="${x}" cy="${y}" r="17"/>` : `<circle class="miss" cx="${x}" cy="${y}" r="15"/><line class="missx" x1="${x - 7}" y1="${y - 7}" x2="${x + 7}" y2="${y + 7}"/><line class="missx" x1="${x + 7}" y1="${y - 7}" x2="${x - 7}" y2="${y + 7}"/>`;
+      const g = games[s[0]], l = gameLabel(g);
+      el.addEventListener('mousemove', e => showTip(e, `<b>${s[3] ? 'Made' : 'Missed'} ${s[4]}PT · ${ZONES[zoneOf(s[1], s[2], s[4])]}</b><br>${l.txt} · Q${s[5] > 40 ? 'OT' : Math.ceil(s[5] / 10)} · ${(Math.hypot(s[1], s[2]) / 100).toFixed(1)} m${s[7] ? ' · fast break' : ''}${s[8] ? ' · second chance' : ''}`));
       el.addEventListener('mouseleave', hideTip);
       layer.appendChild(el);
       if (step) capEl.textContent = `${l.txt} · ${i + 1} / ${shots.length}`;
     };
     if (step) state.timers.push(setTimeout(draw, i * step)); else draw();
   });
-  const done = () => { const m = shots.filter(s => s[4]).length; capEl.textContent = shots.length ? `${m} / ${shots.length} made · ${pct(m, shots.length)}${state.game !== 'all' ? ' · ' + gameLabel(t.games[+state.game]).txt : ''}` : 'No attempts in this selection'; };
+  const done = () => { const m = shots.filter(s => s[3]).length; capEl.textContent = shots.length ? `${m} / ${shots.length} made · ${pct(m, shots.length)}${state.game !== 'all' ? ' · ' + gameLabel(games[+state.game]).txt : ''}` : 'No attempts in this selection'; };
   if (step) state.timers.push(setTimeout(done, shots.length * step + 200)); else done();
 }
 
@@ -383,12 +391,12 @@ const Shot3D = (() => {
   }
   function resize(){ if (!R) return; const w = R.host.clientWidth, h = R.host.clientHeight; if (!w || !h) return; R.renderer.setSize(w, h, false); R.camera.aspect = w / h; R.camera.updateProjectionMatrix(); }
   function applyCam(){ const {target, az, el, dist} = cam; R.camera.position.set(target.x + dist * Math.cos(el) * Math.sin(az), target.y + dist * Math.sin(el), target.z + dist * Math.cos(el) * Math.cos(az)); R.camera.lookAt(target); }
-  const toWorld = s => new THREE.Vector3(s[2] / 100, 0, 1.575 + s[3] / 100);
+  const toWorld = s => new THREE.Vector3(s[1] / 100, 0, 1.575 + s[2] / 100);
   function launch(s){
     const start = toWorld(s), dist = Math.hypot(start.x, start.z - R.RIM.z);
     const release = start.clone(); release.y = dist < 1.5 ? 2.4 : 2.05;
     let end;
-    if (s[4]) end = R.RIM.clone();
+    if (s[3]) end = R.RIM.clone();
     else { const a = Math.atan2(start.z - R.RIM.z, start.x - R.RIM.x) + (Math.random() - 0.5) * 1.2; end = new THREE.Vector3(Math.cos(a) * 0.23, R.RIM.y + 0.02, R.RIM.z + Math.sin(a) * 0.23); }
     const T = Math.max(0.75, Math.min(1.5, 0.55 + dist * 0.11)), apex = Math.max(1.0, Math.min(3.4, 0.6 + dist * 0.28));
     const ball = new THREE.Mesh(R.ballGeo, R.ballMat); ball.castShadow = true; R.scene.add(ball);
@@ -402,16 +410,16 @@ const Shot3D = (() => {
         f.t += dt / f.T; const u = Math.min(1, f.t);
         f.ball.position.lerpVectors(f.release, f.end, u); f.ball.position.y = f.release.y + (f.end.y - f.release.y) * u + 4 * f.apex * u * (1 - u); f.ball.rotation.x += dt * 9;
         if (f.t >= 1) {
-          f.phase = 1; const p = toWorld(f.s); const m = new THREE.Mesh(f.s[4] ? R.markMade : R.markMiss, f.s[4] ? R.madeMark : R.missMark);
+          f.phase = 1; const p = toWorld(f.s); const m = new THREE.Mesh(f.s[3] ? R.markMade : R.markMiss, f.s[3] ? R.madeMark : R.missMark);
           m.rotation.x = -Math.PI / 2; m.position.set(p.x, 0.012 + R.markers.children.length * 0.00002, p.z); R.markers.add(m);
-          S.seen++; S.made += f.s[4]; if (!f.s[4]) f.ball.material = R.missBall;
+          S.seen++; S.made += f.s[3]; if (!f.s[3]) f.ball.material = R.missBall;
           const l = S.labelOf(f.s); $('#cap').textContent = `${l.txt} · ${S.seen} / ${S.list.length}`;
         }
       } else {
         f.post += dt;
-        if (f.s[4]) { f.ball.position.y -= dt * 2.2; if (f.ball.position.y < 2.4) f.ball.position.y -= dt * 4; }
+        if (f.s[3]) { f.ball.position.y -= dt * 2.2; if (f.ball.position.y < 2.4) f.ball.position.y -= dt * 4; }
         else { f.v.y -= 9.81 * dt; f.ball.position.addScaledVector(f.v, dt); if (f.ball.position.y < 0.12) { f.ball.position.y = 0.12; f.v.y = Math.abs(f.v.y) * 0.45; f.v.x *= 0.7; f.v.z *= 0.7; } }
-        if (f.post > (f.s[4] ? 0.55 : 1.3)) { R.scene.remove(f.ball); S.flights.splice(k, 1); }
+        if (f.post > (f.s[3] ? 0.55 : 1.3)) { R.scene.remove(f.ball); S.flights.splice(k, 1); }
       }
     }
   }
@@ -444,9 +452,11 @@ $('#f-cam').querySelectorAll('button').forEach(b => b.addEventListener('click', 
 
 // ---- wiring
 $('#tag-season').textContent = META.label;
+$('#f-season button[data-v="cur"]').textContent = META.label; $('#f-season button[data-v="prev"]').textContent = META.prev_label || '–';
+$('#f-season').querySelectorAll('button').forEach(b => b.addEventListener('click', () => { if (b.disabled) return; state.season = b.dataset.v; state.game = 'all'; renderGames(); renderPlayer(); }));
 $('#team').innerHTML = META.clubs.map(c => `<option value="${c.code}">${c.name}</option>`).join('');
 $('#team').addEventListener('change', e => { loadTeam(e.target.value); location.hash = e.target.value; });
-$('#player').addEventListener('change', e => { state.player = +e.target.value; state.game = 'all'; $('#game').value = 'all'; renderPlayer(); location.hash = `${state.team}/${player().pid}`; });
+$('#player').addEventListener('change', e => { state.player = +e.target.value; state.game = 'all'; state.season = autoSeason(player()); renderGames(); renderPlayer(); location.hash = `${state.team}/${player().pid}`; });
 $('#game').addEventListener('change', e => { state.game = e.target.value; renderChart(true); });
 $('#replay').addEventListener('click', () => renderChart(true));
 [['#f-result', 'result'], ['#f-view', 'view']].forEach(([sel, key]) => {
@@ -459,7 +469,7 @@ $('#replay').addEventListener('click', () => renderChart(true));
   const code = CLUBS[h[0]] ? h[0] : META.clubs[0].code;
   $('#team').value = code;
   await loadTeam(code);
-  if (h[1]) { const i = team().players.findIndex(p => p.pid === h[1]); if (i >= 0) { $('#player').value = i; state.player = i; renderPlayer(); } }
+  if (h[1]) { const i = team().players.findIndex(p => p.pid === h[1]); if (i >= 0) { $('#player').value = i; state.player = i; state.season = autoSeason(player()); renderGames(); renderPlayer(); } }
   if (h[2] === 'zones' || h[2] === '3d') $(`#f-view button[data-v="${h[2]}"]`).click();
   const dbg = +new URLSearchParams(location.search).get('debug3d');
   if (dbg) { await new Promise(r => setTimeout(r, 5000)); for (let k = 0; k < dbg; k++) Shot3D.tick(0.05); }
