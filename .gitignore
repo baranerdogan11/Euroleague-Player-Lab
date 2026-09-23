@@ -1,4 +1,4 @@
-# fetched caches and the intermediate JSON: rebuilt by fetch_team.py
+# fetched raw caches and intermediate JSON: rebuilt by fetch_season.py
 cache/
 data/
 __pycache__/

@@ -2,15 +2,14 @@
 
 **Live app:** https://baranerdogan11.github.io/Euroleague-Shot-Profiles/
 
-Player stats and animated shot charts for every Euroleague player, updated game by game from the league's
-official feeds. Pick a team, pick a player: season numbers, shooting splits, accuracy by zone of the floor,
-and every field-goal attempt of the season plotted on a half court, made and missed, played back in order.
-
-Demo: Fenerbahçe Beko 2025-26, 43 games, 2,664 shots, media-day photos from the 2026-27 campaign.
+Player stats and animated shot charts for every Euroleague player in the 2026-27 season, updated game by game
+from the league's official feeds. Pick a team, pick a player: season numbers, shooting splits, accuracy by zone
+of the floor, and every field-goal attempt of the season plotted on a half court, made and missed, played back
+in order.
 
 ## What it shows
 
-- Team dropdown, then a player dropdown limited to that team's roster
+- All 20 clubs with crests; player dropdown limited to the selected club's registered roster
 - Media-day photo, number, position, height, age, nationality, games and minutes
 - Per-game PTS, REB, AST, STL, BLK, TOV, PIR and fouls drawn
 - 2P%, 3P%, FT% and true shooting, with makes over attempts
@@ -18,23 +17,31 @@ Demo: Fenerbahçe Beko 2025-26, 43 games, 2,664 shots, media-day photos from the
 - Animated shot chart with made / missed filter, single-game filter, and a Zones view shading the floor by FG%
 - Hover any shot for the game, quarter, distance, fast break and second chance
 - Game log
-- Deep links: `index.html#ULK/P002100/zones` (team code, player id, optional `zones`)
+- Before a club's first game the page shows the roster and the date of the opener; stats fill in as games are played
+- Deep links: `#ULK`, `#ULK/P007200`, `#ULK/P007200/zones` (club code, player id, optional zones view)
 
-## Run it
+## Update after each round
 
 ```bash
 pip install -r requirements.txt
-python fetch_team.py ULK E2025   # roster, photos, box scores, shot coordinates; cached per game
-python build.py                  # writes index.html
-open index.html
+python fetch_season.py E2026   # clubs, crests, rosters, photos, then shots and box scores for new games
+python build.py E2026          # writes index.html and teams/E2026/*.json
+git add -A && git commit -m "Update after round" && git push   # GitHub Pages redeploys in about a minute
 ```
 
-`fetch_team.py` pulls only games that are not yet in `cache/`, so re-running it after each round adds the new
-games and `build.py` refreshes the page. Any club works: `python fetch_team.py OLY E2026`. Every club fetched
-appears in the team dropdown.
+`fetch_season.py` caches every game, roster and image under `cache/`, so a rerun only downloads what is new.
+
+## Layout
+
+- `index.html`: the page (loads a club's JSON when it is selected)
+- `teams/E2026/index.json`, `teams/E2026/<CLUB>.json`: compact per-club data (stats, game log, shots)
+- `photos/<player>.webp`, `logos/<CLUB>.png`: media-day photos and crests
+- `fetch_season.py`, `build.py`, `template.html`: the pipeline and page source
+
+The page fetches its data files, so serve the folder over HTTP to run it locally
+(`python -m http.server 8000`, then open http://localhost:8000/); opening `index.html` directly from disk will not load data.
 
 ## Data
 
-Rosters, photos, box scores and shot coordinates come from the Euroleague official API and live feeds.
+Rosters, crests, photos, box scores and shot coordinates come from the Euroleague official API and live feeds.
 Coordinates are in centimetres relative to the basket; the court is drawn to FIBA dimensions.
-`index.html` is a single self-contained file (photos embedded), so it can be hosted anywhere or opened directly.
