@@ -1,0 +1,15 @@
+{
+ "season": "E2026",
+ "checked_at": "2026-09-23T11:52:41Z",
+ "clubs": 20,
+ "players": 317,
+ "games": 0,
+ "shots": 0,
+ "box_lines_reconciled": 0,
+ "players_without_photo": 21,
+ "failures": 0,
+ "warnings": 0,
+ "ok": true,
+ "failure_list": [],
+ "warning_list": []
+}

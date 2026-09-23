@@ -72,7 +72,7 @@ clubs = json.load(open(os.path.join(DATA, "clubs.json")))
 club_list = list(clubs["clubs"])
 summary = []
 for path in sorted(glob.glob(os.path.join(DATA, "*.json"))):
-    if path.endswith("clubs.json"):
+    if path.endswith(("clubs.json", "status.json")):
         continue
     d = json.load(open(path))
     if d.get("club_meta"):
