@@ -1,6 +1,6 @@
 # Euroleague Shot Profiles
 
-**Live app:** https://baranerdogan11.github.io/Euroleague-Shot-Profiles/
+**Live app:** https://baranerdogan11.github.io/Euroleague-Shot-Profiles/ · **Live xFG API:** https://euroleague-xfg.onrender.com (docs at `/docs`)
 
 Player stats and animated shot charts for every Euroleague player in the 2026-27 season, updated game by game
 from the league's official feeds. Pick a team, pick a player: season numbers, shooting splits, accuracy by zone
@@ -101,7 +101,11 @@ builds the Docker image, publishes it to GitHub Container Registry as
 `ghcr.io/baranerdogan11/euroleague-xfg:latest` (and one tag per commit), then starts the published image and
 calls `/predict` as a smoke test. `render.yaml` deploys the same image to Render's free tier with a health check.
 
+The service is deployed at https://euroleague-xfg.onrender.com (free tier: the first call after idle takes
+about 30 seconds); interactive docs at https://euroleague-xfg.onrender.com/docs.
+
 ```bash
+curl -X POST https://euroleague-xfg.onrender.com/predict -H 'content-type: application/json' -d '{"shots":[{"x":0,"y":700,"pts":3}]}'
 docker run -p 8000:8000 ghcr.io/baranerdogan11/euroleague-xfg:latest
 curl -X POST localhost:8000/predict -H 'content-type: application/json' \
      -d '{"shots":[{"x":0,"y":700,"pts":3},{"x":10,"y":50,"pts":2,"minute":38,"clock":"00:20","home":false,"margin":-3,"player":"002100"}]}'
