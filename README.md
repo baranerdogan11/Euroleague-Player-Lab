@@ -1,6 +1,6 @@
-# Euroleague Shot Profiles
+# Euroleague Player Lab
 
-**Live app:** https://baranerdogan11.github.io/Euroleague-Shot-Profiles/ · **Live xFG API:** https://euroleague-xfg.onrender.com (docs at `/docs`)
+**Live app:** https://baranerdogan11.github.io/Euroleague-Player-Lab/ · **Live xFG API:** https://euroleague-xfg.onrender.com (docs at `/docs`)
 
 Player stats and animated shot charts for every Euroleague player in the 2026-27 season, updated game by game
 from the league's official feeds. Pick a team, pick a player: season numbers, shooting splits, accuracy by zone
@@ -107,7 +107,7 @@ two superlative notes, and the prompt now forbids league-wide claims.
 
 ## Monitoring
 
-[`monitor.html`](https://baranerdogan11.github.io/Euroleague-Shot-Profiles/monitor.html) is the system's status page,
+[`monitor.html`](https://baranerdogan11.github.io/Euroleague-Player-Lab/monitor.html) is the system's status page,
 fed by `teams/E2026/monitor.json` which `model/monitor.py` writes at the end of every nightly run (and an append-only
 `warehouse/E2026/run_history.jsonl`). It shows: pipeline result and run history; data freshness against the
 schedule (games played per round, days since the last game); the xFG model's log loss and Brier per round on
