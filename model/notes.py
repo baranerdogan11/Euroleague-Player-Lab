@@ -40,7 +40,11 @@ Rules, all strict:
 - One paragraph, no line breaks.
 - "shot_quality" is the expected points per attempt of the shots he takes; "shooting_skill_per100" is points per 100
   attempts above what a league-average shooter would score on the same shots (a skill estimate, shrunk toward zero).
-  When attempts are under 100, say the sample is small.
+  The estimate leans on a league prior worth about 260 attempts: under 260 attempts say it is still shrunk toward the
+  league; under 100 call the sample small.
+- "league_benchmarks" gives the league-wide rate for each zone and split and the player's position group. Words like
+  elite, excellent, strong, poor or weak are allowed only in the same sentence as the number that supports them (the
+  player's figure next to the league benchmark, or a percentile). Never grade a rate without its benchmark.
 - Lead with the most informative fact. Plain, specific prose; no bullet points, no headings.
 Return JSON matching the schema."""
 
@@ -64,6 +68,24 @@ def zone_of(x, y, pts):
     return "mid"
 
 
+def league_benchmarks(con, w):
+    """League FG% by zone and the league shooting splits from this season's warehouse, or the reference season while it is thin."""
+    for season_dir in (w, os.path.join(ROOT, "warehouse", json.load(open(os.path.join(ROOT, "model", "shooting_priors.json"))).get("reference_season", "E2025"))):
+        sp, bp = os.path.join(season_dir, "shots.parquet"), os.path.join(season_dir, "box.parquet")
+        if not (os.path.exists(sp) and os.path.exists(bp)):
+            continue
+        rows = con.execute(f"select x, y, pts, made::int from read_parquet('{sp}')").fetchall()
+        if len(rows) < 3000:
+            continue
+        acc = {}
+        for x, y, pts, made in rows:
+            z = acc.setdefault(zone_of(x, y, pts), [0, 0]); z[0] += 1; z[1] += made
+        fgm2, fga2, fgm3, fga3, ftm, fta, pts = con.execute(f"select sum(fgm2), sum(fga2), sum(fgm3), sum(fga3), sum(ftm), sum(fta), sum(pts) from read_parquet('{bp}')").fetchone()
+        return {"season": os.path.basename(season_dir)[1:] + "-" + str(int(os.path.basename(season_dir)[1:]) + 1)[2:], "zones_pct": {ZONES[k]: round(v[1] / v[0], 3) for k, v in acc.items()},
+                "two_point_pct": round(fgm2 / fga2, 3), "three_point_pct": round(fgm3 / fga3, 3), "free_throw_pct": round(ftm / fta, 3), "true_shooting_pct": round(pts / (2 * (fga2 + fga3 + 0.44 * fta)), 3)}
+    return None
+
+
 def fact_sheets(season):
     w = os.path.join(ROOT, "warehouse", season)
     con = duckdb.connect()
@@ -81,6 +103,7 @@ def fact_sheets(season):
                   join roster_stints s on s.player = b.player and s.active
                   join clubs c on c.club = s.club
                   where b.minutes > 0 group by 1,2,3,4,5""")
+    bench = league_benchmarks(con, w)
     sheets = []
     for r in played:
         fga = r["fga2"] + r["fga3"]
@@ -91,6 +114,8 @@ def fact_sheets(season):
                  "three_point": {"made": r["fgm3"], "att": r["fga3"], "pct": round(r["fgm3"] / r["fga3"], 3) if r["fga3"] else None},
                  "free_throw": {"made": r["ftm"], "att": r["fta"], "pct": round(r["ftm"] / r["fta"], 3) if r["fta"] else None},
                  "true_shooting_pct": round(ts, 3) if ts else None}
+        if bench:
+            sheet["league_benchmarks"] = {**bench, "position_group": (r["position"] or "").split()[0] if r["position"] else None}
         sh = q("select s.x, s.y, s.made, s.pts, x.xfg_ctx from shots s left join shots_xfg x using (game, seq) where s.player = ?", r["player"])
         if sh:
             zones = {}

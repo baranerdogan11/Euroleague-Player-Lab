@@ -66,6 +66,11 @@ def check_note(note, facts, subject_name, other_names=()):
     for phrase in ("in the league", "in europe", "league-best", "league-worst", "best in", "worst in"):
         if phrase in note.lower():
             reasons.append(f"unsupported league-wide claim: '{phrase}'")
+    for sent in re.split(r"(?<=[.!?])\s+", note):        # grading words need the number that supports them in the same sentence
+        low_s = sent.lower()
+        for adj in ("elite", "excellent", "outstanding", "superb", "strong", "poor", "weak", "terrible", "dominant"):
+            if re.search(r"\b" + adj + r"\b", low_s) and not re.search(r"\d", sent):
+                reasons.append(f"ungrounded adjective: '{adj}'")
     words = len(note.split())
     if words > MAX_WORDS:
         reasons.append(f"too long: {words} words > {MAX_WORDS}")

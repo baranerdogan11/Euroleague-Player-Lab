@@ -141,6 +141,7 @@ for club in index:
             shots.append({"game": gc, "pid": r["ID_PLAYER"].strip(), "x": r["COORD_X"], "y": r["COORD_Y"], "made": act.endswith("M"),
                           "pts": 3 if act.startswith("3") else 2, "zone": r["ZONE"].strip(), "q": r["MINUTE"], "clock": r["CONSOLE"],
                           "fastbreak": r["FASTBREAK"] == "1", "second_chance": r["SECOND_CHANCE"] == "1"})
+        cached(f"pbp_{gc}.json", lambda: get(f"{LIVE}/PlayByPlay", {"gamecode": gc, "seasoncode": SEASON}))   # events: assists, fouls, blocks, substitutions, clock
         j = cached(f"box_{gc}.json", lambda: get(f"{LIVE}/Boxscore", {"gamecode": gc, "seasoncode": SEASON}))
         for side in j.get("Stats", []):
             for p in side.get("PlayersStats", []):

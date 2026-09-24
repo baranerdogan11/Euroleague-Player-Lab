@@ -1,17 +1,17 @@
 {
  "season": "E2026",
- "generated_at": "2026-09-24 07:47 UTC",
+ "generated_at": "2026-09-24 16:48 UTC",
  "pipeline": {
   "last": {
    "date": "2026-09-24",
-   "at": "2026-09-24T07:47:17Z",
+   "at": "2026-09-24T16:48:41Z",
    "ok": true,
    "games": 0,
    "shots": 0,
    "players": 320,
    "failures": 0,
-   "ci": true,
-   "run_id": "35971231383"
+   "ci": false,
+   "run_id": null
   },
   "history": [
    {
@@ -27,14 +27,14 @@
    },
    {
     "date": "2026-09-24",
-    "at": "2026-09-24T07:47:17Z",
+    "at": "2026-09-24T16:48:41Z",
     "ok": true,
     "games": 0,
     "shots": 0,
     "players": 320,
     "failures": 0,
-    "ci": true,
-    "run_id": "35971231383"
+    "ci": false,
+    "run_id": null
    }
   ],
   "tests": 23
@@ -249,6 +249,7 @@
     "shots": 1304,
     "actual": 0.4747,
     "predicted": 0.4741,
+    "pae_ctx": -1.47,
     "logloss": 0.6313,
     "brier": 0.2214,
     "logloss_constant": 0.6919
@@ -258,6 +259,7 @@
     "shots": 1284,
     "actual": 0.4914,
     "predicted": 0.4714,
+    "pae_ctx": 63.57,
     "logloss": 0.6265,
     "brier": 0.2197,
     "logloss_constant": 0.6936
@@ -267,6 +269,7 @@
     "shots": 1249,
     "actual": 0.4748,
     "predicted": 0.4582,
+    "pae_ctx": 35.2,
     "logloss": 0.6217,
     "brier": 0.217,
     "logloss_constant": 0.6919
@@ -276,6 +279,7 @@
     "shots": 1250,
     "actual": 0.4552,
     "predicted": 0.4656,
+    "pae_ctx": -38.9,
     "logloss": 0.6293,
     "brier": 0.2205,
     "logloss_constant": 0.6898
@@ -285,6 +289,7 @@
     "shots": 1299,
     "actual": 0.4642,
     "predicted": 0.4796,
+    "pae_ctx": -46.35,
     "logloss": 0.6239,
     "brier": 0.2188,
     "logloss_constant": 0.6908
@@ -294,6 +299,7 @@
     "shots": 1271,
     "actual": 0.4721,
     "predicted": 0.4729,
+    "pae_ctx": -4.73,
     "logloss": 0.6242,
     "brier": 0.2199,
     "logloss_constant": 0.6916
@@ -303,6 +309,7 @@
     "shots": 1266,
     "actual": 0.4684,
     "predicted": 0.4706,
+    "pae_ctx": -27.01,
     "logloss": 0.6138,
     "brier": 0.2133,
     "logloss_constant": 0.6912
@@ -312,6 +319,7 @@
     "shots": 1276,
     "actual": 0.435,
     "predicted": 0.47,
+    "pae_ctx": -115.18,
     "logloss": 0.6057,
     "brier": 0.2107,
     "logloss_constant": 0.6877
@@ -321,6 +329,7 @@
     "shots": 1325,
     "actual": 0.4687,
     "predicted": 0.4834,
+    "pae_ctx": -44.71,
     "logloss": 0.6157,
     "brier": 0.2162,
     "logloss_constant": 0.6912
@@ -330,6 +339,7 @@
     "shots": 1283,
     "actual": 0.4669,
     "predicted": 0.4769,
+    "pae_ctx": -27.16,
     "logloss": 0.6375,
     "brier": 0.2247,
     "logloss_constant": 0.6911
@@ -339,6 +349,7 @@
     "shots": 1267,
     "actual": 0.4775,
     "predicted": 0.4699,
+    "pae_ctx": 21.25,
     "logloss": 0.6226,
     "brier": 0.2181,
     "logloss_constant": 0.6922
@@ -348,6 +359,7 @@
     "shots": 1258,
     "actual": 0.4762,
     "predicted": 0.4836,
+    "pae_ctx": -35.86,
     "logloss": 0.6227,
     "brier": 0.2181,
     "logloss_constant": 0.692
@@ -357,6 +369,7 @@
     "shots": 1233,
     "actual": 0.4509,
     "predicted": 0.4846,
+    "pae_ctx": -92.9,
     "logloss": 0.6209,
     "brier": 0.2173,
     "logloss_constant": 0.6894
@@ -366,6 +379,7 @@
     "shots": 1320,
     "actual": 0.4682,
     "predicted": 0.4776,
+    "pae_ctx": -28.59,
     "logloss": 0.6188,
     "brier": 0.2172,
     "logloss_constant": 0.6912
@@ -375,6 +389,7 @@
     "shots": 1306,
     "actual": 0.4839,
     "predicted": 0.4646,
+    "pae_ctx": 48.45,
     "logloss": 0.6322,
     "brier": 0.2218,
     "logloss_constant": 0.6928
@@ -384,6 +399,7 @@
     "shots": 1261,
     "actual": 0.4584,
     "predicted": 0.4798,
+    "pae_ctx": -54.28,
     "logloss": 0.6085,
     "brier": 0.2122,
     "logloss_constant": 0.6902
@@ -393,6 +409,7 @@
     "shots": 1353,
     "actual": 0.4937,
     "predicted": 0.4629,
+    "pae_ctx": 79.6,
     "logloss": 0.6217,
     "brier": 0.218,
     "logloss_constant": 0.6938
@@ -402,6 +419,7 @@
     "shots": 1313,
     "actual": 0.4897,
     "predicted": 0.4809,
+    "pae_ctx": 38.43,
     "logloss": 0.6239,
     "brier": 0.219,
     "logloss_constant": 0.6934
@@ -411,6 +429,7 @@
     "shots": 1283,
     "actual": 0.4809,
     "predicted": 0.4642,
+    "pae_ctx": 35.64,
     "logloss": 0.6232,
     "brier": 0.218,
     "logloss_constant": 0.6925
@@ -420,6 +439,7 @@
     "shots": 1240,
     "actual": 0.4871,
     "predicted": 0.466,
+    "pae_ctx": 60.23,
     "logloss": 0.6248,
     "brier": 0.2196,
     "logloss_constant": 0.6932
@@ -429,6 +449,7 @@
     "shots": 1260,
     "actual": 0.4857,
     "predicted": 0.4816,
+    "pae_ctx": 2.79,
     "logloss": 0.6017,
     "brier": 0.2097,
     "logloss_constant": 0.693
@@ -438,6 +459,7 @@
     "shots": 1272,
     "actual": 0.4733,
     "predicted": 0.4705,
+    "pae_ctx": 2.48,
     "logloss": 0.6162,
     "brier": 0.2156,
     "logloss_constant": 0.6917
@@ -447,6 +469,7 @@
     "shots": 1250,
     "actual": 0.488,
     "predicted": 0.4716,
+    "pae_ctx": 45.08,
     "logloss": 0.625,
     "brier": 0.2198,
     "logloss_constant": 0.6933
@@ -456,6 +479,7 @@
     "shots": 1253,
     "actual": 0.4749,
     "predicted": 0.4658,
+    "pae_ctx": 16.78,
     "logloss": 0.6123,
     "brier": 0.2138,
     "logloss_constant": 0.6919
@@ -465,6 +489,7 @@
     "shots": 1263,
     "actual": 0.4743,
     "predicted": 0.473,
+    "pae_ctx": -4.6,
     "logloss": 0.6141,
     "brier": 0.2145,
     "logloss_constant": 0.6918
@@ -474,6 +499,7 @@
     "shots": 1307,
     "actual": 0.4866,
     "predicted": 0.484,
+    "pae_ctx": 6.21,
     "logloss": 0.6214,
     "brier": 0.2175,
     "logloss_constant": 0.6931
@@ -483,6 +509,7 @@
     "shots": 1298,
     "actual": 0.4692,
     "predicted": 0.4692,
+    "pae_ctx": -7.56,
     "logloss": 0.6176,
     "brier": 0.2157,
     "logloss_constant": 0.6913
@@ -492,6 +519,7 @@
     "shots": 1295,
     "actual": 0.4834,
     "predicted": 0.479,
+    "pae_ctx": 20.29,
     "logloss": 0.6183,
     "brier": 0.2162,
     "logloss_constant": 0.6928
@@ -501,6 +529,7 @@
     "shots": 1344,
     "actual": 0.4754,
     "predicted": 0.4683,
+    "pae_ctx": 9.06,
     "logloss": 0.6111,
     "brier": 0.2132,
     "logloss_constant": 0.6919
@@ -510,6 +539,7 @@
     "shots": 1262,
     "actual": 0.4834,
     "predicted": 0.4778,
+    "pae_ctx": 3.99,
     "logloss": 0.601,
     "brier": 0.2085,
     "logloss_constant": 0.6928
@@ -519,6 +549,7 @@
     "shots": 1311,
     "actual": 0.4523,
     "predicted": 0.4561,
+    "pae_ctx": -18.08,
     "logloss": 0.616,
     "brier": 0.2141,
     "logloss_constant": 0.6895
@@ -528,6 +559,7 @@
     "shots": 1294,
     "actual": 0.473,
     "predicted": 0.4878,
+    "pae_ctx": -68.58,
     "logloss": 0.5974,
     "brier": 0.2067,
     "logloss_constant": 0.6917
@@ -537,6 +569,7 @@
     "shots": 1265,
     "actual": 0.4846,
     "predicted": 0.473,
+    "pae_ctx": 36.57,
     "logloss": 0.6142,
     "brier": 0.2146,
     "logloss_constant": 0.6929
@@ -546,6 +579,7 @@
     "shots": 1344,
     "actual": 0.4978,
     "predicted": 0.4691,
+    "pae_ctx": 96.31,
     "logloss": 0.6232,
     "brier": 0.2183,
     "logloss_constant": 0.6943
@@ -555,6 +589,7 @@
     "shots": 1292,
     "actual": 0.4822,
     "predicted": 0.4737,
+    "pae_ctx": 34.43,
     "logloss": 0.6357,
     "brier": 0.224,
     "logloss_constant": 0.6926
@@ -564,6 +599,7 @@
     "shots": 1293,
     "actual": 0.4764,
     "predicted": 0.4737,
+    "pae_ctx": 5.09,
     "logloss": 0.6134,
     "brier": 0.2152,
     "logloss_constant": 0.692
@@ -573,6 +609,7 @@
     "shots": 1289,
     "actual": 0.4756,
     "predicted": 0.4865,
+    "pae_ctx": -15.91,
     "logloss": 0.6209,
     "brier": 0.2166,
     "logloss_constant": 0.692
@@ -582,6 +619,7 @@
     "shots": 1331,
     "actual": 0.4673,
     "predicted": 0.485,
+    "pae_ctx": -57.65,
     "logloss": 0.6152,
     "brier": 0.2143,
     "logloss_constant": 0.6911
@@ -658,11 +696,9 @@
   "judge_human_agreement": null
  },
  "api": {
-  "url": "https://euroleague-xfg.onrender.com",
-  "reachable": true,
-  "latency_ms": 52289,
-  "model_version": "2026-09-23",
-  "model_sha256": "0b6d67c1d6ed"
+  "url": "http://127.0.0.1:9",
+  "reachable": false,
+  "error": "URLError"
  },
  "model": {
   "version": "2026-09-23",

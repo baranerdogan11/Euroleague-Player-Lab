@@ -12,6 +12,9 @@ W = os.path.join(ROOT, "warehouse", SEASON)
 con = duckdb.connect()
 for t in ["clubs", "players", "roster_stints", "games", "box", "shots"]:
     con.execute(f"create view {t} as select * from read_parquet('{os.path.join(W, t + '.parquet')}')")
+for t in ["events", "shot_context"]:      # play-by-play layer, present once events.py has run
+    p = os.path.join(W, t + ".parquet")
+    con.execute(f"create view {t} as select * from read_parquet('{p}')" if os.path.exists(p) else f"create view {t} as select null::int game, null::int seq, null::varchar club, null::varchar playtype where false")
 
 # (name, query returning the number of offending rows)
 TESTS = [
@@ -46,6 +49,12 @@ TESTS = [
           from box b left join shots s on s.game = b.game and s.player = b.player
           group by b.game, b.player, b.fgm2, b.fgm3 having box_made != plotted)"""),
     ("shots: every shooter has a box line", "select count(*) from (select distinct game, player from shots) s left join box b using (game, player) where b.player is null"),
+    ("events: game exists and was played", "select count(*) from (select distinct game from events) e left join games g using (game) where g.game is null or not g.played"),
+    ("events: assists per club per game reconcile with the box score", """
+        select count(*) from (
+          select e.game, e.club, count(*) filter (where e.playtype = 'AS') as a, (select sum(ast) from box b where b.game = e.game and b.club = e.club) as b
+          from events e where e.club is not null group by e.game, e.club having a != b)"""),
+    ("events: every shot in a game with play-by-play has a context row", "select count(*) from shots s left join shot_context c using (game, seq) where s.game in (select distinct game from events) and c.game is null"),
 ]
 # warnings: reported and counted, never fail the run
 WARNINGS = [

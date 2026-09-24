@@ -16,6 +16,8 @@ basket, `x` lateral, `y` toward half court.
 | `games` | one row per scheduled game | `game` | `round`, `phase`, `date_utc`, `date`, `home`, `away`, `home_score`, `away_score`, `played`, `status` |
 | `box` | one row per player per played game | (`game`, `player`) | `club`, `starter`, `minutes`, `pts`, `fgm2`, `fga2`, `fgm3`, `fga3`, `ftm`, `fta`, `oreb`, `dreb`, `reb`, `ast`, `stl`, `tov`, `blk`, `blka`, `pf`, `fd`, `pir`, `plusminus` |
 | `shots` | one row per field-goal attempt | (`game`, `seq`) | `player`, `club`, `x`, `y`, `made`, `pts`, `zone`, `minute`, `clock`, `fastbreak`, `second_chance`, `points_off_tov`, `score_home`, `score_away` |
+| `events` | one row per play-by-play event (`events.py`) | (`game`, `seq`) | `period`, `club`, `player`, `playtype` (2FGM, 3FGA, AS, D, O, TO, ST, RV, CM, FV, AG, FTA, FTM, IN, OUT, ...), `minute`, `clock`, `clock_sec`, `score_home`, `score_away`, `info` |
+| `shot_context` | one row per shot in a game with play-by-play | (`game`, `seq`) | `assisted` (makes only), `fouled` (and-one), `blocked` (misses only), `poss_sec` (seconds since the possession started, from the scorer's clock) |
 
 ## Invariants (all enforced)
 
@@ -24,6 +26,8 @@ basket, `x` lateral, `y` toward half court.
 - `games`: unique codes; both clubs exist; `played` is true exactly when a score exists; no played game in the future; every club has 38 regular-season games.
 - `box`: game exists and was played; club is one of the game's two; one line per player per game; makes never exceed attempts; `pts = 2*fgm2 + 3*fgm3 + ftm`.
 - `shots`: game exists and was played; club is one of the game's two; coordinates inside the court; per player per game, attempts and makes reconcile exactly with the box score; every shooter has a box line.
+- `events`: game exists and was played; assists per club per game reconcile exactly with the box score; every shot in a game with play-by-play has a `shot_context` row. Sequence numbers are the feed's `NUMBEROFPLAY`, shared with `shots.seq`.
+- Warning only: shot value against distance (threes from 6.4 m out, twos inside 7 m).
 
 ## Querying
 

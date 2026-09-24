@@ -56,6 +56,9 @@ jobs:
       - name: Build warehouse (silver)
         run: python warehouse.py $SEASON
 
+      - name: Play-by-play events and shot context
+        run: python events.py $SEASON
+
       - name: Warehouse assertions
         run: python warehouse_tests.py $SEASON
 

@@ -17,6 +17,10 @@ in order.
 - Animated shot chart with made / missed filter, single-game filter, and a Zones view shading the floor by FG%
 - Hover any shot for the game, quarter, distance and its expected FG% (for a league-average shooter, and for the player himself)
 - League values by zone and by shooting split next to every rate; rates on fewer than 10 attempts are greyed and carry a 95% interval
+- Role strip: usage, true shooting, 3-point and free-throw rates, assist, turnover and rebound rates, on/off net rating, each ranked within the player's position group (per game or per 40 minutes for the counting stats)
+- Play-by-play context on every shot: assisted or unassisted, and-ones, blocks, seconds into the possession; an assisted/unassisted filter on the chart, an assisted share per zone and a shot-timing table
+- Shot diet against the position average, form over the last five games, home and away split, rest days, game pace and opponent defensive rating in the log
+- Compare with any player of the same position, next to the position median
 - Game log
 - 2D and 3D shot charts: the 3D view (Three.js, loaded on demand) replays every attempt as a ball in flight with camera presets and orbit
 - Before a club's first game the page shows the roster and the date of the opener; stats and charts fill in as games are played
@@ -31,15 +35,17 @@ of the day, and can be started by hand from the Actions tab. Each run:
 2. runs the gate's own tests (`tests/test_checks.py`), which prove the checks catch what they should
 3. fetches new games, roster changes (re-pulled every night, with start and end dates) and photos (`fetch_season.py`)
 4. runs the raw-feed gate (`checks.py`)
-5. builds the warehouse (`warehouse.py`): six Parquet tables under `warehouse/E2026/`, the silver layer;
-   see [`warehouse/SCHEMA.md`](warehouse/SCHEMA.md)
-6. runs 23 SQL assertions over the warehouse (`warehouse_tests.py`): key uniqueness, referential integrity,
-   schedule completeness, and per player per game reconciliation of plotted attempts and makes with the box score;
-   any failure stops the run before anything is published
+5. builds the warehouse (`warehouse.py`): six Parquet tables under `warehouse/E2026/`, the silver layer, then the
+   play-by-play layer (`events.py`): every event of every game and, per shot, whether it was assisted, an and-one,
+   blocked, and how many seconds into the possession it came; see [`warehouse/SCHEMA.md`](warehouse/SCHEMA.md)
+6. runs 26 SQL assertions over the warehouse (`warehouse_tests.py`): key uniqueness, referential integrity,
+   schedule completeness, per player per game reconciliation of plotted attempts and makes with the box score, and
+   play-by-play assists reconciled with the box score per club per game; any failure stops the run before anything
+   is published (one distance check is a warning only)
 7. scores every shot with the xFG model (`model/score.py`), see below
 8. builds shooting profiles, shot quality versus shooting skill with shrinkage (`model/profile.py`)
 9. writes validated scouting notes with Claude for players whose facts changed (`model/notes.py`, needs the `ANTHROPIC_API_KEY` secret)
-10. builds the site from the warehouse with SQL (`build.py`, the gold layer)
+10. builds the site from the warehouse with SQL (`build.py`, the gold layer): season stats, league benchmarks, role metrics, on/off, position ranks, the defence-adjusted expectation and the compare index
 11. writes the monitoring snapshot (`model/monitor.py`) and commits everything; GitHub Pages deploys within a minute
 
 The assertions write `teams/E2026/status.json` (games, shots, box lines, tests, failures, warnings, time) and the page footer
@@ -66,6 +72,21 @@ basket just made, so both leaked the label. They are excluded and the margin is 
 shooter effects forward as decayed priors. Every "expected" number on the page (the xFG row, the profile panel, the scouting note) uses the
 context-only expectation, what a league-average shooter would do on the same shots, so the figures agree; the
 shooter-aware probability appears only in the per-shot tooltip, labelled as his own.
+
+## What the play-by-play adds, and what no feed has
+
+The live API's PlayByPlay endpoint carries assists, fouls, blocks, substitutions and the scorer's clock. Assists are
+logged after the make they belong to, so each make is marked assisted when an assist by the same club follows it
+within the next four events; fouls received on the attempt mark and-ones; a block by the defence right after a miss
+marks it blocked. Possession start is taken as the opponent's make or last free throw, the club's own defensive or
+offensive rebound or steal, or the opponent's turnover, and the seconds from there to the shot are a coarse
+shot-clock proxy (early 0 to 6 s, mid 7 to 17 s, late 18 s and over). The page uses these for the assisted filter, the
+assisted share per zone, the timing table and the tooltip. Role metrics (usage, assist, turnover and rebound rates)
+come from the box score with both teams' totals; on/off is the team's net rating with the player on court minus off,
+shrunk toward zero with 1,500 minutes of prior weight and shown as descriptive, because half a season of on/off is
+noisy. The defence-adjusted expectation adds each defending club's shrunk residual by zone to the context-only xFG.
+Not in any feed, and therefore not on the page: defender distance, the real shot clock, dribbles, screens and play
+types.
 
 ## Shot quality vs shooting skill
 
