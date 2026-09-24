@@ -22,7 +22,7 @@ for stale in glob.glob(os.path.join(OUT, "*.json")):
     if os.path.basename(stale) not in ("monitor.json",):      # club files are regenerated; the monitoring snapshot is owned by monitor.py
         os.remove(stale)
 label = lambda s: f"{s[1:]}-{str(int(s[1:]) + 1)[2:]}"
-STAT_KEYS = ["pts", "fgm2", "fga2", "fgm3", "fga3", "ftm", "fta", "oreb", "dreb", "reb", "ast", "stl", "tov", "blk", "blka", "pf", "fd", "pir"]
+STAT_KEYS = ["pts", "fgm2", "fga2", "fgm3", "fga3", "ftm", "fta", "oreb", "dreb", "reb", "ast", "stl", "tov", "blk", "blka", "pf", "fd", "pir", "plusminus"]
 
 con = duckdb.connect()
 for t in ["clubs", "players", "roster_stints", "games", "box", "shots"]:
@@ -189,7 +189,7 @@ for c in clubs:
     collected[code] = players
 
 # league percentiles among rotation players (3+ games, 10+ minutes a game), per game and per 40 minutes; turnovers inverted so higher is better
-COUNTING = ("pts", "reb", "ast", "stl", "blk", "tov", "pir")
+COUNTING = ("pts", "reb", "ast", "stl", "blk", "tov", "pir", "plusminus")
 def per_game(tot, per40=False):
     gp = tot["gp"] or 1
     fga = tot["fga2"] + tot["fga3"]
