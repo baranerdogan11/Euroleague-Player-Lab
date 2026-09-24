@@ -654,7 +654,7 @@ $('#replay').addEventListener('click', () => renderChart(true));
   }));
 });
 const DD = {
-  team: Dropdown($('#team'), (op, head) => { const c = CLUBS[op.value]; return `${c && c.logo && !head ? `<img src="${c.logo}" alt="">` : ''}<span>${c.name}</span>${!head ? `<small>${c.city ? c.city[0] + c.city.slice(1).toLowerCase() : ''}</small>` : ''}`; }),
+  team: Dropdown($('#team'), (op, head) => { const c = CLUBS[op.value]; return `${c && c.logo && !head ? `<img src="${c.logo}" alt="">` : ''}<span>${c.name}</span>`; }),
   player: Dropdown($('#player'), (op, head) => { const p = team() && team().players[+op.value]; if (!p) return op.text; const n = nameOf(p.name); return head ? `#${p.dorsal || '–'} ${n.first} ${n.sur}` : `<span class="no">${p.dorsal || '–'}</span><span>${n.first} ${n.sur}</span><small>${(p.position || '').slice(0, 7)}</small>`; }),
   game: Dropdown($('#game'), (op, head) => { if (op.value === 'all' || !team()) return op.text; const g = ds().games[+op.value]; if (!g) return op.text; const l = gameLabel(g); return head ? `${l.txt} · ${l.res} ${l.score}` : `<span>${l.txt}</span><small class="${l.res === 'W' ? 'w' : 'l'}">${l.res} ${l.score}</small>`; })
 };
