@@ -196,7 +196,8 @@ git add -A && git commit -m "Update after round" && git push   # GitHub Pages re
 
 ## Layout
 
-- `index.html`: the page (loads a club's JSON when it is selected)
+- `index.html`: the page (loads a club's JSON when it is selected); `monitor.html`: the status page
+- `p/<pid>.html`: one share stub per player with his Open Graph card (name, club, photo), forwarding to his page; written by `build.py`, handed out by the page's Copy link button
 - `teams/E2026/index.json`, `teams/E2026/<CLUB>.json`: compact per-club data (stats, game log, shots)
 - `photos/<player>.webp`, `logos/<CLUB>.png`: media-day photos and crests
 - `warehouse/E2026/*.parquet`: the queryable season warehouse (schema in `warehouse/SCHEMA.md`)

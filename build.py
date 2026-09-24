@@ -8,8 +8,10 @@ usage: python build.py E2026
 """
 import datetime
 import glob
+import html
 import json
 import os
+import re
 import sys
 import duckdb
 
@@ -17,6 +19,7 @@ SEASON = sys.argv[1] if len(sys.argv) > 1 else "E2026"
 ROOT = os.path.dirname(os.path.abspath(__file__))
 W = os.path.join(ROOT, "warehouse", SEASON)
 OUT = os.path.join(ROOT, "teams", SEASON)
+SITE = "https://baranerdogan11.github.io/Euroleague-Player-Lab/"   # public origin, for absolute Open Graph URLs in the share stubs
 os.makedirs(OUT, exist_ok=True)
 for stale in glob.glob(os.path.join(OUT, "*.json")):
     if os.path.basename(stale) not in ("monitor.json",):      # club files are regenerated; the monitoring snapshot is owned by monitor.py
@@ -269,6 +272,39 @@ for code, players in collected.items():
     json.dump({"code": code, "season": SEASON, "label": label(SEASON), "games_played": played, "upcoming": upcoming, "players": players, "real_code": code},
               open(os.path.join(OUT, f"{code}.json"), "w"), separators=(",", ":"), ensure_ascii=False)
     summary.append((code, len(players), played, sum(len(p["cur"]["shots"]) for p in players)))
+# share stubs: the app is one hash-routed page, which link previews cannot read, so every player gets a static p/<pid>.html carrying his
+# Open Graph card (name, club, photo) that forwards straight to his page. "Copy link" on the page hands out these URLs.
+def display_name(raw):
+    sur, _, first = (raw or "").partition(",")
+    fix = lambda t: re.sub(r"(^|[\s\-'.])(\S)", lambda m: m.group(1) + m.group(2).upper(), t.strip().lower())
+    return f"{fix(first)} {fix(sur)}".strip()
+STUB = ('<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{name} · {club} · Euroleague Player Lab</title>'
+        '<meta name="description" content="{desc}"><meta property="og:type" content="profile"><meta property="og:site_name" content="Euroleague Player Lab"><meta property="og:title" content="{name} · {club}">'
+        '<meta property="og:description" content="{desc}"><meta property="og:image" content="{image}"><meta property="og:url" content="{url}"><meta name="twitter:card" content="summary">'
+        '<link rel="canonical" href="{url}"><meta http-equiv="refresh" content="0;url={rel}"><script>location.replace({rel_js})</script>'
+        '<style>body{{margin:0;background:#060708;color:#c6cbd4;font:14px system-ui,sans-serif;display:grid;place-items:center;min-height:100vh}}a{{color:#f26f21}}</style></head>'
+        '<body><p>Opening <a href="{rel}">{name}</a> in Euroleague Player Lab…</p></body></html>')
+stub_dir = os.path.join(ROOT, "p")
+os.makedirs(stub_dir, exist_ok=True)
+keep = set()
+for code, players in collected.items():
+    club = next(c["name"] for c in clubs if c["club"] == code)
+    for p in players:
+        name = display_name(p["name"]); tot = p["cur"]["tot"]
+        line = f"{tot['gp']} games · {tot['pts'] / tot['gp']:.1f} pts · {tot['reb'] / tot['gp']:.1f} reb · {tot['ast'] / tot['gp']:.1f} ast a game" if tot["gp"] else "shot chart, shooting profile and season stats"
+        desc = f"{'#' + str(p['dorsal']) + ' · ' if p['dorsal'] else ''}{p['position'] or p['cur']['pos_group']} · {club} · {label(SEASON)} · {line}"
+        rel = f"../#{code}/{p['pid']}"
+        page = STUB.format(name=html.escape(name), club=html.escape(club), desc=html.escape(desc), image=SITE + (p["photo"] or next((c["logo"] for c in clubs if c["club"] == code), "") or ""),
+                           url=f"{SITE}#{code}/{p['pid']}", rel=rel, rel_js=json.dumps(rel))
+        fn = f"{p['pid']}.html"; keep.add(fn)
+        path = os.path.join(stub_dir, fn)
+        if not os.path.exists(path) or open(path, encoding="utf-8").read() != page:
+            open(path, "w", encoding="utf-8").write(page)
+for fn in os.listdir(stub_dir):
+    if fn.endswith(".html") and fn not in keep:
+        os.remove(os.path.join(stub_dir, fn))
+print(f"share stubs: {len(keep)} under p/")
+
 # position medians for the compare table (same labels as the page)
 def compare_metrics(cur):
     tot, role, pr = cur["tot"], cur["role"] or {}, cur["profile"]

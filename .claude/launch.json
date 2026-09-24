@@ -2,7 +2,7 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "shot-profiles",
+      "name": "player-lab",
       "runtimeExecutable": "python3",
       "runtimeArgs": ["-m", "http.server", "8127"],
       "port": 8127

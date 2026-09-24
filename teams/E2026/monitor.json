@@ -1,10 +1,10 @@
 {
  "season": "E2026",
- "generated_at": "2026-09-24 20:55 UTC",
+ "generated_at": "2026-09-24 21:45 UTC",
  "pipeline": {
   "last": {
    "date": "2026-09-24",
-   "at": "2026-09-24T20:55:13Z",
+   "at": "2026-09-24T21:45:26Z",
    "ok": true,
    "games": 7,
    "shots": 926,
@@ -27,7 +27,7 @@
    },
    {
     "date": "2026-09-24",
-    "at": "2026-09-24T20:55:13Z",
+    "at": "2026-09-24T21:45:26Z",
     "ok": true,
     "games": 7,
     "shots": 926,
@@ -766,11 +766,9 @@
   "judge_human_agreement": null
  },
  "api": {
-  "url": "https://euroleague-xfg.onrender.com",
-  "reachable": true,
-  "latency_ms": 53161,
-  "model_version": "2026-09-23",
-  "model_sha256": "0b6d67c1d6ed"
+  "url": "http://127.0.0.1:9",
+  "reachable": false,
+  "error": "URLError"
  },
  "model": {
   "version": "2026-09-23",
