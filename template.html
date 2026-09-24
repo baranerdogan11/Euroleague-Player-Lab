@@ -42,7 +42,7 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font
 .toolbar .dd .dd-btn{font-size:14px;letter-spacing:.08em;padding:7px 32px 7px 12px}
 .toolbar .dd .dd-btn::after{right:11px}
 .toolbar .dd-list{left:-1px;right:-1px;min-width:280px}
-.sel select,.toolbar select{position:absolute;opacity:0;pointer-events:none;width:1px;height:1px;margin:0;padding:0}
+.sel select,.toolbar select,.sel select:disabled,.toolbar select:disabled{position:absolute;opacity:0;pointer-events:none;width:1px;height:1px;margin:0;padding:0}
 select{width:100%;appearance:none;-webkit-appearance:none;background:transparent url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 14 9'><path d='M1 1l6 6 6-6' fill='none' stroke='%23c6cbd4' stroke-width='2' stroke-linecap='round'/></svg>") no-repeat right 12px center;border:0;color:var(--ink);font-family:var(--cond);font-weight:700;font-size:19px;letter-spacing:.06em;text-transform:uppercase;padding:14px 34px 14px 0;cursor:pointer;min-width:0;text-overflow:ellipsis}
 select:focus{outline:none;color:var(--club2)}
 select:disabled{opacity:.5;cursor:default}
@@ -74,7 +74,7 @@ h1 span span{display:block;color:var(--club2)}
 .ticker{display:flex;overflow:hidden;background:var(--white);color:#000;font-family:var(--cond);font-weight:700;font-size:16px;letter-spacing:.06em;text-transform:uppercase;border:1px solid var(--line);border-top:0}
 .ticker .lab{position:relative;z-index:1;background:var(--club);color:#fff;padding:9px 24px 9px 16px;font-weight:900;flex:none;clip-path:polygon(0 0,100% 0,calc(100% - 10px) 100%,0 100%);text-shadow:0 1px 0 rgba(0,0,0,.3)}
 .ticker .run{display:flex;gap:28px;padding:9px 14px;white-space:nowrap;animation:run 60s linear infinite}
-.ticker .run span b{color:var(--good)}.ticker .run span b.l{color:#c8362b}
+.ticker .run span b{color:#0f7a4a}.ticker .run span b.l{color:#c8362b}
 .ticker:hover .run{animation-play-state:paused}
 @keyframes run{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 /* stat band */
@@ -299,7 +299,7 @@ const mix = (h1, h2, t) => { const a = hexRgb(h1), b = hexRgb(h2); return '#' + 
 const lum = h => { const [r, g, b] = hexRgb(h).map(v => { v /= 255; return v <= .03928 ? v / 12.92 : ((v + .055) / 1.055) ** 2.4; }); return .2126 * r + .7152 * g + .0722 * b; };
 function applyPalette(c){
   const base = c.base || '#1f2b47', accent = c.accent || '#f26f21', r = document.documentElement.style;
-  r.setProperty('--club', base); r.setProperty('--club2', accent); r.setProperty('--on', lum(accent) > .45 ? '#0b0d10' : '#ffffff');
+  r.setProperty('--club', base); r.setProperty('--club2', accent); const la = lum(accent); r.setProperty('--on', (la + .05) / (lum('#0b0d10') + .05) >= 1.05 / (la + .05) ? '#0b0d10' : '#ffffff');
   r.setProperty('--floor', mix(base, '#0c1016', .16)); r.setProperty('--paint', mix(base, '#0c1016', .28));
   state.accent = accent; state.base = base;
   Shot3D.recolor(accent, mix(base, '#0c1016', .16), mix(base, '#0c1016', .28));
@@ -430,7 +430,8 @@ function renderChart(animate){
   const svg = $('#court'); svg.innerHTML = courtBase();
   const t = team(), d = ds(), games = d.games, shots = playerShots();
   const layer = svg.querySelector('#shots-layer'), zl = svg.querySelector('#zones-layer');
-  const zs = zoneStats(shots), total = shots.length || 1;
+  const tableShots = d.shots.filter(s => state.game === 'all' || s[0] === +state.game);
+  const zs = zoneStats(tableShots), total = tableShots.length || 1;
   const zoneRow = (l, v, cls = '') => { const share = v.a / total; return `<tr class="${cls}"><td>${l}</td><td>${v.a ? `${v.m} / ${v.a}` : '–'}</td><td class="k">${pct(v.m, v.a)}</td><td>${v.a ? (share * 100).toFixed(0) + '%' : '–'}<span class="zone-bar" style="width:${Math.round(share * 60)}px"></span></td></tr>`; };
   const threes = {m: zs.c3.m + zs.a3.m, a: zs.c3.a + zs.a3.a};
   $('#zones tbody').innerHTML = ['rim', 'paint', 'mid'].map(k => zoneRow(ZONES[k], zs[k])).join('')
@@ -458,7 +459,7 @@ function renderChart(animate){
       <circle class="zone" cx="${X(0)}" cy="${Y(0)}" r="150" fill="${col(zs.rim.m, zs.rim.a)}"/>`;
     svg.querySelector('#labels-layer').innerHTML = `${lab('a3', X(0), Y(820))}${lab('c3', X(-705), Y(30), true)}${lab('c3', X(705), Y(30), true)}${lab('mid', X(-430), Y(330))}${lab('paint', X(0), Y(300))}${lab('rim', X(0), Y(70))}`;
     svg.querySelector('.paint').style.display = 'none';
-    $('#cap').textContent = `${shots.length} attempts by zone`;
+    $('#cap').textContent = `${tableShots.length} attempts by zone`;
     return;
   }
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -614,7 +615,7 @@ $('#f-cam').querySelectorAll('button').forEach(b => b.addEventListener('click', 
 function Dropdown(sel, item){
   const dd = document.createElement('div'); dd.className = 'dd'; dd.setAttribute('aria-expanded', 'false');
   dd.innerHTML = `<button type="button" class="dd-btn" aria-haspopup="listbox" aria-label="${sel.getAttribute('aria-label') || ''}"><span class="dd-val"></span></button><ul class="dd-list" role="listbox" hidden></ul>`;
-  sel.after(dd);
+  sel.after(dd); sel.tabIndex = -1; sel.setAttribute('aria-hidden', 'true');
   const btn = dd.querySelector('.dd-btn'), list = dd.querySelector('.dd-list'), val = dd.querySelector('.dd-val');
   let hi = -1;
   const opts = () => [...sel.options];
@@ -657,13 +658,18 @@ const DD = {
   player: Dropdown($('#player'), (op, head) => { const p = team() && team().players[+op.value]; if (!p) return op.text; const n = nameOf(p.name); return head ? `#${p.dorsal || '–'} ${n.first} ${n.sur}` : `<span class="no">${p.dorsal || '–'}</span><span>${n.first} ${n.sur}</span><small>${(p.position || '').slice(0, 7)}</small>`; }),
   game: Dropdown($('#game'), (op, head) => { if (op.value === 'all' || !team()) return op.text; const g = ds().games[+op.value]; if (!g) return op.text; const l = gameLabel(g); return head ? `${l.txt} · ${l.res} ${l.score}` : `<span>${l.txt}</span><small class="${l.res === 'W' ? 'w' : 'l'}">${l.res} ${l.score}</small>`; })
 };
-(async function(){
+async function route(){
   const h = location.hash.replace('#', '').split('/');
   const code = CLUBS[h[0]] ? h[0] : META.clubs[0].code;
-  $('#team').value = code;
-  await loadTeam(code);
-  if (h[1]) { const i = team().players.findIndex(p => p.pid === h[1]); if (i >= 0) { $('#player').value = i; state.player = i; renderGames(); renderPlayer(); } }
-  if (h[2] === 'zones' || h[2] === '3d') $(`#f-view button[data-v="${h[2]}"]`).click();
+  if (state.team !== code) { $('#team').value = code; await loadTeam(code); }
+  if (h[1]) { const i = team().players.findIndex(p => p.pid === h[1]); if (i >= 0 && i !== state.player) { $('#player').value = i; state.player = i; state.game = 'all'; renderGames(); renderPlayer(); } }
+  if (h[2] === 'zones' || h[2] === '3d') { const b = $(`#f-view button[data-v="${h[2]}"]`); if (b.getAttribute('aria-pressed') !== 'true') b.click(); }
+  DD.team.refresh(); DD.player.refresh(); DD.game.refresh();
+  const n = nameOf(player().name); document.title = `${n.first} ${n.sur} · ${shortName(state.team)} · Player Lab`;
+}
+addEventListener('hashchange', route);
+(async function(){
+  await route();
   const dbg = +new URLSearchParams(location.search).get('debug3d');
   if (dbg) { await new Promise(r => setTimeout(r, 5000)); for (let k = 0; k < dbg; k++) Shot3D.tick(0.05); }
 })();
