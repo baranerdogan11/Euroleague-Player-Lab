@@ -488,7 +488,7 @@ function renderOpener(){
   $('#opener').hidden = !none; $('#tiles').hidden = none; $('#f-rate').closest('.band-foot').hidden = none;
   if (!none) return;
   const nx = t.upcoming && t.upcoming[0];
-  $('#opener-sub').textContent = `${nx ? `Round ${nx.round} · ${nx.home === realCode() ? 'vs ' + shortName(nx.away) : '@ ' + shortName(nx.home)} · ${fmtDate(nx.date)} · ` : ''}${t.players.length} players registered · stats appear within minutes of the final`;
+  $('#opener-sub').textContent = nx ? `Round ${nx.round} · ${nx.home === realCode() ? 'vs ' + shortName(nx.away) : '@ ' + shortName(nx.home)} · ${fmtDate(nx.date)}` : '';
   $('#roster').innerHTML = t.players.map((p, i) => { const n = nameOf(p.name); return `<a href="#${state.team}/${p.pid}" data-i="${i}"><i>${p.dorsal || ''}</i><img src="${p.photo || PLACEHOLDER}" alt="" loading="lazy" decoding="async"><b>${n.first} ${n.sur}</b><small>${p.position || ''}</small></a>`; }).join('');
 }
 function skeleton(){
