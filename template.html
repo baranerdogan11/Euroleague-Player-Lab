@@ -402,7 +402,7 @@ const gameLabel = g => { const t = team(), home = g.home === (g.own || realCode(
 async function loadTeam(code){
   if (!cache[code]) {
     document.querySelector('.wrap').classList.add('loading');
-    try { cache[code] = await (await fetch(`${META.path}${code}.json`)).json(); }
+    try { cache[code] = await (await fetch(`${META.path}${code}.json?v=${encodeURIComponent(META.built || '')}`)).json(); }   // stamped with the build time so a new build never reads a cached club file
     finally { document.querySelector('.wrap').classList.remove('loading'); }
   }
   state.team = code; state.data = cache[code];
@@ -526,7 +526,7 @@ async function renderCompare(){
   const tb = $('#cmp-table'), d = ds(), me = player();
   if (!state.cmp) { tb.hidden = true; return; }
   const r = META.roster.find(x => x.pid === state.cmp); if (!r) { tb.hidden = true; return; }
-  if (!cache[r.club]) { try { cache[r.club] = await (await fetch(`${META.path}${r.club}.json`)).json(); } catch (e) { tb.hidden = true; return; } }
+  if (!cache[r.club]) { try { cache[r.club] = await (await fetch(`${META.path}${r.club}.json?v=${encodeURIComponent(META.built || '')}`)).json(); } catch (e) { tb.hidden = true; return; } }
   const other = cache[r.club].players.find(p => p.pid === r.pid); if (!other || state.cmp !== r.pid) return;
   const pool = (META.medians || {})[d.pos_group] || {};
   const line = (label, f, fmt, higher = true) => { const a = f(d), b = f(other.cur), m = pool[label]; const win = a != null && b != null ? (higher ? a > b : a < b) : null; return `<tr><td>${label}</td><td class="${win === true ? 'win me' : 'me'}">${fmt(a)}</td><td class="${win === false ? 'win' : ''}">${fmt(b)}</td><td class="lg">${fmt(m)}</td></tr>`; };
