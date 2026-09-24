@@ -60,7 +60,7 @@ for g in load("games_latest.json"):
     hs, as_ = g["home"]["score"], g["away"]["score"]
     games.append({"game": g["code"], "round": g["round"]["round"], "phase": g["phaseType"]["code"], "date_utc": g["date"],
                   "date": date_only(g["date"]), "home": g["home"]["code"], "away": g["away"]["code"], "home_score": hs, "away_score": as_,
-                  "played": (hs or 0) + (as_ or 0) > 0, "status": g.get("status")})
+                  "played": g.get("status") == "result", "status": g.get("status")})
 game_teams = {g["game"]: (g["home"], g["away"]) for g in games}
 
 # ---- box score lines and shots, both teams of every cached game

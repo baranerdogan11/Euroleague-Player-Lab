@@ -27,7 +27,7 @@ TESTS = [
     ("roster_stints: every club has 10 to 22 active players", "select count(*) from (select club, count(*) n from roster_stints where active group by club having n < 10 or n > 22)"),
     ("games: unique codes", "select count(*) - count(distinct game) from games"),
     ("games: both clubs known", "select count(*) from games g left join clubs h on h.club = g.home left join clubs a on a.club = g.away where h.club is null or a.club is null"),
-    ("games: played games have a score, unplayed do not", "select count(*) from games where played != ((coalesce(home_score, 0) + coalesce(away_score, 0)) > 0)"),
+    ("games: played games have a score", "select count(*) from games where played and coalesce(home_score, 0) + coalesce(away_score, 0) = 0"),
     ("games: played games are not in the future", "select count(*) from games where played and date > current_date"),
     ("games: each club plays 38 regular-season games", "select count(*) from (select c.club, sum(case when g.phase = 'RS' then 1 else 0 end) n from clubs c join games g on c.club in (g.home, g.away) group by c.club having n != 38)"),
     ("box: game exists and was played", "select count(*) from box b left join games g using (game) where g.game is null or not g.played"),

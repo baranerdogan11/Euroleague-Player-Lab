@@ -30,7 +30,7 @@ for c in clubs:
     people = [person(p["Player_ID"].strip()[1:], p["Player"].strip()) for side in box["Stats"] for p in side["PlayersStats"] if p["Team"].strip() == c] or [person(f"9{c[1:]}{i:03d}", f"Z, {i}") for i in range(12)]
     json.dump(people, open(os.path.join(CACHE, f"roster_{c}.json"), "w"))
 # schedule: the fixture game plus a plausible 38-round round-robin so the per-club game-count assertion holds
-games = [{"code": 1, "date": "2025-09-30T17:00:00.000Z", "status": "final", "round": {"round": 1}, "phaseType": {"code": "RS"},
+games = [{"code": 1, "date": "2025-09-30T17:00:00.000Z", "status": "result", "round": {"round": 1}, "phaseType": {"code": "RS"},
           "home": {"code": "IST", "score": 90}, "away": {"code": "TEL", "score": 84}}]
 code = 2
 for rnd in range(1, 39):

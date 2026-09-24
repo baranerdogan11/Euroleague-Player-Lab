@@ -2,7 +2,9 @@ name: Update data
 
 on:
   schedule:
-    - cron: "30 2 * * *"        # 02:30 UTC nightly: every Euroleague game of the day has finished
+    - cron: "*/20 17-23 * * *"  # game evenings: every 20 minutes, runs only when a game has finished since the last build
+    - cron: "*/20 0-1 * * *"
+    - cron: "30 2 * * *"        # 02:30 UTC nightly: always runs (rosters, photos, late corrections)
   workflow_dispatch:            # run by hand from the Actions tab
 
 permissions:
@@ -17,7 +19,31 @@ env:
   ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
 
 jobs:
+  check:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      run: ${{ steps.new.outputs.run }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Has a game finished since the last build?
+        id: new
+        run: |
+          python - <<'EOF'
+          import json, os, urllib.request
+          req = urllib.request.Request(f"https://feeds.incrowdsports.com/provider/euroleague-feeds/v2/competitions/E/seasons/{os.environ['SEASON']}/games?limit=500", headers={"User-Agent": "Mozilla/5.0"})
+          feed = json.load(urllib.request.urlopen(req, timeout=60))["data"]
+          final = sum(1 for g in feed if g.get("status") == "result")
+          p = f"teams/{os.environ['SEASON']}/status.json"
+          built = json.load(open(p))["games"] if os.path.exists(p) else -1
+          run = final > built
+          print(f"final games in the feed: {final}; in the last build: {built}; run: {run}")
+          open(os.environ["GITHUB_OUTPUT"], "a").write(f"run={'true' if run else 'false'}\n")
+          EOF
+
   update:
+    needs: check
+    if: needs.check.outputs.run == 'true' || github.event_name == 'workflow_dispatch' || github.event.schedule == '30 2 * * *'
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
@@ -85,7 +111,7 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes."
           else
-            git commit -m "Nightly update $(date -u +%Y-%m-%d): $(python -c "import json;s=json.load(open('warehouse/$SEASON/status.json'));print(f\"{s['games']} games, {s['shots']} shots\")")"
+            git commit -m "Update $(date -u +%Y-%m-%d\ %H:%M) UTC: $(python -c "import json;s=json.load(open('warehouse/$SEASON/status.json'));print(f\"{s['games']} games, {s['shots']} shots\")")"
             git push
           fi
 

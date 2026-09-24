@@ -103,7 +103,8 @@ print(f"fallback photos available for {len(prev_photo)} players from earlier sea
 # ---- games (all, once per run so newly played games are picked up)
 games = get(f"{FEEDS}/{SEASON}/games", {"limit": 500})["data"]
 json.dump(games, open(os.path.join(CACHE, "games_latest.json"), "w"))
-played_all = [g for g in games if (g["home"]["score"] or 0) + (g["away"]["score"] or 0) > 0]
+is_final = lambda g: g.get("status") == "result"          # a live game already has a score; only finals are fetched and cached
+played_all = [g for g in games if is_final(g)]
 print(f"games: {len(games)} scheduled, {len(played_all)} played")
 
 for club in index:
@@ -126,7 +127,7 @@ for club in index:
     print(f"   roster {len(players)}, photos {sum(1 for p in players if p['photo'])}")
 
     team_games = sorted([g for g in games if code in (g["home"]["code"], g["away"]["code"])], key=lambda g: g["date"])
-    played = [g for g in team_games if (g["home"]["score"] or 0) + (g["away"]["score"] or 0) > 0]
+    played = [g for g in team_games if is_final(g)]
     upcoming = [g for g in team_games if g not in played][:3]
 
     shots, box = [], []
