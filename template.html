@@ -22,6 +22,27 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font
 .sel{display:flex;align-items:center;gap:10px;padding:0 6px 0 16px;border-right:1px solid var(--line);position:relative;min-width:0}
 .sel img{width:26px;height:26px;object-fit:contain;flex:none}
 .sel.team{flex:1.1}.sel.player{flex:1}
+/* dropdowns: the native select stays for state and events; a custom listbox draws the menu in the house style */
+.dd{position:relative;flex:1;min-width:0}
+.dd-btn{width:100%;background:transparent;border:0;color:var(--ink);font-family:var(--cond);font-weight:700;font-size:19px;letter-spacing:.06em;text-transform:uppercase;padding:14px 34px 14px 0;cursor:pointer;text-align:left;display:flex;align-items:center;gap:10px;min-width:0}
+.dd-btn .dd-val{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.dd-btn::after{content:"";position:absolute;right:12px;top:50%;width:9px;height:9px;border-right:2px solid var(--ink2);border-bottom:2px solid var(--ink2);transform:translateY(-70%) rotate(45deg);transition:transform .15s}
+.dd[aria-expanded="true"] .dd-btn::after{transform:translateY(-20%) rotate(225deg)}
+.dd[aria-expanded="true"] .dd-btn{color:var(--club2)}
+.dd-list{position:absolute;left:-16px;right:0;top:calc(100% + 1px);min-width:min(320px,calc(100vw - 24px));max-height:min(62vh,520px);overflow:auto;margin:0;padding:6px 0;list-style:none;background:var(--bg2);border:1px solid var(--line2);border-top:3px solid var(--club2);box-shadow:0 30px 60px -20px rgba(0,0,0,.9);z-index:30;scrollbar-width:thin;scrollbar-color:var(--line2) transparent}
+.dd-list li{display:flex;align-items:center;gap:12px;padding:9px 16px 9px 14px;font-family:var(--cond);font-weight:700;font-size:16px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink2);cursor:pointer;border-left:4px solid transparent;white-space:nowrap}
+.dd-list li:hover,.dd-list li.hi{background:var(--panel2);color:var(--ink)}
+.dd-list li[aria-selected="true"]{border-left-color:var(--club2);color:var(--club2)}
+.dd-list li img{width:22px;height:22px;object-fit:contain;flex:none}
+.dd-list li .no{width:30px;height:22px;display:grid;place-items:center;background:var(--panel2);color:var(--ink);font-size:13px;font-style:italic;font-weight:800;flex:none;transform:skewX(-10deg)}
+.dd-list li[aria-selected="true"] .no{background:var(--club2);color:var(--on)}
+.dd-list li small{margin-left:auto;font-weight:600;color:var(--muted);letter-spacing:.08em;font-size:12px}
+.dd-list li .w{color:var(--good)}.dd-list li .l{color:var(--bad)}
+.toolbar .dd{flex:none;min-width:220px;background:var(--panel);border:1px solid var(--line)}
+.toolbar .dd .dd-btn{font-size:14px;letter-spacing:.08em;padding:7px 32px 7px 12px}
+.toolbar .dd .dd-btn::after{right:11px}
+.toolbar .dd-list{left:-1px;right:-1px;min-width:280px}
+.sel select,.toolbar select{position:absolute;opacity:0;pointer-events:none;width:1px;height:1px;margin:0;padding:0}
 select{width:100%;appearance:none;-webkit-appearance:none;background:transparent url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 14 9'><path d='M1 1l6 6 6-6' fill='none' stroke='%23c6cbd4' stroke-width='2' stroke-linecap='round'/></svg>") no-repeat right 12px center;border:0;color:var(--ink);font-family:var(--cond);font-weight:700;font-size:19px;letter-spacing:.06em;text-transform:uppercase;padding:14px 34px 14px 0;cursor:pointer;min-width:0;text-overflow:ellipsis}
 select:focus{outline:none;color:var(--club2)}
 select:disabled{opacity:.5;cursor:default}
@@ -589,6 +610,36 @@ const Shot3D = (() => {
 })();
 $('#f-cam').querySelectorAll('button').forEach(b => b.addEventListener('click', () => { $('#f-cam').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b)); Shot3D.preset(b.dataset.v); }));
 
+// ---- custom dropdowns over the native selects (the select keeps the value and fires change; the menu is drawn in the house style)
+function Dropdown(sel, item){
+  const dd = document.createElement('div'); dd.className = 'dd'; dd.setAttribute('aria-expanded', 'false');
+  dd.innerHTML = `<button type="button" class="dd-btn" aria-haspopup="listbox" aria-label="${sel.getAttribute('aria-label') || ''}"><span class="dd-val"></span></button><ul class="dd-list" role="listbox" hidden></ul>`;
+  sel.after(dd);
+  const btn = dd.querySelector('.dd-btn'), list = dd.querySelector('.dd-list'), val = dd.querySelector('.dd-val');
+  let hi = -1;
+  const opts = () => [...sel.options];
+  const refresh = () => { const o = opts(); val.innerHTML = o.length && sel.selectedIndex >= 0 ? item(o[sel.selectedIndex], true) : ''; list.innerHTML = o.map((op, i) => `<li role="option" data-i="${i}" aria-selected="${i === sel.selectedIndex}">${item(op, false)}</li>`).join(''); btn.disabled = sel.disabled; dd.classList.toggle('na', sel.disabled); };
+  const close = () => { dd.setAttribute('aria-expanded', 'false'); list.hidden = true; hi = -1; };
+  const open = () => { if (sel.disabled) return; document.querySelectorAll('.dd[aria-expanded="true"]').forEach(d => d !== dd && d.dispatchEvent(new Event('dd-close'))); refresh(); dd.setAttribute('aria-expanded', 'true'); list.hidden = false; hi = sel.selectedIndex; mark(); const cur = list.children[hi]; if (cur) cur.scrollIntoView({block: 'nearest'}); };
+  const mark = () => [...list.children].forEach((li, i) => li.classList.toggle('hi', i === hi));
+  const choose = i => { if (i < 0 || i >= sel.options.length) return; if (sel.selectedIndex !== i) { sel.selectedIndex = i; sel.dispatchEvent(new Event('change', {bubbles: true})); } refresh(); close(); btn.focus(); };
+  btn.addEventListener('click', () => list.hidden ? open() : close());
+  list.addEventListener('click', e => { const li = e.target.closest('li'); if (li) choose(+li.dataset.i); });
+  list.addEventListener('mousemove', e => { const li = e.target.closest('li'); if (li) { hi = +li.dataset.i; mark(); } });
+  btn.addEventListener('keydown', e => {
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); if (list.hidden) open(); hi = Math.max(0, Math.min(sel.options.length - 1, hi + (e.key === 'ArrowDown' ? 1 : -1))); mark(); list.children[hi] && list.children[hi].scrollIntoView({block: 'nearest'}); }
+    else if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); if (list.hidden) open(); else choose(hi); }
+    else if (e.key === 'Escape') { close(); }
+    else if (e.key.length === 1 && /\S/.test(e.key)) { const k = e.key.toLowerCase(), o = opts(); const j = o.findIndex((op, i) => i > hi && op.text.replace(/^#\S+\s/, '').toLowerCase().startsWith(k)); const idx = j >= 0 ? j : o.findIndex(op => op.text.replace(/^#\S+\s/, '').toLowerCase().startsWith(k)); if (idx >= 0) { if (list.hidden) open(); hi = idx; mark(); list.children[hi].scrollIntoView({block: 'nearest'}); } }
+  });
+  dd.addEventListener('dd-close', close);
+  document.addEventListener('pointerdown', e => { if (!dd.contains(e.target)) close(); });
+  new MutationObserver(refresh).observe(sel, {childList: true, attributes: true, attributeFilter: ['disabled']});
+  sel.addEventListener('change', refresh);
+  refresh();
+  return {refresh};
+}
+
 // ---- wiring
 $('#tag-season').textContent = META.label;
 $('#team').innerHTML = META.clubs.map(c => `<option value="${c.code}">${c.name}</option>`).join('');
@@ -601,6 +652,11 @@ $('#replay').addEventListener('click', () => renderChart(true));
     $(sel).querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b)); state[key] = b.dataset.v; renderChart(key === 'view' ? b.dataset.v === '3d' : true);
   }));
 });
+const DD = {
+  team: Dropdown($('#team'), (op, head) => { const c = CLUBS[op.value]; return `${c && c.logo && !head ? `<img src="${c.logo}" alt="">` : ''}<span>${c.name}</span>${!head ? `<small>${c.city ? c.city[0] + c.city.slice(1).toLowerCase() : ''}</small>` : ''}`; }),
+  player: Dropdown($('#player'), (op, head) => { const p = team() && team().players[+op.value]; if (!p) return op.text; const n = nameOf(p.name); return head ? `#${p.dorsal || '–'} ${n.first} ${n.sur}` : `<span class="no">${p.dorsal || '–'}</span><span>${n.first} ${n.sur}</span><small>${(p.position || '').slice(0, 7)}</small>`; }),
+  game: Dropdown($('#game'), (op, head) => { if (op.value === 'all' || !team()) return op.text; const g = ds().games[+op.value]; if (!g) return op.text; const l = gameLabel(g); return head ? `${l.txt} · ${l.res} ${l.score}` : `<span>${l.txt}</span><small class="${l.res === 'W' ? 'w' : 'l'}">${l.res} ${l.score}</small>`; })
+};
 (async function(){
   const h = location.hash.replace('#', '').split('/');
   const code = CLUBS[h[0]] ? h[0] : META.clubs[0].code;
