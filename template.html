@@ -610,7 +610,7 @@ function renderChart(animate){
   empty.hidden = true;
   if (state.view === 'zones') {
     const col = (k, m, a) => { if (!a || a < MIN_ATT) return 'rgba(120,128,144,.22)'; const lg = lgz(k) ?? 0.45; const t = Math.max(-1, Math.min(1, (m / a - lg) / 0.15)); return t >= 0 ? hexA(state.accent, 0.15 + 0.6 * t) : `rgba(79,142,247,${(0.15 + 0.55 * -t).toFixed(2)})`; };
-    const lab = (k, x, y, small) => { const v = zs[k], few = v.a < MIN_ATT; return `<text class="zl" x="${x}" y="${y}" style="${small ? 'font-size:34px' : ''}${few ? ';fill:#c6cbd4' : ''}">${few ? `${v.m}/${v.a}` : pct(v.m, v.a)}</text><text class="zs" x="${x}" y="${y + (small ? 30 : 40)}" style="${small ? 'font-size:24px' : ''}">${few ? (v.a ? 'few attempts' : 'no attempts') : `${v.m}/${v.a}`}</text>`; };
+    const lab = (k, x, y, small) => { const v = zs[k], few = v.a < MIN_ATT; return `<text class="zl" x="${x}" y="${y}" style="${small ? 'font-size:34px' : ''}${few ? ';fill:#c6cbd4' : ''}">${few ? `${v.m}/${v.a}` : pct(v.m, v.a)}</text><text class="zs" x="${x}" y="${y + (small ? 30 : 40)}" style="${small ? 'font-size:24px' : ''}">${few ? '' : `${v.m}/${v.a}`}</text>`; };
     zl.innerHTML = `<rect class="zone" x="${X(-750)}" y="${Y(1242.5)}" width="1500" height="1400" fill="${col('a3', zs.a3.m, zs.a3.a)}"/>
       <rect class="zone" x="${X(-750)}" y="${Y(141.5)}" width="90" height="299" fill="${col('c3', zs.c3.m, zs.c3.a)}"/><rect class="zone" x="${X(660)}" y="${Y(141.5)}" width="90" height="299" fill="${col('c3', zs.c3.m, zs.c3.a)}"/>
       <path class="zone" d="${twoPtPath()}" fill="${col('mid', zs.mid.m, zs.mid.a)}"/>
