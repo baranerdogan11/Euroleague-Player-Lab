@@ -13,6 +13,19 @@ checks = {
     "shrinkage predicts the second half better than raw": pr["split_half"]["rmse_shrunk"] < pr["split_half"]["rmse_raw"],
     "shrinkage predicts the second half better than zero": pr["split_half"]["rmse_shrunk"] < pr["split_half"]["rmse_zero"],
 }
+# the xFG row and the profile panel must state the same points above expectation for every built player page
+import glob
+mismatch, compared = [], 0
+for f in glob.glob(os.path.join(ROOT, "teams", "*", "*.json")):
+    if os.path.basename(f) in ("index.json", "monitor.json", "status.json"):
+        continue
+    for p in json.load(open(f)).get("players", []):
+        c = p["cur"]
+        if c.get("xfg") and c.get("profile") and c["xfg"]["att"] == c["profile"]["att"]:
+            compared += 1
+            if abs((c["xfg"]["pts"] - c["xfg"]["xpts"]) - c["profile"]["pae"]) > 0.1:
+                mismatch.append((os.path.basename(f), p["name"]))
+checks[f"xFG row and profile agree on points above expectation ({compared} players compared)"] = not mismatch
 ok = True
 for k, v in checks.items():
     print(("PASS " if v else "FAIL ") + k); ok &= bool(v)

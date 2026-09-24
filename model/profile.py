@@ -99,10 +99,13 @@ def profiles(df, priors):
         q_sh = (xp + kq * lq) / (att + kq)                       # shrunk shot quality
         s_sh = (pt - xp) / (att + ks)                            # shrunk skill
         s_sd = np.sqrt(priors["shot_var_skill"] / (att + ks))
+        q_sd = np.sqrt(priors["shot_var_quality"] / (att + kq))
         n = att[-1]
         out.append({"player": p, "att": int(n), "xfg": round(float((rows.xfg * rows.att).sum() / n), 4),
                     "quality": round(float(xp[-1] / n), 4), "quality_shrunk": round(float(q_sh[-1]), 4), "quality_pct": pct(ref_q, q_sh[-1]),
+                    "quality_pct_lo": pct(ref_q, q_sh[-1] - q_sd[-1]), "quality_pct_hi": pct(ref_q, q_sh[-1] + q_sd[-1]),
                     "skill": round(float((pt[-1] - xp[-1]) / n), 4), "skill_shrunk": round(float(s_sh[-1]), 4), "skill_sd": round(float(s_sd[-1]), 4), "skill_pct": pct(ref_s, s_sh[-1]),
+                    "skill_pct_lo": pct(ref_s, s_sh[-1] - s_sd[-1]), "skill_pct_hi": pct(ref_s, s_sh[-1] + s_sd[-1]),
                     "pae": round(float(pt[-1] - xp[-1]), 2),
                     "curve": [[int(gm), int(a), round(float(qq), 4), round(float(ss), 4), round(float(sd), 4)] for gm, a, qq, ss, sd in zip(rows.game, att, q_sh, s_sh, s_sd)]})
     return pd.DataFrame(out)

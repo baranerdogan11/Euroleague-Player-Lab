@@ -47,6 +47,15 @@ TESTS = [
           group by b.game, b.player, b.fgm2, b.fgm3 having box_made != plotted)"""),
     ("shots: every shooter has a box line", "select count(*) from (select distinct game, player from shots) s left join box b using (game, player) where b.player is null"),
 ]
+# warnings: reported and counted, never fail the run
+WARNINGS = [
+    ("shots: shot value consistent with distance (3s from 6.4 m out, 2s inside 7 m)", "select count(*) from shots where (pts = 3 and sqrt(x*x + y*y) < 640) or (pts = 2 and sqrt(x*x + y*y) > 700)"),
+]
+warn = 0
+for name, q in WARNINGS:
+    n = con.execute(q).fetchone()[0] or 0
+    print(("PASS " if n == 0 else "WARN ") + name + ("" if n == 0 else f"  ({n} rows)"))
+    warn += n != 0
 bad = 0
 for name, q in TESTS:
     n = con.execute(q).fetchone()[0] or 0
@@ -56,7 +65,7 @@ stats = {t: con.execute(f"select count(*) from {t}").fetchone()[0] for t in ["cl
 played = con.execute("select count(*) from games where played").fetchone()[0]
 import datetime, json
 json.dump({"season": SEASON, "checked_at": datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"), "clubs": stats["clubs"], "players": stats["players"],
-           "games": played, "shots": stats["shots"], "box_lines": stats["box"], "tests": len(TESTS), "failures": bad, "warnings": 0, "ok": bad == 0},
+           "games": played, "shots": stats["shots"], "box_lines": stats["box"], "tests": len(TESTS), "failures": bad, "warnings": warn, "ok": bad == 0},
           open(os.path.join(W, "status.json"), "w"), indent=1)
 print("rows:", stats)
 print("RESULT:", "OK" if not bad else f"{bad} test(s) failed")

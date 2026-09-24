@@ -42,7 +42,7 @@ def calibration_by_round(season):
     """Per round: shots, actual make rate, mean xFG, log loss, Brier, and the same for a constant baseline."""
     if not (view("shots", season) and view("shots_xfg", season) and view("games", season)):
         return [], []
-    df = con.execute(f"""select g.round, s.made::int made, x.xfg, x.xfg_ctx from shots_{season} s join shots_xfg_{season} x using (game, seq)
+    df = con.execute(f"""select g.round, s.made::int made, s.pts, x.xfg, x.xfg_ctx from shots_{season} s join shots_xfg_{season} x using (game, seq)
                          join games_{season} g using (game) where g.phase = 'RS' order by g.round""").df()
     if df.empty:
         return [], []
@@ -53,6 +53,7 @@ def calibration_by_round(season):
         p = grp.xfg.clip(eps, 1 - eps); y = grp.made
         pb = np.full(len(grp), base)
         out.append({"round": int(r), "shots": int(len(grp)), "actual": round(float(y.mean()), 4), "predicted": round(float(grp.xfg.mean()), 4),
+                    "pae_ctx": round(float(((y - grp.xfg_ctx) * grp.pts).sum()), 2),
                     "logloss": round(float(-(y * np.log(p) + (1 - y) * np.log(1 - p)).mean()), 4), "brier": round(float(((p - y) ** 2).mean()), 4),
                     "logloss_constant": round(float(-(y * np.log(pb) + (1 - y) * np.log(1 - pb)).mean()), 4)})
     q = pd.qcut(df.xfg, 10, labels=False, duplicates="drop")
@@ -92,7 +93,8 @@ if live_rounds:
     n = sum(r["shots"] for r in live_rounds)
     live_summary = {"shots": n, "logloss": round(sum(r["logloss"] * r["shots"] for r in live_rounds) / n, 4), "brier": round(sum(r["brier"] * r["shots"] for r in live_rounds) / n, 4),
                     "actual": round(sum(r["actual"] * r["shots"] for r in live_rounds) / n, 4), "predicted": round(sum(r["predicted"] * r["shots"] for r in live_rounds) / n, 4),
-                    "logloss_constant": round(sum(r["logloss_constant"] * r["shots"] for r in live_rounds) / n, 4)}
+                    "logloss_constant": round(sum(r["logloss_constant"] * r["shots"] for r in live_rounds) / n, 4),
+                    "pae_ctx_per100": round(100 * sum(r["pae_ctx"] for r in live_rounds) / n, 2)}
 shooter_cov = None
 if view("shots_xfg"):
     eff_path = os.path.join(ROOT, "model", f"shooter_effects_{card.get('trained_on', 'E2025')}.parquet")

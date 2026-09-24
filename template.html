@@ -87,6 +87,8 @@ h1 span span{display:block;color:var(--club2)}
 .tile i{position:absolute;right:12px;top:14px;font-style:normal;font-family:var(--cond);font-weight:800;font-size:13px;letter-spacing:.06em;color:var(--club2)}
 .tile i.mid{color:var(--muted)}.tile i.low{color:#6f9dff}
 .tile.na b{color:var(--muted)}
+.band-foot{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:8px;font-size:12px;color:var(--muted)}
+.band-foot .seg button{font-size:12px;padding:5px 12px}
 /* panels */
 .grid{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:18px;margin-top:18px;align-items:start}
 .panel{background:var(--bg2);border:1px solid var(--line);position:relative;min-width:0}
@@ -140,8 +142,11 @@ h1 span span{display:block;color:var(--club2)}
 .splits{display:grid;gap:10px;margin:4px 0 16px}
 .split{display:grid;grid-template-columns:52px 1fr 96px;align-items:center;gap:12px;font-variant-numeric:tabular-nums}
 .split .k{font-family:var(--cond);font-weight:700;font-size:16px;letter-spacing:.1em;color:var(--ink2)}
-.split .bar{height:8px;background:var(--panel2);overflow:hidden}
-.split .bar i{display:block;height:100%;background:var(--club2);transition:width .6s ease}
+.split .bar{height:8px;background:var(--panel2);position:relative}
+.split .bar i.fill{display:block;height:100%;background:var(--club2);transition:width .6s ease}
+.split .bar i.ci{position:absolute;top:0;bottom:0;background:var(--club2);opacity:.28}
+.split .bar u.tick{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--ink2)}
+.split.small .v b{color:var(--muted)}
 .split .v{text-align:right;font-size:12.5px;color:var(--muted)}.split .v b{font-family:var(--cond);font-size:22px;font-weight:800;font-style:italic;margin-right:5px;color:var(--ink)}
 .xfg-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:0 0 16px}
 .xfg-row>div{background:var(--panel);border:1px solid var(--line);padding:10px 12px}
@@ -157,6 +162,11 @@ td:first-child{font-family:var(--sans);font-size:13.5px;font-weight:500;color:va
 td.k{color:#fff;font-weight:700}
 tbody tr:hover td{background:rgba(255,255,255,.03)}
 .zone-bar{display:inline-block;height:8px;background:var(--club2);vertical-align:middle;margin-left:8px;transform:skewX(-14deg)}
+.tbl-cap{font-family:var(--cond);font-weight:700;font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:14px 0 2px}
+#zones td.k .cell{display:inline-block;padding:1px 7px}
+#zones td.lg{color:var(--muted);font-weight:500}
+#zones tr.small td{color:var(--muted)}
+#zones tr.small td.k{color:var(--muted);font-weight:500}
 #zones tr.grp td{font-family:var(--cond);font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);text-align:left;padding:14px 8px 6px;font-weight:700;border-bottom:1px solid var(--line2)}
 #zones tr.grp:hover td{background:none}
 #zones tr.sub td:first-child{padding-left:20px;color:var(--ink2)}
@@ -168,7 +178,8 @@ tbody tr:hover td{background:rgba(255,255,255,.03)}
 .gauge b{display:block;font-family:var(--cond);font-weight:900;font-style:italic;font-size:50px;line-height:.95;margin:4px 0;font-variant-numeric:tabular-nums}
 .gauge b small{font-size:16px;font-style:normal;color:var(--muted);margin-left:6px;font-weight:600}
 .gauge .t{height:10px;background:var(--panel2);margin:8px 0 6px;position:relative}
-.gauge .t i{position:absolute;left:0;top:0;bottom:0;background:var(--club2);transition:width .6s ease}
+.gauge .t i{position:absolute;left:0;top:0;bottom:0;background:var(--club2);transition:width .6s ease,left .6s ease}
+.gauge .t u{position:absolute;top:-3px;bottom:-3px;width:3px;background:#fff;transform:translateX(-50%)}
 .gauge .t::after{content:"";position:absolute;left:50%;top:-3px;bottom:-3px;width:2px;background:var(--muted)}
 .gauge .u{display:block;font-size:11.5px;color:var(--muted);line-height:1.35;min-height:32px}
 .gauge .pct{display:block;font-size:11.5px;color:var(--ink2);margin-top:4px}
@@ -217,6 +228,7 @@ td.w{color:var(--good)} td.l{color:var(--bad)}
   </section>
   <div class="ticker"><div class="lab" id="ticker-lab">Season</div><div class="run" id="run"></div></div>
   <div class="tiles" id="tiles"></div>
+  <div class="band-foot"><div class="seg" id="f-rate"><button aria-pressed="true" data-v="pg">Per game</button><button aria-pressed="false" data-v="p40">Per 40 min</button></div><span id="band-legend"></span></div>
 
   <div class="grid">
     <section class="panel">
@@ -245,7 +257,8 @@ td.w{color:var(--good)} td.l{color:var(--bad)}
         <div class="in">
           <div class="splits" id="splits"></div>
           <div id="xfg"></div>
-          <table id="zones"><thead><tr><th>Zone</th><th>FGM / FGA</th><th>FG%</th><th>Share</th></tr></thead><tbody></tbody></table>
+          <div class="tbl-cap" id="zone-cap">Shooting by zone</div>
+          <table id="zones"><thead><tr><th>Zone</th><th>FGM / FGA</th><th>FG%</th><th>Lg</th><th>Share</th></tr></thead><tbody></tbody></table>
         </div>
       </section>
       <section class="panel prof" id="prof-panel" hidden style="margin-top:18px">
@@ -253,8 +266,8 @@ td.w{color:var(--good)} td.l{color:var(--bad)}
         <div class="in">
           <p class="sub" id="prof-sub"></p>
           <div class="gauges">
-            <div class="gauge"><span class="k">Shot quality</span><b id="pq"></b><div class="t"><i id="pq-bar"></i></div><span class="u">expected points per attempt on his shots</span><span class="pct" id="pq-pct"></span></div>
-            <div class="gauge"><span class="k">Shooting skill</span><b id="ps"></b><div class="t"><i id="ps-bar"></i></div><span class="u">points per 100 attempts above a league-average shooter, shrunk</span><span class="pct" id="ps-pct"></span></div>
+            <div class="gauge"><span class="k">Shot quality</span><b id="pq"></b><div class="t"><i id="pq-bar"></i><u id="pq-dot"></u></div><span class="u">expected points per attempt on his shots</span><span class="pct" id="pq-pct"></span></div>
+            <div class="gauge"><span class="k">Shooting skill</span><b id="ps"></b><div class="t"><i id="ps-bar"></i><u id="ps-dot"></u></div><span class="u">points per 100 attempts above a league-average shooter, shrunk</span><span class="pct" id="ps-pct"></span></div>
           </div>
           <div class="prof-chart"><svg id="curve" viewBox="0 0 640 220" role="img" aria-label="Season curve of shooting skill"></svg><div class="legend" id="curve-legend"></div></div>
         </div>
@@ -270,7 +283,7 @@ td.w{color:var(--good)} td.l{color:var(--bad)}
     </div>
   </details>
 
-  <div class="foot"><span><a href="monitor.html">System status</a> · Data: Euroleague official feeds · Photos: Euroleague media days</span><span>Euroleague Player Lab</span></div>
+  <div class="foot"><span><a href="monitor.html">System status</a> · Data: Euroleague official feeds · Photos: Euroleague media days</span><span id="foot-status">Euroleague Player Lab</span></div>
 </div>
 <div class="tip" id="tip"></div>
 <script>
@@ -279,7 +292,7 @@ const $ = s => document.querySelector(s);
 const CLUBS = Object.fromEntries(META.clubs.map(c => [c.code, c]));
 const shortName = code => (CLUBS[code] && CLUBS[code].short) || code;
 const PLACEHOLDER = "data:image/svg+xml;utf8," + encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 360 480'><defs><linearGradient id='g' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='#343841'/><stop offset='1' stop-color='#131519'/></linearGradient></defs><circle cx='180' cy='150' r='80' fill='url(#g)'/><path d='M40 480 C40 330 110 280 180 280 C250 280 320 330 320 480Z' fill='url(#g)'/></svg>`);
-const state = {team: null, data: null, player: 0, result: 'all', view: 'dots', game: 'all', timers: [], accent: '#f26f21', base: '#1f2b47'};
+const state = {team: null, data: null, player: 0, result: 'all', view: 'dots', game: 'all', rate: 'pg', timers: [], accent: '#f26f21', base: '#1f2b47'};
 const cache = {};
 const tip = $('#tip');
 const showTip = (e, h) => { tip.innerHTML = h; tip.style.opacity = 1; moveTip(e); };
@@ -291,6 +304,10 @@ const cap = s => s.toLowerCase().replace(/(^|[\s\-'.])(\S)/g, (m, p, c) => p + c
 const nameOf = n => { const [sur, first] = n.split(',').map(s => s.trim()); return {first: cap(first || ''), sur: cap(sur)}; };
 const age = b => { if (!b) return null; const d = new Date(b), n = new Date(); let a = n.getFullYear() - d.getFullYear(); if (n < new Date(n.getFullYear(), d.getMonth(), d.getDate())) a--; return a; };
 const fmtDate = s => new Date(s + 'T12:00:00').toLocaleDateString('en-GB', {day: 'numeric', month: 'short'});
+const LG = META.league || null, MIN_ATT = 10;
+const seasonLabel = s => s ? s.replace('E', '').replace(/(\d{4})/, (m, y) => y + '-' + (+y + 1).toString().slice(2)) : '';
+const wilson = (m, a) => { if (!a) return null; const z = 1.96, p = m / a, d = 1 + z * z / a, c = p + z * z / (2 * a), h = z * Math.sqrt(p * (1 - p) / a + z * z / (4 * a * a)); return [(c - h) / d, (c + h) / d]; };
+const ival = (m, a) => { const w = wilson(m, a); return w ? `95% interval ${(100 * w[0]).toFixed(0)} to ${(100 * w[1]).toFixed(0)}%` : ''; };
 
 // ---- colourways: base tints panels and the hero wedge, accent carries marks, controls and the surname
 const hexRgb = h => { const n = parseInt(h.replace('#', ''), 16); return [n >> 16 & 255, n >> 8 & 255, n & 255]; };
@@ -378,14 +395,13 @@ function renderPlayer(){
   const a = age(p.birth);
   $('#facts').innerHTML = [p.height ? `<span><b>${p.height}</b> cm</span>` : '', a ? `<span><b>${a}</b> yrs</span>` : '', p.country ? `<span>${p.country.replace('United States of America', 'USA')}</span>` : '',
     played ? `<span><b>${tot.gp}</b> games</span><span><b>${f1(tot.min / gp)}</b> min</span>` : `<span><b>0</b> games</span>`].join('');
-  const flag = () => '';   // percentile labels are not shown; the underline still scales with the league percentile
-  const tiles = [['pts', 'Points'], ['reb', 'Rebounds'], ['ast', 'Assists'], ['stl', 'Steals'], ['blk', 'Blocks'], ['tov', 'Turnovers'], ['pir', 'PIR']];
-  $('#tiles').innerHTML = tiles.map(([k, l]) => `<div class="tile ${played ? '' : 'na'}" style="--p:${pc[k] ?? 0}%"><b>${played ? f1(tot[k] / gp) : '–'}</b><span>${l}</span>${flag(pc[k])}</div>`).join('');
+  renderTiles();
   const xf = d.xfg;
-  $('#xfg').innerHTML = xf ? `<div class="xfg-row"><div><b>${(100 * xf.xfg).toFixed(1)}%</b><span>Expected FG% on his shots (xFG)</span></div><div><b>${((xf.pts / xf.att) || 0).toFixed(2)} <i>vs</i> ${(xf.xpts / xf.att).toFixed(2)}</b><span>Points per attempt, actual vs expected</span></div><div class="${xf.pts - xf.xpts >= 0 ? 'up' : 'down'}"><b>${xf.pts - xf.xpts >= 0 ? '+' : ''}${(xf.pts - xf.xpts).toFixed(1)}</b><span>Points above expectation, ${xf.att} attempts</span></div></div>` : '';
+  $('#xfg').innerHTML = xf ? `<div class="xfg-row"><div><b>${(100 * xf.xfg).toFixed(1)}%</b><span>Expected FG% for a league-average shooter on his shots</span></div><div><b>${((xf.pts / xf.att) || 0).toFixed(2)} <i>vs</i> ${(xf.xpts / xf.att).toFixed(2)}</b><span>Points per attempt, his vs a league-average shooter</span></div><div class="${xf.pts - xf.xpts >= 0 ? 'up' : 'down'}"><b>${xf.pts - xf.xpts >= 0 ? '+' : ''}${(xf.pts - xf.xpts).toFixed(1)}</b><span>Points above expectation, ${xf.att} attempts</span></div></div>` : '';
   const fga = tot.fga2 + tot.fga3, ts = (fga + 0.44 * tot.fta) ? tot.pts / (2 * (fga + 0.44 * tot.fta)) : 0;
   const rows = [['2P', tot.fgm2, tot.fga2, tot.fga2 ? tot.fgm2 / tot.fga2 : 0], ['3P', tot.fgm3, tot.fga3, tot.fga3 ? tot.fgm3 / tot.fga3 : 0], ['FT', tot.ftm, tot.fta, tot.fta ? tot.ftm / tot.fta : 0], ['TS', null, null, ts]];
-  $('#splits').innerHTML = rows.map(([k, m, at, v]) => `<div class="split"><span class="k">${k}%</span><div class="bar"><i style="width:${played ? Math.min(100, v * 100) : 0}%"></i></div><div class="v"><b>${played ? (v * 100).toFixed(1) : '–'}</b>${m !== null && played ? `${m}/${at}` : ''}</div></div>`).join('');
+  const lgs = LG ? {'2P': LG.splits.fg2, '3P': LG.splits.fg3, 'FT': LG.splits.ft, 'TS': LG.splits.ts} : {};
+  $('#splits').innerHTML = rows.map(([k, m, at, v]) => { const w = m !== null && at ? wilson(m, at) : null, small = m !== null && at > 0 && at < MIN_ATT, lg = lgs[k]; return `<div class="split${small ? ' small' : ''}" title="${m !== null && at ? `${m} of ${at} · ${ival(m, at)}${small ? ' · small sample' : ''}` : ''}${lg != null ? ` · league ${(100 * lg).toFixed(1)}%` : ''}"><span class="k">${k}%</span><div class="bar"><i class="fill" style="width:${played ? Math.min(100, v * 100) : 0}%"></i>${w && played ? `<i class="ci" style="left:${(100 * w[0]).toFixed(1)}%;width:${(100 * (w[1] - w[0])).toFixed(1)}%"></i>` : ''}${lg != null ? `<u class="tick" style="left:${(100 * lg).toFixed(1)}%"></u>` : ''}</div><div class="v"><b>${played ? (v * 100).toFixed(1) : '–'}</b>${m !== null && played ? `${m}/${at}` : ''}</div></div>`; }).join('');
   const lg = $('#log tbody');
   lg.innerHTML = d.log.map(r => { const g = d.games[r[0]], l = gameLabel(g); return `<tr><td>${g.round}</td><td>${fmtDate(g.date)}</td><td>${l.home ? 'vs' : '@'} ${l.opp}</td><td class="${l.res === 'W' ? 'w' : 'l'}">${l.res} ${l.score}</td><td>${r[1]}</td><td class="k">${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td><td>${r[5]}</td><td>${r[6]}</td><td>${r[7]}</td><td>${r[8]}/${r[9]}</td><td>${r[10]}/${r[11]}</td><td>${r[12]}/${r[13]}</td><td>${r[14]}</td><td>${r[15] ?? ''}</td></tr>`; }).join('');
   $('#log-none').hidden = d.log.length > 0; $('#log-panel .scroll').hidden = d.log.length === 0;
@@ -395,15 +411,25 @@ function renderPlayer(){
   if (nt && nt.text) { nb.hidden = false; $('#note-text').textContent = nt.text; $('#note-keys').innerHTML = (nt.key_numbers || []).map(k => `<b>${k.value}</b> ${k.label}`).join(' · '); $('#note-src').textContent = `Written by Claude from the numbers on this page, ${nt.generated_at} · checked for numeric consistency`; } else nb.hidden = true;
   renderChart(true);
 }
+function renderTiles(){
+  const d = ds(), tot = d.tot, gp = tot.gp || 1, played = tot.gp > 0, p40 = state.rate === 'p40', pc = (p40 ? d.pct40 : d.pct) || {};
+  const val = k => !played ? '–' : p40 ? (d.per40 ? f1(d.per40[k]) : '–') : f1(tot[k] / gp);
+  const tiles = [['pts', 'Points'], ['reb', 'Rebounds'], ['ast', 'Assists'], ['stl', 'Steals'], ['blk', 'Blocks'], ['tov', 'Turnovers'], ['pir', 'PIR']];
+  $('#tiles').innerHTML = tiles.map(([k, l]) => `<div class="tile ${played ? '' : 'na'}" style="--p:${pc[k] ?? 0}%"><b>${val(k)}</b><span>${l}</span></div>`).join('');
+  $('#band-legend').textContent = d.pct ? `${p40 ? 'Per 40 minutes' : 'Per game'} · underline: rank among ${META.league_n} rotation players (${META.pool_rule}), longer is better, turnovers inverted` : played ? `${p40 ? 'Per 40 minutes' : 'Per game'} · ${META.league_n >= 20 ? 'no rank underline: fewer than 3 games or under 10 minutes a game' : 'rank underlines appear once 20 players have 3+ games at 10+ minutes'}` : 'Per game';
+}
 function renderProfile(p, d){
   const pr = d.profile, panel = $('#prof-panel');
   if (!pr || !META.priors) { panel.hidden = true; return; }
   panel.hidden = false;
   const P = META.priors, per100 = v => (100 * v).toFixed(1);
   $('#prof-sub').textContent = `Shot quality is the value of the shots he takes (a league-average shooter would score this much per attempt on them). Shooting skill is what he scores on top of that. Both are shrunk toward the league (skill: ${Math.round(P.k_skill)} attempts of prior weight, so ${pr.att} attempts carry ${(100 * pr.att / (pr.att + P.k_skill)).toFixed(0)}% of the estimate). Percentiles are against ${P.reference_season.replace('E','').replace(/(\d{4})/, (m,y)=>y+'-'+(+y+1).toString().slice(2))} players with 100+ attempts.`;
-  $('#pq').innerHTML = `${pr.quality_shrunk.toFixed(2)}<small>lg ${P.league_quality.toFixed(2)}</small>`; $('#pq-bar').style.width = (pr.quality_pct ?? 0) + '%'; $('#pq-pct').textContent = pr.quality_pct != null ? `${pr.quality_pct.toFixed(0)}th percentile · raw ${pr.quality.toFixed(2)} on ${pr.att} attempts` : '';
+  const gauge = (bar, dot, pt, lo, hi, minAtt) => { const b = $(bar), u = $(dot), ranged = lo != null && hi != null; b.style.left = ranged ? lo + '%' : '0'; b.style.width = ranged ? Math.max(1, hi - lo) + '%' : (pt ?? 0) + '%'; u.hidden = pt == null || pr.att < minAtt; u.style.left = (pt ?? 0) + '%'; return pt == null ? '' : pr.att < minAtt ? (ranged ? `${Math.round(lo)}th to ${Math.round(hi)}th percentile (${pr.att} attempts, too few for a point rank)` : '') : `${pt.toFixed(0)}th percentile${ranged ? ` (${Math.round(lo)} to ${Math.round(hi)})` : ''}`; };
+  $('#pq').innerHTML = `${pr.quality_shrunk.toFixed(2)}<small>lg ${P.league_quality.toFixed(2)}</small>`;
+  const qtxt = gauge('#pq-bar', '#pq-dot', pr.quality_pct, pr.quality_pct_lo, pr.quality_pct_hi, 30); $('#pq-pct').textContent = qtxt ? `${qtxt} · raw ${pr.quality.toFixed(2)} on ${pr.att} attempts` : '';
   const sgn = pr.skill_shrunk >= 0 ? '+' : '';
-  $('#ps').innerHTML = `${sgn}${per100(pr.skill_shrunk)}<small>± ${per100(pr.skill_sd)}</small>`; $('#ps-bar').style.width = (pr.skill_pct ?? 0) + '%'; $('#ps-pct').textContent = pr.skill_pct != null ? `${pr.skill_pct.toFixed(0)}th percentile · raw ${pr.skill >= 0 ? '+' : ''}${per100(pr.skill)} · ${pr.pae >= 0 ? '+' : ''}${pr.pae.toFixed(1)} points above expectation` : '';
+  $('#ps').innerHTML = `${sgn}${per100(pr.skill_shrunk)}<small>± ${per100(pr.skill_sd)}</small>`;
+  const stxt = gauge('#ps-bar', '#ps-dot', pr.skill_pct, pr.skill_pct_lo, pr.skill_pct_hi, 50); $('#ps-pct').textContent = stxt ? `${stxt} · raw ${pr.skill >= 0 ? '+' : ''}${per100(pr.skill)} · ${pr.pae >= 0 ? '+' : ''}${pr.pae.toFixed(1)} points above expectation` : '';
   // season curve of shrunk skill with ±1 sd band, x = attempts
   const c = pr.curve, W = 640, H = 220, L = 46, R = 16, T = 14, B = 30;
   if (!c.length) { $('#curve').innerHTML = ''; return; }
@@ -432,11 +458,16 @@ function renderChart(animate){
   const layer = svg.querySelector('#shots-layer'), zl = svg.querySelector('#zones-layer');
   const tableShots = d.shots.filter(s => state.game === 'all' || s[0] === +state.game);
   const zs = zoneStats(tableShots), total = tableShots.length || 1;
-  const zoneRow = (l, v, cls = '') => { const share = v.a / total; return `<tr class="${cls}"><td>${l}</td><td>${v.a ? `${v.m} / ${v.a}` : '–'}</td><td class="k">${pct(v.m, v.a)}</td><td>${v.a ? (share * 100).toFixed(0) + '%' : '–'}<span class="zone-bar" style="width:${Math.round(share * 60)}px"></span></td></tr>`; };
+  const lgz = k => LG && LG.zones[k] ? LG.zones[k].fg : null;
+  const zoneRow = (k, l, v, cls = '') => { const share = v.a / total, lg = lgz(k), p = v.a ? v.m / v.a : null, small = v.a > 0 && v.a < MIN_ATT, diff = p != null && lg != null ? p - lg : null;
+    const bg = diff == null || small ? 'transparent' : diff >= 0 ? hexA(state.accent, Math.min(.55, .08 + diff * 2.2)) : `rgba(79,142,247,${Math.min(.55, .08 - diff * 2.2).toFixed(2)})`;
+    const title = v.a ? `${v.m} of ${v.a} · ${ival(v.m, v.a)}${small ? ' · small sample' : ''}${lg != null ? ` · league ${(100 * lg).toFixed(1)}%` : ''}` : '';
+    return `<tr class="${cls}${small ? ' small' : ''}" title="${title}"><td>${l}</td><td>${v.a ? `${v.m} / ${v.a}` : '–'}</td><td class="k"><span class="cell" style="background:${bg}">${pct(v.m, v.a)}</span></td><td class="lg">${lg != null ? (100 * lg).toFixed(1) + '%' : '–'}</td><td>${v.a ? (share * 100).toFixed(0) + '%' : '–'}<span class="zone-bar" style="width:${Math.round(share * 60)}px"></span></td></tr>`; };
   const threes = {m: zs.c3.m + zs.a3.m, a: zs.c3.a + zs.a3.a};
-  $('#zones tbody').innerHTML = ['rim', 'paint', 'mid'].map(k => zoneRow(ZONES[k], zs[k])).join('')
-    + `<tr class="grp"><td colspan="4">3 point shooting</td></tr>`
-    + zoneRow(ZONES.c3, zs.c3, 'sub') + zoneRow(ZONES.a3, zs.a3, 'sub') + zoneRow('All 3s', threes, 'tot');
+  $('#zones tbody').innerHTML = ['rim', 'paint', 'mid'].map(k => zoneRow(k, ZONES[k], zs[k])).join('')
+    + `<tr class="grp"><td colspan="5">3 point shooting</td></tr>`
+    + zoneRow('c3', ZONES.c3, zs.c3, 'sub') + zoneRow('a3', ZONES.a3, zs.a3, 'sub') + zoneRow('three', 'All 3s', threes, 'tot');
+  $('#zone-cap').textContent = `Shooting by zone · ${state.game === 'all' ? 'all games' : gameLabel(games[+state.game]).txt}${LG ? ` · league ${seasonLabel(LG.season)}` : ''}`;
   const empty = $('#empty');
   const is3d = state.view === '3d';
   $('#court').style.display = is3d ? 'none' : ''; $('#court3d').hidden = !is3d;
@@ -450,16 +481,16 @@ function renderChart(animate){
   }
   empty.hidden = true;
   if (state.view === 'zones') {
-    const col = (m, a) => { if (!a) return 'rgba(120,128,144,.3)'; const p = m / a; const q = Math.max(0, Math.min(1, (p - 0.25) / 0.45)); return hexA(state.accent, 0.12 + 0.68 * q); };
-    const lab = (k, x, y, small) => { const v = zs[k]; return `<text class="zl" x="${x}" y="${y}" style="${small ? 'font-size:34px' : ''}">${pct(v.m, v.a)}</text><text class="zs" x="${x}" y="${y + (small ? 30 : 40)}" style="${small ? 'font-size:24px' : ''}">${v.m}/${v.a}</text>`; };
-    zl.innerHTML = `<rect class="zone" x="${X(-750)}" y="${Y(1242.5)}" width="1500" height="1400" fill="${col(zs.a3.m, zs.a3.a)}"/>
-      <rect class="zone" x="${X(-750)}" y="${Y(141.5)}" width="90" height="299" fill="${col(zs.c3.m, zs.c3.a)}"/><rect class="zone" x="${X(660)}" y="${Y(141.5)}" width="90" height="299" fill="${col(zs.c3.m, zs.c3.a)}"/>
-      <path class="zone" d="${twoPtPath()}" fill="${col(zs.mid.m, zs.mid.a)}"/>
-      <rect class="zone" x="${X(-245)}" y="${Y(422.5)}" width="490" height="580" fill="${col(zs.paint.m, zs.paint.a)}"/>
-      <circle class="zone" cx="${X(0)}" cy="${Y(0)}" r="150" fill="${col(zs.rim.m, zs.rim.a)}"/>`;
+    const col = (k, m, a) => { if (!a || a < MIN_ATT) return 'rgba(120,128,144,.22)'; const lg = lgz(k) ?? 0.45; const t = Math.max(-1, Math.min(1, (m / a - lg) / 0.15)); return t >= 0 ? hexA(state.accent, 0.15 + 0.6 * t) : `rgba(79,142,247,${(0.15 + 0.55 * -t).toFixed(2)})`; };
+    const lab = (k, x, y, small) => { const v = zs[k], few = v.a < MIN_ATT; return `<text class="zl" x="${x}" y="${y}" style="${small ? 'font-size:34px' : ''}${few ? ';fill:#c6cbd4' : ''}">${few ? `${v.m}/${v.a}` : pct(v.m, v.a)}</text><text class="zs" x="${x}" y="${y + (small ? 30 : 40)}" style="${small ? 'font-size:24px' : ''}">${few ? (v.a ? 'few attempts' : 'no attempts') : `${v.m}/${v.a}`}</text>`; };
+    zl.innerHTML = `<rect class="zone" x="${X(-750)}" y="${Y(1242.5)}" width="1500" height="1400" fill="${col('a3', zs.a3.m, zs.a3.a)}"/>
+      <rect class="zone" x="${X(-750)}" y="${Y(141.5)}" width="90" height="299" fill="${col('c3', zs.c3.m, zs.c3.a)}"/><rect class="zone" x="${X(660)}" y="${Y(141.5)}" width="90" height="299" fill="${col('c3', zs.c3.m, zs.c3.a)}"/>
+      <path class="zone" d="${twoPtPath()}" fill="${col('mid', zs.mid.m, zs.mid.a)}"/>
+      <rect class="zone" x="${X(-245)}" y="${Y(422.5)}" width="490" height="580" fill="${col('paint', zs.paint.m, zs.paint.a)}"/>
+      <circle class="zone" cx="${X(0)}" cy="${Y(0)}" r="150" fill="${col('rim', zs.rim.m, zs.rim.a)}"/>`;
     svg.querySelector('#labels-layer').innerHTML = `${lab('a3', X(0), Y(820))}${lab('c3', X(-705), Y(30), true)}${lab('c3', X(705), Y(30), true)}${lab('mid', X(-430), Y(330))}${lab('paint', X(0), Y(300))}${lab('rim', X(0), Y(70))}`;
     svg.querySelector('.paint').style.display = 'none';
-    $('#cap').textContent = `${tableShots.length} attempts by zone`;
+    $('#cap').textContent = `${tableShots.length} attempts by zone · colour is FG% against the league zone value · grey under ${MIN_ATT} attempts`;
     return;
   }
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -472,7 +503,7 @@ function renderChart(animate){
       el.setAttribute('class', 'shot');
       el.innerHTML = s[3] ? `<circle class="made" cx="${x}" cy="${y}" r="17"/>` : `<circle class="miss" cx="${x}" cy="${y}" r="15"/><line class="missx" x1="${x - 7}" y1="${y - 7}" x2="${x + 7}" y2="${y + 7}"/><line class="missx" x1="${x + 7}" y1="${y - 7}" x2="${x - 7}" y2="${y + 7}"/>`;
       const g = games[s[0]], l = gameLabel(g);
-      el.addEventListener('mousemove', e => showTip(e, `<b>${s[3] ? 'Made' : 'Missed'} ${s[4]}PT · ${ZONES[zoneOf(s[1], s[2], s[4])]}</b><br>${l.txt} · Q${s[5] > 40 ? 'OT' : Math.ceil(s[5] / 10)} · ${(Math.hypot(s[1], s[2]) / 100).toFixed(1)} m${s[9] != null ? ' · xFG ' + (100 * s[9]).toFixed(0) + '%' : ''}${s[7] ? ' · fast break' : ''}${s[8] ? ' · second chance' : ''}`));
+      el.addEventListener('mousemove', e => showTip(e, `<b>${s[3] ? 'Made' : 'Missed'} ${s[4]}PT · ${ZONES[zoneOf(s[1], s[2], s[4])]}</b><br>${l.txt} · Q${s[5] > 40 ? 'OT' : Math.ceil(s[5] / 10)} · ${(Math.hypot(s[1], s[2]) / 100).toFixed(1)} m${s[9] != null ? ' · xFG ' + (100 * s[9]).toFixed(0) + '%' + (s[10] != null ? ' (him ' + (100 * s[10]).toFixed(0) + '%)' : '') : ''}`));
       el.addEventListener('mouseleave', hideTip);
       layer.appendChild(el);
       if (step) capEl.textContent = `${l.txt} · ${i + 1} / ${shots.length}`;
@@ -648,6 +679,8 @@ $('#team').addEventListener('change', e => { loadTeam(e.target.value); location.
 $('#player').addEventListener('change', e => { state.player = +e.target.value; state.game = 'all'; renderGames(); renderPlayer(); location.hash = `${state.team}/${player().pid}`; });
 $('#game').addEventListener('change', e => { state.game = e.target.value; renderChart(true); });
 $('#replay').addEventListener('click', () => renderChart(true));
+$('#f-rate').querySelectorAll('button').forEach(b => b.addEventListener('click', () => { $('#f-rate').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b)); state.rate = b.dataset.v; renderTiles(); }));
+if (META.status) $('#foot-status').textContent = `Data checked ${META.status.checked_at.slice(0, 10)} · ${META.status.games} games · ${META.status.ok ? `all ${META.status.tests} checks passed` : `${META.status.failures} check(s) failed`}${META.status.warnings ? ` · ${META.status.warnings} warning(s)` : ''}`;
 [['#f-result', 'result'], ['#f-view', 'view']].forEach(([sel, key]) => {
   $(sel).querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
     $(sel).querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b)); state[key] = b.dataset.v; renderChart(key === 'view' ? b.dataset.v === '3d' : true);
