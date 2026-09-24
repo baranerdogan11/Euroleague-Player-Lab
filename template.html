@@ -686,15 +686,15 @@ function renderChart(animate){
   const empty = $('#empty');
   const is3d = state.view === '3d';
   $('#court').style.display = is3d ? 'none' : ''; $('#court3d').hidden = !is3d;
-  if (is3d) { empty.hidden = games.length > 0; if (!games.length) { $('#cap').textContent = 'No games yet'; return; } Shot3D.play(shots, s => gameLabel(games[s[0]])); return; }
-  Shot3D.stop();
-  if (!games.length) {
+  if (!games.length) {   // nothing to draw in either view: clear the 3D scene of the previous player and explain the empty court
     const nx = t.upcoming && t.upcoming[0];
     const l = nx ? (nx.home === realCode() ? `vs ${shortName(nx.away)}` : `@ ${shortName(nx.home)}`) : null;
     $('#empty-sub').textContent = nx ? `First game: Round ${nx.round} ${l} · ${fmtDate(nx.date)}` : 'The season has not started.';
-    empty.hidden = false; $('#cap').textContent = 'No games yet'; return;
+    empty.hidden = false; $('#cap').textContent = 'No games yet'; if (is3d) Shot3D.clear(); else Shot3D.stop(); return;
   }
   empty.hidden = true;
+  if (is3d) { Shot3D.play(shots, s => gameLabel(games[s[0]])); return; }
+  Shot3D.stop();
   if (state.view === 'zones') {
     const col = (k, m, a) => { if (!a || a < MIN_ATT) return 'rgba(120,128,144,.22)'; const lg = lgz(k) ?? 0.45; const t = Math.max(-1, Math.min(1, (m / a - lg) / 0.15)); return t >= 0 ? hexA(state.accent, 0.15 + 0.6 * t) : `rgba(79,142,247,${(0.15 + 0.55 * -t).toFixed(2)})`; };
     const lab = (k, x, y, small) => { const v = zs[k], few = v.a < MIN_ATT; return `<text class="zl" x="${x}" y="${y}" style="${small ? 'font-size:34px' : ''}${few ? ';fill:#c6cbd4' : ''}">${few ? `${v.m}/${v.a}` : pct(v.m, v.a)}</text><text class="zs" x="${x}" y="${y + (small ? 30 : 40)}" style="${small ? 'font-size:24px' : ''}">${few ? '' : `${v.m}/${v.a}`}</text>`; };
@@ -790,13 +790,15 @@ const Shot3D = (() => {
     const lift = e => { ptrs.delete(e.pointerId); if (ptrs.size < 2) pinch = null; drag = null; };
     el.addEventListener('pointerup', lift); el.addEventListener('pointercancel', lift);
     el.addEventListener('wheel', e => { e.preventDefault(); zoom(1 + e.deltaY * 0.0012); }, {passive: false});
-    if ('IntersectionObserver' in window) new IntersectionObserver(es => { vis = es[0].isIntersecting; if (vis && running && !raf) { last = performance.now(); raf = requestAnimationFrame(frame); } }).observe(host);   // the render loop sleeps while the court is scrolled out of view
+    if ('IntersectionObserver' in window) new IntersectionObserver(es => { vis = es[es.length - 1].isIntersecting; wake(); }).observe(host);   // the render loop sleeps while the court is scrolled out of view; the last entry is the current state
     R = {renderer, scene, camera, RIM, markers, host, floor, rimMat, fill, get drag(){ return drag || pinch; },
          ballGeo: new THREE.SphereGeometry(0.123, 24, 18), ballMat: new THREE.MeshStandardMaterial({color: num(pal.accent), roughness: .55}),
          missBall: new THREE.MeshStandardMaterial({color: 0x8a91a0, roughness: .6}), madeMark: new THREE.MeshBasicMaterial({color: num(pal.accent)}), missMark: new THREE.MeshBasicMaterial({color: 0x8a91a0}),
          markMade: new THREE.CircleGeometry(0.15, 24), markMiss: new THREE.RingGeometry(0.1, 0.16, 24)};
     resize(); addEventListener('resize', resize);
   }
+  function inView(){ const r = R.host.getBoundingClientRect(); return r.bottom > 0 && r.top < innerHeight && r.width > 0; }
+  function wake(){ if (running && vis && !raf) { last = performance.now(); raf = requestAnimationFrame(frame); } }   // (re)start the loop when it is wanted, visible and not already scheduled
   function resize(){ if (!R) return; const w = R.host.clientWidth, h = R.host.clientHeight; if (!w || !h) return; R.renderer.setSize(w, h, false); R.camera.aspect = w / h; R.camera.updateProjectionMatrix(); }
   function applyCam(){ const {target, az, el, dist} = cam; R.camera.position.set(target.x + dist * Math.cos(el) * Math.sin(az), target.y + dist * Math.sin(el), target.z + dist * Math.cos(el) * Math.cos(az)); R.camera.lookAt(target); }
   const toWorld = s => new THREE.Vector3(s[1] / 100, 0, 1.575 + s[2] / 100);
@@ -852,9 +854,11 @@ const Shot3D = (() => {
       S.list = list; S.labelOf = labelOf; S.i = 0; S.timer = 0; S.seen = 0; S.made = 0; S.doneAt = 0; cam.drift = true;
       if (matchMedia('(prefers-reduced-motion: reduce)').matches) { list.forEach(mark); S.i = list.length; S.playing = false; cam.drift = false; cap.textContent = list.length ? `${S.made} / ${list.length} made · ${pct(S.made, list.length)}` : 'No attempts in this selection'; }   // no flights: every marker is placed at once
       else { S.playing = true; cap.textContent = list.length ? `${list.length} attempts` : 'No attempts in this selection'; }
-      if (!running) { running = true; last = performance.now(); if (vis && !raf) raf = requestAnimationFrame(frame); }
+      running = true; vis = inView(); wake();   // a new sequence always restarts the loop, whether it was stopped, asleep off-screen, or still running
     },
     stop(){ running = false; cancelAnimationFrame(raf); raf = 0; S.playing = false; },
+    clear(){ S.playing = false; S.list = []; S.i = 0; clear(); },   // empty court, loop kept alive so the camera still responds
+    info(){ return {running, raf, vis, playing: S.playing, i: S.i, n: S.list.length, flights: S.flights.length, built: !!R}; },
     preset(name){ Object.assign(cam, PRESETS[name]); cam.drift = true; S.doneAt = performance.now(); },
     recolor(accent, floor, paint){
       Object.assign(pal, {accent, floor, paint});
