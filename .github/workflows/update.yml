@@ -5,7 +5,12 @@ on:
     - cron: "*/5 17-23 * * *"   # game evenings: every 5 minutes, runs only when a game has finished since the last build
     - cron: "*/5 0-1 * * *"
     - cron: "30 2 * * *"        # 02:30 UTC nightly: always runs (rosters, photos, late corrections)
-  workflow_dispatch:            # run by hand from the Actions tab
+  workflow_dispatch:            # run by hand from the Actions tab, or from an external scheduler; runs only if a game has finished unless force is set
+    inputs:
+      force:
+        description: Run even if no game has finished since the last build
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -43,7 +48,7 @@ jobs:
 
   update:
     needs: check
-    if: needs.check.outputs.run == 'true' || github.event_name == 'workflow_dispatch' || github.event.schedule == '30 2 * * *'
+    if: needs.check.outputs.run == 'true' || github.event.inputs.force == 'true' || github.event.schedule == '30 2 * * *'
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
