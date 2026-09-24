@@ -63,10 +63,18 @@ def profile_of(player, gidx):
             "skill": pr.skill, "skill_shrunk": pr.skill_shrunk, "skill_sd": pr.skill_sd, "skill_pct": pr.skill_pct, "pae": pr.pae, "curve": curve}
 
 
+# Broadcast colourways: base tints panels and the hero wedge, accent carries text, marks and controls on a dark ground.
+PALETTES = {"IST": ("#002D74", "#00A7E1"), "MIL": ("#8E1610", "#F0342B"), "BES": ("#2A2A2A", "#FFFFFF"), "RED": ("#A3121A", "#FF3B44"), "DUB": ("#003E2E", "#F6881F"),
+            "BAR": ("#023485", "#EDBB00"), "MUN": ("#8F0F25", "#FF4D6D"), "ULK": ("#004280", "#FFED00"), "HTA": ("#9E1218", "#FF3B44"), "BAS": ("#0A2240", "#E4213C"),
+            "ASV": ("#2A2A2A", "#FFFFFF"), "TEL": ("#2371B5", "#FFF100"), "OLY": ("#9B0A18", "#F03A4A"), "PAN": ("#0B6B3A", "#22D37A"), "PRS": ("#2A2A2A", "#FFFFFF"),
+            "PAR": ("#2A2A2A", "#FFFFFF"), "MAD": ("#0B3F8F", "#FEBE10"), "PAM": ("#0A3792", "#FF6C0E"), "VIR": ("#2A2A2A", "#FFFFFF"), "ZAL": ("#0C6F3E", "#4ADE80")}
+DEFAULT_PALETTE = ("#1F2B47", "#F26F21")
+
 clubs = rows("select * from clubs order by name")
 for c in clubs:
     c["logo"] = f"logos/{c['club']}.png" if os.path.exists(os.path.join(ROOT, "logos", f"{c['club']}.png")) else None
 summary = []
+collected = {}
 for c in clubs:
     code = c["club"]
     roster = rows("""select s.player, p.name, s.dorsal, s.position, p.height_cm, p.birth_date, p.country
@@ -91,6 +99,31 @@ for c in clubs:
                         "birth": str(r["birth_date"]) if r["birth_date"] else None, "country": r["country"],
                         "photo": f"photos/{r['player']}.webp" if os.path.exists(os.path.join(ROOT, "photos", f"{r['player']}.webp")) else None,
                         "cur": {"tot": tot, "log": log, "shots": shots, "games": games, "xfg": xfg, "profile": profile_of(r["player"], gidx), "note": note_of(r["player"])}})
+    collected[code] = players
+
+# league percentiles per game among rotation players (3+ games, 10+ minutes a game); turnovers inverted so higher is better
+def per_game(tot):
+    gp = tot["gp"] or 1
+    fga = tot["fga2"] + tot["fga3"]
+    return {"pts": tot["pts"] / gp, "reb": tot["reb"] / gp, "ast": tot["ast"] / gp, "stl": tot["stl"] / gp, "blk": tot["blk"] / gp, "tov": tot["tov"] / gp, "pir": tot["pir"] / gp,
+            "fg2": tot["fgm2"] / tot["fga2"] if tot["fga2"] >= 15 else None, "fg3": tot["fgm3"] / tot["fga3"] if tot["fga3"] >= 15 else None,
+            "ft": tot["ftm"] / tot["fta"] if tot["fta"] >= 10 else None, "ts": tot["pts"] / (2 * (fga + 0.44 * tot["fta"])) if fga else None}
+pool = [per_game(p["cur"]["tot"]) for ps in collected.values() for p in ps if p["cur"]["tot"]["gp"] >= 3 and p["cur"]["tot"]["min"] / p["cur"]["tot"]["gp"] >= 10]
+league_n = len(pool)
+def percentiles(tot):
+    if league_n < 20 or tot["gp"] < 3 or tot["min"] / tot["gp"] < 10:
+        return None
+    me = per_game(tot); out = {}
+    for k, v in me.items():
+        if v is None:
+            out[k] = None; continue
+        vals = [r[k] for r in pool if r[k] is not None]
+        below = sum(1 for x in vals if (x > v if k == "tov" else x < v))
+        out[k] = round(100 * below / len(vals))
+    return out
+for code, players in collected.items():
+    for p in players:
+        p["cur"]["pct"] = percentiles(p["cur"]["tot"])
     played = con.execute("select count(*) from games where played and ? in (home, away)", [code]).fetchone()[0]
     upcoming = rows("select game as code, round, cast(date as varchar) as date, home, away, phase from games where not played and ? in (home, away) order by date limit 3", code)
     json.dump({"code": code, "season": SEASON, "label": label(SEASON), "games_played": played, "upcoming": upcoming, "players": players, "real_code": code},
@@ -104,7 +137,8 @@ if status:
 card_path = os.path.join(ROOT, "model", "model_card.json")
 card = json.load(open(card_path)) if os.path.exists(card_path) else None
 meta = {"season": SEASON, "label": label(SEASON), "model": {"version": card["version"], "trained_on": card["trained_on"], "logloss": card["metrics_test"][card["chosen"]]["logloss"],
-                                                           "auc": card["metrics_test"][card["chosen"]]["auc"], "n_shots": card["n_shots"]} if card else None, "clubs": [{"code": c["club"], "name": c["name"], "short": c["short"], "country": c["country"], "city": c["city"], "logo": c["logo"]} for c in clubs],
+                                                           "auc": card["metrics_test"][card["chosen"]]["auc"], "n_shots": card["n_shots"]} if card else None, "clubs": [{"code": c["club"], "name": c["name"], "short": c["short"], "country": c["country"], "city": c["city"], "logo": c["logo"], "base": PALETTES.get(c["club"], DEFAULT_PALETTE)[0], "accent": PALETTES.get(c["club"], DEFAULT_PALETTE)[1]} for c in clubs],
+        "league_n": league_n,
         "priors": {"league_quality": PRIORS["league_quality"], "k_skill": PRIORS["k_skill"], "k_quality": PRIORS["k_quality"], "reference_season": PRIORS["reference_season"],
                    "tau_skill": PRIORS["tau_skill"]} if PRIORS else None,
         "built": datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC"), "path": f"teams/{SEASON}/",
