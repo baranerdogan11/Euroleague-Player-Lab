@@ -232,7 +232,7 @@ def league_refs(season):
     if not all(os.path.exists(os.path.join(w, t + ".parquet")) for t in ("shots", "box")):
         return None
     sh = con.execute(f"select x, y, pts, made::int from read_parquet('{os.path.join(w, 'shots.parquet')}')").fetchall()
-    if len(sh) < 3000:
+    if len(sh) < 1000:
         return None
     acc = {k: [0, 0, 0] for k in ("rim", "paint", "mid", "c3", "a3")}
     for x, y, pts, made in sh:

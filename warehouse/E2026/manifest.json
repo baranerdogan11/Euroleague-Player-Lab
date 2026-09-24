@@ -5,7 +5,9 @@
   "players": 320,
   "roster_stints": 320,
   "games": 380,
-  "box": 0,
-  "shots": 0
+  "box": 48,
+  "shots": 268,
+  "events": 1086,
+  "shot_context": 268
  }
 }

@@ -75,7 +75,7 @@ def league_benchmarks(con, w):
         if not (os.path.exists(sp) and os.path.exists(bp)):
             continue
         rows = con.execute(f"select x, y, pts, made::int from read_parquet('{sp}')").fetchall()
-        if len(rows) < 3000:
+        if len(rows) < 1000:
             continue
         acc = {}
         for x, y, pts, made in rows:

@@ -1,13 +1,13 @@
 {
  "season": "E2026",
- "generated_at": "2026-09-24 16:48 UTC",
+ "generated_at": "2026-09-24 18:22 UTC",
  "pipeline": {
   "last": {
    "date": "2026-09-24",
-   "at": "2026-09-24T16:48:41Z",
+   "at": "2026-09-24T18:22:40Z",
    "ok": true,
-   "games": 0,
-   "shots": 0,
+   "games": 2,
+   "shots": 268,
    "players": 320,
    "failures": 0,
    "ci": false,
@@ -27,30 +27,30 @@
    },
    {
     "date": "2026-09-24",
-    "at": "2026-09-24T16:48:41Z",
+    "at": "2026-09-24T18:22:40Z",
     "ok": true,
-    "games": 0,
-    "shots": 0,
+    "games": 2,
+    "shots": 268,
     "players": 320,
     "failures": 0,
     "ci": false,
     "run_id": null
    }
   ],
-  "tests": 23
+  "tests": 26
  },
  "freshness": {
   "scheduled": 380,
-  "played": 0,
-  "last_played_date": null,
+  "played": 2,
+  "last_played_date": "2026-09-24",
   "next_game_date": "2026-09-24",
-  "last_round": null,
-  "days_since_last_game": null,
+  "last_round": 1,
+  "days_since_last_game": 0,
   "rounds": [
    {
     "round": 1,
     "scheduled": 10,
-    "played": 0
+    "played": 2
    },
    {
     "round": 2,
@@ -240,9 +240,79 @@
   ]
  },
  "calibration": {
-  "live_rounds": [],
-  "live_deciles": [],
-  "live_summary": null,
+  "live_rounds": [
+   {
+    "round": 1,
+    "shots": 268,
+    "actual": 0.4478,
+    "predicted": 0.4833,
+    "pae_ctx": -22.19,
+    "logloss": 0.6475,
+    "brier": 0.2285,
+    "logloss_constant": 0.6891
+   }
+  ],
+  "live_deciles": [
+   {
+    "n": 27,
+    "predicted": 0.31,
+    "actual": 0.407
+   },
+   {
+    "n": 27,
+    "predicted": 0.356,
+    "actual": 0.259
+   },
+   {
+    "n": 27,
+    "predicted": 0.373,
+    "actual": 0.407
+   },
+   {
+    "n": 26,
+    "predicted": 0.395,
+    "actual": 0.346
+   },
+   {
+    "n": 27,
+    "predicted": 0.412,
+    "actual": 0.37
+   },
+   {
+    "n": 27,
+    "predicted": 0.438,
+    "actual": 0.444
+   },
+   {
+    "n": 26,
+    "predicted": 0.484,
+    "actual": 0.308
+   },
+   {
+    "n": 27,
+    "predicted": 0.567,
+    "actual": 0.519
+   },
+   {
+    "n": 27,
+    "predicted": 0.637,
+    "actual": 0.593
+   },
+   {
+    "n": 27,
+    "predicted": 0.858,
+    "actual": 0.815
+   }
+  ],
+  "live_summary": {
+   "shots": 268,
+   "logloss": 0.6475,
+   "brier": 0.2285,
+   "actual": 0.4478,
+   "predicted": 0.4833,
+   "logloss_constant": 0.6891,
+   "pae_ctx_per100": -8.28
+  },
   "reference_rounds": [
    {
     "round": 1,
@@ -681,8 +751,8 @@
   "constant_baseline": 0.474
  },
  "shooter_coverage": {
-  "shots": 0,
-  "known_shooter_share": null
+  "shots": 268,
+  "known_shooter_share": 0.787
  },
  "notes": null,
  "notes_eval": {
@@ -696,9 +766,9 @@
   "judge_human_agreement": null
  },
  "api": {
-  "url": "http://127.0.0.1:9",
+  "url": "https://euroleague-xfg.onrender.com",
   "reachable": false,
-  "error": "URLError"
+  "error": "timeout"
  },
  "model": {
   "version": "2026-09-23",
