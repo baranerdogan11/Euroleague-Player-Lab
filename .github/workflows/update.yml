@@ -2,8 +2,8 @@ name: Update data
 
 on:
   schedule:
-    - cron: "*/20 17-23 * * *"  # game evenings: every 20 minutes, runs only when a game has finished since the last build
-    - cron: "*/20 0-1 * * *"
+    - cron: "*/5 17-23 * * *"   # game evenings: every 5 minutes, runs only when a game has finished since the last build
+    - cron: "*/5 0-1 * * *"
     - cron: "30 2 * * *"        # 02:30 UTC nightly: always runs (rosters, photos, late corrections)
   workflow_dispatch:            # run by hand from the Actions tab
 

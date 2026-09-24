@@ -28,9 +28,9 @@ in order.
 
 ## How it runs
 
-A GitHub Actions workflow (`.github/workflows/update.yml`) checks the games feed every 20 minutes on game evenings
+A GitHub Actions workflow (`.github/workflows/update.yml`) checks the games feed every 5 minutes on game evenings
 (17:00 to 02:00 UTC) and runs the pipeline as soon as a game has been marked final since the last build, so a player's
-page updates within about half an hour of the final buzzer; a game still in progress is never fetched, because only
+page updates within about ten minutes of the final buzzer; a game still in progress is never fetched, because only
 games the feed marks `result` count as played. It also runs every night at 02:30 UTC regardless, after the last game
 of the day, and can be started by hand from the Actions tab. Each run:
 

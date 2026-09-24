@@ -426,7 +426,7 @@ function renderGames(){
 }
 function renderTicker(){
   const d = ds(), games = d.games, t = team();
-  // the last five results with the player's line, then the club's next ten fixtures; rebuilt within half an hour of every final
+  // the last five results with the player's line, then the club's next ten fixtures; rebuilt within minutes of every final
   const up = (t.upcoming || []).slice(0, 10);
   const results = d.log.slice(-5).map(r => { const g = games[r[0]], l = gameLabel(g); return `<span>${l.txt} <b class="${l.res === 'W' ? '' : 'l'}">${l.res} ${l.score}</b> · ${r[2]} pts · ${r[14]} PIR</span>`; });
   const fixtures = up.map((g, i) => `<span>${i === 0 ? 'Next: ' : ''}R${g.round} ${g.home === realCode() ? 'vs ' + shortName(g.away) : '@ ' + shortName(g.home)} · ${fmtDate(g.date)}</span>`);
