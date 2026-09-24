@@ -426,10 +426,13 @@ function renderGames(){
 }
 function renderTicker(){
   const d = ds(), games = d.games, t = team();
-  let items;
-  if (games.length) items = d.log.map(r => { const g = games[r[0]], l = gameLabel(g); return `<span>${l.txt} <b class="${l.res === 'W' ? '' : 'l'}">${l.res} ${l.score}</b> · ${r[2]} pts · ${r[14]} PIR</span>`; });
-  else { const up = t.upcoming || []; items = up.length ? up.map(g => `<span>R${g.round} ${g.home === realCode() ? 'vs ' + shortName(g.away) : '@ ' + shortName(g.home)} · ${fmtDate(g.date)}</span>`) : ['<span>The season has not started</span>']; }
-  $('#ticker-lab').textContent = games.length ? `${games.length} games` : 'Fixtures';
+  // the last five results with the player's line, then the club's next ten fixtures; rebuilt within half an hour of every final
+  const up = (t.upcoming || []).slice(0, 10);
+  const results = d.log.slice(-5).map(r => { const g = games[r[0]], l = gameLabel(g); return `<span>${l.txt} <b class="${l.res === 'W' ? '' : 'l'}">${l.res} ${l.score}</b> · ${r[2]} pts · ${r[14]} PIR</span>`; });
+  const fixtures = up.map((g, i) => `<span>${i === 0 ? 'Next: ' : ''}R${g.round} ${g.home === realCode() ? 'vs ' + shortName(g.away) : '@ ' + shortName(g.home)} · ${fmtDate(g.date)}</span>`);
+  let items = results.concat(fixtures);
+  if (!items.length) items = ['<span>The season has not started</span>'];
+  $('#ticker-lab').textContent = games.length ? `${games.length} game${games.length > 1 ? 's' : ''} · next ${up.length}` : 'Fixtures';
   const run = $('#run'); run.innerHTML = items.join('') + items.join(''); run.style.animationDuration = Math.max(24, items.length * 4) + 's';
 }
 function renderPlayer(){

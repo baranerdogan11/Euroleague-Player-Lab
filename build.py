@@ -265,7 +265,7 @@ for code, players in collected.items():
         p["cur"]["pos_n"] = len(pool) if len(pool) >= 20 else league_n
         p["cur"]["per40"] = {k: round(tot[k] * 40 / tot["min"], 1) for k in COUNTING} if tot["min"] else None
     played = con.execute("select count(*) from games where played and ? in (home, away)", [code]).fetchone()[0]
-    upcoming = rows("select game as code, round, cast(date as varchar) as date, home, away, phase from games where not played and ? in (home, away) order by date limit 3", code)
+    upcoming = rows("select game as code, round, cast(date as varchar) as date, home, away, phase from games where not played and ? in (home, away) order by date limit 10", code)
     json.dump({"code": code, "season": SEASON, "label": label(SEASON), "games_played": played, "upcoming": upcoming, "players": players, "real_code": code},
               open(os.path.join(OUT, f"{code}.json"), "w"), separators=(",", ":"), ensure_ascii=False)
     summary.append((code, len(players), played, sum(len(p["cur"]["shots"]) for p in players)))
