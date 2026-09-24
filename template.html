@@ -432,7 +432,7 @@ function renderTicker(){
   const fixtures = up.map((g, i) => `<span>${i === 0 ? 'Next: ' : ''}R${g.round} ${g.home === realCode() ? 'vs ' + shortName(g.away) : '@ ' + shortName(g.home)} · ${fmtDate(g.date)}</span>`);
   let items = results.concat(fixtures);
   if (!items.length) items = ['<span>The season has not started</span>'];
-  $('#ticker-lab').textContent = games.length ? `${games.length} game${games.length > 1 ? 's' : ''} · next ${up.length}` : 'Fixtures';
+  $('#ticker-lab').textContent = 'Fixtures';
   const run = $('#run'); run.innerHTML = items.join('') + items.join(''); run.style.animationDuration = Math.max(24, items.length * 4) + 's';
 }
 function renderPlayer(){
