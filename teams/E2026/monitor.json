@@ -1,17 +1,17 @@
 {
  "season": "E2026",
- "generated_at": "2026-09-24 21:45 UTC",
+ "generated_at": "2026-09-25 08:21 UTC",
  "pipeline": {
   "last": {
-   "date": "2026-09-24",
-   "at": "2026-09-24T21:45:26Z",
+   "date": "2026-09-25",
+   "at": "2026-09-25T08:21:34Z",
    "ok": true,
    "games": 7,
    "shots": 926,
    "players": 320,
    "failures": 0,
-   "ci": false,
-   "run_id": null
+   "ci": true,
+   "run_id": "36110945148"
   },
   "history": [
    {
@@ -35,6 +35,17 @@
     "failures": 0,
     "ci": false,
     "run_id": null
+   },
+   {
+    "date": "2026-09-25",
+    "at": "2026-09-25T08:21:34Z",
+    "ok": true,
+    "games": 7,
+    "shots": 926,
+    "players": 320,
+    "failures": 0,
+    "ci": true,
+    "run_id": "36110945148"
    }
   ],
   "tests": 26
@@ -45,7 +56,7 @@
   "last_played_date": "2026-09-24",
   "next_game_date": "2026-09-25",
   "last_round": 1,
-  "days_since_last_game": 0,
+  "days_since_last_game": 1,
   "rounds": [
    {
     "round": 1,
@@ -754,7 +765,23 @@
   "shots": 926,
   "known_shooter_share": 0.738
  },
- "notes": null,
+ "notes": {
+  "total": 160,
+  "ok": 156,
+  "rejected": 4,
+  "rejection_reasons": {
+   "too long": 3,
+   "untraceable number": 1
+  },
+  "by_day": [
+   {
+    "day": "2026-09-25",
+    "total": 160,
+    "ok": 156
+   }
+  ],
+  "model": "claude-opus-5"
+ },
  "notes_eval": {
   "n": 30,
   "auto_pass_rate": 0.533,
@@ -766,9 +793,9 @@
   "judge_human_agreement": null
  },
  "api": {
-  "url": "http://127.0.0.1:9",
+  "url": "https://euroleague-xfg.onrender.com",
   "reachable": false,
-  "error": "URLError"
+  "error": "TimeoutError"
  },
  "model": {
   "version": "2026-09-23",
