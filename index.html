@@ -554,7 +554,7 @@ function renderTiles(){
   const val = k => !played ? '–' : p40 ? (d.per40 ? f1(d.per40[k]) : '–') : f1(tot[k] / gp);
   const tiles = [['pts', 'Points'], ['reb', 'Rebounds'], ['ast', 'Assists'], ['stl', 'Steals'], ['blk', 'Blocks'], ['tov', 'Turnovers'], ['pir', 'PIR']];
   $('#tiles').innerHTML = tiles.map(([k, l]) => `<div class="tile ${played ? '' : 'na'}" style="--p:${pc[k] ?? 0}%"><b>${val(k)}</b><span>${l}</span></div>`).join('');
-  $('#band-legend').textContent = d.pct ? `${p40 ? 'Per 40 minutes' : 'Per game'} · underline: rank among ${META.league_n} rotation players (${META.pool_rule}), longer is better, turnovers inverted` : played ? `${p40 ? 'Per 40 minutes' : 'Per game'} · ${META.league_n >= 20 ? 'no rank underline: fewer than 3 games or under 10 minutes a game' : 'rank underlines appear once 20 players have 3+ games at 10+ minutes'}` : 'Per game';
+  $('#band-legend').textContent = d.pct ? `${p40 ? 'Per 40 minutes' : 'Per game'} · underline: rank among ${META.league_n} rotation players (${META.pool_rule}), longer is better, turnovers inverted` : '';
 }
 function renderRole(){
   const d = ds(), r = d.role, pp = d.pct_pos || {}, el = $('#role'), tot = d.tot;
@@ -566,7 +566,7 @@ function renderRole(){
     ['ast_pct', 'Assist rate', r.ast_pct, '%', 'share of teammate field goals he assisted while on court'], ['tov_pct', 'Turnover rate', r.tov_pct, '%', 'turnovers per 100 plays he used'],
     ['reb_pct', 'Rebound rate', r.reb_pct, '%', 'share of available rebounds he took while on court'], ['plusminus', '+/- per game', tot.gp ? Math.round(10 * (tot.plusminus || 0) / tot.gp) / 10 : null, '', `team score margin while he was on court, per game (${(tot.plusminus || 0) >= 0 ? '+' : ''}${tot.plusminus || 0} over ${tot.gp} game${tot.gp > 1 ? 's' : ''})`]];
   el.innerHTML = items.map(([k, l, v, u, tip]) => `<div style="--p:${pp[k] ?? 0}%" title="${tip}${pp[k] != null ? ` · ${ord(pp[k])} percentile among ${d.pos_n} ${(d.pos_group || 'player').toLowerCase()}s` : ''}"><b>${v == null ? '–' : (k === 'plusminus' && v > 0 ? '+' : '') + v}${v == null ? '' : u}</b><span>${l}</span></div>`).join('');
-  $('#role-legend').textContent = d.pct_pos ? `Role · underline: rank among ${d.pos_n} ${(d.pos_group || 'player').toLowerCase()}s (3+ games, 10+ min), longer is better, turnover rate inverted · hover a tile for the definition` : 'Role · hover a tile for the definition · ranks appear with 20 eligible players in the position';
+  $('#role-legend').textContent = d.pct_pos ? `Role · underline: rank among ${d.pos_n} ${(d.pos_group || 'player').toLowerCase()}s (3+ games, 10+ min), longer is better, turnover rate inverted · hover a tile for the definition` : 'Role · hover a tile for the definition';
 }
 function renderForm(){
   const d = ds(), el = $('#form'), log = d.log;
