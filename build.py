@@ -253,7 +253,7 @@ def league_refs(season):
             z[0] += 1; z[1] += made
         by_pos = {g: {"att": sum(v[0] for v in zs.values()), "zones": {k: {"share": round(v[0] / sum(q[0] for q in zs.values()), 4), "fg": round(v[1] / v[0], 4) if v[0] else None} for k, v in zs.items()}} for g, zs in pacc.items()}
     fgm2, fga2, fgm3, fga3, ftm, fta, pts = con.execute(f"select sum(fgm2), sum(fga2), sum(fgm3), sum(fga3), sum(ftm), sum(fta), sum(pts) from read_parquet('{os.path.join(w, 'box.parquet')}')").fetchone()
-    splits = {"fg2": round(fgm2 / fga2, 4), "fg3": round(fgm3 / fga3, 4), "ft": round(ftm / fta, 4), "ts": round(pts / (2 * (fga2 + fga3 + 0.44 * fta)), 4)}
+    splits = {"fg2": round(fgm2 / fga2, 4), "fg3": round(fgm3 / fga3, 4), "fg": round((fgm2 + fgm3) / (fga2 + fga3), 4), "ft": round(ftm / fta, 4), "ts": round(pts / (2 * (fga2 + fga3 + 0.44 * fta)), 4)}
     return {"season": season, "shots": len(sh), "zones": zones, "splits": splits, "by_pos": by_pos}
 
 
