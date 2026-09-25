@@ -857,6 +857,7 @@ const Shot3D = (() => {
     stop(){ running = false; cancelAnimationFrame(raf); raf = 0; S.playing = false; },
     clear(){ S.playing = false; S.list = []; S.i = 0; clear(); },   // empty court, loop kept alive so the camera still responds
     info(){ return {running, raf, vis, playing: S.playing, i: S.i, n: S.list.length, flights: S.flights.length, built: !!R}; },
+    markers(){ return R ? R.markers.children.map(m => [+m.position.x.toFixed(3), +m.position.z.toFixed(3)]) : []; },
     preset(name){ Object.assign(cam, PRESETS[name]); cam.drift = true; S.doneAt = performance.now(); },
     recolor(accent, floor, paint){
       Object.assign(pal, {accent, floor, paint});
