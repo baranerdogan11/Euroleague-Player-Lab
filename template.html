@@ -174,8 +174,6 @@ h1 span span{display:block;color:var(--club2)}
 .note{margin-top:16px;border-left:4px solid var(--gold);background:var(--panel);padding:12px 16px 12px}
 .note h4{margin:0 0 6px;font-family:var(--cond);font-weight:800;font-size:15px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold)}
 .note p{margin:0;font-size:14.5px;line-height:1.5;color:var(--ink)}
-.note-meta{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:8px;font-size:11.5px;color:var(--muted)}
-.note-meta b{color:var(--ink2);font-weight:600}
 /* season stats */
 .splits{display:grid;gap:10px;margin:4px 0 16px}
 .split{display:grid;grid-template-columns:52px 1fr 96px;align-items:center;gap:12px;font-variant-numeric:tabular-nums}
@@ -337,7 +335,7 @@ td.w{color:var(--good)} td.l{color:var(--bad)}
           <div class="empty" id="empty" hidden><div><b>No games yet</b><span id="empty-sub"></span></div></div>
         </div>
         <div class="caption"><b id="cap"></b><div class="legend"><span><i class="m"></i>Made</span><span><i class="x"></i>Missed</span></div></div>
-        <div class="note" id="note" hidden><h4>Scouting Note</h4><p id="note-text"></p><div class="note-meta"><span id="note-keys"></span><span id="note-src"></span></div></div>
+        <div class="note" id="note" hidden><h4>Scouting Note</h4><p id="note-text"></p></div>
       </div>
     </section>
 
@@ -548,7 +546,7 @@ function renderPlayer(){
   renderTicker();
   $('#roster').querySelectorAll('a').forEach(a => a.classList.toggle('cur', +a.dataset.i === state.player));
   const nt = d.note, nb = $('#note');
-  if (nt && nt.text) { nb.hidden = false; $('#note-text').textContent = nt.text; $('#note-keys').innerHTML = (nt.key_numbers || []).map(k => `<b>${k.value}</b> ${k.label}`).join(' · '); $('#note-src').textContent = `Written by Claude from the numbers on this page, ${nt.generated_at} · checked for numeric consistency`; } else nb.hidden = true;
+  if (nt && nt.text) { nb.hidden = false; $('#note-text').textContent = nt.text; } else nb.hidden = true;
   renderChart(true);
 }
 function renderTiles(){
