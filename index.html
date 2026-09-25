@@ -705,7 +705,7 @@ function renderChart(animate){
       <circle class="zone" cx="${X(0)}" cy="${Y(0)}" r="150" fill="${col('rim', zs.rim.m, zs.rim.a)}"/>`;
     svg.querySelector('#labels-layer').innerHTML = `${lab('a3', X(0), Y(820))}${lab('c3', X(-705), Y(30), true)}${lab('c3', X(705), Y(30), true)}${lab('mid', X(-430), Y(330))}${lab('paint', X(0), Y(300))}${lab('rim', X(0), Y(70))}`;
     svg.querySelector('.paint').style.display = 'none';
-    $('#cap').textContent = `${tableShots.length} attempts by zone · colour is FG% against the league zone value · grey under ${MIN_ATT} attempts`;
+    const zm = tableShots.filter(s => s[3]).length; $('#cap').textContent = `${zm} / ${tableShots.length} made · ${pct(zm, tableShots.length)}${state.game !== 'all' ? ' · ' + gameLabel(games[+state.game]).txt : ''}`;
     return;
   }
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
