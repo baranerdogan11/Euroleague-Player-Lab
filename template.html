@@ -27,7 +27,8 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font
 .bar{height:6px;background:repeating-linear-gradient(-60deg,var(--club) 0 18px,var(--club2) 18px 22px,var(--club) 22px 40px)}
 /* header */
 .top{display:flex;align-items:stretch;height:58px;border-bottom:1px solid var(--line);background:var(--bg2)}
-.top .id{background:var(--white);color:#000;font-family:var(--cond);font-weight:900;font-style:italic;font-size:24px;padding:0 28px 0 22px;display:flex;align-items:center;clip-path:polygon(0 0,100% 0,calc(100% - 16px) 100%,0 100%);flex:none;letter-spacing:.01em}
+.top .id{background:var(--white);color:#000;font-family:var(--cond);font-weight:900;font-style:italic;font-size:24px;padding:0 28px 0 22px;display:flex;align-items:center;clip-path:polygon(0 0,100% 0,calc(100% - 16px) 100%,0 100%);flex:none;letter-spacing:.01em;text-decoration:none;transition:filter .15s}
+.top .id:hover{filter:brightness(.93)}
 .top .id span{font-weight:600;font-style:normal;font-size:11px;letter-spacing:.22em;margin-left:10px;color:#555}
 .sel{display:flex;align-items:center;gap:10px;padding:0 6px 0 16px;border-right:1px solid var(--line);position:relative;min-width:0}
 .sel img{width:26px;height:26px;object-fit:contain;flex:none}
@@ -356,10 +357,78 @@ td.w{color:var(--good)} td.l{color:var(--bad)}
 @media (max-width:760px){.lb-head{gap:8px;flex-wrap:wrap}.lb-title{order:-1;flex:1 1 100%}.lb-title b{font-size:24px}.lb-title span{font-size:11.5px}.lb-dots{margin-left:auto}.lb-arrow{width:48px;height:44px;font-size:24px}
   .lb-row a{grid-template-columns:28px 30px 20px minmax(0,1fr) 70px;column-gap:9px;height:52px;padding:0 4px 0 8px}.lb-rank{font-size:21px}.lb-row:nth-child(-n+3) .lb-rank{font-size:25px}.lb-row.me .lb-rank{font-size:18px;min-width:22px;padding:2px 4px}.lb-row.pin a{grid-template-columns:42px 30px 20px minmax(0,1fr) 70px}
   .lb-ph{width:30px;height:38px;clip-path:polygon(0 0,100% 0,calc(100% - 5px) 100%,0 100%)}.lb-crest{width:20px;height:20px}.lb-name b{font-size:17px}.lb-name b.fn{display:none}.lb-name b.ini{display:inline}.lb-val{font-size:25px}.lb-val u{font-size:10px}}
+/* opening page: shown only when the URL carries no club, so every deep link goes straight to the app */
+body.cv-on .top,body.cv-on .wrap{display:none}
+.cv{position:relative;min-height:calc(100vh - 6px);overflow:hidden;display:flex;flex-direction:column;justify-content:center}
+.cv-court{position:absolute;right:-16%;top:50%;transform:translateY(-50%);width:min(980px,86vw);opacity:.07;pointer-events:none;z-index:0}
+.cv-court svg{width:100%;height:auto;display:block}
+.cv-court .l{fill:none;stroke:#fff;stroke-width:9}
+.cv-glow{position:absolute;left:-10%;top:-20%;width:70%;height:120%;background:radial-gradient(60% 50% at 40% 50%,rgba(242,111,33,.14),transparent 70%);pointer-events:none;z-index:0}
+.cv-in{position:relative;z-index:1;width:100%;max-width:1180px;margin:0 auto;padding:56px 24px 64px}
+.cv-eyebrow{margin:0;display:inline-flex;align-items:center;gap:12px;font-family:var(--cond);font-weight:700;font-size:13px;letter-spacing:.26em;text-transform:uppercase;color:var(--muted)}
+.cv-eyebrow i{width:26px;height:6px;background:var(--club2);transform:skewX(-14deg);display:inline-block}
+.cv-h1{font-family:var(--cond);font-weight:900;font-style:italic;font-size:clamp(64px,12vw,152px);line-height:.84;margin:16px 0 0;text-transform:uppercase;letter-spacing:-.015em}
+.cv-h1 span{display:block;color:var(--club2)}
+.cv-lede{max-width:56ch;margin:22px 0 0;font-size:17px;line-height:1.55;color:var(--ink2)}
+.cv-cta{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin:30px 0 0}
+.cv-go{background:var(--club2);color:var(--on);border:0;font-family:var(--cond);font-weight:800;font-size:19px;letter-spacing:.16em;text-transform:uppercase;padding:16px 34px 16px 30px;cursor:pointer;clip-path:polygon(12px 0,100% 0,calc(100% - 12px) 100%,0 100%);transition:filter .15s,transform .15s}
+.cv-go:hover{filter:brightness(1.12);transform:translateX(2px)}
+.cv-note{font-size:13px;color:var(--muted);max-width:34ch;line-height:1.45}
+.cv-note b{color:var(--ink2);font-weight:600}
+.cv-nums{list-style:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));margin:44px 0 0;padding:0;border:1px solid var(--line);background:var(--bg2)}
+.cv-nums li{padding:16px 16px 14px;border-right:1px solid var(--line)}
+.cv-nums li:last-child{border-right:0}
+.cv-nums b{display:block;font-family:var(--cond);font-weight:900;font-style:italic;font-size:40px;line-height:.95;font-variant-numeric:tabular-nums}
+.cv-nums span{display:block;font-family:var(--cond);font-weight:700;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-top:7px}
+.cv-sec{margin:48px 0 0}
+.cv-sec h2{margin:0 0 14px;font-family:var(--cond);font-weight:900;font-style:italic;font-size:22px;letter-spacing:.02em;text-transform:uppercase;display:flex;align-items:center;gap:12px;color:var(--ink)}
+.cv-sec h2::before{content:"";width:6px;height:18px;background:var(--club2);transform:skewX(-14deg);flex:none}
+.cv-clubs{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
+.cv-clubs a{display:flex;flex-direction:column;align-items:center;gap:8px;padding:14px 6px 11px;background:var(--bg2);text-decoration:none;color:var(--ink2);transition:background .15s,color .15s}
+.cv-clubs a:hover{background:var(--panel2);color:var(--ink)}
+.cv-clubs img{width:34px;height:34px;object-fit:contain;filter:drop-shadow(0 0 2.5px rgba(255,255,255,.45))}
+.cv-clubs span{font-family:var(--cond);font-weight:700;font-size:11px;letter-spacing:.1em;text-transform:uppercase;text-align:center;line-height:1.2}
+.cv-feats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
+.cv-feats div{background:var(--bg2);padding:16px 16px 18px}
+.cv-feats b{display:block;font-family:var(--cond);font-weight:800;font-size:17px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink)}
+.cv-feats p{margin:7px 0 0;font-size:13px;line-height:1.5;color:var(--muted)}
+.cv-foot{margin:40px 0 0;font-family:var(--cond);letter-spacing:.14em;text-transform:uppercase;font-size:12px;color:var(--muted);display:flex;gap:10px 22px;flex-wrap:wrap;align-items:center}
+.cv-foot a{color:var(--club2);text-decoration:none}
+.cv-foot a:hover{text-decoration:underline}
+@media (max-width:1000px){.cv-court{right:-28%;width:760px;opacity:.05}.cv-clubs{grid-template-columns:repeat(5,minmax(0,1fr))}.cv-feats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:760px){.cv{min-height:0}.cv-in{padding:36px 14px 48px}.cv-court{display:none}.cv-lede{font-size:15.5px}.cv-nums{grid-template-columns:repeat(2,minmax(0,1fr))}.cv-nums li:nth-child(2n){border-right:0}.cv-nums li:nth-child(-n+2){border-bottom:1px solid var(--line)}.cv-nums b{font-size:32px}.cv-clubs{grid-template-columns:repeat(4,minmax(0,1fr))}.cv-go{width:100%;text-align:center}}
 </style>
 <div class="bar"></div>
+<main class="cv" id="cover" hidden>
+  <div class="cv-glow"></div>
+  <div class="cv-court"><svg viewBox="0 0 1500 1400" aria-hidden="true"><g class="l"><rect x="6" y="6" width="1488" height="1388"/><rect x="505" y="820" width="490" height="574"/><circle cx="750" cy="820" r="180"/><path d="M90 1394 L90 1119 A675 675 0 0 1 1410 1119 L1410 1394"/><circle cx="750" cy="1260" r="22.5"/><path d="M570 1394 A180 180 0 0 0 930 1394"/></g></svg></div>
+  <div class="cv-in">
+    <p class="cv-eyebrow"><i></i>Euroleague <span id="cv-season"></span></p>
+    <h1 class="cv-h1" aria-label="Player Lab">Player<span>Lab</span></h1>
+    <p class="cv-lede">Every shot, every player, every club. Shot charts in two dimensions and three, shooting profiles that separate the shots a player takes from what he adds to them, and season stats rebuilt within minutes of every final.</p>
+    <div class="cv-cta">
+      <button class="cv-go" id="cv-go" type="button">Open the app</button>
+      <span class="cv-note" id="cv-note"></span>
+    </div>
+    <ul class="cv-nums" id="cv-nums"></ul>
+    <section class="cv-sec">
+      <h2>Pick a club</h2>
+      <div class="cv-clubs" id="cv-clubs"></div>
+    </section>
+    <section class="cv-sec">
+      <h2>What is inside</h2>
+      <div class="cv-feats">
+        <div><b>Shot chart</b><p>Every attempt on the floor, grouped by zone against the league, or replayed in 3D with the ball in flight.</p></div>
+        <div><b>Shooting profile</b><p>What his shots are worth to an average shooter, and the points he adds on top of them.</p></div>
+        <div><b>League leaders</b><p>Points, rebounds, assists and three-point percentage across all twenty clubs.</p></div>
+        <div><b>Scouting note</b><p>A short written read of the season so far, checked line by line against the numbers on the page.</p></div>
+      </div>
+    </section>
+    <p class="cv-foot"><span id="cv-built"></span><a href="monitor.html">System status</a><span>Data: Euroleague official feeds</span></p>
+  </div>
+</main>
 <header class="top">
-  <div class="id">Player Lab<span>Euroleague</span></div>
+  <a class="id" href="#" title="Back to the opening page">Player Lab<span>Euroleague</span></a>
   <label class="sel team"><img id="crest-img" alt=""><select id="team" aria-label="Team"></select></label>
   <label class="sel player"><select id="player" aria-label="Player"></select></label>
   <div class="search"><input type="search" id="q" placeholder="Find a player" aria-label="Find a player across all clubs" autocomplete="off" spellcheck="false" role="combobox" aria-expanded="false" aria-controls="q-list" aria-autocomplete="list"><kbd>/</kbd><ul class="dd-list" id="q-list" role="listbox" aria-label="Players" hidden></ul></div>
@@ -1161,9 +1230,29 @@ const LB = (() => {
   return {ok: true, mark(){ paint(0); }};
 })();
 
+// ---- opening page: rendered once, shown whenever the URL carries no club
+const COVER = (() => {
+  const el = $('#cover'), first = META.clubs[0];
+  const n = v => (v || 0).toLocaleString('en-GB');
+  $('#cv-season').textContent = META.label;
+  $('#cv-note').innerHTML = `Opens with <b>${first.name}</b>, the first club on the list. Or pick any club below.`;
+  const st = META.status || {};
+  $('#cv-nums').innerHTML = [[META.clubs.length, 'Clubs'], [(META.roster || []).length, 'Players'], [st.games, 'Games'], [st.shots, 'Shots charted']]
+    .map(([v, k]) => `<li><b>${n(v)}</b><span>${k}</span></li>`).join('');
+  $('#cv-clubs').innerHTML = META.clubs.map(c => `<a href="#${c.code}" title="${c.name}"><img src="${c.logo || ''}" alt="" loading="lazy" decoding="async"><span>${c.short || c.code}</span></a>`).join('');
+  $('#cv-built').textContent = META.built ? `Updated after every game · built ${fmtBuilt(META.built)}` : 'Updated after every game';
+  $('#cv-go').addEventListener('click', () => { location.hash = first.code; });
+  return {
+    show(){ applyPalette({base: '#1f2b47', accent: '#f26f21'}); document.body.classList.add('cv-on'); el.hidden = false; document.title = 'Euroleague Player Lab'; scrollTo(0, 0); },
+    hide(){ document.body.classList.remove('cv-on'); el.hidden = true; }
+  };
+})();
+
 async function route(){
   const h = location.hash.replace('#', '').split('/');
-  const code = CLUBS[h[0]] ? h[0] : META.clubs[0].code;
+  if (!CLUBS[h[0]]) { COVER.show(); return; }         // no club in the URL: the opening page, not a silent fallback
+  COVER.hide();
+  const code = h[0];
   if (state.team !== code) { $('#team').value = code; if (!await loadTeam(code)) return; }
   if (h[1]) { const i = team().players.findIndex(p => p.pid === h[1]); if (i >= 0 && i !== state.player) { $('#player').value = i; state.player = i; state.game = 'all'; renderGames(); renderPlayer(); } }
   if (h[2] === 'zones' || h[2] === '3d') { const b = $(`#f-view button[data-v="${h[2]}"]`); if (b.getAttribute('aria-pressed') !== 'true') b.click(); }

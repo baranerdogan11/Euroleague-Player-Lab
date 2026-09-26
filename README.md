@@ -198,6 +198,14 @@ git add -A && git commit -m "Update after round" && git push   # GitHub Pages re
 
 - `index.html`: the page (loads a club's JSON when it is selected); `monitor.html`: the status page
 
+### Opening page
+
+`index.html` shows a cover when the URL carries no club: the wordmark, one paragraph on what the app does,
+live counts of clubs, players, games and shots charted, a grid of all twenty crests, and a button that enters
+at the first club on the list. Any deep link (`#CLUB`, `#CLUB/PID`, and the `p/<pid>.html` share stubs) skips
+the cover entirely, and the header wordmark returns to it, so the app stays one hash-routed page with no
+second document to keep in step.
+
 ### League leaderboards
 
 Four boards, points, rebounds and assists a game and three-point percentage, are precomputed in `build.py`
