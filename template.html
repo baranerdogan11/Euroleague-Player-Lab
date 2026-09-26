@@ -705,8 +705,7 @@ async function renderCompare(){
   $('#cmp-a').textContent = `${nameOf(me.name).sur}`; $('#cmp-b').textContent = `${nameOf(other.name).sur} · ${shortName(r.club)}`;
   tb.querySelector('tbody').innerHTML = [
     line('Minutes a game', c => c.tot.gp ? c.tot.min / c.tot.gp : null, f1s), line('Points per 40', c => per40(c, 'pts'), f1s), line('Usage', c => role(c, 'usg'), pcs),
-    line('True shooting', c => tsOf(c.tot.pts, c.tot.fga2 + c.tot.fga3, c.tot.fta), pc), line('3P%', c => rate(c, 'fgm3', 'fga3'), pc), line('3-point rate', c => role(c, 'fg3_rate'), pcs), line('FT rate', c => role(c, 'ft_rate'), pcs),
-    line('Assists per 40', c => per40(c, 'ast'), f1s), line('Assist rate', c => role(c, 'ast_pct'), pcs), line('Turnover rate', c => role(c, 'tov_pct'), pcs, false), line('Rebounds per 40', c => per40(c, 'reb'), f1s), line('Rebound rate', c => role(c, 'reb_pct'), pcs),
+    line('True shooting', c => tsOf(c.tot.pts, c.tot.fga2 + c.tot.fga3, c.tot.fta), pc), line('3P%', c => rate(c, 'fgm3', 'fga3'), pc), line('Assists per 40', c => per40(c, 'ast'), f1s), line('Assist rate', c => role(c, 'ast_pct'), pcs), line('Turnover rate', c => role(c, 'tov_pct'), pcs, false), line('Rebounds per 40', c => per40(c, 'reb'), f1s), line('Rebound rate', c => role(c, 'reb_pct'), pcs),
     line('Rim FG%', c => { const v = z(c).rim; return v.a >= MIN_ATT ? v.m / v.a : null; }, pc), line('Share of shots from three', c => { const q = z(c); const a = q.c3.a + q.a3.a, t = Object.values(q).reduce((s, v) => s + v.a, 0); return t ? a / t : null; }, pc),
     line('Shot quality', c => c.profile ? c.profile.quality_shrunk : null, v => v == null ? '–' : v.toFixed(2)), line('Shooting skill per 100', c => c.profile ? 100 * c.profile.skill_shrunk : null, sgn), line('On / off per 40', c => role(c, 'onoff_shrunk'), sgn), line('PIR per 40', c => per40(c, 'pir'), f1s)].join('');
   tb.hidden = false;
@@ -1013,7 +1012,6 @@ $('#retry').addEventListener('click', () => route());
 $('#cmp').addEventListener('change', e => { state.cmp = e.target.value || null; renderCompare(); });
 $('#replay').addEventListener('click', () => renderChart(true));
 $('#f-rate').querySelectorAll('button').forEach(b => b.addEventListener('click', () => { $('#f-rate').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b)); state.rate = b.dataset.v; renderTiles(); }));
-if (META.status) $('#foot-status').textContent = `Data checked ${META.status.checked_at.slice(0, 10)} · ${META.status.games} games · ${META.status.ok ? `all ${META.status.tests} checks passed` : `${META.status.failures} check(s) failed`}${META.status.warnings ? ` · ${META.status.warnings} warning(s)` : ''}`;
 [['#f-result', 'result'], ['#f-view', 'view'], ['#f-ast', 'ast']].forEach(([sel, key]) => {
   $(sel).querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
     $(sel).querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b)); state[key] = b.dataset.v; renderChart(key === 'view' ? b.dataset.v === '3d' : true);

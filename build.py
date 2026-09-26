@@ -317,7 +317,7 @@ def compare_metrics(cur):
     fga = tot["fga2"] + tot["fga3"]
     return {"Minutes a game": tot["min"] / tot["gp"] if tot["gp"] else None, "Points per 40": per40("pts"), "Usage": role.get("usg"),
             "True shooting": tot["pts"] / (2 * (fga + 0.44 * tot["fta"])) if fga else None, "3P%": tot["fgm3"] / tot["fga3"] if tot["fga3"] >= 15 else None,
-            "3-point rate": role.get("fg3_rate"), "FT rate": role.get("ft_rate"), "Assists per 40": per40("ast"), "Assist rate": role.get("ast_pct"), "Turnover rate": role.get("tov_pct"),
+            "Assists per 40": per40("ast"), "Assist rate": role.get("ast_pct"), "Turnover rate": role.get("tov_pct"),
             "Rebounds per 40": per40("reb"), "Rebound rate": role.get("reb_pct"), "Rim FG%": rim[1] / rim[0] if rim[0] >= 10 else None, "Share of shots from three": three / natt if natt else None,
             "Shot quality": pr["quality_shrunk"] if pr else None, "Shooting skill per 100": 100 * pr["skill_shrunk"] if pr else None, "On / off per 40": role.get("onoff_shrunk"), "PIR per 40": per40("pir")}
 medians = {}
