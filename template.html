@@ -1071,7 +1071,7 @@ const LB = (() => {
     const nm = nameOf(r.name), c = CLUBS[r.club] || {}, v = valOf(k, row);
     const p = lead ? Math.max(0, Math.min(100, 100 * v / lead)) : 0;
     const me = state.data && player() && r.pid === player().pid;
-    const small = k !== 'fg3' && row[2] < 3 && mixed;   // the grey only says something when some rows on the board have more games than this one
+    const small = mixed && (k === 'fg3' ? row[2] < MIN_ATT : row[2] < 3);   // the grey only says something when some rows on the board carry more than this one
     return `<li class="lb-row${pin ? ' pin' : ''}${me ? ' me' : ''}${small ? ' small' : ''}" data-pid="${r.pid}" style="--p:${p.toFixed(1)}%;--d:${i * 24}ms">
       <a href="#${r.club}/${r.pid}" title="${titleOf(k, `${nm.first} ${nm.sur}, ${c.name || r.club}`, row)}">
         <span class="lb-rank">${rank}</span>
@@ -1090,23 +1090,30 @@ const LB = (() => {
     const t = ds().tot, row = k === 'fg3' ? [me.pid, t.fgm3, t.fga3] : [me.pid, t[k], t.gp];
     if (rank) return rowHtml(k, row, rank, 10, lead, true, mixed);
     const nm = nameOf(me.name), c = CLUBS[state.team] || {};
-    const why = k === 'fg3' ? `${t.fga3} of ${L.min_3pa} three-point attempts` : `${t.gp} of ${L.min_gp} game${L.min_gp === 1 ? '' : 's'} at ${L.min_mpg} minutes`;
-    return `<li class="lb-row pin me" data-pid="${me.pid}" style="--p:0%"><a href="#${state.team}/${me.pid}" title="Not yet qualified: ${why}">
+    const why = k === 'fg3' ? `${t.fga3} of ${L.min_3pa} attempts` : `${t.gp} of ${L.min_gp} game${L.min_gp === 1 ? '' : 's'}`;
+    const longWhy = k === 'fg3' ? `${t.fga3} of the ${L.min_3pa} three-point attempts this board needs` : `${t.gp} of ${L.min_gp} game${L.min_gp === 1 ? '' : 's'} at ${L.min_mpg} minutes a game`;
+    return `<li class="lb-row pin me" data-pid="${me.pid}" style="--p:0%"><a href="#${state.team}/${me.pid}" title="Not yet qualified: ${longWhy}">
       <span class="lb-rank">–</span>
       <span class="lb-ph"><img src="${photoOf(r)}" alt="" loading="lazy" decoding="async" draggable="false"></span>
       <img class="lb-crest" src="${c.logo || ''}" alt="" loading="lazy" draggable="false">
       <span class="lb-name"><b class="fn">${nm.first}</b><b class="ini">${nm.first.slice(0, 1)}.</b><b class="sn">${nm.sur}</b><small>${c.short || state.team}</small></span>
       <span class="lb-val"><u>${why}</u></span></a></li>`;
   }
-  function foot(open){
+  function foot(k){
     const w = wilson(Math.round(0.36 * L.min_3pa), L.min_3pa);
     const width = w ? Math.round(100 * (w[1] - w[0])) : null;
-    if (L.rounds <= 1) return `Round 1 played, so every average above is one game.${open ? ` The 3-point board opens at ${L.min_3pa} attempts and the league leader has ${L.top_3pa}.` : ''}`;
-    return `Through round ${L.rounds}. Qualifying takes ${L.min_gp} of ${L.rounds} games at ${L.min_mpg} minutes a game, or ${L.min_3pa} three-point attempts.${width ? ` At ${L.min_3pa} attempts the 95% interval is ${width} points wide, so the interval on each row is the story, not the rank.` : ''}`;
+    if (k === 'fg3') {
+      const tail = width ? ` At ${L.min_3pa} attempts the 95% interval is ${width} points wide, so makes over attempts beside each percentage is the number to read.` : '';
+      return L.provisional
+        ? `The gate is ${L.min_3pa} attempts while the season is young, and rises to ${L.att_settled}, the minimum the rest of this app requires before it prints a 3-point percentage. The league leader has ${L.top_3pa} attempts.${tail}`
+        : `Through round ${L.rounds}. Qualifying takes ${L.min_3pa} three-point attempts.${tail}`;
+    }
+    if (L.rounds <= 1) return 'Round 1 played, so every average above is one game.';
+    return `Through round ${L.rounds}. Qualifying takes ${L.min_gp} of ${L.rounds} games at ${L.min_mpg} minutes a game.`;
   }
   function paint(dir){
     const b = BOARDS[at], rows = L[b.k] || [], n = L.n[b.k === 'fg3' ? 'fg3' : 'pg'];
-    const lead = rows.length ? valOf(b.k, rows[0]) : 0, mixed = rows.some(r => r[2] >= 3);
+    const lead = rows.length ? valOf(b.k, rows[0]) : 0, mixed = rows.some(r => r[2] >= (b.k === 'fg3' ? MIN_ATT : 3));
     list.innerHTML = rows.length
       ? rows.map((row, i) => rowHtml(b.k, row, i + 1, i, lead, false, mixed)).join('') + pinHtml(b.k, lead, mixed)
       : `<li class="lb-none">${b.k === 'fg3'
@@ -1115,9 +1122,9 @@ const LB = (() => {
     $('#lb-name').textContent = b.t;
     $('#lb-sub').textContent = rows.length
       ? (n > rows.length ? `Top ${rows.length} of ${n} qualified` : `${n} player${n === 1 ? '' : 's'} qualify`) +
-        (b.k === 'fg3' ? ` · ${L.min_3pa}+ three-point attempts` : ` · ${L.min_gp}+ game${L.min_gp === 1 ? '' : 's'}, ${L.min_mpg}+ minutes a game`)
+        (b.k === 'fg3' ? ` · ${L.min_3pa}+ three-point attempts${L.provisional ? ', provisional' : ''}` : ` · ${L.min_gp}+ game${L.min_gp === 1 ? '' : 's'}, ${L.min_mpg}+ minutes a game`)
       : (b.k === 'fg3' ? `Opens at ${L.min_3pa} attempts` : '');
-    $('#lb-foot').textContent = foot(b.k !== 'fg3');
+    $('#lb-foot').textContent = foot(b.k);
     [...dots.children].forEach((d, i) => d.setAttribute('aria-selected', i === at));
     if (dir && !reduced()) {
       const cls = dir < 0 ? 'go-l' : 'go-r'; list.classList.remove('go-l', 'go-r'); void list.offsetWidth; list.classList.add(cls);

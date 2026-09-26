@@ -210,6 +210,8 @@ way the NBA pro-rates its 70%-of-games rule in season, so the qualifying pool st
 instead of tripling: a player needs appearances in 70% of his club's games and 10 minutes a game. The
 three-point board is gated on attempts alone, `max(15, 2 x rounds)`, and ranked on the raw percentage. The
 floor of 15 is the same attempt minimum the rest of the file already requires before it will print a 3P%.
+Before anyone can reach that gate, the board drops to the highest attempt count that still fields ten shooters
+(never under 5) and says so on the page; the relaxed gate lifts itself back to 15 within a few rounds.
 Empirical-Bayes shrinkage was measured on 2025-26 and rejected: at the season-end gate it compresses 23.9
 points of spread to 4.8, so every row would round to the same number.
 - `p/<pid>.html`: one share stub per player with his Open Graph card (name, club, photo), forwarding to his page; written by `build.py`, handed out by the page's Copy link button

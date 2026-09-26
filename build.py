@@ -339,8 +339,9 @@ for grp, ps in pos_pools.items():
 LB_TOP = 10
 LB_MPG = 10.0                     # the minutes half of the app's own pool rule
 LB_GAME_SHARE = 0.7               # share of his club's played games a player must have appeared in
-LB_ATT_FLOOR = 15                 # never print a 3P% on less, matching per_game() and compare_metrics()
+LB_ATT_FLOOR = 15                 # the settled gate, matching the attempts per_game() and compare_metrics() require
 LB_ATT_PER_ROUND = 2.0
+LB_ATT_EARLY = 5                  # floor of the provisional gate used before anyone can reach the settled one
 
 
 def leaderboards():
@@ -359,6 +360,17 @@ def leaderboards():
     pg_pool = [(pid, t) for pid, t, code in cands
                if t["gp"] >= max(1, math.ceil(LB_GAME_SHARE * cg.get(code, rounds))) and t["min"] / t["gp"] >= LB_MPG]
     a3_pool = [(pid, t) for pid, t, _ in cands if t["fga3"] >= min_3pa]
+    # Early in the season nobody has reached the settled gate yet, so rather than show an empty board, drop to the
+    # highest attempt count that still fields a full ten. It lifts itself back to the settled gate within a few rounds.
+    provisional = False
+    if len(a3_pool) < LB_TOP:
+        for t in range(min_3pa - 1, LB_ATT_EARLY - 1, -1):
+            pool = [(pid, tt) for pid, tt, _ in cands if tt["fga3"] >= t]
+            if len(pool) >= LB_TOP:
+                min_3pa, a3_pool, provisional = t, pool, True
+                break
+        else:
+            min_3pa, a3_pool, provisional = LB_ATT_EARLY, [(pid, tt) for pid, tt, _ in cands if tt["fga3"] >= LB_ATT_EARLY], True
 
     def order(key):
         return sorted(pg_pool, key=lambda x: (-x[1][key] / x[1]["gp"], -x[1]["gp"], x[1]["min"], x[0]))
@@ -367,6 +379,7 @@ def leaderboards():
     ranked["fg3"] = sorted(a3_pool, key=lambda x: (-x[1]["fgm3"] / x[1]["fga3"], -x[1]["fga3"], x[0]))
     rank_of = {k: {pid: i + 1 for i, (pid, _) in enumerate(v)} for k, v in ranked.items()}
     out = {"rounds": rounds, "min_gp": min_gp, "min_3pa": min_3pa, "min_mpg": LB_MPG,
+           "att_settled": max(LB_ATT_FLOOR, int(LB_ATT_PER_ROUND * rounds)), "provisional": provisional,
            "n": {"pg": len(pg_pool), "fg3": len(a3_pool)},
            "top_3pa": max((t["fga3"] for _, t, _ in cands), default=0),
            "pts": [[pid, t["pts"], t["gp"]] for pid, t in ranked["pts"][:LB_TOP]],
