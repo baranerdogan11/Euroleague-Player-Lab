@@ -102,7 +102,7 @@ h1 span span{display:block;color:var(--club2)}
 .tile.na b{color:var(--muted)}
 .band-foot{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:8px;font-size:12px;color:var(--muted)}
 .band-foot .seg button{font-size:12px;padding:5px 12px}
-.role{display:grid;grid-template-columns:repeat(8,1fr);margin-top:12px;border:1px solid var(--line);background:var(--bg2)}
+.role{display:grid;grid-template-columns:repeat(6,1fr);margin-top:12px;border:1px solid var(--line);background:var(--bg2)}
 .role div{padding:11px 12px 10px;border-right:1px solid var(--line);position:relative;overflow:hidden;--p:0%}
 .role div:last-child{border-right:0}
 .role div::after{content:"";position:absolute;left:0;bottom:0;height:3px;width:var(--p);background:var(--club2);opacity:.85}
@@ -123,8 +123,8 @@ h1 span span{display:block;color:var(--club2)}
 .cmp-row .dd-list{left:-1px;right:-1px}
 #cmp-table td.me{color:var(--ink);font-weight:700}
 #cmp-table td.win{color:var(--club2)}
-@media (max-width:1000px){.role{grid-template-columns:repeat(4,1fr)}.role div{border-bottom:1px solid var(--line)}.role div:nth-child(4n){border-right:0}.role div:nth-last-child(-n+4){border-bottom:0}}
-@media (max-width:760px){.role{grid-template-columns:repeat(2,1fr)}.role div:nth-child(4n){border-right:1px solid var(--line)}.role div:nth-child(2n){border-right:0}.role div:nth-last-child(-n+4){border-bottom:1px solid var(--line)}.role div:nth-last-child(-n+2){border-bottom:0}}
+@media (max-width:1000px){.role{grid-template-columns:repeat(3,1fr)}.role div{border-bottom:1px solid var(--line)}.role div:nth-child(3n){border-right:0}.role div:nth-last-child(-n+3){border-bottom:0}}
+@media (max-width:760px){.role{grid-template-columns:repeat(2,1fr)}.role div:nth-child(3n){border-right:1px solid var(--line)}.role div:nth-child(2n){border-right:0}.role div:nth-last-child(-n+3){border-bottom:1px solid var(--line)}.role div:nth-last-child(-n+2){border-bottom:0}}
 /* panels */
 .grid{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:18px;margin-top:18px;align-items:start}
 .panel{background:var(--bg2);border:1px solid var(--line);position:relative;min-width:0}
@@ -154,7 +154,7 @@ h1 span span{display:block;color:var(--club2)}
 .shot{transform-box:fill-box;transform-origin:center;animation:pop .32s cubic-bezier(.2,1.4,.4,1) both}
 @keyframes pop{from{opacity:0;transform:scale(.2)}to{opacity:1;transform:scale(1)}}
 @media (prefers-reduced-motion:reduce){.shot{animation:none}.live i{animation:none}.ticker .run{animation:none}.tile::after,.split .bar i.fill,.gauge .t i,.zone-bar,.progress,.toast{transition:none}.sk{animation:none}
-  .lb-list.go-l,.lb-list.go-r,.lb-title b.swap{animation:none}.lb-row a::after,.lb-arrow,.lb-dots button,.lb-row a{transition:none}}
+  .lb-list.go-l,.lb-list.go-r,.lb-title b.swap{animation:none}.lb-row a::after,.lb-arrow,.lb-dots button,.lb-row a,.lb summary::after{transition:none}}
 .court3d{position:relative;width:100%;aspect-ratio:4/3;background:var(--floor);overflow:hidden}
 .court3d canvas{display:block;width:100%;height:100%;touch-action:none}
 .hud3d{position:absolute;left:12px;top:12px;right:12px;display:flex;justify-content:space-between;align-items:center;gap:10px;pointer-events:none}
@@ -230,10 +230,11 @@ tbody tr:hover td{background:rgba(255,255,255,.03)}
 .prof-chart .end{fill:var(--club2)}
 /* game log */
 .log{margin-top:18px}
-.log summary{cursor:pointer;list-style:none}
-.log summary::-webkit-details-marker{display:none}
-.log summary::after{content:"";margin-left:auto;width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;border-top:9px solid var(--ink2);transition:transform .2s}
-.log[open] summary::after{transform:rotate(180deg)}
+.log summary,.lb summary{cursor:pointer;list-style:none}
+.log summary::-webkit-details-marker,.lb summary::-webkit-details-marker{display:none}
+.log summary::after,.lb summary::after{content:"";margin-left:auto;width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;border-top:9px solid var(--ink2);transition:transform .2s}
+.log[open] summary::after,.lb[open] summary::after{transform:rotate(180deg)}
+.lb summary:hover::after{border-top-color:var(--club2)}
 .log .scroll{overflow-x:auto;scrollbar-width:thin;scrollbar-color:var(--line2) transparent}
 .log .none{color:var(--muted);margin:0}
 td.w{color:var(--good)} td.l{color:var(--bad)}
@@ -443,8 +444,8 @@ td.w{color:var(--good)} td.l{color:var(--bad)}
     </div>
   </section>
 
-  <section class="panel lb" id="lb-panel" hidden>
-    <h2>League leaders</h2>
+  <details class="panel lb" id="lb-panel" open hidden>
+    <summary>League leaders</summary>
     <div class="in">
       <div class="lb-head">
         <button class="lb-arrow" id="lb-prev" type="button" aria-label="Previous leaderboard">&lsaquo;</button>
@@ -455,7 +456,7 @@ td.w{color:var(--good)} td.l{color:var(--bad)}
       <div class="lb-clip" id="lb-clip"><ol class="lb-list" id="lb-list"></ol></div>
       <p class="lb-foot" id="lb-foot"></p>
     </div>
-  </section>
+  </details>
 
   <details class="log panel" id="log-panel">
     <summary>Game log</summary>
@@ -643,11 +644,11 @@ function renderRole(){
   el.hidden = false; $('#role-foot').hidden = false;
   const ts = tsOf(tot.pts, tot.fga2 + tot.fga3, tot.fta);
   const items = [['usg', 'Usage', r.usg, '%', 'share of team possessions he ends with a shot, free throws or a turnover while on court'], ['ts', 'True shooting', ts != null ? (100 * ts).toFixed(1) : null, '%', 'points per shooting possession, counting free throws and the value of threes'],
-    ['fg3_rate', '3-point rate', r.fg3_rate, '%', 'share of his field-goal attempts taken from three'], ['ft_rate', 'FT rate', r.ft_rate, '%', 'free-throw attempts per 100 field-goal attempts'],
     ['ast_pct', 'Assist rate', r.ast_pct, '%', 'share of teammate field goals he assisted while on court'], ['tov_pct', 'Turnover rate', r.tov_pct, '%', 'turnovers per 100 plays he used'],
     ['reb_pct', 'Rebound rate', r.reb_pct, '%', 'share of available rebounds he took while on court'], ['plusminus', '+/- per game', tot.gp ? Math.round(10 * (tot.plusminus || 0) / tot.gp) / 10 : null, '', `team score margin while he was on court, per game (${(tot.plusminus || 0) >= 0 ? '+' : ''}${tot.plusminus || 0} over ${tot.gp} game${tot.gp > 1 ? 's' : ''})`]];
   el.innerHTML = items.map(([k, l, v, u, tip]) => `<div style="--p:${pp[k] ?? 0}%" title="${tip}${pp[k] != null ? ` · ${ord(pp[k])} percentile among ${d.pos_n} ${(d.pos_group || 'player').toLowerCase()}s` : ''}"><b>${v == null ? '–' : (k === 'plusminus' && v > 0 ? '+' : '') + v}${v == null ? '' : u}</b><span>${l}</span></div>`).join('');
-  $('#role-legend').textContent = d.pct_pos ? `Role · underline: rank among ${d.pos_n} ${(d.pos_group || 'player').toLowerCase()}s (3+ games, 10+ min), longer is better, turnover rate inverted · hover a tile for the definition` : 'Role · hover a tile for the definition';
+  $('#role-legend').textContent = d.pct_pos ? `Role · underline: rank among ${d.pos_n} ${(d.pos_group || 'player').toLowerCase()}s (3+ games, 10+ min), longer is better, turnover rate inverted` : '';
+  $('#role-foot').hidden = !d.pct_pos;
 }
 function renderForm(){
   const d = ds(), el = $('#form'), log = d.log;
@@ -984,7 +985,7 @@ function Dropdown(sel, item){
 
 // ---- wiring
 $('#tag-season').textContent = META.label;
-const toLb = () => $('#lb-panel').scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start'});
+const toLb = () => { const p = $('#lb-panel'); p.open = true; p.scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start'}); };
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const fmtBuilt = s => { const m = (s || '').match(/(\d{4})-(\d{2})-(\d{2}) (\d{2}:\d{2})/); return m ? `${+m[3]} ${MONTHS[+m[2] - 1]} ${m[4]} UTC` : s; };
 $('#tag-sub').innerHTML = META.built ? `Updated after every game<br>built ${fmtBuilt(META.built)}` : 'Updated after every game';
