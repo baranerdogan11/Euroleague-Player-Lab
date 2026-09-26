@@ -10,6 +10,7 @@ import datetime
 import glob
 import html
 import json
+import math
 import os
 import re
 import sys
@@ -330,6 +331,51 @@ for grp, ps in pos_pools.items():
                         vals.setdefault(k, []).append(v)
     medians[grp] = {k: round(sorted(v)[len(v) // 2], 3) for k, v in vals.items() if len(v) >= 10}
 
+# ---- league leaderboards: points, rebounds and assists a game, and three-point percentage.
+# Qualification is pro-rated off the player's own club's played games, the way the NBA pro-rates its 70%-of-games
+# rule in season, so the size of the qualifying pool stays flat as the season grows instead of tripling. The
+# three-point board is gated on attempts alone (volume is near-independent of accuracy) and ranked on the raw
+# percentage; the gate starts at the 15 attempts the rest of this file already requires before it will print a 3P%.
+LB_TOP = 10
+LB_MPG = 10.0                     # the minutes half of the app's own pool rule
+LB_GAME_SHARE = 0.7               # share of his club's played games a player must have appeared in
+LB_ATT_FLOOR = 15                 # never print a 3P% on less, matching per_game() and compare_metrics()
+LB_ATT_PER_ROUND = 2.0
+
+
+def leaderboards():
+    """Four boards plus the per-player ranks the page pins under them. Built from `collected`, not from SQL, so every
+    pid on a board resolves to a player the site actually has a page for."""
+    cg = {}
+    for (game, club) in TG:
+        cg[club] = cg.get(club, 0) + 1
+    if not cg:
+        return None, {}
+    counts = sorted(cg.values())
+    rounds = counts[len(counts) // 2]                       # median club, so one moved fixture cannot overstate progress
+    min_3pa = max(LB_ATT_FLOOR, int(LB_ATT_PER_ROUND * rounds))
+    min_gp = max(1, math.ceil(LB_GAME_SHARE * rounds))
+    cands = [(p["pid"], p["cur"]["tot"], code) for code, ps in collected.items() for p in ps if p["cur"]["tot"]["gp"]]
+    pg_pool = [(pid, t) for pid, t, code in cands
+               if t["gp"] >= max(1, math.ceil(LB_GAME_SHARE * cg.get(code, rounds))) and t["min"] / t["gp"] >= LB_MPG]
+    a3_pool = [(pid, t) for pid, t, _ in cands if t["fga3"] >= min_3pa]
+
+    def order(key):
+        return sorted(pg_pool, key=lambda x: (-x[1][key] / x[1]["gp"], -x[1]["gp"], x[1]["min"], x[0]))
+
+    ranked = {k: order(k) for k in ("pts", "reb", "ast")}
+    ranked["fg3"] = sorted(a3_pool, key=lambda x: (-x[1]["fgm3"] / x[1]["fga3"], -x[1]["fga3"], x[0]))
+    rank_of = {k: {pid: i + 1 for i, (pid, _) in enumerate(v)} for k, v in ranked.items()}
+    out = {"rounds": rounds, "min_gp": min_gp, "min_3pa": min_3pa, "min_mpg": LB_MPG,
+           "n": {"pg": len(pg_pool), "fg3": len(a3_pool)},
+           "top_3pa": max((t["fga3"] for _, t, _ in cands), default=0),
+           "pts": [[pid, t["pts"], t["gp"]] for pid, t in ranked["pts"][:LB_TOP]],
+           "reb": [[pid, t["reb"], t["gp"]] for pid, t in ranked["reb"][:LB_TOP]],
+           "ast": [[pid, t["ast"], t["gp"]] for pid, t in ranked["ast"][:LB_TOP]],
+           "fg3": [[pid, t["fgm3"], t["fga3"]] for pid, t in ranked["fg3"][:LB_TOP]]}
+    return out, rank_of
+
+
 def club_ratings():
     """Season-to-date pace, offensive and defensive rating per club, from the box totals."""
     out = {}
@@ -342,6 +388,10 @@ def club_ratings():
     return {c: {"g": r["g"], "pace": round(r["poss"] / r["g"], 1), "ortg": round(100 * r["pf"] / r["poss"], 1), "drtg": round(100 * r["pa"] / r["poss"], 1)} for c, r in out.items() if r["poss"]}
 
 
+LEADERS, LB_RANK = leaderboards()
+if LEADERS is None:
+    LEADERS, LB_RANK = None, {k: {} for k in ("pts", "reb", "ast", "fg3")}
+
 status_path = os.path.join(W, "status.json")
 status = json.load(open(status_path)) if os.path.exists(status_path) else None
 if status:
@@ -351,7 +401,9 @@ card = json.load(open(card_path)) if os.path.exists(card_path) else None
 meta = {"season": SEASON, "label": label(SEASON), "model": {"version": card["version"], "trained_on": card["trained_on"], "logloss": card["metrics_test"][card["chosen"]]["logloss"],
                                                            "auc": card["metrics_test"][card["chosen"]]["auc"], "n_shots": card["n_shots"]} if card else None, "clubs": [{"code": c["club"], "name": c["name"], "short": c["short"], "country": c["country"], "city": c["city"], "logo": c["logo"], "base": PALETTES.get(c["club"], DEFAULT_PALETTE)[0], "accent": PALETTES.get(c["club"], DEFAULT_PALETTE)[1]} for c in clubs],
         "league_n": league_n, "pool_rule": "3+ games, 10+ minutes a game", "league": league, "def_adjusted": DEF_ADJ is not None,
-        "ratings": club_ratings(), "medians": medians, "roster": [{"pid": p["pid"], "name": p["name"], "club": code, "dorsal": p["dorsal"], "pos": p["cur"]["pos_group"]} for code, ps in collected.items() for p in ps],
+        "ratings": club_ratings(), "medians": medians, "leaders": LEADERS,
+        "roster": [{"pid": p["pid"], "name": p["name"], "club": code, "dorsal": p["dorsal"], "pos": p["cur"]["pos_group"], "ph": 1 if p["photo"] else 0,
+                    "lr": [LB_RANK[k].get(p["pid"], 0) for k in ("pts", "reb", "ast", "fg3")]} for code, ps in collected.items() for p in ps],
         "priors": {"league_quality": PRIORS["league_quality"], "k_skill": PRIORS["k_skill"], "k_quality": PRIORS["k_quality"], "reference_season": PRIORS["reference_season"],
                    "tau_skill": PRIORS["tau_skill"]} if PRIORS else None,
         "built": datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC"), "path": f"teams/{SEASON}/",

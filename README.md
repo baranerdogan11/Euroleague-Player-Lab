@@ -48,7 +48,7 @@ of the day, and can be started by hand from the Actions tab. Each run:
 7. scores every shot with the xFG model (`model/score.py`), see below
 8. builds shooting profiles, shot quality versus shooting skill with shrinkage (`model/profile.py`)
 9. writes validated scouting notes with Claude for players whose facts changed (`model/notes.py`, needs the `ANTHROPIC_API_KEY` secret)
-10. builds the site from the warehouse with SQL (`build.py`, the gold layer): season stats, league benchmarks, role metrics, on/off, position ranks, the defence-adjusted expectation and the compare index
+10. builds the site from the warehouse with SQL (`build.py`, the gold layer): season stats, league benchmarks, role metrics, on/off, position ranks, the defence-adjusted expectation, the compare index and the league leaderboards
 11. writes the monitoring snapshot (`model/monitor.py`) and commits everything; GitHub Pages deploys within a minute
 
 The assertions write `teams/E2026/status.json` (games, shots, box lines, tests, failures, warnings, time) and the page footer
@@ -197,6 +197,21 @@ git add -A && git commit -m "Update after round" && git push   # GitHub Pages re
 ## Layout
 
 - `index.html`: the page (loads a club's JSON when it is selected); `monitor.html`: the status page
+
+### League leaderboards
+
+Four boards, points, rebounds and assists a game and three-point percentage, are precomputed in `build.py`
+(`leaderboards()`) and inlined in `index.json` as `leaders`, about 600 bytes. Rows carry only a player id plus
+the raw totals; the page joins names, clubs and photos from `roster`, whose entries also carry each player's
+rank on every board so the viewed player can be pinned under the top ten.
+
+Qualification is pro-rated off the player's own club's played games rather than fixed at a games count, the
+way the NBA pro-rates its 70%-of-games rule in season, so the qualifying pool stays flat as the season grows
+instead of tripling: a player needs appearances in 70% of his club's games and 10 minutes a game. The
+three-point board is gated on attempts alone, `max(15, 2 x rounds)`, and ranked on the raw percentage. The
+floor of 15 is the same attempt minimum the rest of the file already requires before it will print a 3P%.
+Empirical-Bayes shrinkage was measured on 2025-26 and rejected: at the season-end gate it compresses 23.9
+points of spread to 4.8, so every row would round to the same number.
 - `p/<pid>.html`: one share stub per player with his Open Graph card (name, club, photo), forwarding to his page; written by `build.py`, handed out by the page's Copy link button
 - `teams/E2026/index.json`, `teams/E2026/<CLUB>.json`: compact per-club data (stats, game log, shots)
 - `photos/<player>.webp`, `logos/<CLUB>.png`: media-day photos and crests
