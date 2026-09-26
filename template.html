@@ -644,7 +644,10 @@ function skeleton(){
 function renderPlayers(){
   const t = team(), sel = $('#player');
   sel.innerHTML = t.players.map((p, i) => { const n = nameOf(p.name); return `<option value="${i}">#${p.dorsal || '–'} ${n.first} ${n.sur}</option>`; }).join('');
-  sel.value = 0; state.player = 0; state.game = 'all';
+  // the first player on the menu who has actually played, so a club never opens on an empty page;
+  // before a club's first game nobody has, and the menu's first entry stands
+  const idx = Math.max(0, t.players.findIndex(p => p.cur.tot.gp > 0));
+  sel.value = idx; state.player = idx; state.game = 'all';
   renderGames(); renderPlayer();
 }
 function renderGames(){
@@ -670,7 +673,7 @@ function renderPlayer(){
   $('#pos').textContent = `${p.dorsal ? '· #' + p.dorsal + ' ' : ''}· ${p.position || ''}`; $('#nm').innerHTML = `${n.first}<span>${n.sur}</span>`;
   const a = age(p.birth);
   $('#facts').innerHTML = [p.height ? `<span><b>${p.height}</b> cm</span>` : '', a ? `<span><b>${a}</b> yrs</span>` : '', p.country ? `<span>${p.country.replace('United States of America', 'USA')}</span>` : '',
-    played ? `<span><b>${tot.gp}</b> games</span><span><b>${f1(tot.min / gp)}</b> min</span>` : `<span><b>0</b> games</span>`].join('');
+    played ? `<span><b>${tot.gp}</b> game${tot.gp === 1 ? '' : 's'}</span><span><b>${f1(tot.min / gp)}</b> min</span>` : `<span><b>0</b> games</span>`].join('');
   renderTiles(); renderRole(); renderForm(); LB.mark(); $('#f-ast').hidden = !d.shots.some(s => s[11] != null); if ($('#f-ast').hidden) { state.ast = 'all'; $('#f-ast').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x.dataset.v === 'all')); }
   const xf = d.xfg;
   $('#xfg').innerHTML = xf ? `<div class="xfg-row"><div><b>${(100 * xf.xfg).toFixed(1)}%</b><span>Expected FG% for a league-average shooter on his shots</span></div><div><b>${((xf.pts / xf.att) || 0).toFixed(2)} <i>vs</i> ${(xf.xpts / xf.att).toFixed(2)}</b><span>Points per attempt, his vs a league-average shooter</span></div><div class="${xf.pts - xf.xpts >= 0 ? 'up' : 'down'}"><b>${xf.pts - xf.xpts >= 0 ? '+' : ''}${(xf.pts - xf.xpts).toFixed(1)}</b><span>Points above expectation, ${xf.att} attempts</span></div></div>` : '';
