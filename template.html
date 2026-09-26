@@ -373,8 +373,6 @@ body.cv-on .top,body.cv-on .wrap{display:none}
 .cv-cta{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin:30px 0 0}
 .cv-go{background:var(--club2);color:var(--on);border:0;font-family:var(--cond);font-weight:800;font-size:19px;letter-spacing:.16em;text-transform:uppercase;padding:16px 34px 16px 30px;cursor:pointer;clip-path:polygon(12px 0,100% 0,calc(100% - 12px) 100%,0 100%);transition:filter .15s,transform .15s}
 .cv-go:hover{filter:brightness(1.12);transform:translateX(2px)}
-.cv-note{font-size:13px;color:var(--muted);max-width:34ch;line-height:1.45}
-.cv-note b{color:var(--ink2);font-weight:600}
 .cv-nums{list-style:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));margin:44px 0 0;padding:0;border:1px solid var(--line);background:var(--bg2)}
 .cv-nums li{padding:16px 16px 14px;border-right:1px solid var(--line)}
 .cv-nums li:last-child{border-right:0}
@@ -408,7 +406,6 @@ body.cv-on .top,body.cv-on .wrap{display:none}
     <p class="cv-lede">Every shot, every player, every club. Shot charts in two dimensions and three, shooting profiles that separate the shots a player takes from what he adds to them, and season stats rebuilt within minutes of every final.</p>
     <div class="cv-cta">
       <button class="cv-go" id="cv-go" type="button">Open the app</button>
-      <span class="cv-note" id="cv-note"></span>
     </div>
     <ul class="cv-nums" id="cv-nums"></ul>
     <section class="cv-sec">
@@ -647,9 +644,7 @@ function skeleton(){
 function renderPlayers(){
   const t = team(), sel = $('#player');
   sel.innerHTML = t.players.map((p, i) => { const n = nameOf(p.name); return `<option value="${i}">#${p.dorsal || '–'} ${n.first} ${n.sur}</option>`; }).join('');
-  const mins = p => p.cur.tot.min;
-  const top = t.players.reduce((b, p, i) => mins(p) > mins(t.players[b]) ? i : b, 0);
-  sel.value = top; state.player = top; state.game = 'all';
+  sel.value = 0; state.player = 0; state.game = 'all';
   renderGames(); renderPlayer();
 }
 function renderGames(){
@@ -1235,7 +1230,6 @@ const COVER = (() => {
   const el = $('#cover'), first = META.clubs[0];
   const n = v => (v || 0).toLocaleString('en-GB');
   $('#cv-season').textContent = META.label;
-  $('#cv-note').innerHTML = `Opens with <b>${first.name}</b>, the first club on the list. Or pick any club below.`;
   const st = META.status || {};
   $('#cv-nums').innerHTML = [[META.clubs.length, 'Clubs'], [(META.roster || []).length, 'Players'], [st.games, 'Games'], [st.shots, 'Shots charted']]
     .map(([v, k]) => `<li><b>${n(v)}</b><span>${k}</span></li>`).join('');
