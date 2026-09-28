@@ -59,10 +59,26 @@ def profile_of(player, gidx):
 
 
 # Broadcast colourways: base tints panels and the hero wedge, accent carries text, marks and controls on a dark ground.
-PALETTES = {"IST": ("#002D74", "#00A7E1"), "MIL": ("#8E1610", "#F0342B"), "BES": ("#2A2A2A", "#FFFFFF"), "RED": ("#A3121A", "#FF3B44"), "DUB": ("#003E2E", "#F6881F"),
-            "BAR": ("#023485", "#EDBB00"), "MUN": ("#8F0F25", "#FF4D6D"), "ULK": ("#004280", "#FFED00"), "HTA": ("#9E1218", "#FF3B44"), "BAS": ("#0A2240", "#E4213C"),
-            "ASV": ("#2A2A2A", "#FFFFFF"), "TEL": ("#2371B5", "#FFF100"), "OLY": ("#9B0A18", "#F03A4A"), "PAN": ("#0B6B3A", "#22D37A"), "PRS": ("#2A2A2A", "#FFFFFF"),
-            "PAR": ("#2A2A2A", "#FFFFFF"), "MAD": ("#0B3F8F", "#FEBE10"), "PAM": ("#0A3792", "#FF6C0E"), "VIR": ("#2A2A2A", "#FFFFFF"), "ZAL": ("#0C6F3E", "#4ADE80")}
+PALETTES = {"IST": ("#002D74", "#00A7E1"),   # Anadolu Efes: navy and light blue, as on the crest
+            "MIL": ("#8E1610", "#F0342B"),   # Olimpia Milano: red and white
+            "BES": ("#2A2A2A", "#FFFFFF"),   # Besiktas: black and white
+            "RED": ("#A3121A", "#FF3B44"),   # Crvena Zvezda: red and white
+            "DUB": ("#1A1714", "#C69C4D"),   # Dubai Basketball: black and gold (white kit with black and gold trim; the crest is white, black and bronze)
+            "BAR": ("#023485", "#EDBB00"),   # Barcelona: blaugrana blue with the crest's gold
+            "MUN": ("#8F0F25", "#EE3149"),   # Bayern Munich: red and white
+            "ULK": ("#0A2F5E", "#FFED00"),   # Fenerbahce: navy and yellow
+            "HTA": ("#9E1218", "#FF3B44"),   # Hapoel Tel Aviv: red and white
+            "BAS": ("#0A2240", "#E4213C"),   # Baskonia: navy and red
+            "ASV": ("#1C1C1C", "#A7ABB3"),   # LDLC ASVEL: black and grey since the 2018 rebrand
+            "TEL": ("#1B2F6E", "#FFD500"),   # Maccabi Tel Aviv: navy and yellow
+            "OLY": ("#9B0A18", "#F03A4A"),   # Olympiacos: red and white
+            "PAN": ("#0B6B3A", "#22D37A"),   # Panathinaikos: green and white
+            "PRS": ("#151515", "#E63927"),   # Paris Basketball: black with the brand red
+            "PAR": ("#2A2A2A", "#FFFFFF"),   # Partizan: black and white
+            "MAD": ("#0B3F8F", "#FEBE10"),   # Real Madrid: the crest's blue and gold
+            "PAM": ("#0A3792", "#FF6C0E"),   # Valencia: navy and orange
+            "VIR": ("#2A2A2A", "#FFFFFF"),   # Virtus Bologna: black and white
+            "ZAL": ("#146734", "#3FD07A")}   # Zalgiris: the official green and white
 DEFAULT_PALETTE = ("#1F2B47", "#F26F21")
 
 # ---- team and opponent totals per game (both sides of every box score), for usage, rebound shares, on/off and pace
