@@ -281,7 +281,7 @@ td.w{color:var(--good)} td.l{color:var(--bad)}
 .fail .btn{padding:8px 16px;font-size:13px}
 .sk{color:transparent!important;background:linear-gradient(90deg,var(--panel) 0%,var(--panel2) 40%,var(--panel) 80%);background-size:200% 100%;animation:sk 1.3s linear infinite;user-select:none}
 @keyframes sk{from{background-position:120% 0}to{background-position:-80% 0}}
-.progress{position:fixed;left:0;top:0;height:3px;width:0;background:var(--club2);z-index:50;transition:width .4s,opacity .3s;opacity:0}
+.progress{position:fixed;left:0;top:0;height:3px;width:0;background:var(--club2);z-index:120;transition:width .4s,opacity .3s;opacity:0}
 .progress.on{opacity:1;width:70%}.progress.done{width:100%;opacity:0}
 .toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,16px);background:var(--white);color:#000;font-family:var(--cond);font-weight:800;font-size:14px;letter-spacing:.12em;text-transform:uppercase;padding:10px 18px;clip-path:polygon(8px 0,100% 0,calc(100% - 8px) 100%,0 100%);opacity:0;transition:opacity .2s,transform .2s;z-index:60;pointer-events:none}
 .toast.on{opacity:1;transform:translate(-50%,0)}
@@ -404,7 +404,13 @@ body.cv-on .top,body.cv-on .wrap{display:none}
 .wipe.out b{animation:wipe-out .34s cubic-bezier(.75,0,.2,1) .07s forwards}
 @keyframes wipe-in{from{transform:translateX(-118%) skewX(-14deg)}to{transform:translateX(0) skewX(-14deg)}}
 @keyframes wipe-out{from{transform:translateX(0) skewX(-14deg)}to{transform:translateX(118%) skewX(-14deg)}}
-.wipe.on i::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(-60deg,transparent 0 22px,rgba(255,255,255,.04) 22px 26px)}
+.wipe.on i::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(-60deg,transparent 0 22px,rgba(0,0,0,.06) 22px 26px)}
+/* reduced motion: the same cover in the club colour, as a plain fade with nothing moving */
+.wipe.fade i{left:0;top:0;bottom:0;width:100%;transform:none;opacity:0;animation:wipe-fade-in .22s ease forwards}
+.wipe.fade b{display:none}
+.wipe.fade.out i{animation:wipe-fade-out .24s ease forwards}
+@keyframes wipe-fade-in{to{opacity:1}}
+@keyframes wipe-fade-out{from{opacity:1}to{opacity:0}}
 </style>
 <div class="bar"></div>
 <main class="cv" id="cover" hidden>
@@ -1256,14 +1262,28 @@ const COVER = (() => {
 // covered, so no scroll position ever carries over. Player changes inside a club stay instant.
 history.scrollRestoration = 'manual';
 const HOUSE = {base: '#1f2b47', accent: '#f26f21'};
+const pause = ms => new Promise(r => setTimeout(r, ms));
 const WIPE = (() => {
   const el = $('#wipe'), reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const wait = ms => new Promise(r => setTimeout(r, ms));
+  let up = false;
   return {
-    async cover(c){ if (reduced()) return false; el.style.setProperty('--wipe1', c.base || HOUSE.base); el.style.setProperty('--wipe2', c.accent || HOUSE.accent); el.className = 'wipe on in'; await wait(400); return true; },
-    async reveal(){ el.className = 'wipe on out'; await wait(440); el.className = 'wipe'; }
+    get up(){ return up; },
+    async cover(c){
+      el.style.setProperty('--wipe1', c.base || HOUSE.base); el.style.setProperty('--wipe2', c.accent || HOUSE.accent);
+      if (reduced()) { el.className = 'wipe on fade'; await pause(240); }
+      else { el.className = 'wipe on in'; await pause(400); }
+      up = true;
+    },
+    async reveal(){
+      if (!up) return;
+      if (reduced()) { el.className = 'wipe on fade out'; await pause(260); }
+      else { el.className = 'wipe on out'; await pause(440); }
+      el.className = 'wipe'; up = false;
+    }
   };
 })();
+// the reveal waits for the hero photo and crests, so the page under the wipe is finished when it shows; a slow network gets 1.5 s at most
+const settled = () => Promise.race([pause(1500), Promise.all([...document.querySelectorAll('#photo, #crest-img, #club-logo')].map(img => (img.complete || !img.getAttribute('src')) ? null : new Promise(r => { img.addEventListener('load', r, {once: true}); img.addEventListener('error', r, {once: true}); })))]);
 async function go(){
   const h = location.hash.replace('#', '').split('/');
   if (!CLUBS[h[0]]) { COVER.show(); return true; }    // no club in the URL: the opening page, not a silent fallback
@@ -1276,20 +1296,27 @@ async function go(){
   const n = nameOf(player().name); document.title = `${n.first} ${n.sur} · ${shortName(state.team)} · Player Lab`;
   return true;
 }
-let booted = false, chain = Promise.resolve();
-function route(){
-  chain = chain.then(async () => {
-    const h = location.hash.replace('#', '').split('/');
-    const toCover = !CLUBS[h[0]], onCover = document.body.classList.contains('cv-on');
-    const newPage = booted && (toCover !== onCover || (!toCover && state.team && state.team !== h[0]));
-    const covered = newPage && await WIPE.cover(toCover ? HOUSE : CLUBS[h[0]]);
-    const ok = await go();
-    if (newPage) scrollTo(0, 0);
-    if (covered) await WIPE.reveal();
-    booted = true;
-    return ok;
-  });
-  return chain;
+let booted = false, routing = false, queued = false;
+async function route(){
+  if (routing) { queued = true; return; }          // a click during a transition is taken up under the same cover, never as a second wipe
+  routing = true;
+  try {
+    do {
+      queued = false;
+      const h = location.hash.replace('#', '').split('/');
+      const toCover = !CLUBS[h[0]], onCover = document.body.classList.contains('cv-on');
+      const newPage = booted && (toCover !== onCover || (!toCover && state.team && state.team !== h[0]));
+      if (newPage && !WIPE.up) await WIPE.cover(toCover ? HOUSE : CLUBS[h[0]]);
+      try { await go(); }
+      catch (e) { console.error(e); $('#fail').hidden = false; $('#fail-sub').textContent = `This page could not be drawn (${e.message || e}). Try again or pick another club.`; }   // a fault never leaves the screen covered
+      if (newPage) { scrollTo(0, 0); await settled(); }
+      booted = true;
+    } while (queued);
+    await WIPE.reveal();
+  } finally {
+    routing = false;
+    if (queued) route();
+  }
 }
 addEventListener('hashchange', route);
 (async function(){
