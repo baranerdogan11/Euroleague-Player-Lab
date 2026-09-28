@@ -654,10 +654,8 @@ function skeleton(){
 function renderPlayers(){
   const t = team(), sel = $('#player');
   sel.innerHTML = t.players.map((p, i) => { const n = nameOf(p.name); return `<option value="${i}">#${p.dorsal || '–'} ${n.first} ${n.sur}</option>`; }).join('');
-  // the first player on the menu who has actually played, so a club never opens on an empty page;
-  // before a club's first game nobody has, and the menu's first entry stands
-  const idx = Math.max(0, t.players.findIndex(p => p.cur.tot.gp > 0));
-  sel.value = idx; state.player = idx; state.game = 'all';
+  // a club opens on the first player in its menu, the lowest jersey number, whether or not he has played yet
+  sel.value = 0; state.player = 0; state.game = 'all';
   renderGames(); renderPlayer();
 }
 function renderGames(){
