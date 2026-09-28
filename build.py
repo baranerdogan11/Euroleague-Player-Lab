@@ -43,21 +43,9 @@ if os.path.exists(prof_path):
     pf = pd.read_parquet(prof_path)
     if "att" in pf.columns and len(pf):
         PROFILES = {r.player: r for r in pf.itertuples(index=False)}
-notes_path = os.path.join(W, "notes.parquet")
-NOTES = {}
-if os.path.exists(notes_path):
-    import pandas as pd
-    nf = pd.read_parquet(notes_path)
-    NOTES = {r.player: r for r in nf.itertuples(index=False) if r.status == "ok"}
 priors_path = os.path.join(ROOT, "model", "shooting_priors.json")
 PRIORS = json.load(open(priors_path)) if os.path.exists(priors_path) else None
 rows = lambda q, *a: [dict(zip([d[0] for d in con.description], r)) for r in con.execute(q, a).fetchall()]
-
-def note_of(player):
-    n = NOTES.get(player)
-    if n is None:
-        return None
-    return {"text": n.note, "generated_at": n.generated_at[:10], "model": n.model, "confidence": n.confidence, "key_numbers": json.loads(n.key_numbers) if n.key_numbers else []}
 
 
 def profile_of(player, gidx):
@@ -171,7 +159,7 @@ for c in clubs:
         tot["min"] = round(sum(b["minutes"] for b in lines), 1); tot["gp"] = len(lines)
         log = [[gidx[b["game"]], round(b["minutes"], 1), b["pts"], b["reb"], b["ast"], b["stl"], b["blk"], b["tov"], b["fgm2"], b["fga2"], b["fgm3"], b["fga3"], b["ftm"], b["fta"], b["pir"], b["plusminus"]] for b in lines]
         # shot columns: 9 = expectation for a league-average shooter (context only), 10 = the shooter-aware probability; every
-        # "expected" figure on the page uses column 9 so the season stats, the profile panel and the note agree
+        # "expected" figure on the page uses column 9 so the season stats and the profile panel agree
         # columns 11 to 14 come from the play-by-play layer: assisted (makes only), and-one, blocked (misses only), seconds into the possession
         sh = rows("""select s.game, s.club, s.x, s.y, s.made, s.pts, s.minute, s.zone, s.fastbreak, s.second_chance, x.xfg_ctx, x.xfg, c.assisted, c.fouled, c.blocked, c.poss_sec
                      from shots s left join shots_xfg x using (game, seq) left join shot_context c using (game, seq) where s.player = ? order by s.game, s.minute, s.seq""", r["player"])
@@ -189,7 +177,7 @@ for c in clubs:
         players.append({"pid": "P" + r["player"], "name": r["name"], "dorsal": r["dorsal"], "position": r["position"], "height": r["height_cm"],
                         "birth": str(r["birth_date"]) if r["birth_date"] else None, "country": r["country"],
                         "photo": f"photos/{r['player']}.webp" if os.path.exists(os.path.join(ROOT, "photos", f"{r['player']}.webp")) else None,
-                        "cur": {"tot": tot, "log": log, "shots": shots, "games": games, "xfg": xfg, "profile": profile_of(r["player"], gidx), "note": note_of(r["player"]), "role": role, "pos_group": pos_group(r["position"])}})
+                        "cur": {"tot": tot, "log": log, "shots": shots, "games": games, "xfg": xfg, "profile": profile_of(r["player"], gidx), "role": role, "pos_group": pos_group(r["position"])}})
     collected[code] = players
 
 # league percentiles among rotation players (3+ games, 10+ minutes a game), per game and per 40 minutes; turnovers inverted so higher is better

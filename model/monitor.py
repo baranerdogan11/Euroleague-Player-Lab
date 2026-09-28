@@ -2,7 +2,7 @@
 
 Covers pipeline status and history, data freshness against the schedule, the xFG model's live calibration
 by round (log loss, Brier, predicted vs actual make rate) next to the training season as a reference,
-shooter-effect coverage, scouting-note acceptance, the serving API's health, and the production model.
+shooter-effect coverage, the serving API's health, and the production model.
 
 usage: python model/monitor.py E2026
 """
@@ -103,30 +103,6 @@ if view("shots_xfg"):
         sx = con.execute(f"select player from shots_xfg_{SEASON}").df()
         shooter_cov = {"shots": int(len(sx)), "known_shooter_share": round(float(sx.player.isin(eff).mean()), 3) if len(sx) else None}
 
-# ---- scouting notes
-notes = None
-np_path = os.path.join(W, "notes.parquet")
-if os.path.exists(np_path):
-    nf = pd.read_parquet(np_path)
-    if len(nf):
-        reasons = {}
-        for c in nf[nf.status != "ok"].checks.dropna():
-            for r in json.loads(c):
-                key = r.split(":")[0]
-                reasons[key] = reasons.get(key, 0) + 1
-        by_day = nf.assign(day=nf.generated_at.str[:10]).groupby("day").agg(total=("status", "size"), ok=("status", lambda s: int((s == "ok").sum()))).reset_index()
-        notes = {"total": int(len(nf)), "ok": int((nf.status == "ok").sum()), "rejected": int((nf.status != "ok").sum()), "rejection_reasons": reasons,
-                 "by_day": [{"day": r.day, "total": int(r.total), "ok": int(r.ok)} for r in by_day.itertuples()], "model": nf.model.iloc[-1]}
-ns_path = os.path.join(W, "notes_status.json")           # the last run's outcome, including a stop for account reasons
-if os.path.exists(ns_path):
-    notes = notes or {"total": 0, "ok": 0, "rejected": 0, "rejection_reasons": {}, "by_day": [], "model": None}
-    notes["last_run"] = json.load(open(ns_path))
-eval_path = os.path.join(ROOT, "model", "notes_eval.json")
-notes_eval = None
-if os.path.exists(eval_path):
-    e = json.load(open(eval_path))
-    notes_eval = {k: e.get(k) for k in ("n", "auto_pass_rate", "judge_faithfulness_mean", "judge_usefulness_mean", "judge_faithful_5_rate", "unsupported_claims_total", "human_labelled", "judge_human_agreement")}
-
 # ---- serving API
 api = {"url": API, "reachable": False}
 try:
@@ -147,6 +123,6 @@ model_info = {"version": card.get("version"), "trained_on": card.get("trained_on
 monitor = {"season": SEASON, "generated_at": now.strftime("%Y-%m-%d %H:%M UTC"), "pipeline": {"last": record, "history": history[-60:], "tests": status.get("tests")},
            "freshness": freshness, "calibration": {"live_rounds": live_rounds, "live_deciles": live_deciles, "live_summary": live_summary, "reference_rounds": ref_rounds,
                                                     "reference_deciles": ref_deciles, "reference_season": card.get("trained_on"), "constant_baseline": 0.474},
-           "shooter_coverage": shooter_cov, "notes": notes, "notes_eval": notes_eval, "api": api, "model": model_info}
+           "shooter_coverage": shooter_cov, "api": api, "model": model_info}
 json.dump(monitor, open(os.path.join(OUT_DIR, "monitor.json"), "w"), indent=1)
-print(f"monitor: pipeline {'OK' if record['ok'] else 'not OK'} · {freshness.get('played', 0)}/{freshness.get('scheduled', 0)} games played · live shots {live_summary['shots'] if live_summary else 0} · api {'up' if api['reachable'] else 'down'} · notes {notes['ok'] if notes else 0} ok")
+print(f"monitor: pipeline {'OK' if record['ok'] else 'not OK'} · {freshness.get('played', 0)}/{freshness.get('scheduled', 0)} games played · live shots {live_summary['shots'] if live_summary else 0} · api {'up' if api['reachable'] else 'down'}")

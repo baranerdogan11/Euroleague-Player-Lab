@@ -85,14 +85,6 @@ tbody tr:hover td{background:rgba(255,255,255,.03)}
   </section>
 
   <section>
-    <h2>Scouting notes</h2>
-    <div class="two">
-      <div class="panel" id="notes-live"></div>
-      <div class="panel" id="notes-eval"></div>
-    </div>
-  </section>
-
-  <section>
     <h2>Serving and registry</h2>
     <div class="panel" id="serving"></div>
   </section>
@@ -103,7 +95,7 @@ const pct = v => v == null ? '–' : (100 * v).toFixed(1) + '%';
 const seasonLabel = s => s ? s.replace('E', '').replace(/(\d{4})/, (m, y) => y + '-' + (+y + 1).toString().slice(2)) : '';
 fetch('teams/E2026/monitor.json?t=' + Date.now()).then(r => r.json()).then(M => {
   $('#gen').textContent = 'Generated ' + M.generated_at;
-  const P = M.pipeline.last, F = M.freshness, L = M.calibration.live_summary, A = M.api, N = M.notes, E = M.notes_eval, MO = M.model;
+  const P = M.pipeline.last, F = M.freshness, L = M.calibration.live_summary, A = M.api, MO = M.model;
   const tile = (k, v, s, cls = '') => `<div class="tile ${cls}"><span class="dot"></span><span class="k">${k}</span><b>${v}</b><span class="s">${s}</span></div>`;
   const stale = F.days_since_last_game != null && F.days_since_last_game > 7 && F.next_game_date && new Date(F.next_game_date) < new Date();
   $('#tiles').innerHTML = [
@@ -112,7 +104,6 @@ fetch('teams/E2026/monitor.json?t=' + Date.now()).then(r => r.json()).then(M => 
     tile('Live log loss', L ? L.logloss.toFixed(3) : '–', L ? `${L.shots.toLocaleString()} shots · constant ${L.logloss_constant.toFixed(3)} · trained ${MO.metrics_test.logloss}` : 'no scored shots yet', L ? (L.logloss < L.logloss_constant ? 'ok' : 'bad') : ''),
     tile('League points vs expectation', L && L.pae_ctx_per100 != null ? (L.pae_ctx_per100 >= 0 ? '+' : '') + L.pae_ctx_per100.toFixed(1) : '–', 'per 100 attempts, all shooters, season to date · should sit near 0; a drift means every player reads above or below expectation at once', L && L.pae_ctx_per100 != null ? (Math.abs(L.pae_ctx_per100) < 2 ? 'ok' : 'bad') : ''),
     tile('Serving API', A.reachable ? 'UP' : 'DOWN', A.reachable ? `${A.latency_ms} ms · model ${A.model_version} (${A.model_sha256})` : (A.error || 'unreachable'), A.reachable ? 'ok' : 'bad'),
-    tile('Scouting notes', N ? (N.last_run && N.last_run.stopped ? 'STOPPED' : `${N.ok} / ${N.total}`) : '–', N ? (N.last_run && N.last_run.stopped ? `last run ${N.last_run.at.slice(0, 16).replace('T', ' ')} UTC · ${N.last_run.stopped}` : `accepted · ${N.rejected} rejected${N.last_run ? ` · last run ${N.last_run.at.slice(0, 16).replace('T', ' ')} UTC, ${N.last_run.written} written` : ''}`) : 'none generated yet', N ? (N.last_run && N.last_run.stopped ? 'bad' : N.total && N.ok / N.total > 0.85 ? 'ok' : 'warn') : ''),
     tile('Production model', MO.version || '–', `${MO.stage || ''} · ${MO.sha256} · trained on ${seasonLabel(MO.trained_on)} (${(MO.n_shots || 0).toLocaleString()} shots)`, 'ok'),
   ].join('');
 
@@ -143,10 +134,6 @@ fetch('teams/E2026/monitor.json?t=' + Date.now()).then(r => r.json()).then(M => 
   $('#rounds').innerHTML = s;
   const hist = [...M.pipeline.history].reverse();
   $('#hist').innerHTML = hist.length ? `<table><thead><tr><th>Run</th><th>Result</th><th>Games</th><th>Shots</th><th>Players</th><th>Where</th></tr></thead><tbody>${hist.slice(0, 14).map(h => `<tr><td>${h.at.replace('T', ' ').slice(0, 16)}</td><td><span class="pill ${h.ok ? 'ok' : 'bad'}">${h.ok ? 'ok' : 'failed'}</span></td><td>${h.games ?? '–'}</td><td>${(h.shots ?? 0).toLocaleString()}</td><td>${h.players ?? '–'}</td><td>${h.ci ? 'GitHub Actions' : 'local'}</td></tr>`).join('')}</tbody></table>` : '<div class="empty">No runs recorded.</div>';
-
-  // ---- notes
-  $('#notes-live').innerHTML = N ? `<p class="sub">Generated this season by ${N.model}; a note is stored only after the deterministic checks pass.</p><table><thead><tr><th>Day</th><th>Generated</th><th>Accepted</th></tr></thead><tbody>${[...N.by_day].reverse().slice(0, 10).map(d => `<tr><td>${d.day}</td><td>${d.total}</td><td>${d.ok}</td></tr>`).join('')}</tbody></table>${Object.keys(N.rejection_reasons).length ? `<p class="sub" style="margin-top:10px">Rejections: ${Object.entries(N.rejection_reasons).map(([k, v]) => `${k} (${v})`).join(', ')}</p>` : ''}` : '<div class="empty">No notes generated yet: the first ones arrive the night after the first games.</div>';
-  $('#notes-eval').innerHTML = E ? `<p class="sub">Fixed evaluation set of ${E.n} players from last season, latest run.</p><table><tbody><tr><td>Automated checks pass rate</td><td>${pct(E.auto_pass_rate)}</td></tr><tr><td>Judge faithfulness (1-5)</td><td>${E.judge_faithfulness_mean}</td></tr><tr><td>Judge usefulness (1-5)</td><td>${E.judge_usefulness_mean}</td></tr><tr><td>Notes judged fully faithful</td><td>${pct(E.judge_faithful_5_rate)}</td></tr><tr><td>Unsupported claims found</td><td>${E.unsupported_claims_total}</td></tr><tr><td>Human-labelled notes</td><td>${E.human_labelled}${E.judge_human_agreement != null ? ` · judge agreement ${pct(E.judge_human_agreement)}` : ''}</td></tr></tbody></table>` : '<div class="empty">No evaluation run yet.</div>';
 
   // ---- serving + registry
   const sc = M.shooter_coverage;

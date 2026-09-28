@@ -47,9 +47,8 @@ of the day, and can be started by hand from the Actions tab. Each run:
    is published (one distance check is a warning only)
 7. scores every shot with the xFG model (`model/score.py`), see below
 8. builds shooting profiles, shot quality versus shooting skill with shrinkage (`model/profile.py`)
-9. writes validated scouting notes with Claude for players whose facts changed (`model/notes.py`, needs the `ANTHROPIC_API_KEY` secret)
-10. builds the site from the warehouse with SQL (`build.py`, the gold layer): season stats, league benchmarks, role metrics, on/off, position ranks, the defence-adjusted expectation, the compare index and the league leaderboards
-11. writes the monitoring snapshot (`model/monitor.py`) and commits everything; GitHub Pages deploys within a minute
+9. builds the site from the warehouse with SQL (`build.py`, the gold layer): season stats, league benchmarks, role metrics, on/off, position ranks, the defence-adjusted expectation, the compare index and the league leaderboards
+10. writes the monitoring snapshot (`model/monitor.py`) and commits everything; GitHub Pages deploys within a minute
 
 The assertions write `teams/E2026/status.json` (games, shots, box lines, tests, failures, warnings, time) and the page footer
 shows the check date, the game count and the verdict. A failed run leaves the previous good build live and uploads the status report as a
@@ -72,7 +71,7 @@ term adds a small, real gain. A first version scored 0.497 and was discarded: th
 second-chance and points-off-turnover flags are only set on made shots, and the running score includes the
 basket just made, so both leaked the label. They are excluded and the margin is taken before the shot.
 `model/score.py` scores the current season nightly, carrying last season's
-shooter effects forward as decayed priors. Every "expected" number on the page (the xFG row, the profile panel, the scouting note) uses the
+shooter effects forward as decayed priors. Every "expected" number on the page (the xFG row and the profile panel) uses the
 context-only expectation, what a league-average shooter would do on the same shots, so the figures agree; the
 shooter-aware probability appears only in the per-shot tooltip, labelled as his own.
 
@@ -107,30 +106,6 @@ A first version measured skill against the shooter-aware xFG and found zero betw
 what should happen when the expectation already contains the shooter; quality and skill must be measured
 against the context-only expectation.
 
-## Scouting notes (Claude, validated)
-
-`model/notes.py` writes a two-to-three-sentence note per player each night. Input is a fact sheet built from
-the warehouse and the model outputs (season line, shooting splits, zone accuracy, xFG and points above
-expectation, shot quality and skill with percentiles, last game); the prompt allows only those numbers, no
-speculation, no other players, and the response is constrained to a JSON schema. Before a note is stored it
-passes deterministic checks (`model/notes_checks.py`): every number cited traces to the fact sheet at its own
-precision (rates may be written as percentages), length within bounds, no banned vocabulary (injuries,
-contracts, character), no other player named. A failing note is retried once and otherwise rejected and not
-shown. Only players whose fact sheet changed are regenerated, so a nightly run costs a few cents per changed
-player. The page shows the note under the player's facts with its generation date and provenance.
-
-`model/notes_eval.py` evaluates the generator on a fixed set of 30 fact sheets from 2025-26
-(`model/notes_eval_set.jsonl`): automated pass rate, an LLM judge (separate prompt) scoring faithfulness and
-usefulness 1-5 and listing unsupported claims, and agreement with human labels where the jsonl's `human_ok`
-field has been filled in. `.github/workflows/notes-eval.yml` runs it on demand and commits
-`model/notes_eval.json`. The offline validator tests are in `tests/test_notes.py`.
-
-First evaluation (30 players, Claude Opus 5 as generator and judge): judge faithfulness 4.97/5 with one
-unsupported claim in 30 notes (a league-wide superlative built from a 95th-percentile figure), usefulness 4.1/5.
-The automated check initially rejected 47%, almost all false alarms from its own strictness (deficits written as
-magnitudes, numbers inside string facts such as "5/12"); once fixed it passes 28 of 30, rejecting exactly the
-two superlative notes, and the prompt now forbids league-wide claims.
-
 ## Monitoring
 
 [`monitor.html`](https://baranerdogan11.github.io/Euroleague-Player-Lab/monitor.html) is the system's status page,
@@ -138,8 +113,7 @@ fed by `teams/E2026/monitor.json` which `model/monitor.py` writes at the end of 
 `warehouse/E2026/run_history.jsonl`). It shows: pipeline result and run history; data freshness against the
 schedule (games played per round, days since the last game); the xFG model's log loss and Brier per round on
 this season's shots against a constant baseline and the training season, plus predicted versus actual make rate
-and season-to-date calibration by decile; shooter-effect coverage; scouting-note acceptance and the latest
-evaluation scores; the serving API's reachability, latency and served model hash checked against the registry.
+and season-to-date calibration by decile; shooter-effect coverage; the serving API's reachability, latency and served model hash checked against the registry.
 Orange crossing grey on the calibration chart is the retrain signal.
 
 ## xFG as a service
