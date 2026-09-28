@@ -392,6 +392,19 @@ body.cv-on .top,body.cv-on .wrap{display:none}
 .cv-foot a:hover{text-decoration:underline}
 @media (max-width:1000px){.cv-court{right:-28%;width:760px;opacity:.05}.cv-clubs{grid-template-columns:repeat(5,minmax(0,1fr))}.cv-feats{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:760px){.cv{min-height:0}.cv-in{padding:36px 14px 48px}.cv-court{display:none}.cv-lede{font-size:15.5px}.cv-nums{grid-template-columns:repeat(2,minmax(0,1fr))}.cv-nums li:nth-child(2n){border-right:0}.cv-nums li:nth-child(-n+2){border-bottom:1px solid var(--line)}.cv-nums b{font-size:32px}.cv-clubs{grid-template-columns:repeat(4,minmax(0,1fr))}.cv-go{width:100%;text-align:center}}
+/* page transition: a broadcast wipe in the destination club's colours covers the swap between the opening page and a club, or between clubs */
+.wipe{position:fixed;inset:0;z-index:100;pointer-events:none;overflow:hidden;display:none}
+.wipe.on{display:block}
+.wipe i,.wipe b{position:absolute;top:-12%;bottom:-12%;left:-28%;width:156%;transform:translateX(-118%) skewX(-14deg);will-change:transform}
+.wipe i{background:var(--wipe1,#1f2b47)}
+.wipe b{background:var(--wipe2,#f26f21)}
+.wipe.in b{animation:wipe-in .3s cubic-bezier(.75,0,.2,1) forwards}
+.wipe.in i{animation:wipe-in .3s cubic-bezier(.75,0,.2,1) .07s forwards}
+.wipe.out i{animation:wipe-out .34s cubic-bezier(.75,0,.2,1) forwards}
+.wipe.out b{animation:wipe-out .34s cubic-bezier(.75,0,.2,1) .07s forwards}
+@keyframes wipe-in{from{transform:translateX(-118%) skewX(-14deg)}to{transform:translateX(0) skewX(-14deg)}}
+@keyframes wipe-out{from{transform:translateX(0) skewX(-14deg)}to{transform:translateX(118%) skewX(-14deg)}}
+.wipe.on i::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(-60deg,transparent 0 22px,rgba(255,255,255,.04) 22px 26px)}
 </style>
 <div class="bar"></div>
 <main class="cv" id="cover" hidden>
@@ -429,6 +442,7 @@ body.cv-on .top,body.cv-on .wrap{display:none}
   <div class="live"><i></i><b id="tag-season"></b><span id="tag-sub">Updated after every game</span></div>
 </header>
 <div class="progress" id="progress"></div>
+<div class="wipe" id="wipe" aria-hidden="true"><b></b><i></i></div>
 <div class="wrap">
   <section class="hero" id="hero">
     <div class="ph"><div class="num" id="num"></div><img id="photo" alt="" width="360" height="480" decoding="async"></div>
@@ -1239,16 +1253,45 @@ const COVER = (() => {
   };
 })();
 
-async function route(){
+// ---- page transition: the opening page and every club are separate pages to the reader, so moving between them
+// runs through a wipe in the destination's colours; the new page is swapped in and scrolled to the top while it is
+// covered, so no scroll position ever carries over. Player changes inside a club stay instant.
+history.scrollRestoration = 'manual';
+const HOUSE = {base: '#1f2b47', accent: '#f26f21'};
+const WIPE = (() => {
+  const el = $('#wipe'), reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const wait = ms => new Promise(r => setTimeout(r, ms));
+  return {
+    async cover(c){ if (reduced()) return false; el.style.setProperty('--wipe1', c.base || HOUSE.base); el.style.setProperty('--wipe2', c.accent || HOUSE.accent); el.className = 'wipe on in'; await wait(400); return true; },
+    async reveal(){ el.className = 'wipe on out'; await wait(440); el.className = 'wipe'; }
+  };
+})();
+async function go(){
   const h = location.hash.replace('#', '').split('/');
-  if (!CLUBS[h[0]]) { COVER.show(); return; }         // no club in the URL: the opening page, not a silent fallback
+  if (!CLUBS[h[0]]) { COVER.show(); return true; }    // no club in the URL: the opening page, not a silent fallback
   COVER.hide();
   const code = h[0];
-  if (state.team !== code) { $('#team').value = code; if (!await loadTeam(code)) return; }
+  if (state.team !== code) { $('#team').value = code; if (!await loadTeam(code)) return false; }
   if (h[1]) { const i = team().players.findIndex(p => p.pid === h[1]); if (i >= 0 && i !== state.player) { $('#player').value = i; state.player = i; state.game = 'all'; renderGames(); renderPlayer(); } }
   if (h[2] === 'zones' || h[2] === '3d') { const b = $(`#f-view button[data-v="${h[2]}"]`); if (b.getAttribute('aria-pressed') !== 'true') b.click(); }
   DD.team.refresh(); DD.player.refresh(); DD.game.refresh();
   const n = nameOf(player().name); document.title = `${n.first} ${n.sur} · ${shortName(state.team)} · Player Lab`;
+  return true;
+}
+let booted = false, chain = Promise.resolve();
+function route(){
+  chain = chain.then(async () => {
+    const h = location.hash.replace('#', '').split('/');
+    const toCover = !CLUBS[h[0]], onCover = document.body.classList.contains('cv-on');
+    const newPage = booted && (toCover !== onCover || (!toCover && state.team && state.team !== h[0]));
+    const covered = newPage && await WIPE.cover(toCover ? HOUSE : CLUBS[h[0]]);
+    const ok = await go();
+    if (newPage) scrollTo(0, 0);
+    if (covered) await WIPE.reveal();
+    booted = true;
+    return ok;
+  });
+  return chain;
 }
 addEventListener('hashchange', route);
 (async function(){
