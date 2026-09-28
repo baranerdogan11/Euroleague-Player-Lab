@@ -19,3 +19,11 @@ m = notes.merge_notes(prev, [{"player": "2", "facts_hash": "c", "status": "ok"},
 assert sorted(m.player) == ["1", "2", "3"] and m[m.player == "2"].facts_hash.iloc[0] == "c", "a rewrite replaces only its players"
 assert m[m.player == "1"].status.iloc[0] == "ok", "untouched players keep their note"
 print("ALL PASS")
+
+# a change in the league benchmarks alone must not trigger a rewrite; a change in the player's own facts must
+f1 = {"games": 1, "points_per_game": 12.0, "league_benchmarks": {"true_shooting_pct": 0.571}}
+f2 = {"games": 1, "points_per_game": 12.0, "league_benchmarks": {"true_shooting_pct": 0.574}}
+f3 = {"games": 2, "points_per_game": 14.5, "league_benchmarks": {"true_shooting_pct": 0.574}}
+assert notes.facts_hash(f1) == notes.facts_hash(f2), "benchmarks alone do not change the hash"
+assert notes.facts_hash(f1) != notes.facts_hash(f3), "the player's own facts do"
+print("ALL PASS")

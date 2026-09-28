@@ -176,6 +176,14 @@ def generate(client, sheet):
     return structured(client, SYSTEM, "Fact sheet:\n" + json.dumps(sheet["facts"], ensure_ascii=False), SCHEMA)
 
 
+def facts_hash(facts):
+    """What decides whether a player's note is rewritten: his own facts. The league benchmarks move a little after every
+    game in the league, and hashing them meant every player's note was regenerated on every build, whether or not he
+    had played; that multiplied the API bill five to six times for notes that read the same."""
+    own = {k: v for k, v in facts.items() if k != "league_benchmarks"}
+    return hashlib.sha256(json.dumps(own, sort_keys=True).encode()).hexdigest()
+
+
 def merge_notes(prev, rows):
     """The stored notes with this run's rows replacing the same players. Safe when either side is empty."""
     new = pd.DataFrame(rows)
@@ -203,7 +211,7 @@ def main():
         print(f"{SEASON}: no players with games yet; nothing to write"); write_status(changed=0, written=0, ok=0); return 0
     prev = pd.read_parquet(OUT) if os.path.exists(OUT) else pd.DataFrame(columns=["player", "facts_hash", "status"])
     prev_hash = dict(zip(prev.player, prev.facts_hash)) if len(prev) else {}
-    todo = [s for s in sheets if prev_hash.get(s["player"]) != hashlib.sha256(json.dumps(s["facts"], sort_keys=True).encode()).hexdigest()]
+    todo = [s for s in sheets if prev_hash.get(s["player"]) != facts_hash(s["facts"])]
     if LIMIT:
         todo = todo[:LIMIT]
     print(f"{SEASON}: {len(sheets)} players with games, {len(todo)} fact sheets changed")
@@ -216,7 +224,7 @@ def main():
             merge_notes(prev, rows).to_parquet(OUT, index=False)
 
     for i, s in enumerate(todo):
-        fh = hashlib.sha256(json.dumps(s["facts"], sort_keys=True).encode()).hexdigest()
+        fh = facts_hash(s["facts"])
         status, note, checks, out, api_failed = "rejected", None, [], None, False
         for attempt in range(2):
             try:
