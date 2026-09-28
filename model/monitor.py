@@ -117,6 +117,10 @@ if os.path.exists(np_path):
         by_day = nf.assign(day=nf.generated_at.str[:10]).groupby("day").agg(total=("status", "size"), ok=("status", lambda s: int((s == "ok").sum()))).reset_index()
         notes = {"total": int(len(nf)), "ok": int((nf.status == "ok").sum()), "rejected": int((nf.status != "ok").sum()), "rejection_reasons": reasons,
                  "by_day": [{"day": r.day, "total": int(r.total), "ok": int(r.ok)} for r in by_day.itertuples()], "model": nf.model.iloc[-1]}
+ns_path = os.path.join(W, "notes_status.json")           # the last run's outcome, including a stop for account reasons
+if os.path.exists(ns_path):
+    notes = notes or {"total": 0, "ok": 0, "rejected": 0, "rejection_reasons": {}, "by_day": [], "model": None}
+    notes["last_run"] = json.load(open(ns_path))
 eval_path = os.path.join(ROOT, "model", "notes_eval.json")
 notes_eval = None
 if os.path.exists(eval_path):

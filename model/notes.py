@@ -13,6 +13,7 @@ import hashlib
 import json
 import os
 import sys
+import time
 import duckdb
 import pandas as pd
 
@@ -25,6 +26,8 @@ LIMIT = int(sys.argv[sys.argv.index("--limit") + 1]) if "--limit" in sys.argv el
 MODEL = os.environ.get("NOTES_MODEL", "claude-opus-5")
 W = os.path.join(ROOT, "warehouse", SEASON)
 OUT = os.path.join(W, "notes.parquet")
+STATUS = os.path.join(W, "notes_status.json")      # what the last run did, for the status page
+FATAL = ("credit balance", "billing", "api_key", "credential", "authentication", "permission")   # account problems: stop, keep what is stored, still publish
 ZONES = {"rim": "at the rim", "paint": "paint (non-rim)", "mid": "mid-range", "c3": "corner 3", "a3": "above-break 3"}
 
 SYSTEM = """You write scouting notes for a Euroleague analytics site. You receive one player's fact sheet as JSON and write
@@ -173,53 +176,89 @@ def generate(client, sheet):
     return structured(client, SYSTEM, "Fact sheet:\n" + json.dumps(sheet["facts"], ensure_ascii=False), SCHEMA)
 
 
+def merge_notes(prev, rows):
+    """The stored notes with this run's rows replacing the same players. Safe when either side is empty."""
+    new = pd.DataFrame(rows)
+    if not len(new):
+        return prev
+    keep = prev[~prev.player.isin(new.player)] if len(prev) else prev
+    return pd.concat([keep, new], ignore_index=True) if len(keep) else new
+
+
+def write_status(**kw):
+    kw["at"] = datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
+    json.dump(kw, open(STATUS, "w"), indent=1)
+
+
 def main():
     try:
         import anthropic
         client = anthropic.Anthropic()
         client.api_key  # noqa: B018
     except Exception as e:
-        print(f"notes: no Anthropic credentials or SDK ({type(e).__name__}); skipping"); return 0
+        print(f"notes: no Anthropic credentials or SDK ({type(e).__name__}); skipping")
+        write_status(changed=0, written=0, ok=0, stopped=f"no credentials: {type(e).__name__}"); return 0
     sheets, names = fact_sheets(SEASON)
     if not sheets:
-        print(f"{SEASON}: no players with games yet; nothing to write"); return 0
-    prev = pd.read_parquet(OUT) if os.path.exists(OUT) else pd.DataFrame(columns=["player", "facts_hash"])
+        print(f"{SEASON}: no players with games yet; nothing to write"); write_status(changed=0, written=0, ok=0); return 0
+    prev = pd.read_parquet(OUT) if os.path.exists(OUT) else pd.DataFrame(columns=["player", "facts_hash", "status"])
     prev_hash = dict(zip(prev.player, prev.facts_hash)) if len(prev) else {}
     todo = [s for s in sheets if prev_hash.get(s["player"]) != hashlib.sha256(json.dumps(s["facts"], sort_keys=True).encode()).hexdigest()]
     if LIMIT:
         todo = todo[:LIMIT]
     print(f"{SEASON}: {len(sheets)} players with games, {len(todo)} fact sheets changed")
-    rows, usage_in, usage_out = [], 0, 0
+    if not todo:                                              # a night without games: the stored notes stand, nothing to call
+        print("nothing to regenerate"); write_status(changed=0, written=0, ok=int((prev.status == "ok").sum()) if len(prev) else 0); return 0
+    rows, usage_in, usage_out, failed, stopped = [], 0, 0, 0, None
+
+    def flush():                                              # progress is saved as it is made, so a crash or a stop keeps what was paid for
+        if rows:
+            merge_notes(prev, rows).to_parquet(OUT, index=False)
+
     for i, s in enumerate(todo):
         fh = hashlib.sha256(json.dumps(s["facts"], sort_keys=True).encode()).hexdigest()
-        status, note, checks, out = "rejected", None, [], None
+        status, note, checks, out, api_failed = "rejected", None, [], None, False
         for attempt in range(2):
             try:
                 out, usage = generate(client, s)
             except Exception as e:
-                name = type(e).__name__
-                if name in ("AuthenticationError", "PermissionDeniedError") or "api_key" in str(e).lower() or "credential" in str(e).lower():
-                    print(f"notes: no usable Anthropic credentials ({name}); skipping without changes"); return 0
-                checks = [f"api error: {name}: {str(e)[:120]}"]; break
+                name, msg = type(e).__name__, str(e)
+                if name in ("AuthenticationError", "PermissionDeniedError") or any(k in msg.lower() for k in FATAL):
+                    stopped = f"{name}: {msg[:220]}"; break
+                checks, api_failed = [f"api error: {name}: {msg[:120]}"], True
+                time.sleep(3 * (attempt + 1)); continue        # transient: one retry after a pause
+            api_failed = False
             usage_in += usage.input_tokens; usage_out += usage.output_tokens
             if out is None:
                 checks = ["refused"]; break
-            out["note"] = " ".join(out["note"].split())          # normalise whitespace before checking
-            ok, reasons = check_note(out["note"], s["facts"], s["name"], other_names=names)
+            try:
+                out["note"] = " ".join(out["note"].split())      # normalise whitespace before checking
+                ok, reasons = check_note(out["note"], s["facts"], s["name"], other_names=names)
+            except Exception as e:                             # a fault in the checker is a rejection, never a crash
+                ok, reasons = False, [f"check failed: {type(e).__name__}: {str(e)[:120]}"]
             if ok:
                 status, note, checks = "ok", out, []; break
             checks = reasons
+        if stopped:
+            break
+        if api_failed:                                        # the API failed twice: nothing is stored, so the last note stands and this player is retried next run
+            failed += 1; print(f"  {s['name']}: {checks[0]}"); continue
         rows.append({"player": s["player"], "facts_hash": fh, "generated_at": datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"), "model": MODEL,
                      "status": status, "note": note["note"] if note else None, "key_numbers": json.dumps(note["key_numbers"], ensure_ascii=False) if note else None,
                      "confidence": note["confidence"] if note else None, "sample_caveat": bool(note["sample_caveat"]) if note else None, "checks": json.dumps(checks)})
         if (i + 1) % 10 == 0:
             print(f"  {i + 1}/{len(todo)} done")
-    new = pd.DataFrame(rows)
-    keep = prev[~prev.player.isin(new.player)] if len(prev) else prev
-    allrows = pd.concat([keep, new], ignore_index=True) if len(new) else keep
-    allrows.to_parquet(OUT, index=False)
-    ok_n = int((new.status == "ok").sum()) if len(new) else 0
-    print(f"wrote {len(new)} notes ({ok_n} ok, {len(new) - ok_n} rejected); tokens in {usage_in}, out {usage_out}; total stored {len(allrows)}")
+        if (i + 1) % 20 == 0:
+            flush()
+    flush()
+    ok_n = sum(r["status"] == "ok" for r in rows)
+    write_status(changed=len(todo), written=len(rows), ok=ok_n, failed=failed, stopped=stopped, tokens_in=usage_in, tokens_out=usage_out)
+    if stopped:
+        print(f"notes: stopped after {len(rows)} of {len(todo)}: {stopped}")
+        print("       the stored notes stand and the site still publishes; fix the account and rerun the workflow")
+        print(f"::warning title=Scouting notes stopped::{stopped}")
+    else:
+        print(f"wrote {len(rows)} notes ({ok_n} ok, {len(rows) - ok_n} rejected); {failed} left for the next run after API errors; tokens in {usage_in}, out {usage_out}")
     return 0
 
 
