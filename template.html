@@ -426,6 +426,35 @@ body.cv-on .top,body.cv-on .wrap{display:none}
 .wipe.fade.out i{animation:wipe-fade-out .24s ease forwards}
 @keyframes wipe-fade-in{to{opacity:1}}
 @keyframes wipe-fade-out{from{opacity:1}to{opacity:0}}
+/* phone: one column that never grows past the screen, full-width controls, thumb-sized targets */
+.grid>*{min-width:0}
+.scroll{overflow-x:auto;scrollbar-width:thin;scrollbar-color:var(--line2) transparent}
+@media (max-width:760px){
+  .search{flex:1 1 100%;height:44px;border-right:0}
+  .hero .ph img{height:250px}.hero .ph .num{font-size:150px;bottom:-12px}.hero .lt{padding:16px 16px 14px}h1{font-size:58px;margin:12px 0 8px}.facts{font-size:15px;gap:12px}
+  .bio{padding:0 16px 18px}
+  .pnav button{height:40px;min-width:44px;font-size:14px}.pnav #prev,.pnav #next{font-size:26px;padding:0 10px 4px}
+  .tile span{font-size:11px;letter-spacing:.1em}.role b{font-size:24px}
+  .band-foot{gap:8px}.band-foot .seg button{padding:9px 14px;font-size:12px}.band-foot .lnk{padding:8px 0}
+  .seg button{padding:10px 12px;font-size:13px;letter-spacing:.1em}
+  .toolbar{gap:8px}.toolbar .seg{display:flex;width:100%}.toolbar .seg button{flex:1 1 0;text-align:center;padding:11px 4px}
+  .toolbar .dd{flex:1 1 60%;min-width:0}.toolbar .dd .dd-btn{padding:11px 32px 11px 12px}.toolbar .btn{flex:1 1 30%;margin-left:0;padding:11px 10px;text-align:center}
+  .dd-btn{padding:12px 30px 12px 0}
+  .caption{flex-wrap:wrap}.caption b{font-size:14px}
+  .split{grid-template-columns:44px 1fr 78px;gap:8px}.split .k{font-size:14px}.split .v b{font-size:19px}.split .v{font-size:11.5px}
+  .xfg-row b{font-size:24px}
+  table{font-size:12.5px}th{padding:8px 5px;font-size:11px;letter-spacing:.08em}td{padding:8px 5px;font-size:15px}td:first-child{font-size:12.5px}
+  #zones th:nth-child(5),#zones td:nth-child(5),#zones th:nth-child(6),#zones td:nth-child(6),#timing th:nth-child(4),#timing td:nth-child(4){display:none}
+  .zone-bar{display:none}
+  .scroll{mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent);-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent)}
+  .scroll.end{mask-image:none;-webkit-mask-image:none}
+  .panel .sub{font-size:12.5px}.gauge b{font-size:40px}.gauge .u,.gauge .pct{font-size:11.5px}
+  .cmp-row .dd .dd-btn{padding:11px 32px 11px 12px}
+  .lb-val u{font-size:11px}.lb-foot{font-size:11.5px}
+  .foot{font-size:11px;letter-spacing:.1em;gap:6px}
+  .panel h2,.panel summary{font-size:22px;padding:12px 14px 8px}
+  .prof-chart text{font-size:19px}.prof-chart .ln{stroke-width:3.5}.prof-chart .end{r:6}
+}
 </style>
 <div class="bar"></div>
 <main class="cv" id="cover" hidden>
@@ -512,10 +541,10 @@ body.cv-on .top,body.cv-on .wrap{display:none}
           <div class="splits" id="splits"></div>
           <div id="xfg"></div>
           <div class="tbl-cap" id="zone-cap">Shooting by zone</div>
-          <table id="zones"><thead><tr><th>Zone</th><th>FGM / FGA</th><th>FG%</th><th title="League FG% from this zone">Lg</th><th title="Expected FG% for a league-average shooter on these shots">xFG%</th><th title="Share of his makes from this zone that were assisted">Ast%</th><th title="Share of his attempts">Share</th></tr></thead><tbody></tbody></table>
-          <div class="tbl-cap" id="time-cap" hidden>Shot timing · seconds into the possession</div>
-          <table id="timing" hidden><thead><tr><th>Window</th><th>FGM / FGA</th><th>FG%</th><th title="Expected FG% for a league-average shooter on these shots">xFG%</th><th title="Share of his attempts">Share</th></tr></thead><tbody></tbody></table>
-          <div class="tbl-cap" id="diet-cap" hidden>Shot diet</div>
+          <div class="scroll"><table id="zones"><thead><tr><th>Zone</th><th>FGM / FGA</th><th>FG%</th><th title="League FG% from this zone">Lg</th><th title="Expected FG% for a league-average shooter on these shots">xFG%</th><th title="Share of his makes from this zone that were assisted">Ast%</th><th title="Share of his attempts">Share</th></tr></thead><tbody></tbody></table>
+          </div><div class="tbl-cap" id="time-cap" hidden>Shot timing · seconds into the possession</div>
+          <div class="scroll"><table id="timing" hidden><thead><tr><th>Window</th><th>FGM / FGA</th><th>FG%</th><th title="Expected FG% for a league-average shooter on these shots">xFG%</th><th title="Share of his attempts">Share</th></tr></thead><tbody></tbody></table>
+          </div><div class="tbl-cap" id="diet-cap" hidden>Shot diet</div>
           <div class="diet" id="diet" hidden></div>
         </div>
       </section>
@@ -711,7 +740,7 @@ function renderPlayer(){
   const more = $('#bio-more'); if (more) more.addEventListener('click', () => { $('#bio').classList.toggle('all'); more.textContent = $('#bio').classList.contains('all') ? 'Show fewer' : `Show all ${career.length}`; });
   $('#facts').innerHTML = [p.country ? `<span>${p.country.replace('United States of America', 'USA')}</span>` : '',
     played ? `<span><b>${tot.gp}</b> game${tot.gp === 1 ? '' : 's'}</span><span><b>${f1(tot.min / gp)}</b> min</span>` : `<span><b>0</b> games</span>`].join('');
-  renderTiles(); renderRole(); renderForm(); LB.mark(); $('#f-ast').hidden = !d.shots.some(s => s[11] != null); if ($('#f-ast').hidden) { state.ast = 'all'; $('#f-ast').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x.dataset.v === 'all')); }
+  renderTiles(); renderRole(); renderForm(); LB.mark(); requestAnimationFrame(scrollEnds); $('#f-ast').hidden = !d.shots.some(s => s[11] != null); if ($('#f-ast').hidden) { state.ast = 'all'; $('#f-ast').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x.dataset.v === 'all')); }
   const xf = d.xfg;
   $('#xfg').innerHTML = xf ? `<div class="xfg-row"><div><b>${(100 * xf.xfg).toFixed(1)}%</b><span>Expected FG% for a league-average shooter on his shots</span></div><div><b>${((xf.pts / xf.att) || 0).toFixed(2)} <i>vs</i> ${(xf.xpts / xf.att).toFixed(2)}</b><span>Points per attempt, his vs a league-average shooter</span></div><div class="${xf.pts - xf.xpts >= 0 ? 'up' : 'down'}"><b>${xf.pts - xf.xpts >= 0 ? '+' : ''}${(xf.pts - xf.xpts).toFixed(1)}</b><span>Points above expectation, ${xf.att} attempts</span></div></div>` : '';
   const fga = tot.fga2 + tot.fga3, ts = (fga + 0.44 * tot.fta) ? tot.pts / (2 * (fga + 0.44 * tot.fta)) : 0;
@@ -723,7 +752,7 @@ function renderPlayer(){
   lg.innerHTML = d.log.map((r, i) => { const g = d.games[r[0]], l = gameLabel(g), prev = i ? d.games[d.log[i - 1][0]] : null, rest = prev ? Math.round((new Date(g.date) - new Date(prev.date)) / 864e5) : null, opp = l.home ? g.away : g.home, rt = RT[opp]; return `<tr data-g="${r[0]}" tabindex="0" title="Show this game's shots" class="${String(state.game) === String(r[0]) ? 'sel' : ''}"><td>${g.round}</td><td>${fmtDate(g.date)}</td><td>${l.home ? 'vs' : '@'} ${l.opp}</td><td class="${l.res === 'W' ? 'w' : 'l'}">${l.res} ${l.score}</td><td>${rest != null ? rest + 'd' : '–'}</td><td>${r[1]}</td><td class="k">${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td><td>${r[5]}</td><td>${r[6]}</td><td>${r[7]}</td><td>${r[8]}/${r[9]}</td><td>${r[10]}/${r[11]}</td><td>${r[12]}/${r[13]}</td><td>${r[14]}</td><td>${r[15] ?? ''}</td><td>${g.poss != null ? g.poss.toFixed(0) : '–'}</td><td>${rt ? rt.drtg.toFixed(1) : '–'}</td></tr>`; }).join('');
   const ha = {H: {g: 0, pts: 0, fga: 0, fta: 0}, A: {g: 0, pts: 0, fga: 0, fta: 0}};
   d.log.forEach(r => { const g = d.games[r[0]], side = gameLabel(g).home ? ha.H : ha.A; side.g++; side.pts += r[2]; side.fga += r[9] + r[11]; side.fta += r[13]; });
-  const haTxt = s => s.g ? `${(s.pts / s.g).toFixed(1)} pts, ${tsOf(s.pts, s.fga, s.fta) != null ? (100 * tsOf(s.pts, s.fga, s.fta)).toFixed(1) + '% TS' : ''} in ${s.g} games` : 'no games';
+  const haTxt = s => s.g ? `${(s.pts / s.g).toFixed(1)} pts, ${tsOf(s.pts, s.fga, s.fta) != null ? (100 * tsOf(s.pts, s.fga, s.fta)).toFixed(1) + '% TS' : ''} in ${s.g} game${s.g === 1 ? '' : 's'}` : 'no games';
   $('#ha').hidden = !d.log.length; $('#ha').textContent = `Home: ${haTxt(ha.H)} · Away: ${haTxt(ha.A)}`;
   renderCompareOptions();
   $('#log-none').hidden = d.log.length > 0; $('#log-panel .scroll').hidden = d.log.length === 0;
@@ -788,7 +817,7 @@ function renderCompareOptions(){
   const peers = (META.roster || []).filter(r => r.pos === d.pos_group && r.pid !== me.pid);
   if (!d.tot.gp || !peers.length) { panel.hidden = true; return; }
   panel.hidden = false;
-  $('#cmp-sub').textContent = `${nameOf(me.name).sur} against another ${(d.pos_group || 'player').toLowerCase()}, per 40 minutes and per possession where it matters. Position median from the ${d.pos_n} eligible ${(d.pos_group || 'player').toLowerCase()}s.`;
+  $('#cmp-sub').textContent = `${nameOf(me.name).sur} against another ${(d.pos_group || 'player').toLowerCase()}, per 40 minutes and per possession where it matters.${d.pos_n >= 10 ? ` Position median from the ${d.pos_n} eligible ${(d.pos_group || 'player').toLowerCase()}s.` : ''}`;
   const keep = state.cmp && peers.some(r => r.pid === state.cmp) ? state.cmp : '';
   sel.innerHTML = `<option value="">Choose a ${(d.pos_group || 'player').toLowerCase()} to compare</option>` + peers.sort((a, b) => a.club.localeCompare(b.club) || nameOf(a.name).sur.localeCompare(nameOf(b.name).sur)).map(r => `<option value="${r.pid}">${shortName(r.club)} · #${r.dorsal || '–'} ${nameOf(r.name).first} ${nameOf(r.name).sur}</option>`).join('');
   sel.value = keep; state.cmp = keep || null;
@@ -1091,6 +1120,9 @@ const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', '
 const fmtBuilt = s => { const m = (s || '').match(/(\d{4})-(\d{2})-(\d{2}) (\d{2}:\d{2})/); return m ? `${+m[3]} ${MONTHS[+m[2] - 1]} ${m[4]} UTC` : s; };
 $('#tag-sub').textContent = 'Updated after every game';
 document.querySelectorAll('thead th').forEach(t => t.setAttribute('scope', 'col'));
+const scrollEnds = () => document.querySelectorAll('.scroll').forEach(el => el.classList.toggle('end', el.scrollWidth - el.clientWidth - el.scrollLeft < 2));
+document.querySelectorAll('.scroll').forEach(el => el.addEventListener('scroll', scrollEnds, {passive: true}));
+addEventListener('resize', scrollEnds);
 let toastT; function toast(msg){ const t = $('#toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('on'), 2200); }
 document.addEventListener('click', () => { if (tip.pin) { tip.pin = null; hideTip(); } });
 skeleton();
