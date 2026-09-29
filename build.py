@@ -343,7 +343,7 @@ def display_name(raw):
 STUB = ('<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{name} · {club} · Euroleague Player Lab</title>'
         '<meta name="description" content="{desc}"><meta property="og:type" content="profile"><meta property="og:site_name" content="Euroleague Player Lab"><meta property="og:title" content="{name} · {club}">'
         '<meta property="og:description" content="{desc}"><meta property="og:image" content="{image}"><meta property="og:url" content="{url}"><meta name="twitter:card" content="summary">'
-        '<link rel="canonical" href="{url}"><meta http-equiv="refresh" content="0;url={rel}"><script>location.replace({rel_js})</script>'
+        '<link rel="canonical" href="{url}"><meta http-equiv="refresh" content="0;url={rel}"><script>try{{sessionStorage.setItem("pl-in","1")}}catch(e){{}}location.replace({rel_js})</script>'
         '<style>body{{margin:0;background:#060708;color:#c6cbd4;font:14px system-ui,sans-serif;display:grid;place-items:center;min-height:100vh}}a{{color:#f26f21}}</style></head>'
         '<body><p>Opening <a href="{rel}">{name}</a> in Euroleague Player Lab…</p></body></html>')
 stub_dir = os.path.join(ROOT, "p")

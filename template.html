@@ -1358,13 +1358,18 @@ async function route(){
   try {
     do {
       queued = false;
-      const h = location.hash.replace('#', '').split('/');
+      let h = location.hash.replace('#', '').split('/');
+      // a fresh visit opens on the main page whatever the address carried (a phone often restores the last player it
+      // showed); once the reader has entered the app in this tab, reloads and back/forward keep their place
+      let entered = false; try { entered = !!sessionStorage.getItem('pl-in'); } catch (e) {}
+      if (!booted && CLUBS[h[0]] && !entered) { history.replaceState(null, '', location.pathname + location.search); h = ['']; }
       const toCover = !CLUBS[h[0]], onCover = document.body.classList.contains('cv-on');
       const newPage = booted && (toCover !== onCover || (!toCover && state.team && state.team !== h[0]));
       if (newPage && !WIPE.up) await WIPE.cover(toCover ? HOUSE : CLUBS[h[0]]);
       try { await go(); }
       catch (e) { console.error(e); $('#fail').hidden = false; $('#fail-sub').textContent = `This page could not be drawn (${e.message || e}). Try again or pick another club.`; }   // a fault never leaves the screen covered
       if (newPage) { scrollTo(0, 0); await settled(); }
+      if (!toCover) { try { sessionStorage.setItem('pl-in', '1'); } catch (e) {} }
       booted = true;
     } while (queued);
     await WIPE.reveal();
