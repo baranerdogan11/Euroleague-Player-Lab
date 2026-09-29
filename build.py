@@ -247,12 +247,14 @@ for c in clubs:
             adj = sum((s["made"] - (s["xfg_ctx"] + DEF_ADJ.get(opp_of(s["game"], s["club"]), {}).get(zone_of(s["x"], s["y"], s["pts"]), 0.0))) * s["pts"] for s in sh if s["game"] in gidx and s["xfg_ctx"] is not None)
             xfg["pae_adj"] = round(adj, 2)
         role = role_metrics(lines)
+        # the same shares for each game on its own, in log order, so the stats band can show a single game
+        role_g = [{k: m[k] for k in ("usg", "ast_pct", "tov_pct", "reb_pct")} if (m := role_metrics([b])) else None for b in lines]
         games = [{"code": b["game"], "round": b["round"], "date": str(b["date"]), "home": b["home"], "away": b["away"], "hs": b["home_score"], "as": b["away_score"], "phase": b["phase"], "own": b["club"],
                   "poss": game_poss(b["game"])} for b in lines]
         players.append({"pid": "P" + r["player"], "name": r["name"], "dorsal": r["dorsal"], "position": r["position"], "height": r["height_cm"], "weight": r["weight_kg"], "career": career_of(r["player"], code), "career_src": "wikipedia" if r["player"] in WIKI else "euroleague",
                         "birth": str(r["birth_date"]) if r["birth_date"] else None, "country": r["country"],
                         "photo": f"photos/{r['player']}.webp" if os.path.exists(os.path.join(ROOT, "photos", f"{r['player']}.webp")) else None,
-                        "cur": {"tot": tot, "log": log, "shots": shots, "games": games, "xfg": xfg, "profile": profile_of(r["player"], gidx), "role": role, "pos_group": pos_group(r["position"])}})
+                        "cur": {"tot": tot, "log": log, "shots": shots, "games": games, "xfg": xfg, "profile": profile_of(r["player"], gidx), "role": role, "role_g": role_g, "pos_group": pos_group(r["position"])}})
     collected[code] = players
 
 # league percentiles among rotation players (3+ games, 10+ minutes a game), per game and per 40 minutes; turnovers inverted so higher is better

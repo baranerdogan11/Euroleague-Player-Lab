@@ -49,11 +49,15 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font
 .dd-list li[aria-selected="true"] .no{background:var(--club2);color:var(--on)}
 .dd-list li small{margin-left:auto;font-weight:600;color:var(--muted);letter-spacing:.08em;font-size:12px}
 .dd-list li .w{color:var(--good)}.dd-list li .l{color:var(--bad)}
-.toolbar .dd{flex:none;min-width:220px;background:var(--panel);border:1px solid var(--line)}
-.toolbar .dd .dd-btn{font-size:14px;letter-spacing:.08em;padding:7px 32px 7px 12px}
-.toolbar .dd .dd-btn::after{right:11px}
-.toolbar .dd-list{left:-1px;right:-1px;min-width:280px}
-.sel select,.toolbar select,.sel select:disabled,.toolbar select:disabled{position:absolute;opacity:0;pointer-events:none;width:1px;height:1px;margin:0;padding:0;visibility:hidden}
+.toolbar .dd,.band-foot .dd{flex:none;min-width:220px;background:var(--panel);border:1px solid var(--line)}
+.toolbar .dd .dd-btn,.band-foot .dd .dd-btn{font-size:14px;letter-spacing:.08em;padding:7px 32px 7px 12px}
+.toolbar .dd .dd-btn::after,.band-foot .dd .dd-btn::after{right:11px}
+.toolbar .dd-list,.band-foot .dd-list{left:-1px;right:-1px;min-width:280px}
+.band-ctl{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.band-foot .dd .dd-btn{font-size:12px;padding:5px 30px 5px 10px}
+.band-foot .dd.na{opacity:.45}
+.band-foot b.w{color:var(--good)}.band-foot b.l{color:var(--bad)}
+.sel select,.toolbar select,.band-foot select,.sel select:disabled,.toolbar select:disabled,.band-foot select:disabled{position:absolute;opacity:0;pointer-events:none;width:1px;height:1px;margin:0;padding:0;visibility:hidden}
 select{width:100%;appearance:none;-webkit-appearance:none;background:transparent url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 14 9'><path d='M1 1l6 6 6-6' fill='none' stroke='%23c6cbd4' stroke-width='2' stroke-linecap='round'/></svg>") no-repeat right 12px center;border:0;color:var(--ink);font-family:var(--cond);font-weight:700;font-size:19px;letter-spacing:.06em;text-transform:uppercase;padding:14px 34px 14px 0;cursor:pointer;min-width:0;text-overflow:ellipsis}
 select:focus{outline:none;color:var(--club2)}
 select:disabled{opacity:.5;cursor:default}
@@ -435,7 +439,7 @@ body.cv-on .top,body.cv-on .wrap{display:none}
   .bio{padding:0 16px 18px}
   .pnav button{height:40px;min-width:44px;font-size:14px}.pnav #prev,.pnav #next{font-size:26px;padding:0 10px 4px}
   .tile span{font-size:11px;letter-spacing:.1em}.role b{font-size:24px}
-  .band-foot{gap:8px}.band-foot .seg button{padding:9px 14px;font-size:12px}.band-foot .lnk{padding:8px 0}
+  .band-foot{gap:8px}.band-foot .seg button{padding:9px 14px;font-size:12px}.band-foot .lnk{padding:8px 0;display:block}.band-foot .sep{display:none}.band-ctl{width:100%;gap:8px}.band-foot .dd{flex:1 1 auto;min-width:0}.band-foot .dd .dd-btn{padding:9px 30px 9px 10px}
   .seg button{padding:10px 12px;font-size:13px;letter-spacing:.1em}
   .toolbar{gap:8px}.toolbar .seg{display:flex;width:100%}.toolbar .seg button{flex:1 1 0;text-align:center;padding:11px 4px}
   .toolbar .dd{flex:1 1 60%;min-width:0}.toolbar .dd .dd-btn{padding:11px 32px 11px 12px}.toolbar .btn{flex:1 1 30%;margin-left:0;padding:11px 10px;text-align:center}
@@ -507,7 +511,7 @@ body.cv-on .top,body.cv-on .wrap{display:none}
   <div class="fail" id="fail" hidden><b>Data unavailable</b><span id="fail-sub"></span><button class="btn" id="retry" type="button">Retry</button></div>
   <section class="opener" id="opener" hidden><div class="head"><b>Season opener</b><span id="opener-sub"></span></div><div class="roster" id="roster"></div></section>
   <div class="tiles" id="tiles"></div>
-  <div class="band-foot"><div class="seg" id="f-rate"><button aria-pressed="true" data-v="pg">Per game</button><button aria-pressed="false" data-v="p40">Per 40 min</button></div><span id="band-legend"></span></div>
+  <div class="band-foot"><div class="band-ctl"><div class="seg" id="f-rate"><button aria-pressed="true" data-v="pg">Per game</button><button aria-pressed="false" data-v="p40">Per 40 min</button></div><select id="stat-game" aria-label="Game"></select></div><span id="band-legend"></span></div>
   <div class="role" id="role" hidden></div>
   <div class="band-foot" id="role-foot" hidden><span id="role-legend"></span></div>
 
@@ -711,10 +715,16 @@ function renderPlayers(){
   renderGames(); renderPlayer();
 }
 function renderGames(){
-  const games = ds().games, sel = $('#game');
-  sel.innerHTML = games.length ? `<option value="all">All games (${games.length})</option>` + games.map((g, i) => { const l = gameLabel(g); return `<option value="${i}">${l.txt} · ${l.res} ${l.score}</option>`; }).join('') : '<option value="all">No games yet</option>';
-  sel.disabled = !games.length;
+  const games = ds().games;
+  const html = games.length ? `<option value="all">All games (${games.length})</option>` + games.map((g, i) => { const l = gameLabel(g); return `<option value="${i}">${l.txt} · ${l.res} ${l.score}</option>`; }).join('') : '<option value="all">No games yet</option>';
+  ['#game', '#stat-game'].forEach(id => { const sel = $(id); sel.innerHTML = html.replace('All games', id === '#stat-game' ? 'Season' : 'All games'); sel.disabled = !games.length; sel.value = String(state.game); });
 }
+// one game in view for the whole page: the stats band, the role tiles, the shot chart and the highlighted log row follow it
+function setGame(v){
+  state.game = String(v); ['#game', '#stat-game'].forEach(id => { $(id).value = state.game; }); if (typeof DD !== 'undefined') { DD.game.refresh(); DD.statGame.refresh(); }
+  renderTiles(); renderRole(); renderChart(true); markLog();
+}
+const gameRow = () => state.game === 'all' ? null : ds().log.find(r => r[0] === +state.game) || null;
 function renderTicker(){
   const d = ds(), games = d.games, t = team();
   // the last five results with the player's line, then the club's next ten fixtures; rebuilt within minutes of every final
@@ -762,24 +772,28 @@ function renderPlayer(){
   renderChart(true);
 }
 function renderTiles(){
-  const d = ds(), tot = d.tot, gp = tot.gp || 1, played = tot.gp > 0, p40 = state.rate === 'p40', pc = (p40 ? d.pct40 : d.pct) || {};
-  const val = k => !played ? '–' : p40 ? (d.per40 ? f1(d.per40[k]) : '–') : f1(tot[k] / gp);
+  const d = ds(), tot = d.tot, gp = tot.gp || 1, played = tot.gp > 0, p40 = state.rate === 'p40', row = gameRow(), pc = row ? {} : (p40 ? d.pct40 : d.pct) || {};
+  const COL = {pts: 2, reb: 3, ast: 4, stl: 5, blk: 6, tov: 7, pir: 14};
+  const val = k => !played ? '–' : row ? (p40 ? (row[1] ? f1(row[COL[k]] * 40 / row[1]) : '–') : String(row[COL[k]])) : p40 ? (d.per40 ? f1(d.per40[k]) : '–') : f1(tot[k] / gp);
   const tiles = [['pts', 'Points'], ['reb', 'Rebounds'], ['ast', 'Assists'], ['stl', 'Steals'], ['blk', 'Blocks'], ['tov', 'Turnovers'], ['pir', 'PIR']];
   $('#tiles').innerHTML = tiles.map(([k, l]) => `<div class="tile ${played ? '' : 'na'}" style="--p:${pc[k] ?? 0}%"><b>${val(k)}</b><span>${l}</span></div>`).join('');
-  $('#band-legend').innerHTML = d.pct ? `${p40 ? 'Per 40 minutes' : 'Per game'} · underline: rank among ${META.league_n} rotation players (${META.pool_rule}), longer is better, turnovers inverted` : '';
-  if (LB.ok) { $('#band-legend').insertAdjacentHTML('beforeend', `${d.pct ? ' · ' : ''}<button type="button" class="lnk">See the league leaders</button>`); $('#band-legend button').addEventListener('click', toLb); }
+  const gl = row ? gameLabel(d.games[row[0]]) : null;
+  $('#band-legend').innerHTML = row ? `${gl.txt} · <b class="${gl.res === 'W' ? 'w' : 'l'}">${gl.res} ${gl.score}</b> · ${fmtDate(d.games[row[0]].date)} · ${row[1]} min${p40 ? ' · scaled to 40 minutes' : ''}` : d.pct ? `${p40 ? 'Per 40 minutes' : 'Per game'} · underline: rank among ${META.league_n} rotation players (${META.pool_rule}), longer is better, turnovers inverted` : '';
+  if (LB.ok) { $('#band-legend').insertAdjacentHTML('beforeend', `${d.pct || row ? '<span class="sep"> · </span>' : ''}<button type="button" class="lnk">See the league leaders</button>`); $('#band-legend button').addEventListener('click', toLb); }
 }
 function renderRole(){
-  const d = ds(), r = d.role, pp = d.pct_pos || {}, el = $('#role'), tot = d.tot;
+  const d = ds(), row = gameRow(), gi = row ? d.log.indexOf(row) : -1, r = row ? (d.role_g || [])[gi] || {} : d.role, pp = row ? {} : d.pct_pos || {}, el = $('#role');
+  // for one game the totals are that game's line: [1] min, [2] pts, [8..13] 2P/3P/FT makes and attempts, [15] +/-
+  const tot = row ? {gp: 1, pts: row[2], fga2: row[9], fga3: row[11], fta: row[13], plusminus: row[15], min: row[1]} : d.tot;
   if (!r || !tot.gp) { el.hidden = true; $('#role-foot').hidden = true; return; }
   el.hidden = false; $('#role-foot').hidden = false;
   const ts = tsOf(tot.pts, tot.fga2 + tot.fga3, tot.fta);
   const items = [['usg', 'Usage', r.usg, '%', 'share of team possessions he ends with a shot, free throws or a turnover while on court'], ['ts', 'True shooting', ts != null ? (100 * ts).toFixed(1) : null, '%', `points per shooting possession, halved so 50% is a coin flip; free throws count 0.44 of a possession, so a perfect night can pass 100%${(tot.fga2 + tot.fga3 + 0.44 * tot.fta) < MIN_ATT ? ' · small sample' : ''}`],
     ['ast_pct', 'Assist rate', r.ast_pct, '%', 'share of teammate field goals he assisted while on court'], ['tov_pct', 'Turnover rate', r.tov_pct, '%', 'turnovers per 100 plays he used'],
-    ['reb_pct', 'Rebound rate', r.reb_pct, '%', 'share of available rebounds he took while on court'], ['plusminus', '+/- per game', tot.gp ? Math.round(10 * (tot.plusminus || 0) / tot.gp) / 10 : null, '', `team score margin while he was on court, per game (${(tot.plusminus || 0) >= 0 ? '+' : ''}${tot.plusminus || 0} over ${tot.gp} game${tot.gp > 1 ? 's' : ''})`]];
+    ['reb_pct', 'Rebound rate', r.reb_pct, '%', 'share of available rebounds he took while on court'], ['plusminus', row ? '+/-' : '+/- per game', row ? (row[15] ?? null) : tot.gp ? Math.round(10 * (tot.plusminus || 0) / tot.gp) / 10 : null, '', row ? `team score margin while he was on court in this game` : `team score margin while he was on court, per game (${(tot.plusminus || 0) >= 0 ? '+' : ''}${tot.plusminus || 0} over ${tot.gp} game${tot.gp > 1 ? 's' : ''})`]];
   el.innerHTML = items.map(([k, l, v, u, tip]) => `<div class="${k === 'ts' && (tot.fga2 + tot.fga3 + 0.44 * tot.fta) < MIN_ATT ? 'small' : ''}" style="--p:${pp[k] ?? 0}%" title="${tip}${pp[k] != null ? ` · ${ord(pp[k])} percentile among ${d.pos_n} ${(d.pos_group || 'player').toLowerCase()}s` : ''}"><b>${v == null ? '–' : (k === 'plusminus' && v > 0 ? '+' : '') + v}${v == null ? '' : u}</b><span>${l}</span></div>`).join('');
-  $('#role-legend').textContent = d.pct_pos ? `Role · underline: rank among ${d.pos_n} ${(d.pos_group || 'player').toLowerCase()}s (3+ games, 10+ min), longer is better, turnover rate inverted` : '';
-  $('#role-foot').hidden = !d.pct_pos;
+  $('#role-legend').textContent = row ? `Role · this game only · ${row[1]} minutes` : d.pct_pos ? `Role · underline: rank among ${d.pos_n} ${(d.pos_group || 'player').toLowerCase()}s (3+ games, 10+ min), longer is better, turnover rate inverted` : '';
+  $('#role-foot').hidden = !(row || d.pct_pos);
 }
 function renderForm(){
   const d = ds(), el = $('#form'), log = d.log;
@@ -1129,9 +1143,10 @@ skeleton();
 $('#team').innerHTML = META.clubs.map(c => `<option value="${c.code}">${c.name}</option>`).join('');
 $('#team').addEventListener('change', e => { loadTeam(e.target.value); location.hash = e.target.value; });
 $('#player').addEventListener('change', e => { state.player = +e.target.value; state.game = 'all'; renderGames(); renderPlayer(); location.hash = `${state.team}/${player().pid}`; });
-$('#game').addEventListener('change', e => { state.game = e.target.value; renderChart(true); markLog(); });
+$('#game').addEventListener('change', e => setGame(e.target.value));
+$('#stat-game').addEventListener('change', e => setGame(e.target.value));
 function markLog(){ $('#log tbody').querySelectorAll('tr[data-g]').forEach(tr => tr.classList.toggle('sel', tr.dataset.g === String(state.game))); }
-function pickGame(g){ const v = String(state.game) === String(g) ? 'all' : String(g); $('#game').value = v; state.game = v; DD.game.refresh(); renderChart(true); markLog(); $('#court').closest('.panel').scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start'}); }
+function pickGame(g){ setGame(String(state.game) === String(g) ? 'all' : String(g)); $('#court').closest('.panel').scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start'}); }
 $('#log tbody').addEventListener('click', e => { const tr = e.target.closest('tr[data-g]'); if (tr) pickGame(tr.dataset.g); });
 $('#log tbody').addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { const tr = e.target.closest('tr[data-g]'); if (tr) { e.preventDefault(); pickGame(tr.dataset.g); } } });
 const stepPlayer = d => { if (!team()) return; const ps = team().players, i = (state.player + d + ps.length) % ps.length; location.hash = `${state.team}/${ps[i].pid}`; };
@@ -1155,7 +1170,8 @@ const DD = {
   team: Dropdown($('#team'), (op, head) => { const c = CLUBS[op.value]; return `${c && c.logo && !head ? `<img src="${c.logo}" alt="">` : ''}<span>${c.name}</span>`; }),
   player: Dropdown($('#player'), (op, head) => { const p = team() && team().players[+op.value]; if (!p) return op.text; const n = nameOf(p.name); return head ? `#${p.dorsal || '–'} ${n.first} ${n.sur}` : `<span class="no">${p.dorsal || '–'}</span><span>${n.first} ${n.sur}</span><small>${(p.position || '').slice(0, 7)}</small>`; }),
   cmp: Dropdown($('#cmp'), (op, head) => { if (!op.value) return op.text; const r = (META.roster || []).find(x => x.pid === op.value); if (!r) return op.text; const c = CLUBS[r.club], n = nameOf(r.name); return head ? `${n.first} ${n.sur} · ${shortName(r.club)}` : `${c && c.logo ? `<img src="${c.logo}" alt="">` : ''}<span class="no">${r.dorsal || '–'}</span><span>${n.first} ${n.sur}</span><small>${shortName(r.club)}</small>`; }),
-  game: Dropdown($('#game'), (op, head) => { if (op.value === 'all' || !team()) return op.text; const g = ds().games[+op.value]; if (!g) return op.text; const l = gameLabel(g); return head ? `${l.txt} · ${l.res} ${l.score}` : `<span>${l.txt}</span><small class="${l.res === 'W' ? 'w' : 'l'}">${l.res} ${l.score}</small>`; })
+  game: Dropdown($('#game'), (op, head) => { if (op.value === 'all' || !team()) return op.text; const g = ds().games[+op.value]; if (!g) return op.text; const l = gameLabel(g); return head ? `${l.txt} · ${l.res} ${l.score}` : `<span>${l.txt}</span><small class="${l.res === 'W' ? 'w' : 'l'}">${l.res} ${l.score}</small>`; }),
+  statGame: Dropdown($('#stat-game'), (op, head) => { if (op.value === 'all' || !team()) return op.text; const g = ds().games[+op.value]; if (!g) return op.text; const l = gameLabel(g); return head ? `${l.txt} · ${l.res} ${l.score}` : `<span>${l.txt}</span><small class="${l.res === 'W' ? 'w' : 'l'}">${l.res} ${l.score}</small>`; })
 };
 // ---- player search across every club: name, club and code, accents folded
 const fold = s => (s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
@@ -1347,7 +1363,7 @@ async function go(){
   if (state.team !== code) { $('#team').value = code; if (!await loadTeam(code)) return false; }
   if (h[1]) { const i = team().players.findIndex(p => p.pid === h[1]); if (i >= 0 && i !== state.player) { $('#player').value = i; state.player = i; state.game = 'all'; renderGames(); renderPlayer(); } }
   if (h[2] === 'zones' || h[2] === '3d') { const b = $(`#f-view button[data-v="${h[2]}"]`); if (b.getAttribute('aria-pressed') !== 'true') b.click(); }
-  DD.team.refresh(); DD.player.refresh(); DD.game.refresh();
+  DD.team.refresh(); DD.player.refresh(); DD.game.refresh(); DD.statGame.refresh();
   const n = nameOf(player().name); document.title = `${n.first} ${n.sur} · ${shortName(state.team)} · Player Lab`;
   return true;
 }
