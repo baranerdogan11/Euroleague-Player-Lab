@@ -53,7 +53,7 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font
 .toolbar .dd .dd-btn{font-size:14px;letter-spacing:.08em;padding:7px 32px 7px 12px}
 .toolbar .dd .dd-btn::after{right:11px}
 .toolbar .dd-list{left:-1px;right:-1px;min-width:280px}
-.sel select,.toolbar select,.sel select:disabled,.toolbar select:disabled{position:absolute;opacity:0;pointer-events:none;width:1px;height:1px;margin:0;padding:0}
+.sel select,.toolbar select,.sel select:disabled,.toolbar select:disabled{position:absolute;opacity:0;pointer-events:none;width:1px;height:1px;margin:0;padding:0;visibility:hidden}
 select{width:100%;appearance:none;-webkit-appearance:none;background:transparent url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 14 9'><path d='M1 1l6 6 6-6' fill='none' stroke='%23c6cbd4' stroke-width='2' stroke-linecap='round'/></svg>") no-repeat right 12px center;border:0;color:var(--ink);font-family:var(--cond);font-weight:700;font-size:19px;letter-spacing:.06em;text-transform:uppercase;padding:14px 34px 14px 0;cursor:pointer;min-width:0;text-overflow:ellipsis}
 select:focus{outline:none;color:var(--club2)}
 select:disabled{opacity:.5;cursor:default}
@@ -486,8 +486,8 @@ body.cv-on .top,body.cv-on .wrap{display:none}
 </main>
 <header class="top">
   <a class="id" href="#" title="Back to the opening page">Player Lab<span>Euroleague</span></a>
-  <label class="sel team"><img id="crest-img" alt=""><select id="team" aria-label="Team"></select></label>
-  <label class="sel player"><select id="player" aria-label="Player"></select></label>
+  <div class="sel team"><img id="crest-img" alt=""><select id="team" aria-label="Team"></select></div>
+  <div class="sel player"><select id="player" aria-label="Player"></select></div>
   <div class="search"><input type="search" id="q" placeholder="Find a player" aria-label="Find a player across all clubs" autocomplete="off" spellcheck="false" role="combobox" aria-expanded="false" aria-controls="q-list" aria-autocomplete="list"><kbd>/</kbd><ul class="dd-list" id="q-list" role="listbox" aria-label="Players" hidden></ul></div>
   <div class="live"><i></i><b id="tag-season"></b><span id="tag-sub">Updated after every game</span></div>
 </header>
@@ -566,7 +566,7 @@ body.cv-on .top,body.cv-on .wrap{display:none}
     <h2>Compare</h2>
     <div class="in">
       <p class="sub" id="cmp-sub"></p>
-      <div class="cmp-row"><label class="sel" style="border:0;padding:0;flex:1;max-width:420px"><select id="cmp" aria-label="Compare with"></select></label></div>
+      <div class="cmp-row"><div class="sel" style="border:0;padding:0;flex:1;max-width:420px"><select id="cmp" aria-label="Compare with"></select></div></div>
       <div style="overflow-x:auto"><table id="cmp-table" hidden><thead><tr><th>Metric</th><th id="cmp-a"></th><th id="cmp-b"></th><th>Position median</th></tr></thead><tbody></tbody></table></div>
     </div>
   </section>
