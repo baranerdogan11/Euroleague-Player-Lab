@@ -79,6 +79,10 @@ jobs:
       - name: Fetch new games, rosters and photos
         run: python fetch_season.py $SEASON
 
+      - name: Career histories from Wikipedia (cached per season)
+        continue-on-error: true      # a Wikipedia outage never blocks the data publish; players keep their last stored careers
+        run: python wiki_careers.py $SEASON
+
       - name: Raw-feed gate
         run: python checks.py $SEASON
 

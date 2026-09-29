@@ -106,6 +106,19 @@ for pc in list(players):
         careers.append({"player": pc, "season": s["code"], "club": c["code"], "club_name": c.get("abbreviatedName") or c.get("name"),
                         "start_date": date_only(e.get("startDate")), "end_date": date_only(e.get("endDate"))})
 
+# ---- careers_wiki: every team with years from the player's Wikipedia infobox (cache/wiki_<player>.json, written by wiki_careers.py)
+careers_wiki = []
+for pc in list(players):
+    path = os.path.join(CACHE, f"wiki_{pc}.json")
+    if not os.path.exists(path):
+        continue
+    rec = load(os.path.basename(path)) or {}
+    if not rec.get("title"):
+        continue
+    rows_w = ([rec["college"]] if rec.get("college") else []) + list(rec.get("spells") or [])
+    for i, sp in enumerate(rows_w):
+        careers_wiki.append({"player": pc, "ord": i, "team": sp.get("team"), "from_year": sp.get("from"), "to_year": sp.get("to"), "league": sp.get("league"), "page": rec["title"]})
+
 con = duckdb.connect()
 
 
@@ -124,6 +137,7 @@ counts = {
     "clubs": to_parquet("clubs", clubs, [("club", "VARCHAR"), ("name", "VARCHAR"), ("short", "VARCHAR"), ("country", "VARCHAR"), ("city", "VARCHAR")]),
     "players": to_parquet("players", list(players.values()), [("player", "VARCHAR"), ("name", "VARCHAR"), ("birth_date", "DATE"), ("country", "VARCHAR"), ("height_cm", "INTEGER"), ("weight_kg", "INTEGER")]),
     "careers": to_parquet("careers", careers, [("player", "VARCHAR"), ("season", "VARCHAR"), ("club", "VARCHAR"), ("club_name", "VARCHAR"), ("start_date", "DATE"), ("end_date", "DATE")]),
+    "careers_wiki": to_parquet("careers_wiki", careers_wiki, [("player", "VARCHAR"), ("ord", "INTEGER"), ("team", "VARCHAR"), ("from_year", "INTEGER"), ("to_year", "INTEGER"), ("league", "VARCHAR"), ("page", "VARCHAR")]),
     "roster_stints": to_parquet("roster_stints", stints, [("player", "VARCHAR"), ("club", "VARCHAR"), ("start_date", "DATE"), ("end_date", "DATE"), ("active", "BOOLEAN"), ("dorsal", "VARCHAR"), ("position", "VARCHAR"), ("last_team", "VARCHAR")]),
     "games": to_parquet("games", games, [("game", "INTEGER"), ("round", "INTEGER"), ("phase", "VARCHAR"), ("date_utc", "TIMESTAMP"), ("date", "DATE"), ("home", "VARCHAR"), ("away", "VARCHAR"), ("home_score", "INTEGER"), ("away_score", "INTEGER"), ("played", "BOOLEAN"), ("status", "VARCHAR")]),
     "box": to_parquet("box", box, [("game", "INTEGER"), ("player", "VARCHAR"), ("club", "VARCHAR"), ("starter", "BOOLEAN"), ("minutes", "DOUBLE"), ("pts", "INTEGER"), ("fgm2", "INTEGER"), ("fga2", "INTEGER"), ("fgm3", "INTEGER"), ("fga3", "INTEGER"), ("ftm", "INTEGER"), ("fta", "INTEGER"), ("oreb", "INTEGER"), ("dreb", "INTEGER"), ("reb", "INTEGER"), ("ast", "INTEGER"), ("stl", "INTEGER"), ("tov", "INTEGER"), ("blk", "INTEGER"), ("blka", "INTEGER"), ("pf", "INTEGER"), ("fd", "INTEGER"), ("pir", "INTEGER"), ("plusminus", "INTEGER")]),

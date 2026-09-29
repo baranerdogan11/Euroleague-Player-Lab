@@ -13,6 +13,7 @@ basket, `x` lateral, `y` toward half court.
 | `clubs` | one row per club | `club` | `name`, `short`, `country`, `city` |
 | `players` | one row per person seen this season | `player` | `name`, `birth_date`, `country`, `height_cm`, `weight_kg` |
 | `careers` | one row per Euroleague season a current player was registered | (`player`, `season`) | `club`, `club_name`, `start_date`, `end_date` |
+| `careers_wiki` | one row per team in the player's Wikipedia career history, college first | (`player`, `ord`) | `team`, `from_year`, `to_year` (null while current), `league` (NBA, G League, NCAA or null), `page` |
 | `roster_stints` | one row per registration of a player with a club | (`player`, `club`, `start_date`) | `end_date`, `active`, `dorsal`, `position`, `last_team` |
 | `games` | one row per scheduled game | `game` | `round`, `phase`, `date_utc`, `date`, `home`, `away`, `home_score`, `away_score`, `played`, `status` |
 | `box` | one row per player per played game | (`game`, `player`) | `club`, `starter`, `minutes`, `pts`, `fgm2`, `fga2`, `fgm3`, `fga3`, `ftm`, `fta`, `oreb`, `dreb`, `reb`, `ast`, `stl`, `tov`, `blk`, `blka`, `pf`, `fd`, `pir`, `plusminus` |

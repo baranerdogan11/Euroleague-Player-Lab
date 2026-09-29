@@ -169,9 +169,16 @@ if os.path.exists(career_path):
     for pl, season, club, club_name in con.execute(f"select player, season, club, club_name from read_parquet('{career_path}') order by player, season").fetchall():
         CAREERS.setdefault(pl, []).append((int(season[1:]), club, club_name))
 SHORT = {c["club"]: c["short"] for c in clubs}
+SEASON_END = int(SEASON[1:]) + 1
+WIKI = {}
+wiki_path = os.path.join(W, "careers_wiki.parquet")
+if os.path.exists(wiki_path):
+    for pl, ord_, team, y0, y1, league, page in con.execute(f"select player, ord, team, from_year, to_year, league, page from read_parquet('{wiki_path}') order by player, ord").fetchall():
+        WIKI.setdefault(pl, {"page": page, "spells": []})["spells"].append({"name": team, "from": y0, "to": y1, "league": league})
 
 
-def career_of(player):
+def el_spells(player):
+    """Euroleague seasons folded into club spells, oldest first."""
     spells = []
     for year, club, club_name in CAREERS.get(player, []):
         if spells and spells[-1]["club"] == club and spells[-1]["to"] == year:
@@ -179,6 +186,35 @@ def career_of(player):
             spells[-1]["name"] = SHORT.get(club, club_name)          # a club that changed its sponsor name is shown under its latest one
         else:
             spells.append({"club": club, "name": SHORT.get(club, club_name), "from": year, "to": year + 1})
+    return spells
+
+
+def career_of(player, club):
+    """Most recent first. Wikipedia's full history when the player has a matched page; otherwise the Euroleague seasons
+    alone. Either way the list ends on the current club for this season, named as the app names it."""
+    el = el_spells(player)
+    current = {"club": club, "name": SHORT.get(club, club), "from": int(SEASON[1:]), "to": SEASON_END, "league": None}
+    if el and el[-1]["club"] == club:
+        current["from"] = el[-1]["from"]
+    w = WIKI.get(player)
+    if not w:
+        out = [{**s, "league": None} for s in el]
+        if not out or out[-1]["club"] != club:
+            out.append(current)
+        else:
+            out[-1] = {**out[-1], "to": max(out[-1]["to"], SEASON_END)}
+        return [{"name": s["name"], "from": s["from"], "to": s["to"], "league": s["league"]} for s in out[::-1]]
+    spells = []
+    for s in w["spells"]:
+        spells.append({"name": s["name"], "from": s["from"], "to": s["to"], "league": s["league"]})
+    # the open-ended last spell is the current club: name it as the app does and close it on this season
+    last = spells[-1] if spells else None
+    if last and last["to"] is None:
+        last["name"] = current["name"]; last["to"] = SEASON_END
+        if last["from"] is None:
+            last["from"] = current["from"]
+    else:
+        spells.append({"name": current["name"], "from": current["from"], "to": SEASON_END, "league": None})
     return spells[::-1]
 
 
@@ -211,7 +247,7 @@ for c in clubs:
         role = role_metrics(lines)
         games = [{"code": b["game"], "round": b["round"], "date": str(b["date"]), "home": b["home"], "away": b["away"], "hs": b["home_score"], "as": b["away_score"], "phase": b["phase"], "own": b["club"],
                   "poss": game_poss(b["game"])} for b in lines]
-        players.append({"pid": "P" + r["player"], "name": r["name"], "dorsal": r["dorsal"], "position": r["position"], "height": r["height_cm"], "weight": r["weight_kg"], "career": career_of(r["player"]),
+        players.append({"pid": "P" + r["player"], "name": r["name"], "dorsal": r["dorsal"], "position": r["position"], "height": r["height_cm"], "weight": r["weight_kg"], "career": career_of(r["player"], code), "career_src": "wikipedia" if r["player"] in WIKI else "euroleague",
                         "birth": str(r["birth_date"]) if r["birth_date"] else None, "country": r["country"],
                         "photo": f"photos/{r['player']}.webp" if os.path.exists(os.path.join(ROOT, "photos", f"{r['player']}.webp")) else None,
                         "cur": {"tot": tot, "log": log, "shots": shots, "games": games, "xfg": xfg, "profile": profile_of(r["player"], gidx), "role": role, "pos_group": pos_group(r["position"])}})

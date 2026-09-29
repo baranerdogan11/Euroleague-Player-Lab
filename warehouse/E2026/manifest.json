@@ -4,11 +4,10 @@
   "clubs": 20,
   "players": 324,
   "careers": 1378,
+  "careers_wiki": 2367,
   "roster_stints": 325,
   "games": 380,
   "box": 240,
-  "shots": 1299,
-  "events": 5835,
-  "shot_context": 1299
+  "shots": 1299
  }
 }
