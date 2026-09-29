@@ -115,6 +115,8 @@ for pc in list(players):
     rec = load(os.path.basename(path)) or {}
     if not rec.get("title"):
         continue
+    if not players[pc].get("weight_kg") and rec.get("weight_kg"):       # the feed has no weight for a few players; the infobox's listed weight stands in
+        players[pc]["weight_kg"] = rec["weight_kg"]
     rows_w = ([rec["college"]] if rec.get("college") else []) + list(rec.get("spells") or [])
     for i, sp in enumerate(rows_w):
         careers_wiki.append({"player": pc, "ord": i, "team": sp.get("team"), "from_year": sp.get("from"), "to_year": sp.get("to"), "league": sp.get("league"), "page": rec["title"]})

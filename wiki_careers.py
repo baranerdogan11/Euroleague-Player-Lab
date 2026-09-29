@@ -52,6 +52,15 @@ def clean(s):
     return re.sub(r"\s+", " ", s).strip(" *")
 
 
+def weight_of(wt):
+    """The listed weight in kilograms: the infobox's own kg figure, else its pounds converted."""
+    m = re.search(r"\|\s*weight_kg\s*=\s*(\d{2,3})", wt)
+    if m:
+        return int(m.group(1))
+    m = re.search(r"\|\s*weight_lbs?\s*=\s*(\d{2,3})", wt)
+    return round(int(m.group(1)) * 0.45359) if m else None
+
+
 def spells_of(wt):
     yrs = dict(re.findall(r"\|\s*years(\d+)\s*=\s*([^\n]*)", wt)); tms = dict(re.findall(r"\|\s*team(\d+)\s*=\s*([^\n]*)", wt))
     out = []
@@ -98,7 +107,7 @@ def match(name, birth):
             spells, college = spells_of(wt)
             if not spells:
                 continue
-            return {"title": title, "birth": b, "spells": spells, "college": college}
+            return {"title": title, "birth": b, "spells": spells, "college": college, "weight_kg": weight_of(wt)}
     return {"title": None}
 
 
