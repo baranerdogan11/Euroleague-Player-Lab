@@ -161,9 +161,30 @@ for c in clubs:
     c["logo"] = f"logos/{c['club']}.png" if os.path.exists(os.path.join(ROOT, "logos", f"{c['club']}.png")) else None
 summary = []
 collected = {}
+# Euroleague career as spells: consecutive seasons at one club fold into "from-to", most recent first; club names are the
+# current short name where the club is in the league today, else the name the feed used that season
+CAREERS = {}
+career_path = os.path.join(W, "careers.parquet")
+if os.path.exists(career_path):
+    for pl, season, club, club_name in con.execute(f"select player, season, club, club_name from read_parquet('{career_path}') order by player, season").fetchall():
+        CAREERS.setdefault(pl, []).append((int(season[1:]), club, club_name))
+SHORT = {c["club"]: c["short"] for c in clubs}
+
+
+def career_of(player):
+    spells = []
+    for year, club, club_name in CAREERS.get(player, []):
+        if spells and spells[-1]["club"] == club and spells[-1]["to"] == year:
+            spells[-1]["to"] = year + 1
+            spells[-1]["name"] = SHORT.get(club, club_name)          # a club that changed its sponsor name is shown under its latest one
+        else:
+            spells.append({"club": club, "name": SHORT.get(club, club_name), "from": year, "to": year + 1})
+    return spells[::-1]
+
+
 for c in clubs:
     code = c["club"]
-    roster = rows("""select s.player, p.name, s.dorsal, s.position, p.height_cm, p.birth_date, p.country
+    roster = rows("""select s.player, p.name, s.dorsal, s.position, p.height_cm, p.weight_kg, p.birth_date, p.country
                      from roster_stints s join players p using (player) where s.club = ? and s.active
                      order by try_cast(s.dorsal as integer) nulls last, p.name""", code)
     players = []
@@ -190,7 +211,7 @@ for c in clubs:
         role = role_metrics(lines)
         games = [{"code": b["game"], "round": b["round"], "date": str(b["date"]), "home": b["home"], "away": b["away"], "hs": b["home_score"], "as": b["away_score"], "phase": b["phase"], "own": b["club"],
                   "poss": game_poss(b["game"])} for b in lines]
-        players.append({"pid": "P" + r["player"], "name": r["name"], "dorsal": r["dorsal"], "position": r["position"], "height": r["height_cm"],
+        players.append({"pid": "P" + r["player"], "name": r["name"], "dorsal": r["dorsal"], "position": r["position"], "height": r["height_cm"], "weight": r["weight_kg"], "career": career_of(r["player"]),
                         "birth": str(r["birth_date"]) if r["birth_date"] else None, "country": r["country"],
                         "photo": f"photos/{r['player']}.webp" if os.path.exists(os.path.join(ROOT, "photos", f"{r['player']}.webp")) else None,
                         "cur": {"tot": tot, "log": log, "shots": shots, "games": games, "xfg": xfg, "profile": profile_of(r["player"], gidx), "role": role, "pos_group": pos_group(r["position"])}})

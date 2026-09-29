@@ -2,8 +2,9 @@
  "season": "E2026",
  "tables": {
   "clubs": 20,
-  "players": 320,
-  "roster_stints": 320,
+  "players": 324,
+  "careers": 1378,
+  "roster_stints": 325,
   "games": 380,
   "box": 240,
   "shots": 1299,

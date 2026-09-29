@@ -67,7 +67,7 @@ select:disabled{opacity:.5;cursor:default}
 @keyframes pulse{0%,100%{box-shadow:0 0 0 4px rgba(255,59,59,.22)}50%{box-shadow:0 0 0 7px rgba(255,59,59,.08)}}
 .wrap{max-width:1280px;margin:0 auto;padding:0 20px 60px}
 /* hero, the lower third */
-.hero{position:relative;display:grid;grid-template-columns:400px 1fr;min-height:400px;margin-top:22px;background:linear-gradient(100deg,color-mix(in srgb,var(--club) 22%,var(--bg2)) 0%,var(--bg2) 60%);overflow:hidden;border:1px solid var(--line)}
+.hero{position:relative;display:grid;grid-template-columns:400px 236px minmax(0,1fr);min-height:400px;margin-top:22px;background:linear-gradient(100deg,color-mix(in srgb,var(--club) 22%,var(--bg2)) 0%,var(--bg2) 60%);overflow:hidden;border:1px solid var(--line)}
 .hero::before{content:"";position:absolute;left:-120px;top:0;bottom:0;width:540px;background:linear-gradient(100deg,var(--wedge,var(--club)) 0%,var(--wedge,var(--club)) 55%,transparent 56%);opacity:.95}
 .hero::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(255,255,255,.025) 0 1px,transparent 1px 4px);pointer-events:none}
 .hero .ph{position:relative;display:flex;align-items:flex-end;justify-content:center;z-index:1;isolation:isolate}
@@ -79,10 +79,21 @@ select:disabled{opacity:.5;cursor:default}
 .tag span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 .tag #pos{flex:none}
 .tag #pos{color:#555}
-h1{font-family:var(--cond);font-weight:900;font-style:italic;font-size:112px;line-height:.82;margin:14px 0 10px;text-transform:uppercase;letter-spacing:-.01em;overflow-wrap:anywhere}
+h1{font-family:var(--cond);font-weight:900;font-style:italic;font-size:clamp(72px,7vw,112px);line-height:.82;margin:14px 0 10px;text-transform:uppercase;letter-spacing:-.01em;overflow-wrap:anywhere}
 h1 span span{display:block;color:var(--club2)}
 .facts{font-family:var(--cond);font-weight:600;font-size:20px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink2);display:flex;gap:22px;flex-wrap:wrap}
 .facts b{color:#fff}
+/* bio: date of birth, height, weight and the Euroleague career, beside the photo */
+.bio{position:relative;z-index:1;align-self:end;padding:0 10px 30px 4px;min-width:0}
+.bio dl{margin:0;display:grid;grid-template-columns:1fr;gap:10px}
+.bio dt{font-family:var(--cond);font-weight:700;font-size:11.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+.bio dd{margin:2px 0 0;font-family:var(--cond);font-weight:700;font-size:18px;letter-spacing:.04em;text-transform:uppercase;color:#fff;line-height:1.15}
+.bio dd small{font-weight:600;color:var(--ink2);font-size:13.5px;letter-spacing:.08em;margin-left:7px}
+.bio ol{list-style:none;margin:0;padding:0}
+.bio li{display:flex;justify-content:space-between;gap:10px;font-family:var(--cond);font-weight:700;font-size:15px;letter-spacing:.04em;text-transform:uppercase;line-height:1.35;color:#fff}
+.bio li b{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.bio li span{color:var(--club2);font-variant-numeric:tabular-nums;flex:none}
+.bio li.cur b{color:var(--club2)}
 /* ticker */
 .ticker{display:flex;overflow:hidden;background:var(--white);color:#000;font-family:var(--cond);font-weight:700;font-size:16px;letter-spacing:.06em;text-transform:uppercase;border:1px solid var(--line);border-top:0}
 .ticker .lab{position:relative;z-index:1;background:var(--club);color:#fff;padding:9px 24px 9px 16px;font-weight:900;flex:none;clip-path:polygon(0 0,100% 0,calc(100% - 10px) 100%,0 100%);text-shadow:0 1px 0 rgba(0,0,0,.3)}
@@ -242,8 +253,8 @@ td.w{color:var(--good)} td.l{color:var(--bad)}
 .foot a{color:var(--club2);text-decoration:none}
 .foot a:hover{text-decoration:underline}
 .loading{opacity:.5;pointer-events:none;transition:opacity .2s}
-@media (max-width:1000px){.hero{grid-template-columns:300px 1fr;min-height:340px}.hero .ph img{height:340px}h1{font-size:84px}.tiles{grid-template-columns:repeat(12,1fr)}.tile{grid-column:span 3;border-bottom:1px solid var(--line)}.tile:nth-child(n+5){grid-column:span 4}.tile:nth-child(4n){border-right:0}.tile:nth-last-child(-n+3){border-bottom:0}.grid{grid-template-columns:1fr}}
-@media (max-width:760px){.top{flex-wrap:wrap;height:auto}.top .id{order:-2;flex:1 1 auto;height:46px;clip-path:none;font-size:20px;padding:0 14px}.top .id span{display:none}.live{order:-1;margin-left:0;flex:none;height:46px;padding:0 12px;border-bottom:1px solid var(--line)}.live span{display:none}.sel{border-right:0;padding:0 12px;height:46px}.sel.team,.sel.player{flex:1 1 100%;border-bottom:1px solid var(--line)}.search{flex:1 1 100%;height:44px;border-right:0}.dd-btn{font-size:17px;padding:10px 30px 10px 0}.wrap{padding:0 12px 48px}.hero{grid-template-columns:1fr;min-height:0}.hero::before{width:100%;left:0;background:linear-gradient(180deg,var(--club) 0%,var(--club) 45%,transparent 46%)}.hero .ph{padding-top:16px}.hero .ph img{height:280px}.hero .ph .num{font-size:170px;bottom:-16px}h1{font-size:64px}.facts{font-size:16px;gap:14px}.tiles{grid-template-columns:repeat(12,1fr)}.tile{padding:12px 8px 10px}.tile b{font-size:30px}.tile span{font-size:10.5px;letter-spacing:.12em}.tile i{font-size:11px;right:8px;top:10px}.panel .in{padding:0 12px 14px}.gauges,.xfg-row{grid-template-columns:1fr}}
+@media (max-width:1000px){.hero{grid-template-columns:300px 196px minmax(0,1fr);min-height:340px}.bio{padding-bottom:26px}.bio dd{font-size:16px}.hero .ph img{height:340px}h1{font-size:84px}.tiles{grid-template-columns:repeat(12,1fr)}.tile{grid-column:span 3;border-bottom:1px solid var(--line)}.tile:nth-child(n+5){grid-column:span 4}.tile:nth-child(4n){border-right:0}.tile:nth-last-child(-n+3){border-bottom:0}.grid{grid-template-columns:1fr}}
+@media (max-width:760px){.top{flex-wrap:wrap;height:auto}.top .id{order:-2;flex:1 1 auto;height:46px;clip-path:none;font-size:20px;padding:0 14px}.top .id span{display:none}.live{order:-1;margin-left:0;flex:none;height:46px;padding:0 12px;border-bottom:1px solid var(--line)}.live span{display:none}.sel{border-right:0;padding:0 12px;height:46px}.sel.team,.sel.player{flex:1 1 100%;border-bottom:1px solid var(--line)}.search{flex:1 1 100%;height:44px;border-right:0}.dd-btn{font-size:17px;padding:10px 30px 10px 0}.wrap{padding:0 12px 48px}.hero{grid-template-columns:1fr;min-height:0}.bio{order:3;padding:0 20px 22px}.bio dl{grid-template-columns:1fr 1fr;gap:12px 16px}.bio .career{grid-column:1/-1}.hero::before{width:100%;left:0;background:linear-gradient(180deg,var(--club) 0%,var(--club) 45%,transparent 46%)}.hero .ph{padding-top:16px}.hero .ph img{height:280px}.hero .ph .num{font-size:170px;bottom:-16px}h1{font-size:64px}.facts{font-size:16px;gap:14px}.tiles{grid-template-columns:repeat(12,1fr)}.tile{padding:12px 8px 10px}.tile b{font-size:30px}.tile span{font-size:10.5px;letter-spacing:.12em}.tile i{font-size:11px;right:8px;top:10px}.panel .in{padding:0 12px 14px}.gauges,.xfg-row{grid-template-columns:1fr}}
 /* header search */
 .search{display:flex;align-items:center;position:relative;flex:0 1 250px;min-width:150px;padding:0 12px 0 14px;border-right:1px solid var(--line)}
 .search input{width:100%;background:transparent;border:0;border-bottom:2px solid var(--line2);color:var(--ink);font-family:var(--cond);font-weight:700;font-size:16px;letter-spacing:.06em;text-transform:uppercase;padding:6px 0 4px;min-width:0;border-radius:0}
@@ -452,6 +463,7 @@ body.cv-on .top,body.cv-on .wrap{display:none}
 <div class="wrap">
   <section class="hero" id="hero">
     <div class="ph"><div class="num" id="num"></div><img id="photo" alt="" width="360" height="480" decoding="async"></div>
+    <div class="bio" id="bio"></div>
     <div class="lt">
       <div class="tagrow"><div class="tag"><img id="club-logo" alt=""><span id="club-name"></span><span id="pos"></span></div><div class="pnav"><button type="button" id="prev" aria-label="Previous player" title="Previous player">&lsaquo;</button><button type="button" id="next" aria-label="Next player" title="Next player">&rsaquo;</button><button type="button" id="share" title="Copy a link to this player">Copy link</button></div></div>
       <h1 id="name"><span id="nm"></span></h1>
@@ -654,7 +666,8 @@ function renderOpener(){
 }
 function skeleton(){
   $('#nm').innerHTML = '<span class="sk">Loading</span><span class="sk">Player</span>'; $('#club-name').innerHTML = '<span class="sk">Club name</span>';
-  $('#facts').innerHTML = '<span class="sk">000 cm</span><span class="sk">00 yrs</span><span class="sk">Country</span>';
+  $('#facts').innerHTML = '<span class="sk">Country</span><span class="sk">0 games</span>';
+  $('#bio').innerHTML = '<dl><div><dt class="sk">Date of birth</dt><dd class="sk">1 January 1990</dd></div><div><dt class="sk">Height</dt><dd class="sk">200 cm</dd></div><div><dt class="sk">Weight</dt><dd class="sk">90 kg</dd></div></dl>';
   $('#tiles').innerHTML = Array.from({length: 7}, () => '<div class="tile na"><b class="sk">00.0</b><span class="sk">Points</span></div>').join('');
 }
 function renderPlayers(){
@@ -686,7 +699,10 @@ function renderPlayer(){
   $('#photo').src = p.photo || PLACEHOLDER; $('#photo').alt = `${n.first} ${n.sur}`; $('#num').textContent = p.dorsal || '';
   $('#pos').textContent = `${p.dorsal ? '· #' + p.dorsal + ' ' : ''}· ${p.position || ''}`; $('#nm').innerHTML = `${n.first}<span>${n.sur}</span>`;
   const a = age(p.birth);
-  $('#facts').innerHTML = [p.height ? `<span><b>${p.height}</b> cm</span>` : '', a ? `<span><b>${a}</b> yrs</span>` : '', p.country ? `<span>${p.country.replace('United States of America', 'USA')}</span>` : '',
+  const dob = p.birth ? new Date(p.birth + 'T12:00:00').toLocaleDateString('en-GB', {day: 'numeric', month: 'long', year: 'numeric'}) : null;
+  const spells = (p.career || []).map((s, i) => `<li class="${i === 0 && s.club === state.team ? 'cur' : ''}"><b title="${s.name}">${s.name}</b><span>${s.from}-${String(s.to).slice(2)}</span></li>`).join('');
+  $('#bio').innerHTML = `<dl>${dob ? `<div><dt>Date of birth</dt><dd>${dob}${a ? ` <small>${a} yrs</small>` : ''}</dd></div>` : ''}${p.height ? `<div><dt>Height</dt><dd>${p.height} cm</dd></div>` : ''}${p.weight ? `<div><dt>Weight</dt><dd>${p.weight} kg</dd></div>` : ''}${spells ? `<div class="career"><dt>Euroleague career</dt><dd><ol>${spells}</ol></dd></div>` : ''}</dl>`;
+  $('#facts').innerHTML = [p.country ? `<span>${p.country.replace('United States of America', 'USA')}</span>` : '',
     played ? `<span><b>${tot.gp}</b> game${tot.gp === 1 ? '' : 's'}</span><span><b>${f1(tot.min / gp)}</b> min</span>` : `<span><b>0</b> games</span>`].join('');
   renderTiles(); renderRole(); renderForm(); LB.mark(); $('#f-ast').hidden = !d.shots.some(s => s[11] != null); if ($('#f-ast').hidden) { state.ast = 'all'; $('#f-ast').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x.dataset.v === 'all')); }
   const xf = d.xfg;

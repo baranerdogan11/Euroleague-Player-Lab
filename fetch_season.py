@@ -24,6 +24,7 @@ for d in (CACHE, DATA, PHOTOS, LOGOS):
 H = {"User-Agent": "Mozilla/5.0", "Accept": "application/json"}
 FEEDS = "https://feeds.incrowdsports.com/provider/euroleague-feeds/v2/competitions/E/seasons"
 LIVE = "https://live.euroleague.net/api"
+PEOPLE = "https://api-live.euroleague.net/v2/competitions/E/people"   # one row per Euroleague season a player was registered, with the club
 PHOTO_H = 480
 
 
@@ -119,10 +120,14 @@ for club in index:
         if p.get("type") != "J":
             continue
         pc = p["person"]["code"]
+        try:
+            cached(f"career_{pc}.json", lambda: get(f"{PEOPLE}/{pc}").get("data", []))
+        except Exception as e:
+            print("   career unavailable:", pc, e)
         url = (p.get("images") or {}).get("headshot") or (p.get("images") or {}).get("action") or prev_photo.get(pc)
         has_photo = save_image(url, os.path.join(PHOTOS, f"{pc}.webp"), height=PHOTO_H) if (url and not NO_PHOTOS) else os.path.exists(os.path.join(PHOTOS, f"{pc}.webp"))
         players.append({"pid": "P" + pc, "code": pc, "name": p["person"]["name"], "dorsal": p.get("dorsal"), "position": p.get("positionName"),
-                        "height": p["person"].get("height"), "birth": (p["person"].get("birthDate") or "")[:10],
+                        "height": p["person"].get("height"), "weight": p["person"].get("weight"), "birth": (p["person"].get("birthDate") or "")[:10],
                         "country": (p["person"].get("country") or {}).get("name"), "photo": f"photos/{pc}.webp" if has_photo else None})
     print(f"   roster {len(players)}, photos {sum(1 for p in players if p['photo'])}")
 

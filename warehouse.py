@@ -50,7 +50,7 @@ for c in clubs:
             continue
         pc = p["person"]["code"]
         players[pc] = {"player": pc, "name": p["person"]["name"], "birth_date": date_only(p["person"].get("birthDate")),
-                       "country": (p["person"].get("country") or {}).get("name"), "height_cm": p["person"].get("height") or None}
+                       "country": (p["person"].get("country") or {}).get("name"), "height_cm": p["person"].get("height") or None, "weight_kg": p["person"].get("weight") or None}
         stints.append({"player": pc, "club": c["club"], "start_date": date_only(p.get("startDate")), "end_date": date_only(p.get("endDate")),
                        "active": bool(p.get("active")), "dorsal": p.get("dorsal") or None, "position": p.get("positionName"), "last_team": p.get("lastTeam") or None})
 
@@ -91,7 +91,20 @@ for path in sorted(glob.glob(os.path.join(CACHE, "points_*.json"))):
                       "score_home": r.get("POINTS_A"), "score_away": r.get("POINTS_B")})
 # players who appear in box scores but not in any current roster feed (departed before the first roster pull)
 for b in box:
-    players.setdefault(b["player"], {"player": b["player"], "name": b["player_name"], "birth_date": None, "country": None, "height_cm": None})
+    players.setdefault(b["player"], {"player": b["player"], "name": b["player_name"], "birth_date": None, "country": None, "height_cm": None, "weight_kg": None})
+
+# ---- careers: every Euroleague season a current player was registered, from the people feed (cache/career_<player>.json)
+careers = []
+for pc in list(players):
+    path = os.path.join(CACHE, f"career_{pc}.json")
+    if not os.path.exists(path):
+        continue
+    for e in load(os.path.basename(path)) or []:
+        s, c = e.get("season") or {}, e.get("club") or {}
+        if not (s.get("code") and c.get("code")):
+            continue
+        careers.append({"player": pc, "season": s["code"], "club": c["code"], "club_name": c.get("abbreviatedName") or c.get("name"),
+                        "start_date": date_only(e.get("startDate")), "end_date": date_only(e.get("endDate"))})
 
 con = duckdb.connect()
 
@@ -109,7 +122,8 @@ def to_parquet(name, rows, schema):
 
 counts = {
     "clubs": to_parquet("clubs", clubs, [("club", "VARCHAR"), ("name", "VARCHAR"), ("short", "VARCHAR"), ("country", "VARCHAR"), ("city", "VARCHAR")]),
-    "players": to_parquet("players", list(players.values()), [("player", "VARCHAR"), ("name", "VARCHAR"), ("birth_date", "DATE"), ("country", "VARCHAR"), ("height_cm", "INTEGER")]),
+    "players": to_parquet("players", list(players.values()), [("player", "VARCHAR"), ("name", "VARCHAR"), ("birth_date", "DATE"), ("country", "VARCHAR"), ("height_cm", "INTEGER"), ("weight_kg", "INTEGER")]),
+    "careers": to_parquet("careers", careers, [("player", "VARCHAR"), ("season", "VARCHAR"), ("club", "VARCHAR"), ("club_name", "VARCHAR"), ("start_date", "DATE"), ("end_date", "DATE")]),
     "roster_stints": to_parquet("roster_stints", stints, [("player", "VARCHAR"), ("club", "VARCHAR"), ("start_date", "DATE"), ("end_date", "DATE"), ("active", "BOOLEAN"), ("dorsal", "VARCHAR"), ("position", "VARCHAR"), ("last_team", "VARCHAR")]),
     "games": to_parquet("games", games, [("game", "INTEGER"), ("round", "INTEGER"), ("phase", "VARCHAR"), ("date_utc", "TIMESTAMP"), ("date", "DATE"), ("home", "VARCHAR"), ("away", "VARCHAR"), ("home_score", "INTEGER"), ("away_score", "INTEGER"), ("played", "BOOLEAN"), ("status", "VARCHAR")]),
     "box": to_parquet("box", box, [("game", "INTEGER"), ("player", "VARCHAR"), ("club", "VARCHAR"), ("starter", "BOOLEAN"), ("minutes", "DOUBLE"), ("pts", "INTEGER"), ("fgm2", "INTEGER"), ("fga2", "INTEGER"), ("fgm3", "INTEGER"), ("fga3", "INTEGER"), ("ftm", "INTEGER"), ("fta", "INTEGER"), ("oreb", "INTEGER"), ("dreb", "INTEGER"), ("reb", "INTEGER"), ("ast", "INTEGER"), ("stl", "INTEGER"), ("tov", "INTEGER"), ("blk", "INTEGER"), ("blka", "INTEGER"), ("pf", "INTEGER"), ("fd", "INTEGER"), ("pir", "INTEGER"), ("plusminus", "INTEGER")]),

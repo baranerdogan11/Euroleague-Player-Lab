@@ -199,6 +199,7 @@ points of spread to 4.8, so every row would round to the same number.
 - `p/<pid>.html`: one share stub per player with his Open Graph card (name, club, photo), forwarding to his page; written by `build.py`, handed out by the page's Copy link button
 - `teams/E2026/index.json`, `teams/E2026/<CLUB>.json`: compact per-club data (stats, game log, shots)
 - `photos/<player>.webp`, `logos/<CLUB>.png`: media-day photos and crests
+- Each player page carries a bio beside the photo: date of birth, height, weight and his Euroleague career as club spells (consecutive seasons folded into one line, most recent first). Weight comes from the roster feed; the spells come from the league's people feed, one row per season a player was registered, cached per season under `cache/<season>/career_<player>.json` and stored in the warehouse's `careers` table.
 - `warehouse/E2026/*.parquet`: the queryable season warehouse (schema in `warehouse/SCHEMA.md`)
 - `fetch_season.py`, `checks.py`, `warehouse.py`, `warehouse_tests.py`, `build.py`, `template.html`: the pipeline and page source
 
