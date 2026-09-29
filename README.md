@@ -106,6 +106,21 @@ A first version measured skill against the shooter-aware xFG and found zero betw
 what should happen when the expectation already contains the shooter; quality and skill must be measured
 against the context-only expectation.
 
+## Custom domain
+
+The site is served by GitHub Pages and takes a custom domain with one file and two DNS records. Order matters:
+the `CNAME` file makes the GitHub address redirect to the domain, so it goes in only after the DNS is live.
+
+1. At the registrar, point the apex to GitHub Pages with four A records (`185.199.108.153`, `185.199.109.153`,
+   `185.199.110.153`, `185.199.111.153`) and add a CNAME record for `www` to `baranerdogan11.github.io`.
+2. When `dig <domain>` returns those addresses, add a file named `CNAME` at the repository root containing the
+   bare domain and push. `build.py` reads it and switches the share stubs' Open Graph URLs to the domain.
+3. In the repository's Settings, Pages, confirm the domain shows as verified and tick "Enforce HTTPS" once the
+   certificate has been issued, usually within an hour.
+
+Nothing else in the app depends on the address: the page fetches its data by relative path and the share links
+are built from wherever the site is served.
+
 ## Monitoring
 
 [`monitor.html`](https://baranerdogan11.github.io/Euroleague-Player-Lab/monitor.html) is the system's status page,

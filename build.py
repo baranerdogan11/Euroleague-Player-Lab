@@ -20,7 +20,9 @@ SEASON = sys.argv[1] if len(sys.argv) > 1 else "E2026"
 ROOT = os.path.dirname(os.path.abspath(__file__))
 W = os.path.join(ROOT, "warehouse", SEASON)
 OUT = os.path.join(ROOT, "teams", SEASON)
-SITE = "https://baranerdogan11.github.io/Euroleague-Player-Lab/"   # public origin, for absolute Open Graph URLs in the share stubs
+# public origin for the absolute Open Graph URLs in the share stubs: the custom domain once a CNAME file exists, GitHub Pages until then
+_cname = os.path.join(ROOT, "CNAME")
+SITE = f"https://{open(_cname).read().strip()}/" if os.path.exists(_cname) and open(_cname).read().strip() else "https://baranerdogan11.github.io/Euroleague-Player-Lab/"
 os.makedirs(OUT, exist_ok=True)
 for stale in glob.glob(os.path.join(OUT, "*.json")):
     if os.path.basename(stale) not in ("monitor.json",):      # club files are regenerated; the monitoring snapshot is owned by monitor.py
