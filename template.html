@@ -180,7 +180,11 @@ h1 span span{display:block;color:var(--club2)}
 @media (prefers-reduced-motion:reduce){.shot{animation:none}.live i{animation:none}.ticker .run{animation:none}.tile::after,.split .bar i.fill,.gauge .t i,.zone-bar,.progress,.toast{transition:none}.sk{animation:none}
   .lb-list.go-l,.lb-list.go-r,.lb-title b.swap{animation:none}.lb-row a::after,.lb-arrow,.lb-dots button,.lb-row a,.lb summary::after{transition:none}}
 .court3d{position:relative;width:100%;aspect-ratio:4/3;background:var(--floor);overflow:hidden}
-.court3d canvas{display:block;width:100%;height:100%;touch-action:none}
+.court3d canvas{display:block;width:100%;height:100%;touch-action:pan-y}
+.court3d.orbit canvas{touch-action:none}
+.hud-row{display:flex;gap:8px;align-items:center}
+.orbit-seg,.hint3d .coarse{display:none}
+@media (pointer:coarse){.orbit-seg{display:inline-flex}.hint3d .fine{display:none}.hint3d .coarse{display:inline}.hint3d{transition:opacity .4s}.hint3d.gone{opacity:0}}
 .hud3d{position:absolute;left:12px;top:12px;right:12px;display:flex;justify-content:space-between;align-items:center;gap:10px;pointer-events:none}
 .hud3d .seg{pointer-events:auto}
 .hud3d .seg button{background:rgba(6,7,8,.8)}
@@ -491,6 +495,7 @@ body.cv-on .top,body.cv-on .wrap{display:none}
   .foot{font-size:11px;letter-spacing:.1em;gap:6px}
   .panel h2,.panel summary{font-size:22px;padding:12px 14px 8px}
   .prof-chart text{font-size:19px}.prof-chart .ln{stroke-width:3.5}.prof-chart .end{r:6}
+  .hud3d{flex-direction:column;align-items:stretch;gap:6px;left:8px;top:8px;right:8px}.hud-row{width:100%}.hud-row .seg{display:flex;flex:1}.hud-row .seg button{flex:1 1 0;text-align:center;padding:9px 4px;font-size:12px}.orbit-seg{flex:0 0 auto}.orbit-seg button{padding:9px 14px}.hint3d{align-self:flex-start;font-size:11px}
 }
 </style>
 <div class="bar"></div>
@@ -572,7 +577,7 @@ body.cv-on .top,body.cv-on .wrap{display:none}
         <div class="court-wrap">
           <svg class="court" id="court" viewBox="-30 0 1580 1440" role="img" aria-label="Half-court shot chart"></svg>
           <div class="court3d" id="court3d" hidden>
-            <div class="hud3d"><div class="seg" id="f-cam"><button aria-pressed="true" data-v="broadcast">Broadcast</button><button aria-pressed="false" data-v="baseline">Behind rim</button><button aria-pressed="false" data-v="high">High</button></div><span class="hint3d">Drag to orbit · scroll or pinch to zoom</span></div>
+            <div class="hud3d"><div class="hud-row"><div class="seg" id="f-cam"><button aria-pressed="true" data-v="broadcast">Broadcast</button><button aria-pressed="false" data-v="baseline">Behind rim</button><button aria-pressed="false" data-v="high">High</button></div><div class="seg orbit-seg"><button type="button" id="orbit" aria-pressed="false">Orbit</button></div></div><span class="hint3d" id="hint3d"><span class="fine">Drag to orbit · scroll or pinch to zoom</span><span class="coarse">Tap Orbit to look around · pinch to zoom</span></span></div>
           </div>
           <div class="empty" id="empty" hidden><div><b>No games yet</b><span id="empty-sub"></span></div></div>
         </div>
@@ -1051,9 +1056,13 @@ const Shot3D = (() => {
     let drag = null, pinch = null; const ptrs = new Map(), el = renderer.domElement;
     const span = () => { const [a, b] = [...ptrs.values()]; return Math.hypot(a[0] - b[0], a[1] - b[1]); };
     const zoom = f => { cam.dist = Math.max(6, Math.min(34, cam.dist * f)); };
-    el.addEventListener('pointerdown', e => { ptrs.set(e.pointerId, [e.clientX, e.clientY]); cam.drift = false; el.setPointerCapture(e.pointerId); if (ptrs.size === 2) { pinch = span(); drag = null; } else drag = {x: e.clientX, y: e.clientY}; });
-    el.addEventListener('pointermove', e => { if (!ptrs.has(e.pointerId)) return; ptrs.set(e.pointerId, [e.clientX, e.clientY]); if (ptrs.size === 2 && pinch) { const d = span(); if (d > 0) zoom(pinch / d); pinch = d; return; } if (!drag) return; cam.az -= (e.clientX - drag.x) * 0.006; cam.el = Math.max(0.12, Math.min(1.45, cam.el + (e.clientY - drag.y) * 0.004)); drag = {x: e.clientX, y: e.clientY}; });
-    const lift = e => { ptrs.delete(e.pointerId); if (ptrs.size < 2) pinch = null; drag = null; };
+    const orbitBtn = $('#orbit'); let hold = 0, holdAt = null;
+    const setOrbit = on => { host.classList.toggle('orbit', on); orbitBtn.setAttribute('aria-pressed', on); orbitBtn.textContent = on ? 'Done' : 'Orbit'; if (on) toast('Orbit on · drag to look around'); };
+    orbitBtn.addEventListener('click', () => setOrbit(!host.classList.contains('orbit')));
+    el.addEventListener('pointerdown', e => { ptrs.set(e.pointerId, [e.clientX, e.clientY]); cam.drift = false; el.setPointerCapture(e.pointerId); if (ptrs.size === 2) { pinch = span(); drag = null; } else drag = {x: e.clientX, y: e.clientY};
+      if (e.pointerType === 'touch' && !host.classList.contains('orbit')) { holdAt = [e.clientX, e.clientY]; clearTimeout(hold); hold = setTimeout(() => { if (holdAt) setOrbit(true); }, 350); } });
+    el.addEventListener('pointermove', e => { if (holdAt && Math.hypot(e.clientX - holdAt[0], e.clientY - holdAt[1]) > 8) { holdAt = null; clearTimeout(hold); } if (!ptrs.has(e.pointerId)) return; ptrs.set(e.pointerId, [e.clientX, e.clientY]); if (ptrs.size === 2 && pinch) { const d = span(); if (d > 0) zoom(pinch / d); pinch = d; return; } if (!drag) return; cam.az -= (e.clientX - drag.x) * 0.006; cam.el = Math.max(0.12, Math.min(1.45, cam.el + (e.clientY - drag.y) * 0.004)); drag = {x: e.clientX, y: e.clientY}; });
+    const lift = e => { ptrs.delete(e.pointerId); if (ptrs.size < 2) pinch = null; drag = null; holdAt = null; clearTimeout(hold); };
     el.addEventListener('pointerup', lift); el.addEventListener('pointercancel', lift);
     el.addEventListener('wheel', e => { e.preventDefault(); zoom(1 + e.deltaY * 0.0012); }, {passive: false});
     if ('IntersectionObserver' in window) new IntersectionObserver(es => { vis = es[es.length - 1].isIntersecting; wake(); }).observe(host);   // the render loop sleeps while the court is scrolled out of view; the last entry is the current state
@@ -1121,6 +1130,7 @@ const Shot3D = (() => {
       if (matchMedia('(prefers-reduced-motion: reduce)').matches) { list.forEach(mark); S.i = list.length; S.playing = false; cam.drift = false; cap.textContent = list.length ? `${S.made} / ${list.length} made · ${pct(S.made, list.length)}` : 'No attempts in this selection'; }   // no flights: every marker is placed at once
       else { S.playing = true; cap.textContent = list.length ? `${list.length} attempts` : 'No attempts in this selection'; }
       running = true; vis = inView(); wake();   // a new sequence always restarts the loop, whether it was stopped, asleep off-screen, or still running
+      const hint = $('#hint3d'); hint.classList.remove('gone'); clearTimeout(hint.t); hint.t = setTimeout(() => hint.classList.add('gone'), 3000);   // phones: the hint fades once read
     },
     stop(){ running = false; cancelAnimationFrame(raf); raf = 0; S.playing = false; },
     clear(){ S.playing = false; S.list = []; S.i = 0; clear(); },   // empty court, loop kept alive so the camera still responds
