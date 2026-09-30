@@ -237,7 +237,14 @@ tbody tr:hover td{background:rgba(255,255,255,.03)}
 .gauge .t u{position:absolute;top:-3px;bottom:-3px;width:3px;background:#fff;transform:translateX(-50%)}
 .gauge .t::after{content:"";position:absolute;left:50%;top:-3px;bottom:-3px;width:2px;background:var(--muted)}
 .gauge .u{display:block;font-size:11.5px;color:var(--muted);line-height:1.35;min-height:32px}
-.gauge .pct{display:block;font-size:11.5px;color:var(--ink2);margin-top:4px}
+.gauge .pct{display:block;font-size:11.5px;color:var(--ink2);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.how{margin-top:12px}
+.how summary{cursor:pointer;list-style:none;font-family:var(--cond);font-weight:700;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--club2);display:inline-flex;align-items:center;gap:8px}
+.how summary::-webkit-details-marker{display:none}
+.panel .how summary{padding:0;font-size:12px;font-style:normal;font-weight:700}.panel .how summary::before{display:none}
+.how summary::after{content:"";width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid currentColor;transition:transform .2s}
+.how[open] summary::after{transform:rotate(180deg)}
+.how .sub{margin:10px 0 0;max-width:70ch}
 .prof-chart{margin-top:14px}
 .prof-chart svg{width:100%;height:auto;display:block}
 .prof-chart .ax{stroke:var(--line2);stroke-width:1}
@@ -563,12 +570,12 @@ body.cv-on .top,body.cv-on .wrap{display:none}
     <section class="panel prof" id="prof-panel" hidden style="margin-top:18px">
       <h2>Shot quality vs shooting skill</h2>
       <div class="in">
-        <p class="sub" id="prof-sub"></p>
         <div class="gauges">
           <div class="gauge"><span class="k">Shot quality</span><b id="pq"></b><div class="t"><i id="pq-bar"></i><u id="pq-dot"></u></div><span class="u">expected points per attempt on his shots</span><span class="pct" id="pq-pct"></span></div>
           <div class="gauge"><span class="k">Shooting skill</span><b id="ps"></b><div class="t"><i id="ps-bar"></i><u id="ps-dot"></u></div><span class="u">points per 100 attempts above a league-average shooter, shrunk</span><span class="pct" id="ps-pct"></span></div>
         </div>
         <div class="prof-chart"><svg id="curve" viewBox="0 0 640 220" role="img" aria-label="Season curve of shooting skill"></svg><div class="legend" id="curve-legend"></div></div>
+        <details class="how"><summary>How this is measured</summary><p class="sub" id="prof-sub"></p></details>
       </div>
     </section>
     </div>
@@ -879,13 +886,13 @@ function renderProfile(p, d){
   panel.hidden = false;
   const P = META.priors, per100 = v => (100 * v).toFixed(1);
   $('#prof-sub').textContent = `Shot quality is the value of the shots he takes (a league-average shooter would score this much per attempt on them). Shooting skill is what he scores on top of that: scoring above the expectation for where and when the shot was taken (the model does not see the defender, the dribble or the shot clock, so shot creation is part of it). Both are shrunk toward the league (skill: ${Math.round(P.k_skill)} attempts of prior weight, so ${pr.att} attempts carry ${(100 * pr.att / (pr.att + P.k_skill)).toFixed(0)}% of the estimate). Percentiles are against ${P.reference_season.replace('E','').replace(/(\d{4})/, (m,y)=>y+'-'+(+y+1).toString().slice(2))} players with 100+ attempts.`;
-  const gauge = (bar, dot, pt, lo, hi, minAtt) => { const b = $(bar), u = $(dot), ranged = lo != null && hi != null; b.style.left = ranged ? lo + '%' : '0'; b.style.width = ranged ? Math.max(1, hi - lo) + '%' : (pt ?? 0) + '%'; u.hidden = pt == null || pr.att < minAtt; u.style.left = (pt ?? 0) + '%'; return pt == null ? '' : pr.att < minAtt ? (ranged ? `${Math.round(lo)}th to ${Math.round(hi)}th percentile (${pr.att} attempts, too few for a point rank)` : '') : `${pt.toFixed(0)}th percentile${ranged ? ` (${Math.round(lo)} to ${Math.round(hi)})` : ''}`; };
+  const gauge = (bar, dot, pt, lo, hi, minAtt) => { const b = $(bar), u = $(dot), ranged = lo != null && hi != null; b.style.left = ranged ? lo + '%' : '0'; b.style.width = ranged ? Math.max(1, hi - lo) + '%' : (pt ?? 0) + '%'; u.hidden = pt == null || pr.att < minAtt; u.style.left = (pt ?? 0) + '%'; return pt == null ? '' : pr.att < minAtt ? (ranged ? `${ord(Math.round(lo))} to ${ord(Math.round(hi))} pct · ${pr.att} attempts` : '') : `${ord(Math.round(pt))} pct${ranged ? ` (${Math.round(lo)} to ${Math.round(hi)})` : ''} · ${pr.att} attempts`; };
   $('#pq').innerHTML = `${pr.quality_shrunk.toFixed(2)}<small>lg ${P.league_quality.toFixed(2)}</small>`;
-  const qtxt = gauge('#pq-bar', '#pq-dot', pr.quality_pct, pr.quality_pct_lo, pr.quality_pct_hi, 30); $('#pq-pct').textContent = qtxt ? `${qtxt} · raw ${pr.quality.toFixed(2)} on ${pr.att} attempts` : '';
+  const qtxt = gauge('#pq-bar', '#pq-dot', pr.quality_pct, pr.quality_pct_lo, pr.quality_pct_hi, 30); $('#pq-pct').textContent = qtxt; $('#pq').closest('.gauge').title = `Raw ${pr.quality.toFixed(2)} on ${pr.att} attempts${pr.att < 30 ? ' · too few for a point rank' : ''}`;
   const sgn = pr.skill_shrunk >= 0 ? '+' : '';
   $('#ps').innerHTML = `${sgn}${per100(pr.skill_shrunk)}<small>± ${per100(pr.skill_sd)}</small>`;
   const stxt = gauge('#ps-bar', '#ps-dot', pr.skill_pct, pr.skill_pct_lo, pr.skill_pct_hi, 50), pAbove = pr.skill_sd ? 0.5 * (1 + erf(pr.skill_shrunk / (pr.skill_sd * Math.SQRT2))) : null, xa = d.xfg && d.xfg.pae_adj != null ? ` · ${d.xfg.pae_adj >= 0 ? '+' : ''}${d.xfg.pae_adj.toFixed(1)} against the defences faced` : '';
-  $('#ps-pct').textContent = stxt ? `${stxt} · raw ${pr.skill >= 0 ? '+' : ''}${per100(pr.skill)} · ${pr.pae >= 0 ? '+' : ''}${pr.pae.toFixed(1)} points above expectation${xa}${pAbove != null ? ` · ${(100 * pAbove).toFixed(0)}% chance he is above a league-average shooter` : ''}` : '';
+  $('#ps-pct').textContent = stxt; $('#ps').closest('.gauge').title = `Raw ${pr.skill >= 0 ? '+' : ''}${per100(pr.skill)} per 100 · ${pr.pae >= 0 ? '+' : ''}${pr.pae.toFixed(1)} points above expectation${xa}${pAbove != null ? ` · ${(100 * pAbove).toFixed(0)}% chance he is above a league-average shooter` : ''}${pr.att < 50 ? ' · too few attempts for a point rank' : ''}`;
   // season curve of shrunk skill with ±1 sd band, x = attempts
   const c = pr.curve, W = 640, H = 220, L = 46, R = 16, T = 14, B = 30;
   if (!c.length) { $('#curve').innerHTML = ''; return; }
