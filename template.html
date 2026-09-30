@@ -273,6 +273,7 @@ td.w{color:var(--good)} td.l{color:var(--bad)}
 .search kbd{position:absolute;right:20px;top:50%;transform:translateY(-50%);font-family:var(--cond);font-size:11px;color:var(--muted);border:1px solid var(--line2);padding:0 5px;line-height:16px;pointer-events:none}
 .search input:focus~kbd,.search input:not(:placeholder-shown)~kbd{display:none}
 .search .dd-list{left:0;right:0;min-width:300px}
+.q-btn,.q-x{display:none}
 .search .dd-list li.none{color:var(--muted);cursor:default;text-transform:none;letter-spacing:0;font-family:var(--sans);font-weight:500;font-size:13px}
 /* hero controls */
 .tagrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
@@ -435,7 +436,18 @@ body.cv-on .top,body.cv-on .wrap{display:none}
 .grid>*{min-width:0}
 .scroll{overflow-x:auto;scrollbar-width:thin;scrollbar-color:var(--line2) transparent}
 @media (max-width:760px){
-  .search{flex:1 1 100%;height:44px;border-right:0}
+  .top{position:sticky;top:0;z-index:40;flex-wrap:nowrap;height:52px;background:var(--bg2)}
+  .top .id{order:0;flex:none;height:52px;font-size:18px;padding:0 12px 0 12px}
+  .live{display:none}
+  .sel.team{flex:none;width:54px;height:52px;padding:0;border-bottom:0;border-right:1px solid var(--line);justify-content:center;position:static}
+  .sel.team img{width:30px;height:30px}
+  .sel.team .dd{position:static}.sel.team .dd-btn{position:absolute;left:auto;top:0;width:54px;height:52px;margin-left:-54px;padding:0;font-size:0}.sel.team .dd-btn::after{display:none}.sel.team .dd-list{left:6px;right:6px;top:52px}
+  .sel.player{flex:1 1 auto;height:52px;padding:0 6px 0 10px;border-bottom:0}
+  .sel.player .dd-btn{font-size:16px;padding:12px 24px 12px 0}.sel.player .dd-btn::after{right:6px}.sel.player .dd-list{left:auto;right:0}
+  .q-btn{display:grid;place-items:center;width:52px;height:52px;flex:none;background:transparent;border:0;border-left:1px solid var(--line);color:var(--ink);cursor:pointer}
+  .search{display:none;position:absolute;left:0;right:0;top:0;height:52px;background:var(--bg2);padding:0 12px;flex:none;border-right:0;z-index:2}
+  .top.q-on .search{display:flex}.q-x{display:grid;place-items:center;width:44px;height:44px;flex:none;background:transparent;border:0;color:var(--ink2);font-size:26px;line-height:1;cursor:pointer}
+  .search input{font-size:17px;padding:10px 0 8px}.search kbd{display:none}.search .dd-list{left:0;right:0;top:100%}
   .hero .ph img{height:250px}.hero .ph .num{font-size:150px;bottom:-12px}.hero .lt{padding:16px 16px 14px}h1{font-size:58px;margin:12px 0 8px}.facts{font-size:15px;gap:12px}
   .bio{padding:0 16px 18px}
   .pnav button{height:40px;min-width:44px;font-size:14px}.pnav #prev,.pnav #next{font-size:26px;padding:0 10px 4px}
@@ -493,7 +505,8 @@ body.cv-on .top,body.cv-on .wrap{display:none}
   <a class="id" href="#" title="Back to the opening page">Player Lab<span>Euroleague</span></a>
   <div class="sel team"><img id="crest-img" alt=""><select id="team" aria-label="Team"></select></div>
   <div class="sel player"><select id="player" aria-label="Player"></select></div>
-  <div class="search"><input type="search" id="q" placeholder="Find a player" aria-label="Find a player across all clubs" autocomplete="off" spellcheck="false" role="combobox" aria-expanded="false" aria-controls="q-list" aria-autocomplete="list"><kbd>/</kbd><ul class="dd-list" id="q-list" role="listbox" aria-label="Players" hidden></ul></div>
+  <div class="search"><input type="search" id="q" placeholder="Find a player" aria-label="Find a player across all clubs" autocomplete="off" spellcheck="false" role="combobox" aria-expanded="false" aria-controls="q-list" aria-autocomplete="list"><kbd>/</kbd><ul class="dd-list" id="q-list" role="listbox" aria-label="Players" hidden></ul><button type="button" class="q-x" id="q-x" aria-label="Close search" hidden>&times;</button></div>
+  <button type="button" class="q-btn" id="q-btn" aria-label="Find a player"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M15.5 15.5L21 21" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button>
   <div class="live"><i></i><b id="tag-season"></b><span id="tag-sub">Updated after every game</span></div>
 </header>
 <div class="progress" id="progress"></div>
@@ -1188,13 +1201,16 @@ function findPlayers(q){ const toks = fold(q).trim().split(/[\s\-'.]+/).filter(B
   const q = $('#q'), list = $('#q-list'); let hits = [], hi = -1;
   const close = () => { list.hidden = true; q.setAttribute('aria-expanded', 'false'); q.removeAttribute('aria-activedescendant'); hi = -1; };
   const mark = () => { [...list.children].forEach((li, i) => { li.classList.toggle('hi', i === hi); li.setAttribute('aria-selected', i === hi); }); if (hi >= 0) q.setAttribute('aria-activedescendant', `q-opt-${hi}`); else q.removeAttribute('aria-activedescendant'); };
-  const go = x => { location.hash = `${x.r.club}/${x.r.pid}`; q.value = ''; close(); q.blur(); };
+  const go = x => { location.hash = `${x.r.club}/${x.r.pid}`; q.value = ''; close(); q.blur(); $('.top').classList.remove('q-on'); };
   const show = () => { if (!q.value.trim()) { close(); return; } hits = findPlayers(q.value); list.innerHTML = hits.length ? hits.map((x, i) => { const c = CLUBS[x.r.club] || {}; return `<li role="option" id="q-opt-${i}" data-i="${i}" aria-selected="false">${c.logo ? `<img src="${c.logo}" alt="">` : ''}<span class="no">${x.r.dorsal || '–'}</span><span>${x.n.first} ${x.n.sur}</span><small>${shortName(x.r.club)}</small></li>`; }).join('') : '<li class="none">No player matches</li>'; list.hidden = false; q.setAttribute('aria-expanded', 'true'); hi = hits.length ? 0 : -1; mark(); };
   q.addEventListener('input', show); q.addEventListener('focus', show);
+  $('#q-btn').addEventListener('click', () => { $('.top').classList.add('q-on'); $('#q-x').hidden = false; q.focus(); });   // phones: the field opens over the bar from the icon
+  $('#q-x').addEventListener('click', () => { q.value = ''; close(); $('.top').classList.remove('q-on'); });
+  q.addEventListener('blur', () => setTimeout(() => { if (document.activeElement !== q) $('.top').classList.remove('q-on'); }, 120));
   q.addEventListener('keydown', e => {
     if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); if (list.hidden) { show(); return; } if (hits.length) { hi = (hi + (e.key === 'ArrowDown' ? 1 : -1) + hits.length) % hits.length; mark(); } }
     else if (e.key === 'Enter') { if (hi >= 0 && hits[hi]) go(hits[hi]); }
-    else if (e.key === 'Escape') { if (!list.hidden) close(); else { q.value = ''; q.blur(); } }
+    else if (e.key === 'Escape') { if (!list.hidden) close(); else { q.value = ''; q.blur(); $('.top').classList.remove('q-on'); } }
   });
   list.addEventListener('mousedown', e => e.preventDefault());
   list.addEventListener('click', e => { const li = e.target.closest('li[data-i]'); if (li) go(hits[+li.dataset.i]); });
