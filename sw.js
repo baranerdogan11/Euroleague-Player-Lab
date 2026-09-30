@@ -1,6 +1,6 @@
 // Euroleague Player Lab service worker: the page and every JSON go network-first (a rebuild is never masked), the heavy
 // static files (photos, crests, fonts, the 3D library) cache-first for thirty days so a club already opened reads offline.
-const V = 'pl-2026-09-30_1151_UTC';
+const V = 'pl-2026-09-30_1215_UTC';
 const STATIC = /\/(photos|logos|fonts|icons)\/|cdnjs\.cloudflare\.com/;
 const DAY = 864e5, TTL = 30 * DAY;
 self.addEventListener('install', e => { self.skipWaiting(); });
@@ -12,8 +12,13 @@ self.addEventListener('fetch', e => {
   if (STATIC.test(url.href)) {
     e.respondWith(caches.open(V).then(async c => {
       const hit = await c.match(req);
-      if (hit && Date.now() - +(hit.headers.get('sw-at') || 0) < TTL) return hit;
-      try { const r = await fetch(req); if (r.ok || r.type === 'opaque') { const h = new Headers(r.headers); h.set('sw-at', String(Date.now())); c.put(req, new Response(await r.clone().blob(), {status: r.status, statusText: r.statusText, headers: h})); } return r; }
+      if (hit && (hit.type === 'opaque' || Date.now() - +(hit.headers.get('sw-at') || 0) < TTL)) return hit;   // opaque entries live until the next build replaces the cache
+      try {
+        const r = await fetch(req);
+        if (r.type === 'opaque') c.put(req, r.clone());   // cross-origin (the 3D library): stored as is; an opaque response cannot be rebuilt with headers
+        else if (r.ok) { const h = new Headers(r.headers); h.set('sw-at', String(Date.now())); c.put(req, new Response(await r.clone().blob(), {status: r.status, statusText: r.statusText, headers: h})); }
+        return r;
+      }
       catch (err) { if (hit) return hit; throw err; }
     }));
     return;
