@@ -167,7 +167,7 @@ h1 span span{display:block;color:var(--club2)}
 .court .line{fill:none;stroke:#4d5566;stroke-width:6;vector-effect:non-scaling-stroke}
 .court .floor{fill:var(--floor)}
 .court .paint{fill:var(--paint)}
-.court .made{fill:var(--club2);stroke:var(--floor);stroke-width:3}
+.court .made{fill:var(--hit,var(--club2));stroke:var(--floor);stroke-width:3}
 .court .miss{fill:none;stroke:var(--miss);stroke-width:5}
 .court .missx{stroke:var(--miss);stroke-width:5;stroke-linecap:round}
 .court .zone{stroke:var(--floor);stroke-width:4}
@@ -192,7 +192,7 @@ h1 span span{display:block;color:var(--club2)}
 .caption b{font-family:var(--cond);font-weight:700;font-size:16px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink)}
 .legend{display:flex;gap:16px;font-size:12px;color:var(--muted)}
 .legend i{display:inline-block;width:11px;height:11px;border-radius:50%;vertical-align:-1px;margin-right:6px}
-.legend i.m{background:var(--club2)} .legend i.x{border:2px solid var(--miss)}
+.legend i.m{background:var(--hit,var(--club2))} .legend i.x{border:2px solid var(--miss)}
 /* season stats */
 .splits{display:grid;gap:10px;margin:4px 0 16px}
 .split{display:grid;grid-template-columns:52px 1fr 96px;align-items:center;gap:12px;font-variant-numeric:tabular-nums}
@@ -216,7 +216,7 @@ th:first-child,td:first-child{text-align:left}
 td:first-child{font-family:var(--sans);font-size:13.5px;font-weight:500;color:var(--ink)}
 td.k{color:#fff;font-weight:700}
 tbody tr:hover td{background:rgba(255,255,255,.03)}
-.zone-bar{display:inline-block;height:8px;background:var(--club2);vertical-align:middle;margin-left:8px;transform:skewX(-14deg)}
+.zone-bar{display:inline-block;height:8px;background:var(--hit,var(--club2));vertical-align:middle;margin-left:8px;transform:skewX(-14deg)}
 .tbl-cap{font-family:var(--cond);font-weight:700;font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:14px 0 2px}
 #zones td.k .cell{display:inline-block;padding:1px 7px}
 #zones td.lg{color:var(--muted);font-weight:500}
@@ -636,7 +636,7 @@ const $ = s => document.querySelector(s);
 const CLUBS = Object.fromEntries(META.clubs.map(c => [c.code, c]));
 const shortName = code => (CLUBS[code] && CLUBS[code].short) || code;
 const PLACEHOLDER = "data:image/svg+xml;utf8," + encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 360 480'><defs><linearGradient id='g' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='#343841'/><stop offset='1' stop-color='#131519'/></linearGradient></defs><circle cx='180' cy='150' r='80' fill='url(#g)'/><path d='M40 480 C40 330 110 280 180 280 C250 280 320 330 320 480Z' fill='url(#g)'/></svg>`);
-const state = {team: null, data: null, player: 0, result: 'all', view: 'dots', game: 'all', rate: 'pg', ast: 'all', cmp: null, timers: [], accent: '#f26f21', base: '#1f2b47'};
+const state = {team: null, data: null, player: 0, result: 'all', view: 'dots', game: 'all', rate: 'pg', ast: 'all', cmp: null, timers: [], accent: '#f26f21', base: '#1f2b47', hit: '#f26f21'};
 const cache = {};
 const tip = $('#tip');
 const showTip = (e, h) => { tip.innerHTML = h; tip.style.opacity = 1; moveTip(e); };
@@ -668,8 +668,10 @@ function applyPalette(c){
   r.setProperty('--wedge', lum(base) < 0.026 ? mix(base, '#ffffff', .86) : base);   // near-black bases (Besiktas, Asvel, Paris, Partizan, Virtus, Baskonia) get a lifted wedge so the hero keeps its shape
   const [hh, sat] = hue(accent); r.setProperty('--bad', sat > .35 && (hh < 22 || hh > 338) ? '#ffa040' : '#ff6b6b');   // red-accent clubs: losses in amber so they never read as the club colour
   r.setProperty('--floor', mix(base, '#0c1016', .16)); r.setProperty('--paint', mix(base, '#0c1016', .28));
-  state.accent = accent; state.base = base;
-  Shot3D.recolor(accent, mix(base, '#0c1016', .16), mix(base, '#0c1016', .28));
+  // the court keeps its own hit colour: the club accent unless it is grey or near-white (Asvel, Besiktas), when made shots would vanish against the misses
+  const hit = sat < .2 || la > .8 ? '#f26f21' : accent; r.setProperty('--hit', hit);
+  state.accent = accent; state.base = base; state.hit = hit;
+  Shot3D.recolor(hit, mix(base, '#0c1016', .16), mix(base, '#0c1016', .28));
 }
 
 // ---- court geometry (cm, basket at origin, y toward half court) -> SVG (basket at bottom)
@@ -849,7 +851,7 @@ function renderDiet(zs, total){
   if (!total || total < MIN_ATT || !ref) { cap.hidden = true; el.hidden = true; return; }
   cap.hidden = false; el.hidden = false;
   const keys = [['rim', 'Rim', 1], ['paint', 'Paint', .7], ['mid', 'Mid', null], ['c3', 'Corner 3', 'b1'], ['a3', 'Above-break 3', 'b2']];
-  const colour = c => c === null ? 'rgba(138,145,160,.55)' : c === 'b1' ? 'rgba(79,142,247,.95)' : c === 'b2' ? 'rgba(79,142,247,.55)' : hexA(state.accent, c);
+  const colour = c => c === null ? 'rgba(138,145,160,.55)' : c === 'b1' ? 'rgba(79,142,247,.95)' : c === 'b2' ? 'rgba(79,142,247,.55)' : hexA(state.hit, c);
   const bar = shares => `<div class="stack">${keys.map(([k, l, c]) => `<i style="width:${(100 * shares[k]).toFixed(1)}%;background:${colour(c)}" title="${l} ${(100 * shares[k]).toFixed(0)}%"></i>`).join('')}</div>`;
   const mine = Object.fromEntries(keys.map(([k]) => [k, zs[k].a / total])), pos = Object.fromEntries(keys.map(([k]) => [k, ref.zones[k].share]));
   cap.textContent = `Shot diet vs ${(d.pos_group || 'player').toLowerCase()}s · share of attempts by zone`;
@@ -927,7 +929,7 @@ function renderChart(animate){
   const zs = zoneStats(tableShots), total = tableShots.length || 1;
   const lgz = k => LG && LG.zones[k] ? LG.zones[k].fg : null;
   const zoneRow = (k, l, v, cls = '') => { const share = v.a / total, lg = lgz(k), p = v.a ? v.m / v.a : null, small = v.a > 0 && v.a < MIN_ATT, diff = p != null && lg != null ? p - lg : null;
-    const bg = diff == null || small ? 'transparent' : diff >= 0 ? hexA(state.accent, Math.min(.55, .08 + diff * 2.2)) : `rgba(79,142,247,${Math.min(.55, .08 - diff * 2.2).toFixed(2)})`;
+    const bg = diff == null || small ? 'transparent' : diff >= 0 ? hexA(state.hit, Math.min(.55, .08 + diff * 2.2)) : `rgba(79,142,247,${Math.min(.55, .08 - diff * 2.2).toFixed(2)})`;
     const title = v.a ? `${v.m} of ${v.a} · ${ival(v.m, v.a)}${small ? ' · small sample' : ''}${lg != null ? ` · league ${(100 * lg).toFixed(1)}%` : ''}` : '';
     return `<tr class="${cls}${small ? ' small' : ''}" data-tip="${title}"><td>${l}</td><td>${v.a ? `${v.m} / ${v.a}` : '–'}</td><td class="k"><span class="cell" style="background:${bg}">${pct(v.m, v.a)}</span></td><td class="lg">${lg != null ? (100 * lg).toFixed(1) + '%' : '–'}</td><td class="lg">${v.xa ? (100 * v.x / v.xa).toFixed(1) + '%' : '–'}</td><td class="lg">${v.ak ? (100 * v.am / v.ak).toFixed(0) + '%' : '–'}</td><td>${v.a ? (share * 100).toFixed(0) + '%' : '–'}<span class="zone-bar" style="width:${Math.round(share * 60)}px"></span></td></tr>`; };
   const threes = {m: zs.c3.m + zs.a3.m, a: zs.c3.a + zs.a3.a, x: zs.c3.x + zs.a3.x, xa: zs.c3.xa + zs.a3.xa, am: zs.c3.am + zs.a3.am, ak: zs.c3.ak + zs.a3.ak};
@@ -949,7 +951,7 @@ function renderChart(animate){
   if (is3d) { Shot3D.play(shots, s => gameLabel(games[s[0]])); return; }
   Shot3D.stop();
   if (state.view === 'zones') {
-    const col = (k, m, a) => { if (!a || a < MIN_ATT) return 'rgba(120,128,144,.22)'; const lg = lgz(k) ?? 0.45; const t = Math.max(-1, Math.min(1, (m / a - lg) / 0.15)); return t >= 0 ? hexA(state.accent, 0.15 + 0.6 * t) : `rgba(79,142,247,${(0.15 + 0.55 * -t).toFixed(2)})`; };
+    const col = (k, m, a) => { if (!a || a < MIN_ATT) return 'rgba(120,128,144,.22)'; const lg = lgz(k) ?? 0.45; const t = Math.max(-1, Math.min(1, (m / a - lg) / 0.15)); return t >= 0 ? hexA(state.hit, 0.15 + 0.6 * t) : `rgba(79,142,247,${(0.15 + 0.55 * -t).toFixed(2)})`; };
     const lab = (k, x, y, small) => { const v = zs[k], few = v.a < MIN_ATT; return `<text class="zl" x="${x}" y="${y}" style="${small ? 'font-size:34px' : ''}${few ? ';fill:#c6cbd4' : ''}">${few ? `${v.m}/${v.a}` : pct(v.m, v.a)}</text><text class="zs" x="${x}" y="${y + (small ? 30 : 40)}" style="${small ? 'font-size:24px' : ''}">${few ? '' : `${v.m}/${v.a}`}</text>`; };
     zl.innerHTML = `<rect class="zone" x="${X(-750)}" y="${Y(1242.5)}" width="1500" height="1400" fill="${col('a3', zs.a3.m, zs.a3.a)}"/>
       <rect class="zone" x="${X(-750)}" y="${Y(141.5)}" width="90" height="299" fill="${col('c3', zs.c3.m, zs.c3.a)}"/><rect class="zone" x="${X(660)}" y="${Y(141.5)}" width="90" height="299" fill="${col('c3', zs.c3.m, zs.c3.a)}"/>
