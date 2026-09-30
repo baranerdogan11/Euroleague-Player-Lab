@@ -1,6 +1,6 @@
 {
  "model": "xFG (expected field goal)",
- "version": "2026-09-23",
+ "version": "2026-09-30",
  "trained_on": "E2025",
  "n_shots": 51750,
  "n_shooters": 329,
@@ -14,9 +14,11 @@
   "minute",
   "margin",
   "quarter",
+  "poss_sec",
   "three",
   "home",
   "zone",
+  "poss_start",
   "shooter"
  ],
  "chosen": "xfg_context_plus_shooter",
@@ -37,100 +39,116 @@
    "auc": 0.6522
   },
   "xfg_context": {
-   "logloss": 0.6317,
-   "brier": 0.2219,
-   "auc": 0.6703
+   "logloss": 0.627,
+   "brier": 0.2199,
+   "auc": 0.6812
   },
   "xfg_context_plus_shooter": {
-   "logloss": 0.6303,
-   "brier": 0.2213,
-   "auc": 0.6734
+   "logloss": 0.6264,
+   "brier": 0.2196,
+   "auc": 0.6829
   }
  },
  "calibration_test": [
   {
    "n": 1279,
-   "pred": 0.297,
-   "actual": 0.303
+   "pred": 0.288,
+   "actual": 0.28
   },
   {
    "n": 1278,
-   "pred": 0.353,
-   "actual": 0.341
+   "pred": 0.349,
+   "actual": 0.322
   },
   {
    "n": 1278,
-   "pred": 0.372,
-   "actual": 0.335
-  },
-  {
-   "n": 1279,
-   "pred": 0.389,
-   "actual": 0.406
-  },
-  {
-   "n": 1277,
-   "pred": 0.406,
-   "actual": 0.414
+   "pred": 0.37,
+   "actual": 0.345
   },
   {
    "n": 1278,
-   "pred": 0.427,
-   "actual": 0.412
+   "pred": 0.388,
+   "actual": 0.392
+  },
+  {
+   "n": 1278,
+   "pred": 0.409,
+   "actual": 0.415
+  },
+  {
+   "n": 1278,
+   "pred": 0.433,
+   "actual": 0.449
   },
   {
    "n": 1278,
    "pred": 0.479,
-   "actual": 0.469
+   "actual": 0.461
   },
   {
    "n": 1278,
    "pred": 0.565,
-   "actual": 0.557
+   "actual": 0.559
   },
   {
    "n": 1278,
-   "pred": 0.659,
-   "actual": 0.64
+   "pred": 0.664,
+   "actual": 0.646
   },
   {
    "n": 1279,
-   "pred": 0.86,
-   "actual": 0.873
+   "pred": 0.865,
+   "actual": 0.882
   }
  ],
  "permutation_importance": [
   [
    "dist",
-   0.1145
+   0.1107
+  ],
+  [
+   "poss_sec",
+   0.0061
   ],
   [
    "y",
-   0.0017
+   0.0019
   ],
   [
    "shooter",
-   0.0016
+   0.0017
   ],
   [
    "x",
+   0.0015
+  ],
+  [
+   "poss_start",
    0.0014
   ],
   [
    "clock_sec",
-   0.0011
-  ],
-  [
-   "zone",
-   0.0004
+   0.0012
   ],
   [
    "angle",
-   0.0003
+   0.0004
+  ],
+  [
+   "zone",
+   0.0002
   ],
   [
    "minute",
-   0.0002
+   0.0001
+  ],
+  [
+   "home",
+   0.0001
+  ],
+  [
+   "margin",
+   -0.0
   ],
   [
    "quarter",
@@ -139,17 +157,11 @@
   [
    "three",
    0.0
-  ],
-  [
-   "home",
-   0.0
-  ],
-  [
-   "margin",
-   -0.0001
   ]
  ],
  "shooter_shrinkage_k": 150.0,
  "algorithm": "sklearn HistGradientBoostingClassifier, early stopping",
- "notes": "Shooter effect is a sequential shrunk residual computed from earlier shots only; no leakage."
+ "notes": "Shooter effect is a sequential shrunk residual computed from earlier shots only; no leakage.",
+ "changes": "Adds poss_sec (seconds into the possession) and poss_start (how the possession began) from the play-by-play layer; both are known before the release and missing for games without play-by-play.",
+ "context_coverage": 0.982
 }

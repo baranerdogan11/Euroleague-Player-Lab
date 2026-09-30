@@ -63,6 +63,8 @@ class Shot(BaseModel):
     home: bool = True
     margin: float = Field(0.0, ge=-100, le=100, description="shooter's team margin before the shot")
     zone: Optional[str] = Field(None, description="league zone letter; inferred as unknown if omitted")
+    poss_sec: Optional[float] = Field(None, ge=0, le=40, description="seconds since the possession started, if known")
+    poss_start: Optional[str] = Field(None, description="how the possession began: period, make, dreb, oreb, steal or tov; unknown if omitted")
     player: Optional[str] = Field(None, description="league person code for the shooter effect, e.g. 002100")
 
     @field_validator("pts")
@@ -94,10 +96,13 @@ def shooter_term(code):
 
 def score(shots):
     d = pd.DataFrame([{"x": s.x, "y": s.y, "pts": s.pts, "minute": s.minute, "clock": s.clock, "club": "H" if s.home else "A", "home": "H", "away": "A",
-                        "score_home": 0, "score_away": 0, "made": 0, "zone": s.zone or "?", "fastbreak": 0, "second_chance": 0, "points_off_tov": 0} for s in shots])
+                        "score_home": 0, "score_away": 0, "made": 0, "zone": s.zone or "?", "fastbreak": 0, "second_chance": 0, "points_off_tov": 0,
+                        "poss_sec": s.poss_sec, "poss_start": s.poss_start or "?"} for s in shots])
     f = featurize(d)
     f["margin"] = [s.margin for s in shots]
     f["zone"] = pd.Categorical(f.zone.astype(str), categories=ZONES)
+    if "poss_start" in bundle["categories"]:
+        f["poss_start"] = pd.Categorical(f.poss_start.astype(str), categories=bundle["categories"]["poss_start"])
     if "shooter" in FEATS:
         f["shooter"] = [shooter_term(s.player) for s in shots]
         xfg = MODEL.predict_proba(f[FEATS])[:, 1]

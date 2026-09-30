@@ -30,6 +30,40 @@
    },
    "baseline_zone_logloss": 0.6447,
    "algorithm": "sklearn HistGradientBoostingClassifier, early stopping",
+   "stage": "archived"
+  },
+  {
+   "name": "xfg",
+   "version": "2026-09-30",
+   "sha256": "da04bae2c5f6bb8c82690eaed05395a5b9944dfa76183aa901cddcd610cd7a2f",
+   "registered_at": "2026-09-30T16:15:45Z",
+   "trained_on": "E2025",
+   "training_shots_sha256": "fba442f7228e45496f4f418ac75541d8ba144d6bdc49ecd8aff8218e99cffc34",
+   "n_shots": 51750,
+   "features": [
+    "dist",
+    "angle",
+    "x",
+    "y",
+    "clock_sec",
+    "minute",
+    "margin",
+    "quarter",
+    "poss_sec",
+    "three",
+    "home",
+    "zone",
+    "poss_start",
+    "shooter"
+   ],
+   "chosen": "xfg_context_plus_shooter",
+   "metrics_test": {
+    "logloss": 0.6264,
+    "brier": 0.2196,
+    "auc": 0.6829
+   },
+   "baseline_zone_logloss": 0.6447,
+   "algorithm": "sklearn HistGradientBoostingClassifier, early stopping",
    "stage": "production"
   }
  ]

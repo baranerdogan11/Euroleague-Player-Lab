@@ -19,7 +19,7 @@ basket, `x` lateral, `y` toward half court.
 | `box` | one row per player per played game | (`game`, `player`) | `club`, `starter`, `minutes`, `pts`, `fgm2`, `fga2`, `fgm3`, `fga3`, `ftm`, `fta`, `oreb`, `dreb`, `reb`, `ast`, `stl`, `tov`, `blk`, `blka`, `pf`, `fd`, `pir`, `plusminus` |
 | `shots` | one row per field-goal attempt | (`game`, `seq`) | `player`, `club`, `x`, `y`, `made`, `pts`, `zone`, `minute`, `clock`, `fastbreak`, `second_chance`, `points_off_tov`, `score_home`, `score_away` |
 | `events` | one row per play-by-play event (`events.py`) | (`game`, `seq`) | `period`, `club`, `player`, `playtype` (2FGM, 3FGA, AS, D, O, TO, ST, RV, CM, FV, AG, FTA, FTM, IN, OUT, ...), `minute`, `clock`, `clock_sec`, `score_home`, `score_away`, `info` |
-| `shot_context` | one row per shot in a game with play-by-play | (`game`, `seq`) | `assisted` (makes only), `fouled` (and-one), `blocked` (misses only), `poss_sec` (seconds since the possession started, from the scorer's clock) |
+| `shot_context` | one row per shot in a game with play-by-play | (`game`, `seq`) | `assisted` (makes only), `fouled` (and-one), `blocked` (misses only), `poss_sec` (seconds since the possession started, from the scorer's clock), `poss_start` (how it began: `period`, `make`, `dreb`, `oreb`, `steal`, `tov`) |
 
 ## Invariants (all enforced)
 

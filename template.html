@@ -340,6 +340,13 @@ td.w{color:var(--good)} td.l{color:var(--bad)}
 .toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,16px);background:var(--white);color:#000;font-family:var(--cond);font-weight:800;font-size:14px;letter-spacing:.12em;text-transform:uppercase;padding:10px 18px;clip-path:polygon(8px 0,100% 0,calc(100% - 8px) 100%,0 100%);opacity:0;transition:opacity .2s,transform .2s;z-index:60;pointer-events:none}
 .toast.on{opacity:1;transform:translate(-50%,0)}
 .toast .lnk{color:#000;font:inherit;text-decoration:underline;padding:6px 0;cursor:pointer}
+.trend{margin:0 0 12px;padding:10px 12px;background:var(--panel);border:1px solid var(--line)}
+.tsum{display:flex;gap:18px;flex-wrap:wrap;font-size:12.5px;color:var(--ink2);margin-bottom:8px}.tsum b{font-family:var(--cond);font-size:16px;font-weight:800;font-style:italic;color:var(--ink)}.tsum small{color:var(--muted)}.tsum i{font-style:normal;color:var(--muted)}.tsum i.up{color:var(--good)}.tsum i.down{color:var(--bad)}
+.trow{display:grid;grid-template-columns:56px minmax(0,1fr);gap:10px;align-items:center;margin:4px 0}.trow span{font-family:var(--cond);font-weight:700;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}.trow svg{width:100%;height:48px;display:block;overflow:visible}
+.trend rect.st{fill:var(--club2)}.trend rect.bn{fill:none;stroke:var(--club2);stroke-width:1.5}.trend text.gap{font-family:var(--cond);font-size:9px;fill:var(--muted);text-anchor:middle}.trend .ln{fill:none;stroke:var(--ink2);stroke-width:1.5}.trend .dt{fill:var(--club2)}.trend .gr{stroke:var(--line2);stroke-width:1}
+.tleg{font-size:11.5px;color:var(--muted);margin-top:6px}.tleg i{display:inline-block;width:10px;height:10px;vertical-align:-1px;margin:0 4px 0 10px}.tleg i.st{background:var(--club2)}.tleg i.bn{border:1.5px solid var(--club2)}
+.log tr.dnp td{color:var(--muted)}.log tr.dnp td[colspan]{text-align:left;font-family:var(--sans);font-size:12.5px;font-weight:500}
+td .st{display:inline-block;color:var(--club2);font-style:normal;font-family:var(--cond);font-size:10px;font-weight:800;margin-right:4px;vertical-align:2px;cursor:help}
 .log tbody tr{cursor:pointer}
 .log tbody tr.on td{background:rgba(255,255,255,.07);color:var(--ink)}
 .log tbody tr.on td:nth-child(3)::after{content:"in view";display:inline-block;margin-left:8px;padding:1px 6px;font-family:var(--cond);font-size:11px;letter-spacing:.12em;text-transform:uppercase;background:var(--club2);color:var(--on);vertical-align:1px}
@@ -584,6 +591,7 @@ body.cv-on .top,body.cv-on .wrap{display:none}
     <summary>Game log</summary>
     <div class="in">
       <p class="sub" id="ha" hidden></p>
+      <div class="trend" id="trend" hidden></div>
       <div class="scroll"><table id="log"><thead><tr><th>Rd</th><th>Date</th><th>Opponent</th><th>Result</th><th>Min</th><th>Pts</th><th>Reb</th><th>Ast</th><th>Stl</th><th>Blk</th><th>Tov</th><th>2P</th><th>3P</th><th>FT</th><th>PIR</th><th>+/-</th><th data-tip="Possessions in the game">Pace</th><th data-tip="Opponent points allowed per 100 possessions, season to date">Opp DRtg</th></tr></thead><tbody></tbody></table></div>
       <p class="none" id="log-none" hidden>No games played yet.</p>
     </div>
@@ -825,7 +833,7 @@ function renderPlayer(){
   $('#bio').innerHTML = `<dl>${dob ? `<div><dt>Date of birth</dt><dd><span class="full">${dob}${a ? ` <small>${a} yrs</small>` : ''}</span><span class="short">${a ? `${a} yrs` : dob}</span></dd></div>` : ''}${p.height ? `<div><dt>Height</dt><dd>${p.height} cm</dd></div>` : ''}${p.weight ? `<div><dt>Weight</dt><dd>${p.weight} kg</dd></div>` : ''}${spells ? `<div class="career"><dt>${cl}</dt><dd><details${PHONE.matches ? '' : ' open'}><summary>${cl} · ${career.length} spell${career.length === 1 ? '' : 's'}</summary><ol>${spells}</ol>${career.length > CAP ? `<button type="button" class="lnk" id="bio-more">Show all ${career.length}</button>` : ''}</details></dd></div>` : ''}</dl>`;
   const more = $('#bio-more'); if (more) more.addEventListener('click', () => { $('#bio').classList.toggle('all'); more.textContent = $('#bio').classList.contains('all') ? 'Show fewer' : `Show all ${career.length}`; });
   $('#facts').innerHTML = [p.country ? `<span>${p.country.replace('United States of America', 'USA')}</span>` : '',
-    played ? `<span><b>${tot.gp}</b> game${tot.gp === 1 ? '' : 's'}</span><span><b>${f1(tot.min / gp)}</b> min</span>` : `<span><b>0</b> games</span>`].join('');
+    played ? `<span><b>${tot.gp}</b> game${tot.gp === 1 ? '' : 's'}</span>${tot.starts ? `<span><b>${tot.starts}</b> start${tot.starts === 1 ? '' : 's'}</span>` : ''}<span><b>${f1(tot.min / gp)}</b> min</span>` : `<span><b>0</b> games</span>`].join('');
   // no minutes yet: the splits, zones and shot tools would be a page of dashes, so one line says when he plays instead
   const nx = t.upcoming && t.upcoming[0], nxTxt = nx ? `Round ${nx.round} ${nx.home === realCode() ? 'vs ' + shortName(nx.away) : '@ ' + shortName(nx.home)} · ${fmtDate(nx.date)}` : null;
   $('#stats-none').hidden = played; $('#stats-none-sub').textContent = played ? '' : `${t.games_played ? `No minutes in the club's ${t.games_played} game${t.games_played === 1 ? '' : 's'} so far` : 'The club has not played yet'}${nxTxt ? ` · next: ${nxTxt}` : ''} · his bio and career are above.`;
@@ -839,11 +847,16 @@ function renderPlayer(){
   $('#splits').innerHTML = rows.map(([k, m, at, v, sp]) => { const w = m !== null && at ? wilson(m, at) : null, small = (m !== null && at > 0 && at < MIN_ATT) || (sp != null && sp > 0 && sp < MIN_ATT), lg = lgs[k]; return `<div class="split${small ? ' small' : ''}" data-tip="${m !== null && at ? `${m} of ${at} · ${ival(m, at)}${small ? ' · small sample' : ''}` : sp != null ? `${tot.pts} points on ${sp.toFixed(1)} shooting possessions${small ? ' · small sample' : ''} · points per shooting possession, halved; free throws count 0.44 of a possession, so a perfect night can pass 100%` : ''}${lg != null ? ` · league ${(100 * lg).toFixed(1)}%` : ''}"><span class="k">${k}%</span><div class="bar"><i class="fill" style="width:${played ? Math.min(100, v * 100) : 0}%"></i></div><div class="v"><b>${played ? (v * 100).toFixed(1) : '–'}</b>${m !== null && played ? `${m}/${at}` : ''}</div></div>`; }).join('');
   const lg = $('#log tbody');
   const RT = META.ratings || {};
-  lg.innerHTML = d.log.map((r, i) => { const g = d.games[r[0]], l = gameLabel(g), opp = l.home ? g.away : g.home, rt = RT[opp]; return `<tr data-g="${r[0]}" tabindex="0" title="Show this game across the page" class="${String(state.game) === String(r[0]) ? 'on' : ''}"><td>${g.round}</td><td>${fmtDate(g.date)}</td><td>${l.home ? 'vs' : '@'} ${l.opp}</td><td class="${l.res === 'W' ? 'w' : 'l'}">${l.res} ${l.score}</td><td>${r[1]}</td><td class="k">${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td><td>${r[5]}</td><td>${r[6]}</td><td>${r[7]}</td><td>${r[8]}/${r[9]}</td><td>${r[10]}/${r[11]}</td><td>${r[12]}/${r[13]}</td><td>${r[14]}</td><td>${r[15] ?? ''}</td><td>${g.poss != null ? g.poss.toFixed(0) : '–'}</td><td>${rt ? rt.drtg.toFixed(1) : '–'}</td></tr>`; }).join('');
+  // club games he missed sit in the log too: DNP (in the box, no minutes) or not in the squad
+  const seq = [...d.log.map(r => ({r, g: d.games[r[0]], date: d.games[r[0]].date})), ...(d.absent || []).map(a => ({a, g: a, date: a.date}))].sort((p, q) => p.date < q.date ? -1 : p.date > q.date ? 1 : 0);
+  lg.innerHTML = seq.map(({r, a, g}) => { const l = gameLabel(g), opp = l.home ? g.away : g.home, rt = RT[opp];
+    if (a) return `<tr class="dnp"><td>${g.round}</td><td>${fmtDate(g.date)}</td><td>${l.home ? 'vs' : '@'} ${l.opp}</td><td class="${l.res === 'W' ? 'w' : 'l'}">${l.res} ${l.score}</td><td colspan="14">${a.kind === 'DNP' ? 'Did not play' : 'Not in the squad'}</td></tr>`;
+    return `<tr data-g="${r[0]}" tabindex="0" title="Show this game across the page" class="${String(state.game) === String(r[0]) ? 'on' : ''}"><td>${g.round}</td><td>${fmtDate(g.date)}</td><td>${l.home ? 'vs' : '@'} ${l.opp}</td><td class="${l.res === 'W' ? 'w' : 'l'}">${l.res} ${l.score}</td><td>${r[16] ? '<i class="st" data-tip="Started">S</i>' : ''}${r[1]}</td><td class="k">${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td><td>${r[5]}</td><td>${r[6]}</td><td>${r[7]}</td><td>${r[8]}/${r[9]}</td><td>${r[10]}/${r[11]}</td><td>${r[12]}/${r[13]}</td><td>${r[14]}</td><td>${r[15] ?? ''}</td><td>${g.poss != null ? g.poss.toFixed(0) : '–'}</td><td>${rt ? rt.drtg.toFixed(1) : '–'}</td></tr>`; }).join('');
   const ha = {H: {g: 0, pts: 0, fga: 0, fta: 0}, A: {g: 0, pts: 0, fga: 0, fta: 0}};
   d.log.forEach(r => { const g = d.games[r[0]], side = gameLabel(g).home ? ha.H : ha.A; side.g++; side.pts += r[2]; side.fga += r[9] + r[11]; side.fta += r[13]; });
   const haTxt = s => s.g ? `${(s.pts / s.g).toFixed(1)} pts, ${tsOf(s.pts, s.fga, s.fta) != null ? (100 * tsOf(s.pts, s.fga, s.fta)).toFixed(1) + '% TS' : ''} in ${s.g} game${s.g === 1 ? '' : 's'}` : 'no games';
   $('#ha').hidden = !d.log.length; $('#ha').textContent = `Home: ${haTxt(ha.H)} · Away: ${haTxt(ha.A)}`;
+  renderTrend();
   renderCompareOptions();
   $('#log-none').hidden = d.log.length > 0; $('#log-panel .scroll').hidden = d.log.length === 0;
   renderProfile(p, d);
@@ -886,6 +899,30 @@ function renderForm(){
   const spark = `<svg viewBox="0 0 ${w} ${h}" width="${w}" height="${h}"><path d="M${pts.map((v, i) => `${sx(i).toFixed(1)} ${sy(v).toFixed(1)}`).join(' L')}" fill="none" stroke="var(--club2)" stroke-width="2" stroke-linejoin="round"/><circle cx="${sx(pts.length - 1).toFixed(1)}" cy="${sy(pts[pts.length - 1]).toFixed(1)}" r="3" fill="var(--club2)"/></svg>`;
   const arrow = v => v > 0.5 ? '▲' : v < -0.5 ? '▼' : '▶';
   el.innerHTML = `<span><small>Last 5 games</small> <b>${last.p36.toFixed(1)}</b> pts / 36 <small>(season ${season.p36.toFixed(1)}) ${arrow(last.p36 - season.p36)}</small></span><span><b>${last.ts != null ? (100 * last.ts).toFixed(1) + '%' : '–'}</b> TS <small>(${season.ts != null ? (100 * season.ts).toFixed(1) + '%' : '–'})</small></span>${spark}<small>points, last ${pts.length} games</small>`;
+}
+// minutes and role game by game: bars for minutes (filled when he started), usage as a line, missed games as gaps, and a
+// last-five-against-season read on minutes flagged only when the change beats his own game-to-game spread
+function renderTrend(){
+  const d = ds(), el = $('#trend'), log = d.log;
+  if (log.length < 3) { el.hidden = true; return; }
+  el.hidden = false;
+  const mins = log.map(r => r[1]), n = mins.length, season = mins.reduce((a, b) => a + b, 0) / n;
+  const lastN = Math.min(5, n), last = mins.slice(-lastN).reduce((a, b) => a + b, 0) / lastN;
+  const own = n >= 5 ? Math.sqrt(mins.reduce((a, v) => a + (v - season) ** 2, 0) / (n - 1)) : null, sd = own ?? META.min_sd ?? 5.5;
+  const diff = last - season, flag = n > lastN && Math.abs(diff) > sd;
+  const starts = log.filter(r => r[16]).length, lastStarts = log.slice(-lastN).filter(r => r[16]).length;
+  const seq = [...log.map((r, i) => ({date: d.games[r[0]].date, round: d.games[r[0]].round, min: r[1], usg: (d.role_g || [])[i] ? d.role_g[i].usg : null, start: !!r[16]})),
+    ...(d.absent || []).map(a => ({date: a.date, round: a.round, min: null, kind: a.kind}))].sort((p, q) => p.date < q.date ? -1 : p.date > q.date ? 1 : 0);
+  const W = Math.max(180, seq.length * 18), H = 48, bw = 12, x = i => 2 + i * 18, y = v => H - 4 - Math.min(40, v) / 40 * (H - 10);
+  const bars = seq.map((s, i) => s.min == null ? `<text x="${x(i) + bw / 2}" y="${H - 7}" class="gap" data-tip="R${s.round} · ${s.kind === 'DNP' ? 'did not play' : 'not in the squad'}">${s.kind === 'DNP' ? 'dnp' : '–'}</text>`
+    : `<rect x="${x(i)}" y="${y(s.min)}" width="${bw}" height="${Math.max(1, H - 4 - y(s.min))}" class="${s.start ? 'st' : 'bn'}" data-tip="R${s.round} · ${s.min} min · ${s.start ? 'started' : 'from the bench'}"/>`).join('');
+  const pts = seq.map((s, i) => s.usg == null ? null : `${x(i) + bw / 2} ${y(s.usg)}`).filter(Boolean);
+  const usage = (pts.length > 1 ? `<path d="M${pts.join(' L')}" class="ln"/>` : '') + seq.map((s, i) => s.usg == null ? '' : `<circle cx="${x(i) + bw / 2}" cy="${y(s.usg)}" r="2.6" class="dt" data-tip="R${s.round} · usage ${s.usg}%"/>`).join('');
+  const grid = `<line x1="0" x2="${W}" y1="${y(20)}" y2="${y(20)}" class="gr"/><line x1="0" x2="${W}" y1="${y(40)}" y2="${y(40)}" class="gr"/>`;
+  el.innerHTML = `<div class="tsum"><span><small>Minutes, last ${lastN}</small> <b>${last.toFixed(1)}</b> <small>season ${season.toFixed(1)}</small> <i class="${flag ? (diff > 0 ? 'up' : 'down') : ''}">${flag ? (diff > 0 ? '▲ up' : '▼ down') : '▶ steady'}</i></span><span><small>Starts</small> <b>${starts}</b> <small>of ${n}${n > lastN ? ` · ${lastStarts} of the last ${lastN}` : ''}</small></span></div>
+    <div class="trow"><span>Minutes</span><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMinYMid meet" role="img" aria-label="Minutes per game">${grid}${bars}</svg></div>
+    <div class="trow"><span>Usage</span><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMinYMid meet" role="img" aria-label="Usage per game">${grid}${usage}</svg></div>
+    <div class="tleg"><i class="st"></i>started<i class="bn"></i>bench · lines at 20 and 40 (minutes, usage %)${(d.absent || []).length ? ' · dnp: did not play, –: not in the squad' : ''}${flag ? ` · the change beats his usual game-to-game spread (${sd.toFixed(1)} min)` : ''}</div>`;
 }
 function renderTiming(shots){
   const rows = shots.filter(s => s[14] != null), cap = $('#time-cap'), tb = $('#timing');

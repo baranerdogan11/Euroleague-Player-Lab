@@ -32,6 +32,8 @@ if raw.empty:
     sys.exit(0)
 df = featurize(raw)
 df["zone"] = pd.Categorical(df.zone.astype(str), categories=bundle["categories"]["zone"])
+if "poss_start" in bundle["categories"]:
+    df["poss_start"] = pd.Categorical(df.poss_start.astype(str), categories=bundle["categories"]["poss_start"])
 
 if "shooter" in feats:
     prior_path = os.path.join(MODEL_DIR, f"shooter_effects_{bundle['trained_on']}.parquet")

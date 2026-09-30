@@ -33,17 +33,21 @@ from features import NUMERIC, BINARY, CATEG, FEATURES, featurize  # noqa: E402
 def load_shots(season):
     con = duckdb.connect()
     w = os.path.join(ROOT, "warehouse", season)
+    ctx = os.path.join(w, "shot_context.parquet")
+    has_ctx = os.path.exists(ctx)
     q = f"""
     select s.game, s.seq, s.player, s.club, s.x, s.y, s.made, s.pts, s.zone, s.minute, s.clock, s.fastbreak, s.second_chance, s.points_off_tov,
-           s.score_home, s.score_away, g.date, g.home, g.away, g.round
+           s.score_home, s.score_away, g.date, g.home, g.away, g.round,
+           {"c.poss_sec, c.poss_start" if has_ctx else "null::integer as poss_sec, null::varchar as poss_start"}
     from read_parquet('{w}/shots.parquet') s join read_parquet('{w}/games.parquet') g using (game)
+    {f"left join read_parquet('{ctx}') c using (game, seq)" if has_ctx else ""}
     order by g.date, s.game, s.minute, s.seq"""
     return con.execute(q).df()
 
 
 def make_model(seed=SEED):
     return HistGradientBoostingClassifier(learning_rate=0.05, max_iter=600, max_leaf_nodes=31, min_samples_leaf=40, l2_regularization=1.0,
-                                          early_stopping=True, validation_fraction=0.1, n_iter_no_change=40, categorical_features=[FEATURES.index("zone")],
+                                          early_stopping=True, validation_fraction=0.1, n_iter_no_change=40, categorical_features=[FEATURES.index(c) for c in CATEG],
                                           random_state=seed)
 
 
@@ -98,7 +102,7 @@ if __name__ == "__main__":
     prior_all, effects = shooter_effects(pd.concat([train, test]), resid_all)
     train = train.assign(shooter=prior_all[:len(train)]); test = test.assign(shooter=prior_all[len(train):])
     FEAT2 = FEATURES + ["shooter"]
-    aug = HistGradientBoostingClassifier(**{**make_model().get_params(), "categorical_features": [FEAT2.index("zone")]}).fit(train[FEAT2], train.made)
+    aug = HistGradientBoostingClassifier(**{**make_model().get_params(), "categorical_features": [FEAT2.index(c) for c in CATEG]}).fit(train[FEAT2], train.made)
     p_aug_test = aug.predict_proba(test[FEAT2])[:, 1]
 
     res = {"constant": metrics(test.made, np.full(len(test), base_rate)), "zone_fg": metrics(test.made, p_zone), "distance_bins": metrics(test.made, p_dist),
@@ -113,7 +117,7 @@ if __name__ == "__main__":
     # refit the chosen model on the full season for deployment
     full = pd.concat([train, test])
     if use_shooter:
-        final = HistGradientBoostingClassifier(**{**make_model().get_params(), "categorical_features": [FEAT2.index("zone")]}).fit(full[FEAT2], full.made)
+        final = HistGradientBoostingClassifier(**{**make_model().get_params(), "categorical_features": [FEAT2.index(c) for c in CATEG]}).fit(full[FEAT2], full.made)
         feats = FEAT2
     else:
         final = make_model().fit(full[FEATURES], full.made); feats = FEATURES
@@ -123,12 +127,14 @@ if __name__ == "__main__":
     importance = sorted(zip(feats, pi.importances_mean.round(4)), key=lambda t: -t[1])
 
     os.makedirs(OUT, exist_ok=True)
-    joblib.dump({"model": final, "features": feats, "categories": {"zone": list(df.zone.cat.categories)}, "k_shrink": K_SHRINK, "trained_on": SEASON}, os.path.join(OUT, "xfg_model.joblib"))
+    joblib.dump({"model": final, "features": feats, "categories": {"zone": list(df.zone.cat.categories), "poss_start": list(df.poss_start.cat.categories)}, "k_shrink": K_SHRINK, "trained_on": SEASON}, os.path.join(OUT, "xfg_model.joblib"))
     effects.to_parquet(os.path.join(OUT, f"shooter_effects_{SEASON}.parquet"), index=False)
     card = {"model": "xFG (expected field goal)", "version": datetime.date.today().isoformat(), "trained_on": SEASON, "n_shots": int(len(df)), "n_shooters": int(df.player.nunique()),
             "split": f"time-based, test = games after {cut.date()} ({len(test)} shots)", "features": feats, "chosen": chosen, "metrics_test": res,
             "calibration_test": cal, "permutation_importance": importance, "shooter_shrinkage_k": K_SHRINK,
-            "algorithm": "sklearn HistGradientBoostingClassifier, early stopping", "notes": "Shooter effect is a sequential shrunk residual computed from earlier shots only; no leakage."}
+            "algorithm": "sklearn HistGradientBoostingClassifier, early stopping", "notes": "Shooter effect is a sequential shrunk residual computed from earlier shots only; no leakage.",
+            "changes": "Adds poss_sec (seconds into the possession) and poss_start (how the possession began) from the play-by-play layer; both are known before the release and missing for games without play-by-play.",
+            "context_coverage": round(float(df.poss_sec.notna().mean()), 3)}
     json.dump(card, open(os.path.join(OUT, "model_card.json"), "w"), indent=1)
     print(f"\nchosen: {chosen}; saved model, card and {len(effects)} shooter effects")
     print("top features:", importance[:8])

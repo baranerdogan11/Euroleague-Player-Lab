@@ -24,6 +24,8 @@ df = pd.DataFrame({"game": 1, "seq": [r["NUM_ANOT"] for r in shots], "player": [
                    "score_home": [r["POINTS_A"] for r in shots], "score_away": [r["POINTS_B"] for r in shots], "date": "2025-09-30", "home": "IST", "away": "TEL", "round": 1})
 f = featurize(df)
 f["zone"] = pd.Categorical(f.zone.astype(str), categories=bundle["categories"]["zone"])
+if "poss_start" in bundle["categories"]:
+    f["poss_start"] = pd.Categorical(f.poss_start.astype(str), categories=bundle["categories"]["poss_start"])
 if "shooter" in bundle["features"]:
     f["shooter"] = 0.0
 p = bundle["model"].predict_proba(f[bundle["features"]])[:, 1]

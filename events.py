@@ -3,8 +3,9 @@
 Reads cache/<season>/pbp_<game>.json (the live API's PlayByPlay feed, fetched by fetch_season.py) and writes two
 Parquet tables next to the rest of the warehouse:
   events        one row per play-by-play event (game, seq), sequence numbers shared with the shots table
-  shot_context  one row per shot: assisted (makes only), fouled on the shot, blocked (misses only), and seconds
-                since the possession started, from the scorer's clock (a coarse shot-clock proxy)
+  shot_context  one row per shot: assisted (makes only), fouled on the shot, blocked (misses only), seconds since
+                the possession started, from the scorer's clock (a coarse shot-clock proxy), and how that possession
+                began (period start, opponent make, own defensive or offensive rebound, steal, opponent turnover)
 
 usage: python events.py E2026
 """
@@ -52,33 +53,33 @@ for e in events:
 for gc, evs in by_game.items():
     evs.sort(key=lambda e: e["seq"])
     clubs = [c for c in {e["club"] for e in evs} if c]
-    start = {c: (1, 600) for c in clubs}          # possession start per club: (period, clock seconds remaining)
+    start = {c: (1, 600, 'period') for c in clubs}   # possession start per club: (period, clock seconds remaining, how it began)
     for i, e in enumerate(evs):
         pt, club, per, cs = e["playtype"], e["club"], e["period"], e["clock_sec"]
         opp = next((c for c in clubs if c != club), None) if club else None
         if pt == "BP":
             for c in clubs:
-                start[c] = (per, 300 if per >= 5 else 600)
+                start[c] = (per, 300 if per >= 5 else 600, 'period')
         if pt in FG and club:
             made = pt.endswith("M")
             look = evs[i + 1:i + 5]
             assisted = int(any(x["playtype"] == "AS" and x["club"] == club for x in look if x["period"] == per)) if made else None
             fouled = int(any(x["playtype"] == "RV" and x["club"] == club and x["player"] == e["player"] for x in evs[i + 1:i + 4] if x["period"] == per))
             blocked = None if made else int(any(x["playtype"] == "FV" and x["club"] == opp for x in evs[i + 1:i + 3]))
-            sp, sc = start.get(club, (per, None))
+            sp, sc, kind = start.get(club, (per, None, None))
             poss = (sc - cs) if (cs is not None and sc is not None and sp == per) else None
             if poss is not None and (poss < 0 or poss > 40):
                 poss = None
-            context.append({"game": gc, "seq": e["seq"], "assisted": assisted, "fouled": fouled, "blocked": blocked, "poss_sec": poss})
+            context.append({"game": gc, "seq": e["seq"], "assisted": assisted, "fouled": fouled, "blocked": blocked, "poss_sec": poss, "poss_start": kind if (poss is not None and sp == per) else None})
             if made and opp:                      # the opponent starts a possession after a make (and after the last free throw of an and-one, handled by FTM below)
-                start[opp] = (per, cs)
+                start[opp] = (per, cs, 'make')
         elif club and cs is not None:
             if pt in ("FTM",) and opp:             # each made free throw restarts the opponent's clock; the last one stands
-                start[opp] = (per, cs)
-            elif pt == "D" or pt == "ST" or pt == "O":   # own defensive rebound, steal, or offensive rebound: fresh possession for this club
-                start[club] = (per, cs)
-            elif pt == "TO" and opp:              # turnover: the opponent starts
-                start[opp] = (per, cs)
+                start[opp] = (per, cs, 'make')
+            elif pt in ("D", "ST", "O"):           # own defensive rebound, steal, or offensive rebound: fresh possession for this club
+                start[club] = (per, cs, {'D': 'dreb', 'ST': 'steal', 'O': 'oreb'}[pt])
+            elif pt == "TO" and opp:              # turnover: the opponent starts (a steal event that follows relabels it)
+                start[opp] = (per, cs, 'tov')
 
 con = duckdb.connect()
 
@@ -97,7 +98,7 @@ def to_parquet(name, rows, schema):
 os.makedirs(OUT, exist_ok=True)
 n_ev = to_parquet("events", events, [("game", "INTEGER"), ("seq", "INTEGER"), ("period", "INTEGER"), ("club", "VARCHAR"), ("player", "VARCHAR"), ("playtype", "VARCHAR"), ("minute", "INTEGER"),
                                      ("clock", "VARCHAR"), ("clock_sec", "INTEGER"), ("score_home", "INTEGER"), ("score_away", "INTEGER"), ("info", "VARCHAR")])
-n_ctx = to_parquet("shot_context", context, [("game", "INTEGER"), ("seq", "INTEGER"), ("assisted", "INTEGER"), ("fouled", "INTEGER"), ("blocked", "INTEGER"), ("poss_sec", "INTEGER")])
+n_ctx = to_parquet("shot_context", context, [("game", "INTEGER"), ("seq", "INTEGER"), ("assisted", "INTEGER"), ("fouled", "INTEGER"), ("blocked", "INTEGER"), ("poss_sec", "INTEGER"), ("poss_start", "VARCHAR")])
 manifest_path = os.path.join(OUT, "manifest.json")
 manifest = json.load(open(manifest_path)) if os.path.exists(manifest_path) else {"season": SEASON, "tables": {}}
 manifest["tables"].update({"events": n_ev, "shot_context": n_ctx})

@@ -21,7 +21,7 @@ in order.
 - Play-by-play context on every shot: assisted or unassisted, and-ones, blocks, seconds into the possession; an assisted/unassisted filter on the chart, an assisted share per zone and a shot-timing table
 - Shot diet against the position average, form over the last five games, home and away split, rest days, game pace and opponent defensive rating in the log
 - Compare with any player of the same position, next to the position median
-- Game log
+- Game log, with the club games he missed (did not play, or not in the squad), a start mark, and a minutes and usage trend: bars per game, starts filled, the last five against the season, flagged only when the change beats his own game-to-game spread
 - 2D and 3D shot charts: the 3D view (Three.js, loaded on demand) replays every attempt as a ball in flight with camera presets and orbit
 - Before a club's first game the page shows the roster and the date of the opener; stats and charts fill in as games are played
 - Deep links: `#ULK`, `#ULK/P007200`, `#ULK/P007200/zones` (club code, player id, optional zones view)
@@ -59,15 +59,19 @@ current club.
 
 `model/xfg.py` trains a gradient-boosted classifier on a past season's warehouse to estimate the probability
 that a shot goes in from its context: location, distance, angle, shot value, zone, quarter and clock, score
-margin, home court, fast break, second chance, points off turnover. Shooter quality is a separate, leak-free
+margin, home court, and from the play-by-play layer the seconds into the possession and how the possession began
+(period start, opponent make, own defensive or offensive rebound, steal, opponent turnover), both known before the
+release and missing for games without play-by-play. Shooter quality is a separate, leak-free
 feature: each shooter's shrunk running residual (made minus xFG) over his earlier shots only, so the model never
 sees the outcome it predicts. Validation is time-based (the last quarter of the season's games held out) against
 constant, zone-average and distance-bin baselines; metrics, calibration by decile and permutation importance are
 written to `model/model_card.json`.
 
-Trained on 2025-26 (51,750 shots, 329 shooters), held-out log loss 0.630 against 0.645 for zone-average FG%
-and 0.692 for a constant, AUC 0.67, calibrated within 4 points in every decile and within 2 in eight of ten. Distance dominates; the shooter
-term adds a small, real gain. A first version scored 0.497 and was discarded: the feed's fast-break,
+Trained on 2025-26 (51,750 shots, 329 shooters), held-out log loss 0.626 against 0.645 for zone-average FG%
+and 0.692 for a constant, AUC 0.68, calibrated within 3 points in every decile. Distance dominates, the seconds into
+the possession are the second strongest feature (FG% runs 55% in the first six seconds, 49% mid, 42% late), the
+shooter term adds a small, real gain. The 30 Sep 2026 version added the two possession features (log loss 0.630 to
+0.626) and the shooting priors were recalibrated on its expectations; `model/registry.json` keeps both versions. A first version scored 0.497 and was discarded: the feed's fast-break,
 second-chance and points-off-turnover flags are only set on made shots, and the running score includes the
 basket just made, so both leaked the label. They are excluded and the margin is taken before the shot.
 `model/score.py` scores the current season nightly, carrying last season's

@@ -242,8 +242,13 @@ for c in clubs:
                         from box b join games g using (game) where b.player = ? and b.minutes > 0 order by g.date, g.game""", r["player"])
         gidx = {b["game"]: i for i, b in enumerate(lines)}
         tot = {k: sum(b[k] or 0 for b in lines) for k in STAT_KEYS}
-        tot["min"] = round(sum(b["minutes"] for b in lines), 1); tot["gp"] = len(lines)
-        log = [[gidx[b["game"]], round(b["minutes"], 1), b["pts"], b["reb"], b["ast"], b["stl"], b["blk"], b["tov"], b["fgm2"], b["fga2"], b["fgm3"], b["fga3"], b["ftm"], b["fta"], b["pir"], b["plusminus"]] for b in lines]
+        tot["min"] = round(sum(b["minutes"] for b in lines), 1); tot["gp"] = len(lines); tot["starts"] = sum(1 for b in lines if b["starter"])
+        # log column 16: started the game
+        log = [[gidx[b["game"]], round(b["minutes"], 1), b["pts"], b["reb"], b["ast"], b["stl"], b["blk"], b["tov"], b["fgm2"], b["fga2"], b["fgm3"], b["fga3"], b["ftm"], b["fta"], b["pir"], b["plusminus"], int(bool(b["starter"]))] for b in lines]
+        # club games he missed: DNP when he was in the box with no minutes, NR when he was not dressed at all
+        zero = {z["game"] for z in rows("select game from box where player = ? and minutes = 0", r["player"])}
+        absent = [{"round": g["round"], "date": str(g["date"]), "home": g["home"], "away": g["away"], "hs": g["home_score"], "as": g["away_score"], "kind": "DNP" if g["game"] in zero else "NR"}
+                  for g in rows("select game, round, date, home, away, home_score, away_score from games where played and ? in (home, away) order by date, game", code) if g["game"] not in gidx]
         # shot columns: 9 = expectation for a league-average shooter (context only), 10 = the shooter-aware probability; every
         # "expected" figure on the page uses column 9 so the season stats and the profile panel agree
         # columns 11 to 14 come from the play-by-play layer: assisted (makes only), and-one, blocked (misses only), seconds into the possession
@@ -265,7 +270,7 @@ for c in clubs:
         players.append({"pid": "P" + r["player"], "name": r["name"], "dorsal": r["dorsal"], "position": r["position"], "height": r["height_cm"], "weight": r["weight_kg"], "career": career_of(r["player"], code), "career_src": "wikipedia" if r["player"] in WIKI else "euroleague",
                         "birth": str(r["birth_date"]) if r["birth_date"] else None, "country": r["country"],
                         "photo": f"photos/{r['player']}.webp" if os.path.exists(os.path.join(ROOT, "photos", f"{r['player']}.webp")) else None,
-                        "cur": {"tot": tot, "log": log, "shots": shots, "games": games, "xfg": xfg, "profile": profile_of(r["player"], gidx), "role": role, "role_g": role_g, "pos_group": pos_group(r["position"])}})
+                        "cur": {"tot": tot, "log": log, "absent": absent, "shots": shots, "games": games, "xfg": xfg, "profile": profile_of(r["player"], gidx), "role": role, "role_g": role_g, "pos_group": pos_group(r["position"])}})
     collected[code] = players
 
 # league percentiles among rotation players (3+ games, 10+ minutes a game), per game and per 40 minutes; turnovers inverted so higher is better
@@ -662,7 +667,9 @@ if status:
     json.dump(status, open(os.path.join(OUT, "status.json"), "w"), indent=1)
 card_path = os.path.join(ROOT, "model", "model_card.json")
 card = json.load(open(card_path)) if os.path.exists(card_path) else None
-meta = {"season": SEASON, "label": label(SEASON), "model": {"version": card["version"], "trained_on": card["trained_on"], "logloss": card["metrics_test"][card["chosen"]]["logloss"],
+_ref_box = os.path.join(ROOT, "warehouse", PRIORS["reference_season"] if PRIORS else "E2025", "box.parquet")
+MIN_SD = round(float(con.execute(f"select median(sd) from (select player, stddev_samp(minutes) sd, count(*) n, avg(minutes) m from read_parquet('{_ref_box}') where minutes > 0 group by 1 having n >= 10 and m >= 10)").fetchone()[0] or 5.5), 1) if os.path.exists(_ref_box) else 5.5
+meta = {"season": SEASON, "label": label(SEASON), "min_sd": MIN_SD, "model": {"version": card["version"], "trained_on": card["trained_on"], "logloss": card["metrics_test"][card["chosen"]]["logloss"],
                                                            "auc": card["metrics_test"][card["chosen"]]["auc"], "n_shots": card["n_shots"]} if card else None, "clubs": [{"code": c["club"], "name": c["name"], "short": c["short"], "country": c["country"], "city": c["city"], "logo": c["logo"], "base": PALETTES.get(c["club"], DEFAULT_PALETTE)[0], "accent": PALETTES.get(c["club"], DEFAULT_PALETTE)[1]} for c in clubs],
         "league_n": league_n, "pool_rule": "3+ games, 10+ minutes a game", "league": league, "def_adjusted": DEF_ADJ is not None,
         "ratings": club_ratings(), "medians": medians, "leaders": LEADERS,
