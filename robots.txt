@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+Disallow: /build.py
+Disallow: /README.md
+Disallow: /model/
+Disallow: /tests/
+Disallow: /warehouse/
+Disallow: /cache/
+Disallow: /service/
+Disallow: /teams/
+Disallow: /data/
+Sitemap: https://elplayerlab.com/sitemap.xml

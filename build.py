@@ -358,9 +358,12 @@ def display_name(raw):
 STUB = ('<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{name} · {club} · Euroleague Player Lab</title>'
         '<meta name="description" content="{desc}"><meta property="og:type" content="profile"><meta property="og:site_name" content="Euroleague Player Lab"><meta property="og:title" content="{name} · {club}">'
         '<meta property="og:description" content="{desc}"><meta property="og:image" content="{image}"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:url" content="{url}"><meta name="twitter:card" content="summary_large_image">'
-        '<link rel="canonical" href="{url}"><meta http-equiv="refresh" content="0;url={rel}"><script>try{{sessionStorage.setItem("pl-in","1")}}catch(e){{}}location.replace({rel_js})</script>'
-        '<style>body{{margin:0;background:#060708;color:#c6cbd4;font:14px system-ui,sans-serif;display:grid;place-items:center;min-height:100vh}}a{{color:#f26f21}}</style></head>'
-        '<body><p>Opening <a href="{rel}">{name}</a> in Euroleague Player Lab…</p></body></html>')
+        '<link rel="canonical" href="{self}"><script>try{{sessionStorage.setItem("pl-in","1")}}catch(e){{}}location.replace({rel_js})</script>'
+        '<style>body{{margin:0;background:#060708;color:#c6cbd4;font:15px/1.5 system-ui,sans-serif}}main{{max-width:720px;margin:0 auto;padding:36px 20px}}h1{{font-size:34px;line-height:1.05;margin:0 0 4px;color:#fff}}h1 span{{color:{accent}}}'
+        'p{{margin:8px 0}}a{{color:{accent}}}img{{max-width:100%;height:auto;display:block;margin:18px 0}}dl{{display:grid;grid-template-columns:max-content 1fr;gap:4px 16px;margin:14px 0}}dt{{color:#8a919f;text-transform:uppercase;font-size:12px;letter-spacing:.12em}}dd{{margin:0}}'
+        'ol{{padding-left:20px}}.go{{display:inline-block;margin-top:14px;padding:12px 20px;background:{accent};color:#0b0d10;font-weight:800;text-decoration:none;text-transform:uppercase;letter-spacing:.12em}}</style></head>'
+        '<body><main><p>{club} · Euroleague {season}</p><h1>{first} <span>{sur}</span></h1><p>{desc}</p><img src="../cards/{pid}.jpg" alt="" width="1200" height="630">'
+        '<dl>{facts}</dl>{career}<a class="go" href="{rel}">Open in Player Lab</a><p><a href="../">Euroleague Player Lab</a>: shot charts, shooting profiles and season stats for every player, rebuilt after every game.</p></main></body></html>')
 # share cards: one 1200x630 JPEG per player for link previews (about 45 KB each; PNG would be five times that), drawn from the roster fields alone (name, number, club, position,
 # photo) so it changes only when those do; cards/manifest.json holds each card's input hash and skips the unchanged ones
 import hashlib
@@ -452,8 +455,12 @@ for code, players in collected.items():
         card = os.path.join(CARDS, f"{p['pid']}.jpg")
         if card_manifest.get(p["pid"]) != digest or not os.path.exists(card):
             base, accent = PALETTES.get(code, DEFAULT_PALETTE); draw_card(p, club, base, accent, card); card_manifest[p["pid"]] = digest; cards_drawn += 1
-        page = STUB.format(name=html.escape(name), club=html.escape(club), desc=html.escape(desc), image=f"{SITE}cards/{p['pid']}.jpg",
-                           url=f"{SITE}#{code}/{p['pid']}", rel=rel, rel_js=json.dumps(rel))
+        parts = name.split(" ", 1); first, sur = (parts[0], parts[1]) if len(parts) == 2 else ("", parts[0])
+        facts = "".join(f"<dt>{k}</dt><dd>{html.escape(str(v))}</dd>" for k, v in (("Number", p["dorsal"]), ("Position", p["position"]), ("Height", f"{p['height']} cm" if p["height"] else None), ("Weight", f"{p['weight']} kg" if p["weight"] else None), ("Born", p["birth"]), ("Country", p["country"])) if v)
+        spell = lambda s: f"{s['name']}{' (' + s['league'] + ')' if s.get('league') else ''} {s['from'] or ''}{('-' + str(s['to'])) if s.get('to') and s['to'] != s['from'] else ''}".strip()
+        career_html = f"<h2>Career</h2><ol>{''.join(f'<li>{html.escape(spell(s))}</li>' for s in p['career'])}</ol>" if p.get("career") else ""
+        page = STUB.format(name=html.escape(name), first=html.escape(first), sur=html.escape(sur), club=html.escape(club), desc=html.escape(desc), image=f"{SITE}cards/{p['pid']}.jpg", pid=p["pid"],
+                           url=f"{SITE}#{code}/{p['pid']}", self=f"{SITE}p/{p['pid']}.html", rel=rel, rel_js=json.dumps(rel), accent=PALETTES.get(code, DEFAULT_PALETTE)[1], season=label(SEASON), facts=facts, career=career_html)
         fn = f"{p['pid']}.html"; keep.add(fn)
         path = os.path.join(stub_dir, fn)
         if not os.path.exists(path) or open(path, encoding="utf-8").read() != page:
@@ -466,6 +473,41 @@ for pid in [k for k in card_manifest if f"{k}.html" not in keep]:      # a playe
     if os.path.exists(os.path.join(CARDS, f"{pid}.jpg")): os.remove(os.path.join(CARDS, f"{pid}.jpg"))
 json.dump(card_manifest, open(card_manifest_path, "w"), indent=0, sort_keys=True)
 print(f"share stubs: {len(keep)} under p/, cards drawn: {cards_drawn}")
+# search engines: every player page listed, the code and data folders kept out, and a 404 in house style with the club grid and the search
+status_path = os.path.join(W, "status.json")
+_st = json.load(open(status_path)) if os.path.exists(status_path) else {}
+lastmod = (_st.get("checked_at") or datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"))[:10]
+urls = [SITE, SITE + "monitor.html"] + [f"{SITE}p/{fn[:-5]}.html" for fn in sorted(keep)]
+open(os.path.join(ROOT, "sitemap.xml"), "w", encoding="utf-8").write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+    + "".join(f"  <url><loc>{u}</loc><lastmod>{lastmod}</lastmod></url>\n" for u in urls) + "</urlset>\n")
+open(os.path.join(ROOT, "robots.txt"), "w", encoding="utf-8").write("User-agent: *\nAllow: /\nDisallow: /build.py\nDisallow: /README.md\nDisallow: /model/\nDisallow: /tests/\nDisallow: /warehouse/\nDisallow: /cache/\nDisallow: /service/\nDisallow: /teams/\nDisallow: /data/\n"
+    + f"Sitemap: {SITE}sitemap.xml\n")
+club_grid = "".join(f'<a href="/#{c["club"]}"><img src="/{c["logo"]}" alt="" width="34" height="34" loading="lazy">{html.escape(c["short"] or c["club"])}</a>' for c in clubs if c["logo"])
+open(os.path.join(ROOT, "404.html"), "w", encoding="utf-8").write(f'''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Page not found · Euroleague Player Lab</title><meta name="robots" content="noindex">
+<style>@font-face{{font-family:'Barlow Condensed';font-style:italic;font-weight:900;font-display:swap;src:url(/fonts/cond-900i.woff2) format('woff2')}}@font-face{{font-family:'Barlow Condensed';font-weight:700;font-display:swap;src:url(/fonts/cond-700.woff2) format('woff2')}}
+body{{margin:0;background:#060708;color:#c6cbd4;font:15px/1.5 Barlow,system-ui,sans-serif}}.bar{{height:6px;background:repeating-linear-gradient(-60deg,#1f2b47 0 18px,#f26f21 18px 22px,#1f2b47 22px 40px)}}main{{max-width:1180px;margin:0 auto;padding:48px 20px 64px}}
+h1{{font-family:'Barlow Condensed',Impact,sans-serif;font-style:italic;font-weight:900;font-size:clamp(56px,10vw,120px);line-height:.85;margin:0;text-transform:uppercase;color:#fff}}h1 span{{color:#f26f21;display:block}}p{{max-width:56ch;font-size:17px}}
+.q{{margin:24px 0 8px;max-width:440px;position:relative}}.q input{{width:100%;box-sizing:border-box;background:transparent;border:0;border-bottom:2px solid #343841;color:#fff;font:700 19px 'Barlow Condensed',sans-serif;letter-spacing:.06em;text-transform:uppercase;padding:8px 0 6px;outline:0}}.q input:focus{{border-bottom-color:#f26f21}}
+.q ul{{list-style:none;margin:0;padding:6px 0;background:#0e1013;border:1px solid #343841;border-top:3px solid #f26f21;position:absolute;left:0;right:0;z-index:2}}.q li a{{display:flex;gap:12px;padding:9px 14px;color:#c6cbd4;text-decoration:none;font:700 16px 'Barlow Condensed',sans-serif;text-transform:uppercase}}.q li a:hover{{background:#191c22;color:#fff}}.q li small{{margin-left:auto;color:#8a919f;font-size:12px;letter-spacing:.08em}}
+h2{{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;letter-spacing:.2em;text-transform:uppercase;color:#8a919f;margin:36px 0 12px}}.clubs{{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:1px;background:#24272e;border:1px solid #24272e}}
+.clubs a{{display:flex;flex-direction:column;align-items:center;gap:8px;padding:14px 6px 11px;background:#0e1013;color:#c6cbd4;text-decoration:none;font:700 11px 'Barlow Condensed',sans-serif;letter-spacing:.1em;text-transform:uppercase;text-align:center}}.clubs a:hover{{background:#191c22;color:#fff}}.clubs img{{filter:drop-shadow(0 0 2.5px rgba(255,255,255,.45))}}
+.home{{display:inline-block;margin-top:28px;padding:14px 26px;background:#f26f21;color:#0b0d10;font:800 16px 'Barlow Condensed',sans-serif;letter-spacing:.16em;text-transform:uppercase;text-decoration:none;clip-path:polygon(10px 0,100% 0,calc(100% - 10px) 100%,0 100%)}}</style></head>
+<body><div class="bar"></div><main><h1>Not<span>found</span></h1><p>That address has no page. Find a player below, pick a club, or start from the opening page.</p>
+<div class="q"><input type="search" id="q" placeholder="Find a player" aria-label="Find a player" autocomplete="off"><ul id="hits" hidden></ul></div>
+<h2>Clubs</h2><div class="clubs">{club_grid}</div><a class="home" href="/">Opening page</a></main>
+<script>
+const fold = s => (s || '').normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').toLowerCase();
+const cap = s => s.toLowerCase().replace(/(^|[\\s\\-'.])(\\S)/g, (m, p, c) => p + c.toUpperCase());
+let roster = null; const q = document.getElementById('q'), hits = document.getElementById('hits');
+q.addEventListener('input', async () => {{
+  if (!roster) {{ try {{ roster = await (await fetch('/teams/{SEASON}/roster.json')).json(); }} catch (e) {{ roster = []; }} }}
+  const t = fold(q.value).trim().split(/\\s+/).filter(Boolean); if (!t.length) {{ hits.hidden = true; return; }}
+  const rows = roster.filter(r => {{ const w = fold(r.name + ' ' + r.club); return t.every(x => w.includes(x)); }}).slice(0, 8);
+  hits.innerHTML = rows.map(r => {{ const [sur, first] = r.name.split(',').map(s => s.trim()); return `<li><a href="/p/${{r.pid}}.html">${{cap(first || '')}} ${{cap(sur)}}<small>${{r.club}}</small></a></li>`; }}).join('') || '<li><a>No player matches</a></li>';
+  hits.hidden = false;
+}});
+</script></body></html>''')
+print("sitemap.xml, robots.txt, 404.html written")
 
 # position medians for the compare table (same labels as the page)
 def compare_metrics(cur):
