@@ -307,7 +307,8 @@ td.w{color:var(--good)} td.l{color:var(--bad)}
 .toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,16px);background:var(--white);color:#000;font-family:var(--cond);font-weight:800;font-size:14px;letter-spacing:.12em;text-transform:uppercase;padding:10px 18px;clip-path:polygon(8px 0,100% 0,calc(100% - 8px) 100%,0 100%);opacity:0;transition:opacity .2s,transform .2s;z-index:60;pointer-events:none}
 .toast.on{opacity:1;transform:translate(-50%,0)}
 .log tbody tr{cursor:pointer}
-.log tbody tr.sel td{background:rgba(255,255,255,.07);color:var(--ink)}
+.log tbody tr.on td{background:rgba(255,255,255,.07);color:var(--ink)}
+.log tbody tr.on td:nth-child(3)::after{content:"in view";display:inline-block;margin-left:8px;padding:1px 6px;font-family:var(--cond);font-size:11px;letter-spacing:.12em;text-transform:uppercase;background:var(--club2);color:var(--on);vertical-align:1px}
 .log tbody tr:focus-visible{outline:2px solid var(--club2);outline-offset:-2px}
 @media (min-width:761px) and (max-width:1100px){.top .id span{display:none}.top .id{font-size:20px;padding:0 20px 0 16px}.dd-btn{font-size:16px;padding:14px 30px 14px 0}.live{padding:0 14px}.live b{font-size:15px}.live span{display:none}.search{flex:0 1 190px;min-width:130px}}
 /* leaderboards: league scope, so the panel stays on house grey and the club accent marks only the viewed player */
@@ -529,6 +530,15 @@ body.cv-on .top,body.cv-on .wrap{display:none}
   <div class="role" id="role" hidden></div>
   <div class="band-foot" id="role-foot" hidden><span id="role-legend"></span></div>
 
+  <details class="log panel" id="log-panel" open>
+    <summary>Game log</summary>
+    <div class="in">
+      <p class="sub" id="ha" hidden></p>
+      <div class="scroll"><table id="log"><thead><tr><th>Rd</th><th>Date</th><th>Opponent</th><th>Result</th><th>Min</th><th>Pts</th><th>Reb</th><th>Ast</th><th>Stl</th><th>Blk</th><th>Tov</th><th>2P</th><th>3P</th><th>FT</th><th>PIR</th><th>+/-</th><th title="Possessions in the game">Pace</th><th title="Opponent points allowed per 100 possessions, season to date">Opp DRtg</th></tr></thead><tbody></tbody></table></div>
+      <p class="none" id="log-none" hidden>No games played yet.</p>
+    </div>
+  </details>
+
   <div class="grid">
     <section class="panel">
       <h2>Shot chart</h2>
@@ -537,7 +547,6 @@ body.cv-on .top,body.cv-on .wrap{display:none}
           <div class="seg" id="f-result"><button aria-pressed="true" data-v="all">All</button><button aria-pressed="false" data-v="made">Made</button><button aria-pressed="false" data-v="miss">Missed</button></div>
           <div class="seg" id="f-view"><button aria-pressed="true" data-v="dots">Shots</button><button aria-pressed="false" data-v="zones">Zones</button><button aria-pressed="false" data-v="3d">3D</button></div>
           <div class="seg" id="f-ast" hidden><button aria-pressed="true" data-v="all">Any</button><button aria-pressed="false" data-v="ast">Assisted</button><button aria-pressed="false" data-v="unast">Unassisted</button></div>
-          <select id="game" aria-label="Game"></select>
           <button class="btn" id="replay" type="button" title="Replay the shot sequence">Replay</button>
         </div>
         <div class="court-wrap">
@@ -589,7 +598,7 @@ body.cv-on .top,body.cv-on .wrap{display:none}
     </div>
   </section>
 
-  <details class="panel lb" id="lb-panel" open hidden>
+  <details class="panel lb" id="lb-panel" hidden>
     <summary>League leaders</summary>
     <div class="in">
       <div class="lb-head">
@@ -603,14 +612,6 @@ body.cv-on .top,body.cv-on .wrap{display:none}
     </div>
   </details>
 
-  <details class="log panel" id="log-panel">
-    <summary>Game log</summary>
-    <div class="in">
-      <p class="sub" id="ha" hidden></p>
-      <div class="scroll"><table id="log"><thead><tr><th>Rd</th><th>Date</th><th>Opponent</th><th>Result</th><th>Min</th><th>Pts</th><th>Reb</th><th>Ast</th><th>Stl</th><th>Blk</th><th>Tov</th><th>2P</th><th>3P</th><th>FT</th><th>PIR</th><th>+/-</th><th title="Possessions in the game">Pace</th><th title="Opponent points allowed per 100 possessions, season to date">Opp DRtg</th></tr></thead><tbody></tbody></table></div>
-      <p class="none" id="log-none" hidden>No games played yet.</p>
-    </div>
-  </details>
 
   <div class="foot"><span><a href="monitor.html">System status</a> · Data: Euroleague official feeds · Photos: Euroleague media days</span><span id="foot-status">Euroleague Player Lab</span></div>
 </div>
@@ -731,11 +732,11 @@ function renderPlayers(){
 function renderGames(){
   const games = ds().games;
   const html = games.length ? `<option value="all">All games (${games.length})</option>` + games.map((g, i) => { const l = gameLabel(g); return `<option value="${i}">${l.txt} · ${l.res} ${l.score}</option>`; }).join('') : '<option value="all">No games yet</option>';
-  ['#game', '#stat-game'].forEach(id => { const sel = $(id); sel.innerHTML = html.replace('All games', id === '#stat-game' ? 'Season' : 'All games'); sel.disabled = !games.length; sel.value = String(state.game); });
+  const sel = $('#stat-game'); sel.innerHTML = html.replace('All games', 'Season'); sel.disabled = !games.length; sel.value = String(state.game);
 }
 // one game in view for the whole page: the stats band, the role tiles, the shot chart and the highlighted log row follow it
 function setGame(v){
-  state.game = String(v); ['#game', '#stat-game'].forEach(id => { $(id).value = state.game; }); if (typeof DD !== 'undefined') { DD.game.refresh(); DD.statGame.refresh(); }
+  state.game = String(v); $('#stat-game').value = state.game; if (typeof DD !== 'undefined') DD.statGame.refresh();
   renderTiles(); renderRole(); renderChart(true); markLog();
 }
 const gameRow = () => state.game === 'all' ? null : ds().log.find(r => r[0] === +state.game) || null;
@@ -773,7 +774,7 @@ function renderPlayer(){
   $('#splits').innerHTML = rows.map(([k, m, at, v, sp]) => { const w = m !== null && at ? wilson(m, at) : null, small = (m !== null && at > 0 && at < MIN_ATT) || (sp != null && sp > 0 && sp < MIN_ATT), lg = lgs[k]; return `<div class="split${small ? ' small' : ''}" title="${m !== null && at ? `${m} of ${at} · ${ival(m, at)}${small ? ' · small sample' : ''}` : sp != null ? `${tot.pts} points on ${sp.toFixed(1)} shooting possessions${small ? ' · small sample' : ''} · points per shooting possession, halved; free throws count 0.44 of a possession, so a perfect night can pass 100%` : ''}${lg != null ? ` · league ${(100 * lg).toFixed(1)}%` : ''}"><span class="k">${k}%</span><div class="bar"><i class="fill" style="width:${played ? Math.min(100, v * 100) : 0}%"></i>${w && played ? `<i class="ci" style="left:${(100 * w[0]).toFixed(1)}%;width:${(100 * (w[1] - w[0])).toFixed(1)}%"></i>` : ''}</div><div class="v"><b>${played ? (v * 100).toFixed(1) : '–'}</b>${m !== null && played ? `${m}/${at}` : ''}</div></div>`; }).join('');
   const lg = $('#log tbody');
   const RT = META.ratings || {};
-  lg.innerHTML = d.log.map((r, i) => { const g = d.games[r[0]], l = gameLabel(g), opp = l.home ? g.away : g.home, rt = RT[opp]; return `<tr data-g="${r[0]}" tabindex="0" title="Show this game's shots" class="${String(state.game) === String(r[0]) ? 'sel' : ''}"><td>${g.round}</td><td>${fmtDate(g.date)}</td><td>${l.home ? 'vs' : '@'} ${l.opp}</td><td class="${l.res === 'W' ? 'w' : 'l'}">${l.res} ${l.score}</td><td>${r[1]}</td><td class="k">${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td><td>${r[5]}</td><td>${r[6]}</td><td>${r[7]}</td><td>${r[8]}/${r[9]}</td><td>${r[10]}/${r[11]}</td><td>${r[12]}/${r[13]}</td><td>${r[14]}</td><td>${r[15] ?? ''}</td><td>${g.poss != null ? g.poss.toFixed(0) : '–'}</td><td>${rt ? rt.drtg.toFixed(1) : '–'}</td></tr>`; }).join('');
+  lg.innerHTML = d.log.map((r, i) => { const g = d.games[r[0]], l = gameLabel(g), opp = l.home ? g.away : g.home, rt = RT[opp]; return `<tr data-g="${r[0]}" tabindex="0" title="Show this game across the page" class="${String(state.game) === String(r[0]) ? 'on' : ''}"><td>${g.round}</td><td>${fmtDate(g.date)}</td><td>${l.home ? 'vs' : '@'} ${l.opp}</td><td class="${l.res === 'W' ? 'w' : 'l'}">${l.res} ${l.score}</td><td>${r[1]}</td><td class="k">${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td><td>${r[5]}</td><td>${r[6]}</td><td>${r[7]}</td><td>${r[8]}/${r[9]}</td><td>${r[10]}/${r[11]}</td><td>${r[12]}/${r[13]}</td><td>${r[14]}</td><td>${r[15] ?? ''}</td><td>${g.poss != null ? g.poss.toFixed(0) : '–'}</td><td>${rt ? rt.drtg.toFixed(1) : '–'}</td></tr>`; }).join('');
   const ha = {H: {g: 0, pts: 0, fga: 0, fta: 0}, A: {g: 0, pts: 0, fga: 0, fta: 0}};
   d.log.forEach(r => { const g = d.games[r[0]], side = gameLabel(g).home ? ha.H : ha.A; side.g++; side.pts += r[2]; side.fga += r[9] + r[11]; side.fta += r[13]; });
   const haTxt = s => s.g ? `${(s.pts / s.g).toFixed(1)} pts, ${tsOf(s.pts, s.fga, s.fta) != null ? (100 * tsOf(s.pts, s.fga, s.fta)).toFixed(1) + '% TS' : ''} in ${s.g} game${s.g === 1 ? '' : 's'}` : 'no games';
@@ -793,7 +794,8 @@ function renderTiles(){
   $('#tiles').innerHTML = tiles.map(([k, l]) => `<div class="tile ${played ? '' : 'na'}" style="--p:${pc[k] ?? 0}%"><b>${val(k)}</b><span>${l}</span></div>`).join('');
   const gl = row ? gameLabel(d.games[row[0]]) : null;
   $('#band-legend').innerHTML = row ? `${gl.txt} · <b class="${gl.res === 'W' ? 'w' : 'l'}">${gl.res} ${gl.score}</b> · ${fmtDate(d.games[row[0]].date)} · ${row[1]} min${p40 ? ' · scaled to 40 minutes' : ''}` : d.pct ? `${p40 ? 'Per 40 minutes' : 'Per game'} · underline: rank among ${META.league_n} rotation players (${META.pool_rule}), longer is better, turnovers inverted` : '';
-  if (LB.ok) { $('#band-legend').insertAdjacentHTML('beforeend', `${d.pct || row ? '<span class="sep"> · </span>' : ''}<button type="button" class="lnk">See the league leaders</button>`); $('#band-legend button').addEventListener('click', toLb); }
+  if (row) { $('#band-legend').insertAdjacentHTML('beforeend', `<span class="sep"> · </span><button type="button" class="lnk" id="to-season">Back to the season</button>`); $('#to-season').addEventListener('click', () => setGame('all')); }
+  if (LB.ok) { $('#band-legend').insertAdjacentHTML('beforeend', `${d.pct || row ? '<span class="sep"> · </span>' : ''}<button type="button" class="lnk">See the league leaders</button>`); $('#band-legend button:last-child').addEventListener('click', toLb); }
 }
 function renderRole(){
   const d = ds(), row = gameRow(), gi = row ? d.log.indexOf(row) : -1, r = row ? (d.role_g || [])[gi] || {} : d.role, pp = row ? {} : d.pct_pos || {}, el = $('#role');
@@ -1163,10 +1165,9 @@ skeleton();
 $('#team').innerHTML = META.clubs.map(c => `<option value="${c.code}">${c.name}</option>`).join('');
 $('#team').addEventListener('change', e => { loadTeam(e.target.value); location.hash = e.target.value; });
 $('#player').addEventListener('change', e => { state.player = +e.target.value; state.game = 'all'; renderGames(); renderPlayer(); location.hash = `${state.team}/${player().pid}`; });
-$('#game').addEventListener('change', e => setGame(e.target.value));
 $('#stat-game').addEventListener('change', e => setGame(e.target.value));
-function markLog(){ $('#log tbody').querySelectorAll('tr[data-g]').forEach(tr => tr.classList.toggle('sel', tr.dataset.g === String(state.game))); }
-function pickGame(g){ setGame(String(state.game) === String(g) ? 'all' : String(g)); $('#court').closest('.panel').scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start'}); }
+function markLog(){ $('#log tbody').querySelectorAll('tr[data-g]').forEach(tr => tr.classList.toggle('on', tr.dataset.g === String(state.game))); }
+function pickGame(g){ setGame(String(state.game) === String(g) ? 'all' : String(g)); if (state.game !== 'all' && $('#tiles').getBoundingClientRect().top < 0) $('#tiles').scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start'}); }
 $('#log tbody').addEventListener('click', e => { const tr = e.target.closest('tr[data-g]'); if (tr) pickGame(tr.dataset.g); });
 $('#log tbody').addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { const tr = e.target.closest('tr[data-g]'); if (tr) { e.preventDefault(); pickGame(tr.dataset.g); } } });
 const stepPlayer = d => { if (!team()) return; const ps = team().players, i = (state.player + d + ps.length) % ps.length; location.hash = `${state.team}/${ps[i].pid}`; };
@@ -1190,7 +1191,6 @@ const DD = {
   team: Dropdown($('#team'), (op, head) => { const c = CLUBS[op.value]; return `${c && c.logo && !head ? `<img src="${c.logo}" alt="">` : ''}<span>${c.name}</span>`; }),
   player: Dropdown($('#player'), (op, head) => { const p = team() && team().players[+op.value]; if (!p) return op.text; const n = nameOf(p.name); return head ? `#${p.dorsal || '–'} ${n.first} ${n.sur}` : `<span class="no">${p.dorsal || '–'}</span><span>${n.first} ${n.sur}</span><small>${(p.position || '').slice(0, 7)}</small>`; }),
   cmp: Dropdown($('#cmp'), (op, head) => { if (!op.value) return op.text; const r = (META.roster || []).find(x => x.pid === op.value); if (!r) return op.text; const c = CLUBS[r.club], n = nameOf(r.name); return head ? `${n.first} ${n.sur} · ${shortName(r.club)}` : `${c && c.logo ? `<img src="${c.logo}" alt="">` : ''}<span class="no">${r.dorsal || '–'}</span><span>${n.first} ${n.sur}</span><small>${shortName(r.club)}</small>`; }),
-  game: Dropdown($('#game'), (op, head) => { if (op.value === 'all' || !team()) return op.text; const g = ds().games[+op.value]; if (!g) return op.text; const l = gameLabel(g); return head ? `${l.txt} · ${l.res} ${l.score}` : `<span>${l.txt}</span><small class="${l.res === 'W' ? 'w' : 'l'}">${l.res} ${l.score}</small>`; }),
   statGame: Dropdown($('#stat-game'), (op, head) => { if (op.value === 'all' || !team()) return op.text; const g = ds().games[+op.value]; if (!g) return op.text; const l = gameLabel(g); return head ? `${l.txt} · ${l.res} ${l.score}` : `<span>${l.txt}</span><small class="${l.res === 'W' ? 'w' : 'l'}">${l.res} ${l.score}</small>`; })
 };
 // ---- player search across every club: name, club and code, accents folded
@@ -1386,7 +1386,7 @@ async function go(){
   if (state.team !== code) { $('#team').value = code; if (!await loadTeam(code)) return false; }
   if (h[1]) { const i = team().players.findIndex(p => p.pid === h[1]); if (i >= 0 && i !== state.player) { $('#player').value = i; state.player = i; state.game = 'all'; renderGames(); renderPlayer(); } }
   if (h[2] === 'zones' || h[2] === '3d') { const b = $(`#f-view button[data-v="${h[2]}"]`); if (b.getAttribute('aria-pressed') !== 'true') b.click(); }
-  DD.team.refresh(); DD.player.refresh(); DD.game.refresh(); DD.statGame.refresh();
+  DD.team.refresh(); DD.player.refresh(); DD.statGame.refresh();
   const n = nameOf(player().name); document.title = `${n.first} ${n.sur} · ${shortName(state.team)} · Player Lab`;
   return true;
 }
