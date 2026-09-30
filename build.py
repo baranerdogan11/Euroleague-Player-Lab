@@ -2,7 +2,7 @@
 
 A club's page lists its active roster stints; each player's games, box lines and shots come from every club
 he played for this season, so a mid-season move keeps his full record under his current club.
-Photos (photos/*.webp) and crests (logos/*.png) are referenced by path. Run after warehouse.py.
+Photos (photos/*.webp) and crests (logos/*.png, served as 128 px logos/*.webp) are referenced by path. Run after warehouse.py.
 
 usage: python build.py E2026
 """
@@ -98,6 +98,17 @@ def game_poss(game):
     return round(((th["tfga"] - th["toreb"] + th["ttov"] + 0.44 * th["tfta"]) + (ta["tfga"] - ta["toreb"] + ta["ttov"] + 0.44 * ta["tfta"])) / 2, 1)
 
 
+def crest_webp(code):
+    """The crest the site serves: a 128 px webp made from the feed's 160 px PNG (a fifth of the bytes), written only when missing or stale."""
+    src, dst = os.path.join(ROOT, "logos", f"{code}.png"), os.path.join(ROOT, "logos", f"{code}.webp")
+    if not os.path.exists(src):
+        return f"logos/{code}.webp" if os.path.exists(dst) else None
+    if not os.path.exists(dst) or os.path.getmtime(dst) < os.path.getmtime(src):
+        from PIL import Image
+        Image.open(src).convert("RGBA").resize((128, 128), Image.LANCZOS).save(dst, "WEBP", quality=85, method=6)
+    return f"logos/{code}.webp"
+
+
 def role_metrics(lines):
     """Usage, assist, turnover and rebound shares, shot mix, and on/off net rating from a player's box lines. None without games."""
     if not lines:
@@ -160,7 +171,7 @@ DEF_ADJ = defence_adjustments(SEASON)
 
 clubs = rows("select * from clubs order by name")
 for c in clubs:
-    c["logo"] = f"logos/{c['club']}.png" if os.path.exists(os.path.join(ROOT, "logos", f"{c['club']}.png")) else None
+    c["logo"] = crest_webp(c["club"])
 summary = []
 collected = {}
 # Euroleague career as spells: consecutive seasons at one club fold into "from-to", most recent first; club names are the

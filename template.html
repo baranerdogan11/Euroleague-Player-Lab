@@ -539,7 +539,7 @@ body.cv-on .top,body.cv-on .wrap{display:none}
 </main>
 <header class="top">
   <a class="id" href="#" title="Back to the opening page">Player Lab<span>Euroleague</span></a>
-  <div class="sel team"><img id="crest-img" alt=""><select id="team" aria-label="Team"></select></div>
+  <div class="sel team"><img id="crest-img" alt="" width="26" height="26"><select id="team" aria-label="Team"></select></div>
   <div class="sel player"><select id="player" aria-label="Player"></select></div>
   <div class="search"><input type="search" id="q" placeholder="Find a player" aria-label="Find a player across all clubs" autocomplete="off" spellcheck="false" role="combobox" aria-expanded="false" aria-controls="q-list" aria-autocomplete="list"><kbd>/</kbd><ul class="dd-list" id="q-list" role="listbox" aria-label="Players" hidden></ul><button type="button" class="q-x" id="q-x" aria-label="Close search" hidden>&times;</button></div>
   <button type="button" class="q-btn" id="q-btn" aria-label="Find a player"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M15.5 15.5L21 21" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button>
@@ -552,7 +552,7 @@ body.cv-on .top,body.cv-on .wrap{display:none}
     <div class="ph"><div class="num" id="num"></div><img id="photo" alt="" width="360" height="480" decoding="async"></div>
     <div class="bio" id="bio"></div>
     <div class="lt">
-      <div class="tagrow"><div class="tag"><img id="club-logo" alt=""><span id="club-name"></span><span id="pos"></span></div><div class="pnav"><button type="button" id="prev" aria-label="Previous player" title="Previous player">&lsaquo;</button><button type="button" id="next" aria-label="Next player" title="Next player">&rsaquo;</button><button type="button" id="share" title="Copy a link to this player">Copy link</button></div></div>
+      <div class="tagrow"><div class="tag"><img id="club-logo" alt="" width="20" height="20"><span id="club-name"></span><span id="pos"></span></div><div class="pnav"><button type="button" id="prev" aria-label="Previous player" title="Previous player">&lsaquo;</button><button type="button" id="next" aria-label="Next player" title="Next player">&rsaquo;</button><button type="button" id="share" title="Copy a link to this player">Copy link</button></div></div>
       <h1 id="name"><span id="nm"></span></h1>
       <div class="facts" id="facts"></div>
     </div>
@@ -1314,7 +1314,7 @@ const LB = (() => {
       <a href="#${r.club}/${r.pid}" title="${titleOf(k, `${nm.first} ${nm.sur}, ${c.name || r.club}`, row)}">
         <span class="lb-rank">${rank}</span>
         <span class="lb-ph"><img src="${photoOf(r)}" alt="" loading="lazy" decoding="async" draggable="false"></span>
-        <img class="lb-crest" src="${c.logo || ''}" alt="" loading="lazy" draggable="false">
+        <img class="lb-crest" src="${c.logo || ''}" alt="" width="24" height="24" loading="lazy" draggable="false">
         <span class="lb-name"><b class="fn">${nm.first}</b><b class="ini">${nm.first.slice(0, 1)}.</b><b class="sn">${nm.sur}</b><small>${c.short || r.club}</small></span>
         <span class="lb-val">${cell(k, row)}</span>
       </a></li>`;
@@ -1408,7 +1408,7 @@ const COVER = (() => {
   const st = META.status || {};
   $('#cv-nums').innerHTML = [[META.clubs.length, 'Clubs'], [(META.roster || []).length, 'Players'], [st.games, 'Games'], [st.shots, 'Shots charted']]
     .map(([v, k]) => `<li><b>${n(v)}</b><span>${k}</span></li>`).join('');
-  $('#cv-clubs').innerHTML = META.clubs.map(c => `<a href="#${c.code}" title="${c.name}"><img src="${c.logo || ''}" alt="" loading="lazy" decoding="async"><span>${c.short || c.code}</span></a>`).join('');
+  $('#cv-clubs').innerHTML = META.clubs.map(c => `<a href="#${c.code}" title="${c.name}"><img src="${c.logo || ''}" alt="" width="34" height="34" loading="lazy" decoding="async"><span>${c.short || c.code}</span></a>`).join('');
   $('#cv-built').textContent = META.built ? `Built ${fmtBuilt(META.built)}${st.games != null ? ` · ${st.games} game${st.games === 1 ? '' : 's'}` : ''}` : 'Updated after every game';
   const last = (() => { try { return JSON.parse(localStorage.getItem('pl-last')); } catch (e) { return null; } })();
   const go = $('#cv-go');
