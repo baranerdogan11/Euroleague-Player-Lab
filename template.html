@@ -540,6 +540,7 @@ body.cv-on .top,body.cv-on .wrap{display:none}
   </details>
 
   <div class="grid">
+    <div>
     <section class="panel">
       <h2>Shot chart</h2>
       <div class="in">
@@ -559,6 +560,18 @@ body.cv-on .top,body.cv-on .wrap{display:none}
         <div class="caption"><b id="cap"></b><div class="legend"><span><i class="m"></i>Made</span><span><i class="x"></i>Missed</span></div></div>
       </div>
     </section>
+    <section class="panel prof" id="prof-panel" hidden style="margin-top:18px">
+      <h2>Shot quality vs shooting skill</h2>
+      <div class="in">
+        <p class="sub" id="prof-sub"></p>
+        <div class="gauges">
+          <div class="gauge"><span class="k">Shot quality</span><b id="pq"></b><div class="t"><i id="pq-bar"></i><u id="pq-dot"></u></div><span class="u">expected points per attempt on his shots</span><span class="pct" id="pq-pct"></span></div>
+          <div class="gauge"><span class="k">Shooting skill</span><b id="ps"></b><div class="t"><i id="ps-bar"></i><u id="ps-dot"></u></div><span class="u">points per 100 attempts above a league-average shooter, shrunk</span><span class="pct" id="ps-pct"></span></div>
+        </div>
+        <div class="prof-chart"><svg id="curve" viewBox="0 0 640 220" role="img" aria-label="Season curve of shooting skill"></svg><div class="legend" id="curve-legend"></div></div>
+      </div>
+    </section>
+    </div>
 
     <div>
       <section class="panel">
@@ -573,17 +586,6 @@ body.cv-on .top,body.cv-on .wrap{display:none}
           <div class="scroll"><table id="timing" hidden><thead><tr><th>Window</th><th>FGM / FGA</th><th>FG%</th><th title="Expected FG% for a league-average shooter on these shots">xFG%</th><th title="Share of his attempts">Share</th></tr></thead><tbody></tbody></table>
           </div><div class="tbl-cap" id="diet-cap" hidden>Shot diet</div>
           <div class="diet" id="diet" hidden></div>
-        </div>
-      </section>
-      <section class="panel prof" id="prof-panel" hidden style="margin-top:18px">
-        <h2>Shot quality vs shooting skill</h2>
-        <div class="in">
-          <p class="sub" id="prof-sub"></p>
-          <div class="gauges">
-            <div class="gauge"><span class="k">Shot quality</span><b id="pq"></b><div class="t"><i id="pq-bar"></i><u id="pq-dot"></u></div><span class="u">expected points per attempt on his shots</span><span class="pct" id="pq-pct"></span></div>
-            <div class="gauge"><span class="k">Shooting skill</span><b id="ps"></b><div class="t"><i id="ps-bar"></i><u id="ps-dot"></u></div><span class="u">points per 100 attempts above a league-average shooter, shrunk</span><span class="pct" id="ps-pct"></span></div>
-          </div>
-          <div class="prof-chart"><svg id="curve" viewBox="0 0 640 220" role="img" aria-label="Season curve of shooting skill"></svg><div class="legend" id="curve-legend"></div></div>
         </div>
       </section>
     </div>
