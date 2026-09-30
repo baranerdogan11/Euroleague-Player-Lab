@@ -552,7 +552,7 @@ for c in clubs:
     body = ("BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//Euroleague Player Lab//EN\r\nCALSCALE:GREGORIAN\r\nMETHOD:PUBLISH\r\n"
             f"X-WR-CALNAME:{ics_esc(c['name'])} · Euroleague {label(SEASON)}\r\nX-WR-TIMEZONE:UTC\r\n" + "".join(ev) + "END:VCALENDAR\r\n")
     path = os.path.join(CAL, f"{code}.ics")
-    old = open(path, encoding="utf-8").read() if os.path.exists(path) else ""
+    old = open(path, encoding="utf-8", newline="").read() if os.path.exists(path) else ""   # newline="" keeps the CRLF so the compare below is exact
     if re.sub(r"DTSTAMP:\S+", "", old) != re.sub(r"DTSTAMP:\S+", "", body):   # rewrite only when a fixture or result changed, not on every build
         open(path, "w", encoding="utf-8", newline="").write(body)
 print(f"feed.json, feed.xml ({len(items)} items), cal/*.ics ({len(clubs)} clubs) written")

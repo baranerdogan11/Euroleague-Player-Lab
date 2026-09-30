@@ -17,9 +17,10 @@ checks = {
 import glob
 mismatch, compared = [], 0
 for f in glob.glob(os.path.join(ROOT, "teams", "*", "*.json")):
-    if os.path.basename(f) in ("index.json", "monitor.json", "status.json"):
+    if os.path.basename(f) in ("index.json", "monitor.json", "status.json", "roster.json"):
         continue
-    for p in json.load(open(f)).get("players", []):
+    data = json.load(open(f))
+    for p in (data.get("players", []) if isinstance(data, dict) else []):
         c = p["cur"]
         if c.get("xfg") and c.get("profile") and c["xfg"]["att"] == c["profile"]["att"]:
             compared += 1
