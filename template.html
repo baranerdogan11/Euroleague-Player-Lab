@@ -671,6 +671,8 @@ const shortName = code => (CLUBS[code] && CLUBS[code].short) || code;
 const PLACEHOLDER = "data:image/svg+xml;utf8," + encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 360 480'><defs><linearGradient id='g' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='#343841'/><stop offset='1' stop-color='#131519'/></linearGradient></defs><circle cx='180' cy='150' r='80' fill='url(#g)'/><path d='M40 480 C40 330 110 280 180 280 C250 280 320 330 320 480Z' fill='url(#g)'/></svg>`);
 const state = {team: null, data: null, player: 0, result: 'all', view: 'dots', game: 'all', rate: 'pg', ast: 'all', cmp: null, timers: [], accent: '#f26f21', base: '#1f2b47', hit: '#f26f21'};
 const cache = {};
+// the roster arrives after first paint: the search index, compare peers and leaderboard names wait on it
+const ROSTER = {list: [], byPid: {}, loaded: false};
 const PHONE = matchMedia('(max-width:760px)');   // the career list is open on wide screens and folded on phones; crossing the breakpoint follows suit
 PHONE.addEventListener('change', e => { const d = $('#bio details'); if (d) d.open = !e.matches; });
 const tip = $('#tip');
@@ -899,7 +901,7 @@ function renderDiet(zs, total){
 }
 function renderCompareOptions(){
   const d = ds(), me = player(), sel = $('#cmp'), panel = $('#cmp-panel');
-  const peers = (META.roster || []).filter(r => r.pos === d.pos_group && r.pid !== me.pid);
+  const peers = ROSTER.list.filter(r => r.pos === d.pos_group && r.pid !== me.pid);
   if (!d.tot.gp || !peers.length) { panel.hidden = true; return; }
   panel.hidden = false;
   $('#cmp-sub').textContent = `${nameOf(me.name).sur} against another ${(d.pos_group || 'player').toLowerCase()}, per 40 minutes and per possession where it matters.${d.pos_n >= 10 ? ` Position median from the ${d.pos_n} eligible ${(d.pos_group || 'player').toLowerCase()}s.` : ''}`;
@@ -911,7 +913,7 @@ function renderCompareOptions(){
 async function renderCompare(){
   const tb = $('#cmp-table'), d = ds(), me = player();
   if (!state.cmp) { tb.hidden = true; return; }
-  const r = META.roster.find(x => x.pid === state.cmp); if (!r) { tb.hidden = true; return; }
+  const r = ROSTER.byPid[state.cmp]; if (!r) { tb.hidden = true; return; }
   if (!cache[r.club]) { try { cache[r.club] = await (await fetch(`${META.path}${r.club}.json?v=${encodeURIComponent(META.built || '')}`)).json(); } catch (e) { tb.hidden = true; return; } }
   const other = cache[r.club].players.find(p => p.pid === r.pid); if (!other || state.cmp !== r.pid) return;
   const pool = (META.medians || {})[d.pos_group] || {};
@@ -1261,12 +1263,13 @@ $('#f-rate').querySelectorAll('button').forEach(b => b.addEventListener('click',
 const DD = {
   team: Dropdown($('#team'), (op, head) => { const c = CLUBS[op.value]; return `${c && c.logo && !head ? `<img src="${c.logo}" alt="">` : ''}<span>${c.name}</span>`; }),
   player: Dropdown($('#player'), (op, head) => { const p = team() && team().players[+op.value]; if (!p) return op.text; const n = nameOf(p.name); return head ? `#${p.dorsal || '–'} ${n.first} ${n.sur}` : `<span class="no">${p.dorsal || '–'}</span><span>${n.first} ${n.sur}</span><small>${(p.position || '').slice(0, 7)}</small>`; }),
-  cmp: Dropdown($('#cmp'), (op, head) => { if (!op.value) return op.text; const r = (META.roster || []).find(x => x.pid === op.value); if (!r) return op.text; const c = CLUBS[r.club], n = nameOf(r.name); return head ? `${n.first} ${n.sur} · ${shortName(r.club)}` : `${c && c.logo ? `<img src="${c.logo}" alt="">` : ''}<span class="no">${r.dorsal || '–'}</span><span>${n.first} ${n.sur}</span><small>${shortName(r.club)}</small>`; }),
+  cmp: Dropdown($('#cmp'), (op, head) => { if (!op.value) return op.text; const r = ROSTER.byPid[op.value]; if (!r) return op.text; const c = CLUBS[r.club], n = nameOf(r.name); return head ? `${n.first} ${n.sur} · ${shortName(r.club)}` : `${c && c.logo ? `<img src="${c.logo}" alt="">` : ''}<span class="no">${r.dorsal || '–'}</span><span>${n.first} ${n.sur}</span><small>${shortName(r.club)}</small>`; }),
   statGame: Dropdown($('#stat-game'), (op, head) => { if (op.value === 'all' || !team()) return op.text; const g = ds().games[+op.value]; if (!g) return op.text; const l = gameLabel(g); return head ? `${l.txt} · ${l.res} ${l.score}` : `<span>${l.txt}</span><small class="${l.res === 'W' ? 'w' : 'l'}">${l.res} ${l.score}</small>`; })
 };
 // ---- player search across every club: name, club and code, accents folded
 const fold = s => (s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
-const INDEX = (META.roster || []).map(r => { const n = nameOf(r.name), c = CLUBS[r.club] || {}; return {r, n, sur: fold(n.sur), words: fold(`${n.first} ${n.sur} ${c.short || ''} ${c.name || ''} ${r.club}`).split(/[\s\-'.]+/).filter(Boolean)}; });
+let INDEX = [];
+const indexRoster = () => { INDEX = ROSTER.list.map(r => { const n = nameOf(r.name), c = CLUBS[r.club] || {}; return {r, n, sur: fold(n.sur), words: fold(`${n.first} ${n.sur} ${c.short || ''} ${c.name || ''} ${r.club}`).split(/[\s\-'.]+/).filter(Boolean)}; }); };
 function findPlayers(q){ const toks = fold(q).trim().split(/[\s\-'.]+/).filter(Boolean); if (!toks.length) return []; return INDEX.filter(x => toks.every(t => x.words.some(w => w.startsWith(t)))).sort((a, b) => (a.sur.startsWith(toks[0]) ? 0 : 1) - (b.sur.startsWith(toks[0]) ? 0 : 1) || a.n.sur.localeCompare(b.n.sur)).slice(0, 8); }
 function bindSearch(q, list){
   let hits = [], hi = -1;
@@ -1299,7 +1302,6 @@ const LB = (() => {
   if (!L) return {ok: false, mark(){}};
   const BOARDS = [{k: 'pts', t: 'Points per game'}, {k: 'reb', t: 'Rebounds per game'}, {k: 'ast', t: 'Assists per game'}, {k: 'fg3', t: '3-point percentage'}];
   const RANK_I = {pts: 0, reb: 1, ast: 2, fg3: 3};
-  const R = Object.fromEntries((META.roster || []).map(r => [r.pid, r]));
   const list = $('#lb-list'), dots = $('#lb-dots'), reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
   let at = 0, swiped = false, down = null;
   panel.hidden = false;
@@ -1313,7 +1315,7 @@ const LB = (() => {
     ? `${n} · ${row[1]} of ${row[2]} · ${ival(row[1], row[2])}`
     : `${n} · ${row[1]} in ${row[2]} game${row[2] === 1 ? '' : 's'}${row[2] < 3 ? ' · small sample' : ''}`;
   function rowHtml(k, row, rank, i, lead, pin, mixed){
-    const r = R[row[0]]; if (!r) return '';
+    const r = ROSTER.byPid[row[0]]; if (!r) return '';
     const nm = nameOf(r.name), c = CLUBS[r.club] || {}, v = valOf(k, row);
     const p = lead ? Math.max(0, Math.min(100, 100 * v / lead)) : 0;
     const me = state.data && player() && r.pid === player().pid;
@@ -1330,7 +1332,7 @@ const LB = (() => {
   // the viewed player pinned under the ten: his rank comes from the roster index, his numbers from the club file already loaded
   function pinHtml(k, lead, mixed){
     if (!state.data || !player()) return '';
-    const me = player(), r = R[me.pid]; if (!r || !ds().tot.gp) return '';
+    const me = player(), r = ROSTER.byPid[me.pid]; if (!r || !ds().tot.gp) return '';
     const rank = (r.lr || [])[RANK_I[k]] || 0;
     if (rank && rank <= 10) return '';
     const t = ds().tot, row = k === 'fg3' ? [me.pid, t.fgm3, t.fga3] : [me.pid, t[k], t.gp];
@@ -1360,7 +1362,7 @@ const LB = (() => {
   function paint(dir){
     const b = BOARDS[at], rows = L[b.k] || [], n = L.n[b.k === 'fg3' ? 'fg3' : 'pg'];
     const lead = rows.length ? valOf(b.k, rows[0]) : 0, mixed = rows.some(r => r[2] >= (b.k === 'fg3' ? MIN_ATT : 3));
-    list.innerHTML = rows.length
+    list.innerHTML = !ROSTER.loaded ? '<li class="lb-none"><b>Loading</b></li>' : rows.length
       ? rows.map((row, i) => rowHtml(b.k, row, i + 1, i, lead, false, mixed)).join('') + pinHtml(b.k, lead, mixed)
       : `<li class="lb-none">${b.k === 'fg3'
           ? `<b>No player has ${L.min_3pa} three-point attempts yet</b><span>The league leader has ${L.top_3pa}. This board opens at ${L.min_3pa}, the same number of attempts the rest of the app requires before it prints a 3-point percentage.</span>`
@@ -1414,7 +1416,7 @@ const COVER = (() => {
   const n = v => (v || 0).toLocaleString('en-GB');
   $('#cv-season').textContent = META.label;
   const st = META.status || {};
-  $('#cv-nums').innerHTML = [[META.clubs.length, 'Clubs'], [(META.roster || []).length, 'Players'], [st.games, 'Games'], [st.shots, 'Shots charted']]
+  $('#cv-nums').innerHTML = [[META.clubs.length, 'Clubs'], [META.n_players, 'Players'], [st.games, 'Games'], [st.shots, 'Shots charted']]
     .map(([v, k]) => `<li><b>${n(v)}</b><span>${k}</span></li>`).join('');
   $('#cv-clubs').innerHTML = META.clubs.map(c => `<a href="#${c.code}" title="${c.name}"><img src="${c.logo || ''}" alt="" width="34" height="34" loading="lazy" decoding="async"><span>${c.short || c.code}</span></a>`).join('');
   $('#cv-built').textContent = META.built ? `Built ${fmtBuilt(META.built)}${st.games != null ? ` · ${st.games} game${st.games === 1 ? '' : 's'}` : ''}` : 'Updated after every game';
@@ -1498,6 +1500,10 @@ async function route(){
 addEventListener('hashchange', route);
 (async function(){
   await route();
+  // the roster after the first page is up: search, compare and the leaderboard names switch on when it lands
+  try { ROSTER.list = await (await fetch(`${META.path}roster.json?v=${encodeURIComponent(META.built || '')}`)).json(); } catch (e) { ROSTER.list = []; }
+  ROSTER.byPid = Object.fromEntries(ROSTER.list.map(r => [r.pid, r])); ROSTER.loaded = true; indexRoster();
+  if (state.data) { renderCompareOptions(); LB.mark(); }
   const dbg = +new URLSearchParams(location.search).get('debug3d');
   if (dbg) { await new Promise(r => setTimeout(r, 5000)); for (let k = 0; k < dbg; k++) Shot3D.tick(0.05); }
 })();

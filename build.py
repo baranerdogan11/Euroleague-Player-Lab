@@ -498,8 +498,11 @@ meta = {"season": SEASON, "label": label(SEASON), "model": {"version": card["ver
         "built": datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC"), "path": f"teams/{SEASON}/",
         "status": {k: status.get(k) for k in ("checked_at", "games", "shots", "players", "tests", "ok", "failures", "warnings")} if status else None}
 json.dump(meta, open(os.path.join(OUT, "index.json"), "w"), ensure_ascii=False)
+# the roster (search index, compare peers, leaderboard names) is 40 KB the cover never needs, so the page fetches it after first paint
+json.dump(meta["roster"], open(os.path.join(OUT, "roster.json"), "w"), separators=(",", ":"), ensure_ascii=False)
+inline = {k: v for k, v in meta.items() if k != "roster"}; inline["n_players"] = len(meta["roster"])
 tpl = open(os.path.join(ROOT, "template.html"), encoding="utf-8").read()
-open(os.path.join(ROOT, "index.html"), "w", encoding="utf-8").write(tpl.replace("/*META*/", json.dumps(meta, ensure_ascii=False)))
+open(os.path.join(ROOT, "index.html"), "w", encoding="utf-8").write(tpl.replace("/*META*/", json.dumps(inline, ensure_ascii=False)))
 for s in summary:
     print("%-4s players %2d  games %2d  shots %4d" % s)
 print("index.html + teams/%s/*.json written from warehouse" % SEASON)
