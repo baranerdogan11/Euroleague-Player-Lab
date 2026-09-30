@@ -498,6 +498,29 @@ meta = {"season": SEASON, "label": label(SEASON), "model": {"version": card["ver
         "built": datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC"), "path": f"teams/{SEASON}/",
         "status": {k: status.get(k) for k in ("checked_at", "games", "shots", "players", "tests", "ok", "failures", "warnings")} if status else None}
 json.dump(meta, open(os.path.join(OUT, "index.json"), "w"), ensure_ascii=False)
+# app icons drawn from the house mark (a dark square, the orange ball, court lines), written once
+def draw_icons():
+    from PIL import Image, ImageDraw
+    os.makedirs(os.path.join(ROOT, "icons"), exist_ok=True)
+    def mark(size, pad):
+        im = Image.new("RGBA", (size, size), (6, 7, 8, 255)); d = ImageDraw.Draw(im)
+        r = size * (22 / 64) * (1 - pad); cx = cy = size / 2; w = max(2, round(size * 3 / 64))
+        d.ellipse([cx - r, cy - r, cx + r, cy + r], fill=(242, 111, 33, 255))
+        d.line([cx - r, cy, cx + r, cy], fill=(6, 7, 8, 255), width=w); d.line([cx, cy - r, cx, cy + r], fill=(6, 7, 8, 255), width=w)
+        a = r * 0.68
+        d.arc([cx - r - a, cy - a * 1.05, cx - r + a, cy + a * 1.05], 300, 60, fill=(6, 7, 8, 255), width=w)
+        d.arc([cx + r - a, cy - a * 1.05, cx + r + a, cy + a * 1.05], 120, 240, fill=(6, 7, 8, 255), width=w)
+        return im
+    for name, size, pad in (("icon-192.png", 192, 0.0), ("icon-512.png", 512, 0.0), ("icon-maskable-512.png", 512, 0.22), ("apple-touch-icon.png", 180, 0.06)):
+        path = os.path.join(ROOT, "icons", name)
+        if not os.path.exists(path):
+            mark(size, pad).save(path, "PNG", optimize=True)
+draw_icons()
+# the service worker carries the build stamp so every build replaces the cached page and JSON
+sw = open(os.path.join(ROOT, "sw.js"), encoding="utf-8").read()
+if "/*BUILT*/" not in sw:
+    sw = re.sub(r"const V = 'pl-[^']*';", "const V = 'pl-/*BUILT*/';", sw, count=1)
+open(os.path.join(ROOT, "sw.js"), "w", encoding="utf-8").write(sw.replace("/*BUILT*/", meta["built"].replace(" ", "_").replace(":", "")))
 # the roster (search index, compare peers, leaderboard names) is 40 KB the cover never needs, so the page fetches it after first paint
 json.dump(meta["roster"], open(os.path.join(OUT, "roster.json"), "w"), separators=(",", ":"), ensure_ascii=False)
 inline = {k: v for k, v in meta.items() if k != "roster"}; inline["n_players"] = len(meta["roster"])

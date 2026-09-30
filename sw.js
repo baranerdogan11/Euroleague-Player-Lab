@@ -1,0 +1,27 @@
+// Euroleague Player Lab service worker: the page and every JSON go network-first (a rebuild is never masked), the heavy
+// static files (photos, crests, fonts, the 3D library) cache-first for thirty days so a club already opened reads offline.
+const V = 'pl-2026-09-30_1114_UTC';
+const STATIC = /\/(photos|logos|fonts|icons)\/|cdnjs\.cloudflare\.com/;
+const DAY = 864e5, TTL = 30 * DAY;
+self.addEventListener('install', e => { self.skipWaiting(); });
+self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== V).map(k => caches.delete(k)))).then(() => self.clients.claim())); });
+self.addEventListener('fetch', e => {
+  const req = e.request;
+  if (req.method !== 'GET') return;
+  const url = new URL(req.url);
+  if (STATIC.test(url.href)) {
+    e.respondWith(caches.open(V).then(async c => {
+      const hit = await c.match(req);
+      if (hit && Date.now() - +(hit.headers.get('sw-at') || 0) < TTL) return hit;
+      try { const r = await fetch(req); if (r.ok || r.type === 'opaque') { const h = new Headers(r.headers); h.set('sw-at', String(Date.now())); c.put(req, new Response(await r.clone().blob(), {status: r.status, statusText: r.statusText, headers: h})); } return r; }
+      catch (err) { if (hit) return hit; throw err; }
+    }));
+    return;
+  }
+  if (req.mode === 'navigate' || url.pathname.endsWith('.json') || url.pathname.endsWith('.html') || url.pathname.endsWith('/')) {
+    e.respondWith(caches.open(V).then(async c => {
+      try { const r = await fetch(req); if (r.ok) c.put(req, r.clone()); return r; }
+      catch (err) { const hit = await c.match(req, {ignoreSearch: true}); if (hit) return hit; if (req.mode === 'navigate') { const home = await c.match('/', {ignoreSearch: true}); if (home) return home; } throw err; }
+    }));
+  }
+});

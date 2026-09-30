@@ -5,6 +5,9 @@
 <title>Euroleague Player Lab</title>
 <meta name="description" content="Shot charts, shooting profiles and season stats for every Euroleague player, rebuilt within minutes of every final.">
 <meta name="theme-color" content="#060708">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 <meta property="og:site_name" content="Euroleague Player Lab">
 <meta property="og:title" content="Euroleague Player Lab">
 <meta property="og:description" content="Shot charts, shooting profiles and season stats for every Euroleague player, rebuilt within minutes of every final.">
@@ -1498,6 +1501,7 @@ async function route(){
   }
 }
 addEventListener('hashchange', route);
+if ('serviceWorker' in navigator && location.protocol === 'https:') addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));   // offline shell and a 30-day cache for photos, crests and fonts
 (async function(){
   await route();
   // the roster after the first page is up: search, compare and the leaderboard names switch on when it lands

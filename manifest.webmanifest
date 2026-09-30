@@ -1,0 +1,16 @@
+{
+  "name": "Euroleague Player Lab",
+  "short_name": "Player Lab",
+  "description": "Shot charts, shooting profiles and season stats for every Euroleague player, rebuilt within minutes of every final.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#060708",
+  "theme_color": "#060708",
+  "lang": "en",
+  "icons": [
+    {"src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png"},
+    {"src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png"},
+    {"src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ]
+}
