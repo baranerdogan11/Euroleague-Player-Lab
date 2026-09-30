@@ -337,6 +337,7 @@ td.w{color:var(--good)} td.l{color:var(--bad)}
 .progress.on{opacity:1;width:70%}.progress.done{width:100%;opacity:0}
 .toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,16px);background:var(--white);color:#000;font-family:var(--cond);font-weight:800;font-size:14px;letter-spacing:.12em;text-transform:uppercase;padding:10px 18px;clip-path:polygon(8px 0,100% 0,calc(100% - 8px) 100%,0 100%);opacity:0;transition:opacity .2s,transform .2s;z-index:60;pointer-events:none}
 .toast.on{opacity:1;transform:translate(-50%,0)}
+.toast .lnk{color:#000;font:inherit;text-decoration:underline;padding:6px 0;cursor:pointer}
 .log tbody tr{cursor:pointer}
 .log tbody tr.on td{background:rgba(255,255,255,.07);color:var(--ink)}
 .log tbody tr.on td:nth-child(3)::after{content:"in view";display:inline-block;margin-left:8px;padding:1px 6px;font-family:var(--cond);font-size:11px;letter-spacing:.12em;text-transform:uppercase;background:var(--club2);color:var(--on);vertical-align:1px}
@@ -1219,10 +1220,17 @@ const fmtBuilt = s => { const m = (s || '').match(/(\d{4})-(\d{2})-(\d{2}) (\d{2
 // the build stamp: when the page was last rebuilt, how many games it holds and whether the checks passed
 const builtMs = (() => { const m = (META.built || '').match(/(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2})/); return m ? Date.UTC(+m[1], +m[2] - 1, +m[3], +m[4], +m[5]) : 0; })();
 const ST = META.status || {};
-$('#tag-sub').textContent = META.built ? `Updated ${fmtBuilt(META.built)}` : 'Updated after every game';
+$('#tag-sub').textContent = META.built ? `Updated ${fmtBuilt(META.built)}${META.leaders && META.leaders.rounds ? ` · through R${META.leaders.rounds}` : ''}` : 'Updated after every game';
 $('#foot-status').innerHTML = META.built ? `<a href="monitor.html">Built ${fmtBuilt(META.built)}${ST.games != null ? ` · ${ST.games} game${ST.games === 1 ? '' : 's'}` : ''}${ST.ok != null ? ` · ${ST.failures ? 'checks failed' : 'checks passed'}` : ''}</a>` : 'Euroleague Player Lab';
 // a final that the build has not caught up with after 36 hours marks the live dot amber, so a stalled pipeline shows on the page itself
-function markStale(){ const t = team(), now = Date.now(); const lag = builtMs && now - builtMs > 36 * 3600e3 && (t && (t.upcoming || []).some(g => new Date(g.date + 'T22:00:00Z') < now - 24 * 3600e3)); $('.live').classList.toggle('stale', !!lag); $('.live i').title = lag ? `Last built ${fmtBuilt(META.built)}; a game since then is not in yet` : ''; }
+function markStale(){ const t = team(), now = Date.now(); const lag = builtMs && now - builtMs > 36 * 3600e3 && (t && (t.upcoming || []).some(g => new Date(g.date + 'T22:00:00Z') < now - 24 * 3600e3)); $('.live').classList.toggle('stale', !!lag); $('.live i').title = lag ? `Last built ${fmtBuilt(META.built)}; a game since then is not in yet` : ''; if (lag) $('#tag-sub').textContent = `Update pending · built ${fmtBuilt(META.built)}`; }
+// a build newer than the one this tab holds (the page is cached for ten minutes): one line offers the fresh data
+async function checkFresh(){
+  try {
+    const st = await (await fetch(`${META.path}status.json`, {cache: 'no-store'})).json();
+    if (st && st.checked_at && ST.checked_at && st.checked_at > ST.checked_at) { const t = $('#toast'); clearTimeout(toastT); t.innerHTML = 'New data since you opened this page · <button type="button" class="lnk" id="refresh">Refresh</button>'; t.style.pointerEvents = 'auto'; t.classList.add('on'); $('#refresh').addEventListener('click', () => location.reload()); }
+  } catch (e) {}
+}
 document.querySelectorAll('thead th').forEach(t => t.setAttribute('scope', 'col'));
 const scrollEnds = () => document.querySelectorAll('.scroll').forEach(el => el.classList.toggle('end', el.scrollWidth - el.clientWidth - el.scrollLeft < 2));
 document.querySelectorAll('.scroll').forEach(el => el.addEventListener('scroll', scrollEnds, {passive: true}));
@@ -1252,6 +1260,8 @@ $('#prev').addEventListener('click', () => stepPlayer(-1)); $('#next').addEventL
 $('#share').addEventListener('click', async () => {
   if (!team()) return;
   const url = new URL(`p/${player().pid}.html`, location.href).href, b = $('#share');   // the share stub carries the player's Open Graph card and forwards to this page
+  const n = nameOf(player().name);
+  if (navigator.share && PHONE.matches) { try { await navigator.share({title: `${n.first} ${n.sur} · ${shortName(state.team)} · Player Lab`, url}); return; } catch (e) { if (e.name === 'AbortError') return; } }   // phones: the system share sheet
   try { await navigator.clipboard.writeText(url); } catch (e) { const i = document.createElement('input'); i.value = url; document.body.appendChild(i); i.select(); document.execCommand('copy'); i.remove(); }
   toast('Link copied'); b.classList.add('ok'); b.textContent = 'Copied'; setTimeout(() => { b.classList.remove('ok'); b.textContent = 'Copy link'; }, 1800);
 });
@@ -1467,8 +1477,12 @@ async function go(){
   COVER.hide();
   const code = h[0];
   if (state.team !== code) { $('#team').value = code; if (!await loadTeam(code)) return false; }
-  if (h[1]) { const i = team().players.findIndex(p => p.pid === h[1]); if (i >= 0 && i !== state.player) { $('#player').value = i; state.player = i; state.game = 'all'; renderGames(); renderPlayer(); } }
+  let i = h[1] ? team().players.findIndex(p => p.pid === h[1]) : 0;
+  if (h[1] && i < 0) { i = 0; toast('Not on this roster this season'); }   // a stale link (a transfer, a typo) lands on the club's first player
+  if (i !== state.player) { $('#player').value = i; state.player = i; state.game = 'all'; renderGames(); renderPlayer(); }
   if (h[2] === 'zones' || h[2] === '3d') { const b = $(`#f-view button[data-v="${h[2]}"]`); if (b.getAttribute('aria-pressed') !== 'true') b.click(); }
+  const want = `#${code}/${player().pid}${h[2] === 'zones' || h[2] === '3d' ? '/' + h[2] : ''}`;
+  if (location.hash !== want) history.replaceState(null, '', location.pathname + location.search + want);   // the bar names the player shown, so back and reload agree with the page
   DD.team.refresh(); DD.player.refresh(); DD.statGame.refresh();
   const n = nameOf(player().name); document.title = `${n.first} ${n.sur} · ${shortName(state.team)} · Player Lab`;
   try { localStorage.setItem('pl-last', JSON.stringify({hash: `${state.team}/${player().pid}`, name: `${n.first} ${n.sur} · ${shortName(state.team)}`})); } catch (e) {}   // the cover's Continue button
@@ -1509,6 +1523,7 @@ if ('serviceWorker' in navigator && location.protocol === 'https:') addEventList
   try { ROSTER.list = await (await fetch(`${META.path}roster.json?v=${encodeURIComponent(META.built || '')}`)).json(); } catch (e) { ROSTER.list = []; }
   ROSTER.byPid = Object.fromEntries(ROSTER.list.map(r => [r.pid, r])); ROSTER.loaded = true; indexRoster();
   if (state.data) { renderCompareOptions(); LB.mark(); }
+  checkFresh(); setInterval(checkFresh, 15 * 60e3);
   const dbg = +new URLSearchParams(location.search).get('debug3d');
   if (dbg) { await new Promise(r => setTimeout(r, 5000)); for (let k = 0; k < dbg; k++) Shot3D.tick(0.05); }
 })();
