@@ -410,6 +410,11 @@ body.cv-on .top,body.cv-on .wrap{display:none}
 .cv-cta{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin:30px 0 0}
 .cv-go{background:var(--club2);color:var(--on);border:0;font-family:var(--cond);font-weight:800;font-size:19px;letter-spacing:.16em;text-transform:uppercase;padding:16px 34px 16px 30px;cursor:pointer;clip-path:polygon(12px 0,100% 0,calc(100% - 12px) 100%,0 100%);transition:filter .15s,transform .15s}
 .cv-go:hover{filter:brightness(1.12);transform:translateX(2px)}
+.cv-go small{display:block;font-size:11px;letter-spacing:.2em;font-weight:700;opacity:.8;margin-top:2px}
+.cv-search{flex:1 1 300px;max-width:440px;border-right:0;padding:0;height:52px}
+.cv-search input{font-size:19px;padding:8px 0 6px}
+.cv-search kbd{right:6px}
+.cv-search .dd-list{left:0;right:0;top:calc(100% + 4px)}
 .cv-nums{list-style:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));margin:44px 0 0;padding:0;border:1px solid var(--line);background:var(--bg2)}
 .cv-nums li{padding:16px 16px 14px;border-right:1px solid var(--line)}
 .cv-nums li:last-child{border-right:0}
@@ -465,7 +470,8 @@ body.cv-on .top,body.cv-on .wrap{display:none}
   .sel.player .dd-btn{font-size:16px;padding:12px 24px 12px 0}.sel.player .dd-btn::after{right:6px}.sel.player .dd-list{left:auto;right:0}
   .q-btn{display:grid;place-items:center;width:52px;height:52px;flex:none;background:transparent;border:0;border-left:1px solid var(--line);color:var(--ink);cursor:pointer}
   .search{display:none;position:absolute;left:0;right:0;top:0;height:52px;background:var(--bg2);padding:0 12px;flex:none;border-right:0;z-index:2}
-  .top.q-on .search{display:flex}.q-x{display:grid;place-items:center;width:44px;height:44px;flex:none;background:transparent;border:0;color:var(--ink2);font-size:26px;line-height:1;cursor:pointer}
+  .top.q-on .search{display:flex}
+  .cv-search{order:-1;flex:1 1 100%;max-width:none;display:flex;position:relative;height:48px;background:none;padding:0;left:auto;right:auto;top:auto}.cv-search kbd{display:none}.q-x{display:grid;place-items:center;width:44px;height:44px;flex:none;background:transparent;border:0;color:var(--ink2);font-size:26px;line-height:1;cursor:pointer}
   .search input{font-size:17px;padding:10px 0 8px}.search kbd{display:none}.search .dd-list{left:0;right:0;top:100%}
   .facts{font-size:15px;gap:12px}
   .bio{padding:0 16px 14px}
@@ -509,6 +515,7 @@ body.cv-on .top,body.cv-on .wrap{display:none}
     <p class="cv-lede">Every shot, every player, every club. Shot charts in two dimensions and three, shooting profiles that separate the shots a player takes from what he adds to them, and season stats rebuilt within minutes of every final.</p>
     <div class="cv-cta">
       <button class="cv-go" id="cv-go" type="button">Open the app</button>
+      <div class="search cv-search"><input type="search" id="cq" placeholder="Find a player" aria-label="Find a player across all clubs" autocomplete="off" spellcheck="false" role="combobox" aria-expanded="false" aria-controls="cq-list" aria-autocomplete="list"><kbd>/</kbd><ul class="dd-list" id="cq-list" role="listbox" aria-label="Players" hidden></ul></div>
     </div>
     <ul class="cv-nums" id="cv-nums"></ul>
     <section class="cv-sec">
@@ -1248,15 +1255,17 @@ const DD = {
 const fold = s => (s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 const INDEX = (META.roster || []).map(r => { const n = nameOf(r.name), c = CLUBS[r.club] || {}; return {r, n, sur: fold(n.sur), words: fold(`${n.first} ${n.sur} ${c.short || ''} ${c.name || ''} ${r.club}`).split(/[\s\-'.]+/).filter(Boolean)}; });
 function findPlayers(q){ const toks = fold(q).trim().split(/[\s\-'.]+/).filter(Boolean); if (!toks.length) return []; return INDEX.filter(x => toks.every(t => x.words.some(w => w.startsWith(t)))).sort((a, b) => (a.sur.startsWith(toks[0]) ? 0 : 1) - (b.sur.startsWith(toks[0]) ? 0 : 1) || a.n.sur.localeCompare(b.n.sur)).slice(0, 8); }
-(function(){
-  const q = $('#q'), list = $('#q-list'); let hits = [], hi = -1;
+function bindSearch(q, list){
+  let hits = [], hi = -1;
   const close = () => { list.hidden = true; q.setAttribute('aria-expanded', 'false'); q.removeAttribute('aria-activedescendant'); hi = -1; };
   const mark = () => { [...list.children].forEach((li, i) => { li.classList.toggle('hi', i === hi); li.setAttribute('aria-selected', i === hi); }); if (hi >= 0) q.setAttribute('aria-activedescendant', `q-opt-${hi}`); else q.removeAttribute('aria-activedescendant'); };
   const go = x => { location.hash = `${x.r.club}/${x.r.pid}`; q.value = ''; close(); q.blur(); $('.top').classList.remove('q-on'); };
   const show = () => { if (!q.value.trim()) { close(); return; } hits = findPlayers(q.value); list.innerHTML = hits.length ? hits.map((x, i) => { const c = CLUBS[x.r.club] || {}; return `<li role="option" id="q-opt-${i}" data-i="${i}" aria-selected="false">${c.logo ? `<img src="${c.logo}" alt="">` : ''}<span class="no">${x.r.dorsal || '–'}</span><span>${x.n.first} ${x.n.sur}</span><small>${shortName(x.r.club)}</small></li>`; }).join('') : '<li class="none">No player matches</li>'; list.hidden = false; q.setAttribute('aria-expanded', 'true'); hi = hits.length ? 0 : -1; mark(); };
   q.addEventListener('input', show); q.addEventListener('focus', show);
-  $('#q-btn').addEventListener('click', () => { $('.top').classList.add('q-on'); $('#q-x').hidden = false; q.focus(); });   // phones: the field opens over the bar from the icon
-  $('#q-x').addEventListener('click', () => { q.value = ''; close(); $('.top').classList.remove('q-on'); });
+  if (q.id === 'q') {
+    $('#q-btn').addEventListener('click', () => { $('.top').classList.add('q-on'); $('#q-x').hidden = false; q.focus(); });   // phones: the field opens over the bar from the icon
+    $('#q-x').addEventListener('click', () => { q.value = ''; close(); $('.top').classList.remove('q-on'); });
+  }
   q.addEventListener('blur', () => setTimeout(() => { if (document.activeElement !== q) $('.top').classList.remove('q-on'); }, 120));
   q.addEventListener('keydown', e => {
     if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); if (list.hidden) { show(); return; } if (hits.length) { hi = (hi + (e.key === 'ArrowDown' ? 1 : -1) + hits.length) % hits.length; mark(); } }
@@ -1266,9 +1275,10 @@ function findPlayers(q){ const toks = fold(q).trim().split(/[\s\-'.]+/).filter(B
   list.addEventListener('mousedown', e => e.preventDefault());
   list.addEventListener('click', e => { const li = e.target.closest('li[data-i]'); if (li) go(hits[+li.dataset.i]); });
   list.addEventListener('mousemove', e => { const li = e.target.closest('li[data-i]'); if (li && +li.dataset.i !== hi) { hi = +li.dataset.i; mark(); } });
-  document.addEventListener('pointerdown', e => { if (!e.target.closest('.search')) close(); });
-  document.addEventListener('keydown', e => { if (e.key === '/' && !e.ctrlKey && !e.metaKey && !e.altKey && !['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) { e.preventDefault(); q.focus(); q.select(); } });   // "/" jumps to the search box
-})();
+  document.addEventListener('pointerdown', e => { if (!q.closest('.search').contains(e.target)) close(); });
+}
+bindSearch($('#q'), $('#q-list')); bindSearch($('#cq'), $('#cq-list'));
+document.addEventListener('keydown', e => { if (e.key === '/' && !e.ctrlKey && !e.metaKey && !e.altKey && !['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) { e.preventDefault(); const q = document.body.classList.contains('cv-on') ? $('#cq') : $('#q'); if (q === $('#q') && PHONE.matches) $('#q-btn').click(); q.focus(); q.select(); } });   // "/" jumps to the search box on either page
 
 // ---- league leaderboards: four boards precomputed by build.py, one visible at a time
 const LB = (() => {
@@ -1395,7 +1405,10 @@ const COVER = (() => {
     .map(([v, k]) => `<li><b>${n(v)}</b><span>${k}</span></li>`).join('');
   $('#cv-clubs').innerHTML = META.clubs.map(c => `<a href="#${c.code}" title="${c.name}"><img src="${c.logo || ''}" alt="" loading="lazy" decoding="async"><span>${c.short || c.code}</span></a>`).join('');
   $('#cv-built').textContent = META.built ? `Built ${fmtBuilt(META.built)}${st.games != null ? ` · ${st.games} game${st.games === 1 ? '' : 's'}` : ''}` : 'Updated after every game';
-  $('#cv-go').addEventListener('click', () => { location.hash = first.code; });
+  const last = (() => { try { return JSON.parse(localStorage.getItem('pl-last')); } catch (e) { return null; } })();
+  const go = $('#cv-go');
+  if (last && last.hash && CLUBS[last.hash.split('/')[0]]) go.innerHTML = `Continue<small>${esc(last.name)}</small>`;
+  go.addEventListener('click', () => { location.hash = last && last.hash && CLUBS[last.hash.split('/')[0]] ? last.hash : first.code; });
   return {
     show(){ applyPalette({base: '#1f2b47', accent: '#f26f21'}); document.body.classList.add('cv-on'); el.hidden = false; document.title = 'Euroleague Player Lab'; scrollTo(0, 0); },
     hide(){ document.body.classList.remove('cv-on'); el.hidden = true; }
@@ -1439,6 +1452,7 @@ async function go(){
   if (h[2] === 'zones' || h[2] === '3d') { const b = $(`#f-view button[data-v="${h[2]}"]`); if (b.getAttribute('aria-pressed') !== 'true') b.click(); }
   DD.team.refresh(); DD.player.refresh(); DD.statGame.refresh();
   const n = nameOf(player().name); document.title = `${n.first} ${n.sur} · ${shortName(state.team)} · Player Lab`;
+  try { localStorage.setItem('pl-last', JSON.stringify({hash: `${state.team}/${player().pid}`, name: `${n.first} ${n.sur} · ${shortName(state.team)}`})); } catch (e) {}   // the cover's Continue button
   return true;
 }
 let booted = false, routing = false, queued = false;
