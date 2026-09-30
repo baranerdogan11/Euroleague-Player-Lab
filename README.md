@@ -15,7 +15,7 @@ in order.
 - 2P%, 3P%, FT% and true shooting, with makes over attempts
 - Five-zone accuracy: rim, paint, mid-range, corner 3, above-break 3
 - Animated shot chart with made / missed filter, single-game filter, and a Zones view shading the floor by FG%
-- Hover any shot for the game, quarter, distance and its expected FG% (for a league-average shooter, and for the player himself)
+- Hover or tap any shot for the game, quarter, distance and its expected FG% (for a league-average shooter, and for the player himself); every definition, interval and sample-size note on the page shows on hover and pins on a tap
 - League values by zone and by shooting split next to every rate; rates on fewer than 10 attempts are greyed and carry a 95% interval
 - Role strip: usage, true shooting, 3-point and free-throw rates, assist, turnover and rebound rates, on/off net rating, each ranked within the player's position group (per game or per 40 minutes for the counting stats)
 - Play-by-play context on every shot: assisted or unassisted, and-ones, blocks, seconds into the possession; an assisted/unassisted filter on the chart, an assisted share per zone and a shot-timing table
@@ -190,10 +190,13 @@ git add -A && git commit -m "Update after round" && git push   # GitHub Pages re
 ### Opening page
 
 `index.html` shows a cover when the URL carries no club: the wordmark, one paragraph on what the app does,
-live counts of clubs, players, games and shots charted, a grid of all twenty crests, and a button that enters
-at the first club on the list. Any deep link (`#CLUB`, `#CLUB/PID`, and the `p/<pid>.html` share stubs) skips
-the cover entirely, and the header wordmark returns to it, so the app stays one hash-routed page with no
-second document to keep in step.
+the player search, live counts of clubs, players, games and shots charted, a grid of all twenty crests, and a
+button that enters at the first club on the list, or continues at the last player viewed in that browser
+(`localStorage` `pl-last`). A fresh visit to the site always opens on the cover, whatever the address carried,
+because phones restore the last player they showed; once the reader has entered the app in that tab
+(`sessionStorage` `pl-in`, which the `p/<pid>.html` share stubs set before forwarding), reloads and
+back/forward keep their place. The header wordmark returns to the cover, so the app stays one hash-routed
+page with no second document to keep in step.
 
 ### League leaderboards
 

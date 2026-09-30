@@ -14,7 +14,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,600;0,700;0,800;1,700;1,900&family=Barlow:wght@400;500;600;700&display=swap">
 <style>
 :root{
-  --bg:#060708;--bg2:#0e1013;--panel:#131519;--panel2:#191c22;--line:#24272e;--line2:#343841;--ink:#ffffff;--ink2:#c6cbd4;--muted:#7a8190;
+  --bg:#060708;--bg2:#0e1013;--panel:#131519;--panel2:#191c22;--line:#24272e;--line2:#343841;--ink:#ffffff;--ink2:#c6cbd4;--muted:#8a919f;
   --club:#1f2b47;--club2:#f26f21;--on:#0b0d10;--floor:#0c1016;--paint:#12161e;--white:#f4f6f8;--miss:#8a91a0;--good:#3fc48a;--bad:#ff6b6b;
   --cond:"Barlow Condensed","Arial Narrow",Impact,sans-serif;--sans:"Barlow",system-ui,-apple-system,"Segoe UI",sans-serif;
 }
@@ -96,7 +96,7 @@ h1 span span{display:block;color:var(--club2)}
 .bio dd small{font-weight:600;color:var(--ink2);font-size:13.5px;letter-spacing:.08em;margin-left:7px}
 .bio ol{list-style:none;margin:0;padding:0}
 .bio li{display:flex;align-items:baseline;gap:8px;font-family:var(--cond);font-weight:700;font-size:15px;letter-spacing:.04em;text-transform:uppercase;line-height:1.35;color:#fff}
-.bio li b{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.bio li b{font-weight:700;min-width:0;line-height:1.15}
 .bio li span{color:var(--club2);font-variant-numeric:tabular-nums;flex:none;margin-left:auto}
 .bio li.cur b{color:var(--club2)}
 .bio li i{font-style:normal;font-weight:600;font-size:10.5px;letter-spacing:.14em;color:var(--muted);flex:none}
@@ -147,6 +147,7 @@ h1 span span{display:block;color:var(--club2)}
 .cmp-row .dd-list{left:-1px;right:-1px}
 #cmp-table td.me{color:var(--ink);font-weight:700}
 #cmp-table td.win{color:var(--club2)}
+#cmp-b a{color:var(--club2);text-decoration:none}#cmp-b a:hover{text-decoration:underline}
 @media (max-width:1000px){.role{grid-template-columns:repeat(3,1fr)}.role div{border-bottom:1px solid var(--line)}.role div:nth-child(3n){border-right:0}.role div:nth-last-child(-n+3){border-bottom:0}}
 @media (max-width:760px){.role{grid-template-columns:repeat(2,1fr)}.role div:nth-child(3n){border-right:1px solid var(--line)}.role div:nth-child(2n){border-right:0}.role div:nth-last-child(-n+3){border-bottom:1px solid var(--line)}.role div:nth-last-child(-n+2){border-bottom:0}}
 /* panels */
@@ -178,7 +179,7 @@ h1 span span{display:block;color:var(--club2)}
 .court .zs{font-family:var(--sans);font-weight:500;font-size:34px;fill:#d6dcea;text-anchor:middle;paint-order:stroke;stroke:var(--floor);stroke-width:8}
 .shot{transform-box:fill-box;transform-origin:center;animation:pop .32s cubic-bezier(.2,1.4,.4,1) both}
 @keyframes pop{from{opacity:0;transform:scale(.2)}to{opacity:1;transform:scale(1)}}
-@media (prefers-reduced-motion:reduce){.shot{animation:none}.live i{animation:none}.ticker .run{animation:none}.tile::after,.split .bar i.fill,.gauge .t i,.zone-bar,.progress,.toast{transition:none}.sk{animation:none}
+@media (prefers-reduced-motion:reduce){.shot{animation:none}.live i{animation:none}.ticker{overflow-x:auto;scrollbar-width:thin}.ticker .run{animation:none}.tile::after,.split .bar i.fill,.gauge .t i,.zone-bar,.progress,.toast{transition:none}.sk{animation:none}
   .lb-list.go-l,.lb-list.go-r,.lb-title b.swap{animation:none}.lb-row a::after,.lb-arrow,.lb-dots button,.lb-row a,.lb summary::after{transition:none}}
 .court3d{position:relative;width:100%;aspect-ratio:4/3;background:var(--floor);overflow:hidden}
 .court3d canvas{display:block;width:100%;height:100%;touch-action:pan-y}
@@ -287,6 +288,7 @@ td.w{color:var(--good)} td.l{color:var(--bad)}
 .search input{width:100%;background:transparent;border:0;border-bottom:2px solid var(--line2);color:var(--ink);font-family:var(--cond);font-weight:700;font-size:16px;letter-spacing:.06em;text-transform:uppercase;padding:6px 0 4px;min-width:0;border-radius:0}
 .search input::placeholder{color:var(--muted);font-weight:600}
 .search input:focus{outline:none;border-bottom-color:var(--club2)}
+.search input:focus-visible{outline:2px solid var(--ink2);outline-offset:3px}
 .search input::-webkit-search-cancel-button,.search input::-webkit-search-decoration{-webkit-appearance:none}
 .search kbd{position:absolute;right:20px;top:50%;transform:translateY(-50%);font-family:var(--cond);font-size:11px;color:var(--muted);border:1px solid var(--line2);padding:0 5px;line-height:16px;pointer-events:none}
 .search input:focus~kbd,.search input:not(:placeholder-shown)~kbd{display:none}
@@ -341,10 +343,11 @@ td.w{color:var(--good)} td.l{color:var(--bad)}
 .lb-arrow:disabled:hover{background:var(--panel);border-color:var(--line);color:var(--ink)}
 #lb-prev{clip-path:polygon(0 0,100% 0,100% 100%,8px 100%)}
 #lb-next{clip-path:polygon(8px 0,100% 0,100% 100%,0 100%)}
-.lb-dots{display:flex;gap:5px;flex:none}
-.lb-dots button{width:26px;height:6px;padding:0;border:0;background:var(--line2);transform:skewX(-14deg);cursor:pointer;transition:background .2s}
-.lb-dots button:hover{background:var(--ink2)}
-.lb-dots button[aria-selected="true"],.lb-dots button[aria-selected="true"]:hover{background:var(--club2)}
+.lb-dots{display:flex;gap:2px;flex:none}
+.lb-dots button{width:34px;height:24px;padding:0;border:0;background:none;position:relative;cursor:pointer}
+.lb-dots button::before{content:"";position:absolute;left:4px;right:4px;top:9px;height:6px;background:var(--line2);transform:skewX(-14deg);transition:background .2s}
+.lb-dots button:hover::before{background:var(--ink2)}
+.lb-dots button[aria-pressed="true"]::before,.lb-dots button[aria-pressed="true"]:hover::before{background:var(--club2)}
 .lb-clip{position:relative;overflow:hidden;touch-action:pan-y}
 .lb-list{list-style:none;margin:0;padding:0;display:grid;grid-auto-flow:column;grid-template-rows:repeat(5,auto) auto;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:16px}
 .lb-row{position:relative;min-width:0}
@@ -485,11 +488,12 @@ body.cv-on .top,body.cv-on .wrap{display:none}
   .hero .ph img{height:220px}.hero .ph .num{font-size:130px;bottom:-10px}h1{font-size:50px;margin:10px 0 6px}.hero .lt{padding:12px 16px 10px}
   .pnav button{height:40px;min-width:44px;font-size:14px}.pnav #prev,.pnav #next{font-size:26px;padding:0 10px 4px}
   .tile span{font-size:11px;letter-spacing:.1em}.role b{font-size:24px}
-  .band-foot{gap:8px}.band-foot .seg button{padding:9px 14px;font-size:12px}.band-foot .lnk{padding:8px 0;display:block}.band-foot .sep{display:none}.band-ctl{width:100%;gap:8px}.band-foot .dd{flex:1 1 auto;min-width:0}.band-foot .dd .dd-btn{padding:9px 30px 9px 10px}
+  .band-foot{gap:8px}.band-foot .seg button{padding:12px 14px;font-size:12px}.band-foot .lnk{padding:10px 0;display:block}.foot a,.bio .lnk,.lb-foot .lnk{display:inline-block;padding:10px 0}.band-foot .sep{display:none}.band-ctl{width:100%;gap:8px}.band-foot .dd{flex:1 1 auto;min-width:0}.band-foot .dd .dd-btn{padding:13px 30px 13px 10px}
   .seg button{padding:10px 12px;font-size:13px;letter-spacing:.1em}
   .toolbar{gap:8px}.toolbar .seg{display:flex;width:100%}.toolbar .seg button{flex:1 1 0;text-align:center;padding:11px 4px}
   .toolbar .dd{flex:1 1 60%;min-width:0}.toolbar .dd .dd-btn{padding:11px 32px 11px 12px}.toolbar .btn{flex:1 1 30%;margin-left:0;padding:11px 10px;text-align:center}
   .dd-btn{padding:12px 30px 12px 0}
+  .ticker .run{padding-left:18px}
   .caption{flex-wrap:wrap}.caption b{font-size:14px}
   .split{grid-template-columns:44px 1fr 78px;gap:8px}.split .k{font-size:14px}.split .v b{font-size:19px}.split .v{font-size:11.5px}
   .xfg-row b{font-size:24px}
@@ -583,13 +587,13 @@ body.cv-on .top,body.cv-on .wrap{display:none}
           <button class="btn" id="replay" type="button" title="Replay the shot sequence">Replay</button>
         </div>
         <div class="court-wrap">
-          <svg class="court" id="court" viewBox="-30 0 1580 1440" role="img" aria-label="Half-court shot chart"></svg>
+          <svg class="court" id="court" viewBox="-30 0 1580 1440" role="img" aria-label="Half-court shot chart" aria-describedby="zones"></svg>
           <div class="court3d" id="court3d" hidden>
             <div class="hud3d"><div class="hud-row"><div class="seg" id="f-cam"><button aria-pressed="true" data-v="broadcast">Broadcast</button><button aria-pressed="false" data-v="baseline">Behind rim</button><button aria-pressed="false" data-v="high">High</button></div><div class="seg orbit-seg"><button type="button" id="orbit" aria-pressed="false">Orbit</button></div></div><span class="hint3d" id="hint3d"><span class="fine">Drag to orbit · scroll or pinch to zoom</span><span class="coarse">Tap Orbit to look around · pinch to zoom</span></span></div>
           </div>
           <div class="empty" id="empty" hidden><div><b>No games yet</b><span id="empty-sub"></span></div></div>
         </div>
-        <div class="caption"><b id="cap"></b><div class="legend"><span><i class="m"></i>Made</span><span><i class="x"></i>Missed</span></div></div>
+        <div class="caption"><b id="cap" aria-live="polite"></b><div class="legend"><span><i class="m"></i>Made</span><span><i class="x"></i>Missed</span></div></div>
       </div>
     </section>
     <section class="panel prof" id="prof-panel" hidden style="margin-top:18px">
@@ -639,7 +643,7 @@ body.cv-on .top,body.cv-on .wrap{display:none}
       <div class="lb-head">
         <button class="lb-arrow" id="lb-prev" type="button" aria-label="Previous leaderboard">&lsaquo;</button>
         <div class="lb-title"><b id="lb-name" aria-live="polite"></b><span id="lb-sub"></span></div>
-        <div class="lb-dots" id="lb-dots" role="tablist" aria-label="Leaderboards"></div>
+        <div class="lb-dots" id="lb-dots" aria-label="Leaderboards"></div>
         <button class="lb-arrow" id="lb-next" type="button" aria-label="Next leaderboard">&rsaquo;</button>
       </div>
       <div class="lb-clip" id="lb-clip"><ol class="lb-list" id="lb-list"></ol></div>
@@ -789,7 +793,7 @@ function renderTicker(){
   if (!items.length) items = ['<span>The season has not started</span>'];
   $('#ticker-lab').textContent = 'Fixtures';
   const run = $('#run'); run.classList.add('static'); run.innerHTML = items.join('');
-  if (run.scrollWidth > run.parentElement.clientWidth - $('#ticker-lab').offsetWidth) { run.innerHTML = items.join('') + items.join(''); run.classList.remove('static'); run.style.animationDuration = Math.max(24, items.length * 4) + 's'; }
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches && run.scrollWidth > run.parentElement.clientWidth - $('#ticker-lab').offsetWidth) { run.innerHTML = items.join('') + items.join(''); run.classList.remove('static'); run.style.animationDuration = Math.max(24, items.length * 4) + 's'; }
 }
 function renderPlayer(){
   const p = player(), t = team(), n = nameOf(p.name), d = ds(), tot = d.tot, gp = tot.gp || 1, played = tot.gp > 0, pc = d.pct || {};
@@ -907,7 +911,7 @@ async function renderCompare(){
   const line = (label, f, fmt, higher = true) => { const a = f(d), b = f(other.cur), m = pool[label]; const win = a != null && b != null ? (higher ? a > b : a < b) : null; return `<tr><td>${label}</td><td class="${win === true ? 'win me' : 'me'}">${fmt(a)}</td><td class="${win === false ? 'win' : ''}">${fmt(b)}</td><td class="lg">${fmt(m)}</td></tr>`; };
   const per40 = (c, k) => c.tot.min ? c.tot[k] * 40 / c.tot.min : null, rate = (c, m, a) => c.tot[a] ? c.tot[m] / c.tot[a] : null, role = (c, k) => c.role ? c.role[k] : null, z = c => zoneStats(c.shots);
   const f1s = v => v == null ? '–' : v.toFixed(1), pc = v => v == null ? '–' : (100 * v).toFixed(1) + '%', pcs = v => v == null ? '–' : v.toFixed(1) + '%', sgn = v => v == null ? '–' : (v >= 0 ? '+' : '') + v.toFixed(1);
-  $('#cmp-a').textContent = `${nameOf(me.name).sur}`; $('#cmp-b').textContent = `${nameOf(other.name).sur} · ${shortName(r.club)}`;
+  $('#cmp-a').textContent = `${nameOf(me.name).sur}`; $('#cmp-b').innerHTML = `<a href="#${r.club}/${r.pid}" title="Open his page">${nameOf(other.name).sur} · ${shortName(r.club)}</a>`;
   tb.querySelector('tbody').innerHTML = [
     line('Minutes a game', c => c.tot.gp ? c.tot.min / c.tot.gp : null, f1s), line('Points per 40', c => per40(c, 'pts'), f1s), line('Usage', c => role(c, 'usg'), pcs),
     line('True shooting', c => tsOf(c.tot.pts, c.tot.fga2 + c.tot.fga3, c.tot.fta), pc), line('3P%', c => rate(c, 'fgm3', 'fga3'), pc), line('Assists per 40', c => per40(c, 'ast'), f1s), line('Assist rate', c => role(c, 'ast_pct'), pcs), line('Turnover rate', c => role(c, 'tov_pct'), pcs, false), line('Rebounds per 40', c => per40(c, 'reb'), f1s), line('Rebound rate', c => role(c, 'reb_pct'), pcs),
@@ -1176,6 +1180,8 @@ function Dropdown(sel, item){
   const mark = () => { [...list.children].forEach((li, i) => li.classList.toggle('hi', i === hi)); if (hi >= 0 && !list.hidden) btn.setAttribute('aria-activedescendant', `${sel.id}-opt-${hi}`); };
   const choose = i => { if (i < 0 || i >= sel.options.length) return; if (sel.selectedIndex !== i) { sel.selectedIndex = i; sel.dispatchEvent(new Event('change', {bubbles: true})); } refresh(); close(); btn.focus(); };
   btn.addEventListener('click', () => list.hidden ? open() : close());
+  btn.addEventListener('blur', e => { if (!dd.contains(e.relatedTarget)) close(); });
+  list.addEventListener('mousedown', e => e.preventDefault());
   list.addEventListener('click', e => { const li = e.target.closest('li'); if (li) choose(+li.dataset.i); });
   list.addEventListener('mousemove', e => { const li = e.target.closest('li'); if (li) { hi = +li.dataset.i; mark(); } });
   btn.addEventListener('keydown', e => {
@@ -1358,7 +1364,7 @@ const LB = (() => {
         (b.k === 'fg3' ? ` · ${L.min_3pa}+ three-point attempts${L.provisional ? ', provisional' : ''}` : ` · ${L.min_gp}+ game${L.min_gp === 1 ? '' : 's'}, ${L.min_mpg}+ minutes a game`)
       : (b.k === 'fg3' ? `Opens at ${L.min_3pa} attempts` : '');
     $('#lb-foot').textContent = (state.data && player() && !ds().tot.gp ? `${nameOf(player().name).sur} is not on any board yet: no games played. ` : '') + foot(b.k);
-    [...dots.children].forEach((d, i) => d.setAttribute('aria-selected', i === at));
+    [...dots.children].forEach((d, i) => d.setAttribute('aria-pressed', i === at));
     if (dir && !reduced()) {
       const cls = dir < 0 ? 'go-l' : 'go-r'; list.classList.remove('go-l', 'go-r'); void list.offsetWidth; list.classList.add(cls);
       const t = $('#lb-name'); t.classList.remove('swap'); void t.offsetWidth; t.classList.add('swap');
@@ -1369,7 +1375,7 @@ const LB = (() => {
     requestAnimationFrame(() => requestAnimationFrame(() => els.forEach(el => el.style.setProperty('--p', el.dataset.p))));
   }
   const go = d => { at = (at + d + BOARDS.length) % BOARDS.length; paint(d); };
-  dots.innerHTML = BOARDS.map((b, i) => `<button type="button" role="tab" aria-selected="${i === 0}" aria-label="${b.t}" title="${b.t}"></button>`).join('');
+  dots.innerHTML = BOARDS.map((b, i) => `<button type="button" aria-pressed="${i === 0}" aria-label="${b.t}" title="${b.t}"></button>`).join('');
   dots.addEventListener('click', e => { const i = [...dots.children].indexOf(e.target.closest('button')); if (i >= 0 && i !== at) { const d = i > at ? 1 : -1; at = i; paint(d); } });
   $('#lb-prev').addEventListener('click', () => go(-1));
   $('#lb-next').addEventListener('click', () => go(1));
