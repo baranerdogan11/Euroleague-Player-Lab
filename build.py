@@ -357,13 +357,89 @@ def display_name(raw):
     return f"{fix(first)} {fix(sur)}".strip()
 STUB = ('<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{name} · {club} · Euroleague Player Lab</title>'
         '<meta name="description" content="{desc}"><meta property="og:type" content="profile"><meta property="og:site_name" content="Euroleague Player Lab"><meta property="og:title" content="{name} · {club}">'
-        '<meta property="og:description" content="{desc}"><meta property="og:image" content="{image}"><meta property="og:url" content="{url}"><meta name="twitter:card" content="summary">'
+        '<meta property="og:description" content="{desc}"><meta property="og:image" content="{image}"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:url" content="{url}"><meta name="twitter:card" content="summary_large_image">'
         '<link rel="canonical" href="{url}"><meta http-equiv="refresh" content="0;url={rel}"><script>try{{sessionStorage.setItem("pl-in","1")}}catch(e){{}}location.replace({rel_js})</script>'
         '<style>body{{margin:0;background:#060708;color:#c6cbd4;font:14px system-ui,sans-serif;display:grid;place-items:center;min-height:100vh}}a{{color:#f26f21}}</style></head>'
         '<body><p>Opening <a href="{rel}">{name}</a> in Euroleague Player Lab…</p></body></html>')
+# share cards: one 1200x630 JPEG per player for link previews (about 45 KB each; PNG would be five times that), drawn from the roster fields alone (name, number, club, position,
+# photo) so it changes only when those do; cards/manifest.json holds each card's input hash and skips the unchanged ones
+import hashlib
+CARDS = os.path.join(ROOT, "cards"); os.makedirs(CARDS, exist_ok=True)
+FONT_DIR = os.path.join(ROOT, "fonts")
+card_manifest_path = os.path.join(CARDS, "manifest.json")
+card_manifest = json.load(open(card_manifest_path)) if os.path.exists(card_manifest_path) else {}
+def hex_rgb(h):
+    h = h.lstrip("#"); return tuple(int(h[i:i + 2], 16) for i in (0, 2, 4))
+def font(name, size):
+    from PIL import ImageFont
+    return ImageFont.truetype(os.path.join(FONT_DIR, name), size)
+def fit(draw, text, name, size, max_w, floor=40):
+    """The largest size at or under `size` at which `text` fits `max_w`."""
+    while size > floor:
+        f = font(name, size)
+        if draw.textlength(text, font=f) <= max_w:
+            return f
+        size -= 4
+    return font(name, floor)
+def draw_card(p, club, base, accent, out):
+    from PIL import Image, ImageDraw
+    Wc, Hc = 1200, 630
+    im = Image.new("RGB", (Wc, Hc), (14, 16, 19)); d = ImageDraw.Draw(im)
+    b, a = hex_rgb(base), hex_rgb(accent)
+    lum = 0.2126 * b[0] + 0.7152 * b[1] + 0.0722 * b[2]
+    wedge = b if lum > 18 else tuple(min(255, v + 46) for v in b)     # near-black bases lift so the wedge keeps its shape
+    d.polygon([(0, 0), (560, 0), (440, Hc), (0, Hc)], fill=wedge)
+    for x in range(-40, Wc + 40, 44):                                  # the hazard stripe along the top
+        d.polygon([(x, 0), (x + 22, 0), (x + 10, 14), (x - 12, 14)], fill=a)
+    d.rectangle([0, 14, Wc, 16], fill=(36, 39, 46))
+    first_last = display_name(p["name"]).split(" ", 1)
+    first, sur = (first_last[0], first_last[1]) if len(first_last) == 2 else ("", first_last[0])
+    # photo on the wedge, number behind it
+    if p["dorsal"]:
+        fn = font("BarlowCondensed-BlackItalic.ttf", 300)
+        d.text((30, Hc - 300), str(p["dorsal"]), font=fn, fill=tuple(min(255, v + 28) for v in wedge))
+    if p["photo"] and os.path.exists(os.path.join(ROOT, p["photo"])):
+        ph = Image.open(os.path.join(ROOT, p["photo"])).convert("RGBA")
+        h = Hc - 40; w = round(ph.width * h / ph.height); ph = ph.resize((w, h), Image.BICUBIC)
+        im.paste(ph, (110, Hc - h), ph)
+    # name, club, position on the right
+    x0 = 600
+    d.text((x0, 60), f"EUROLEAGUE {label(SEASON)}", font=font("BarlowCondensed-Bold.ttf", 30), fill=(138, 145, 159))
+    y = 110
+    if first:
+        f1 = fit(d, first.upper(), "BarlowCondensed-BlackItalic.ttf", 96, Wc - x0 - 40); d.text((x0, y), first.upper(), font=f1, fill=(255, 255, 255)); y += 96
+    f2 = fit(d, sur.upper(), "BarlowCondensed-BlackItalic.ttf", 132, Wc - x0 - 40, 56); d.text((x0, y), sur.upper(), font=f2, fill=a); y += int(f2.size * 1.05) + 14
+    line = " · ".join(x for x in ((f"#{p['dorsal']}" if p["dorsal"] else ""), club, p["position"] or "") if x)
+    d.text((x0, y), line.upper(), font=fit(d, line.upper(), "BarlowCondensed-Bold.ttf", 34, Wc - x0 - 40, 24), fill=(198, 203, 212))
+    d.text((x0, Hc - 70), "Shot chart · shooting profile · season stats", font=font("Barlow-Regular.ttf", 24), fill=(138, 145, 159))
+    d.text((Wc - 40 - d.textlength("elplayerlab.com", font=font("BarlowCondensed-Bold.ttf", 28)), Hc - 46), "elplayerlab.com", font=font("BarlowCondensed-Bold.ttf", 28), fill=a)
+    im.save(out, "JPEG", quality=80, optimize=True, progressive=True)
+def home_card(out):
+    from PIL import Image, ImageDraw
+    Wc, Hc = 1200, 630
+    im = Image.new("RGB", (Wc, Hc), (6, 7, 8)); d = ImageDraw.Draw(im)
+    for x in range(-40, Wc + 40, 44):
+        d.polygon([(x, 0), (x + 22, 0), (x + 10, 14), (x - 12, 14)], fill=(242, 111, 33))
+    # a faint half court on the right
+    g = (34, 38, 46); cx, by = 1000, Hc + 4                              # basket end at the bottom edge
+    d.rectangle([cx - 560, 30, cx + 560, by], outline=g, width=4)         # the half court, running off the right edge
+    d.rectangle([cx - 100, by - 300, cx + 100, by], outline=g, width=4)   # the key
+    d.ellipse([cx - 72, by - 372, cx + 72, by - 228], outline=g, width=4) # free-throw circle
+    d.arc([cx - 340, by - 340, cx + 340, by + 340], 180, 360, fill=g, width=4)   # three-point arc
+    d.arc([cx - 60, by - 110, cx + 60, by + 10], 180, 360, fill=g, width=4)      # restricted area
+    d.text((80, 150), "PLAYER", font=font("BarlowCondensed-BlackItalic.ttf", 180), fill=(255, 255, 255))
+    d.text((80, 300), "LAB", font=font("BarlowCondensed-BlackItalic.ttf", 180), fill=(242, 111, 33))
+    d.text((84, 90), f"EUROLEAGUE {label(SEASON)}", font=font("BarlowCondensed-Bold.ttf", 34), fill=(138, 145, 159))
+    d.text((84, 500), "Every shot, every player, every club.", font=font("Barlow-Regular.ttf", 32), fill=(198, 203, 212))
+    d.text((84, 545), "Shot charts, shooting profiles and season stats, rebuilt within minutes of every final.", font=font("Barlow-Regular.ttf", 24), fill=(138, 145, 159))
+    im.save(out, "PNG", optimize=True)
+os.makedirs(os.path.join(ROOT, "og"), exist_ok=True)
+if not os.path.exists(os.path.join(ROOT, "og", "home.png")):
+    home_card(os.path.join(ROOT, "og", "home.png"))
 stub_dir = os.path.join(ROOT, "p")
 os.makedirs(stub_dir, exist_ok=True)
 keep = set()
+cards_drawn = 0
 for code, players in collected.items():
     club = next(c["name"] for c in clubs if c["club"] == code)
     for p in players:
@@ -371,7 +447,12 @@ for code, players in collected.items():
         line = f"{tot['gp']} games · {tot['pts'] / tot['gp']:.1f} pts · {tot['reb'] / tot['gp']:.1f} reb · {tot['ast'] / tot['gp']:.1f} ast a game" if tot["gp"] else "shot chart, shooting profile and season stats"
         desc = f"{'#' + str(p['dorsal']) + ' · ' if p['dorsal'] else ''}{p['position'] or p['cur']['pos_group']} · {club} · {label(SEASON)} · {line}"
         rel = f"../#{code}/{p['pid']}"
-        page = STUB.format(name=html.escape(name), club=html.escape(club), desc=html.escape(desc), image=SITE + (p["photo"] or next((c["logo"] for c in clubs if c["club"] == code), "") or ""),
+        photo_path = os.path.join(ROOT, p["photo"]) if p["photo"] else None
+        digest = hashlib.sha1(json.dumps([p["name"], p["dorsal"], p["position"], club, code, p["photo"], hashlib.sha1(open(photo_path, "rb").read()).hexdigest() if photo_path and os.path.exists(photo_path) else None, 2]).encode()).hexdigest()[:16]
+        card = os.path.join(CARDS, f"{p['pid']}.jpg")
+        if card_manifest.get(p["pid"]) != digest or not os.path.exists(card):
+            base, accent = PALETTES.get(code, DEFAULT_PALETTE); draw_card(p, club, base, accent, card); card_manifest[p["pid"]] = digest; cards_drawn += 1
+        page = STUB.format(name=html.escape(name), club=html.escape(club), desc=html.escape(desc), image=f"{SITE}cards/{p['pid']}.jpg",
                            url=f"{SITE}#{code}/{p['pid']}", rel=rel, rel_js=json.dumps(rel))
         fn = f"{p['pid']}.html"; keep.add(fn)
         path = os.path.join(stub_dir, fn)
@@ -380,7 +461,11 @@ for code, players in collected.items():
 for fn in os.listdir(stub_dir):
     if fn.endswith(".html") and fn not in keep:
         os.remove(os.path.join(stub_dir, fn))
-print(f"share stubs: {len(keep)} under p/")
+for pid in [k for k in card_manifest if f"{k}.html" not in keep]:      # a player who left the league loses his card
+    card_manifest.pop(pid, None)
+    if os.path.exists(os.path.join(CARDS, f"{pid}.jpg")): os.remove(os.path.join(CARDS, f"{pid}.jpg"))
+json.dump(card_manifest, open(card_manifest_path, "w"), indent=0, sort_keys=True)
+print(f"share stubs: {len(keep)} under p/, cards drawn: {cards_drawn}")
 
 # position medians for the compare table (same labels as the page)
 def compare_metrics(cur):
@@ -525,7 +610,7 @@ open(os.path.join(ROOT, "sw.js"), "w", encoding="utf-8").write(sw.replace("/*BUI
 json.dump(meta["roster"], open(os.path.join(OUT, "roster.json"), "w"), separators=(",", ":"), ensure_ascii=False)
 inline = {k: v for k, v in meta.items() if k != "roster"}; inline["n_players"] = len(meta["roster"])
 tpl = open(os.path.join(ROOT, "template.html"), encoding="utf-8").read()
-open(os.path.join(ROOT, "index.html"), "w", encoding="utf-8").write(tpl.replace("/*META*/", json.dumps(inline, ensure_ascii=False)))
+open(os.path.join(ROOT, "index.html"), "w", encoding="utf-8").write(tpl.replace("/*META*/", json.dumps(inline, ensure_ascii=False)).replace("/*OG*/", SITE + "og/home.png"))
 for s in summary:
     print("%-4s players %2d  games %2d  shots %4d" % s)
 print("index.html + teams/%s/*.json written from warehouse" % SEASON)
