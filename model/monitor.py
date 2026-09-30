@@ -104,12 +104,23 @@ if view("shots_xfg"):
         shooter_cov = {"shots": int(len(sx)), "known_shooter_share": round(float(sx.player.isin(eff).mean()), 3) if len(sx) else None}
 
 # ---- serving API
+# the free Render instance sleeps after 15 idle minutes and a cold start can pass a minute, so the probe wakes it first
+# (up to two attempts of 90 s), then measures a warm call; a cold start is reported as a fact, not as an outage
 api = {"url": API, "reachable": False}
-try:
+def health(timeout):
     t0 = datetime.datetime.utcnow()
-    with urllib.request.urlopen(f"{API}/health", timeout=60) as resp:
+    with urllib.request.urlopen(f"{API}/health", timeout=timeout) as resp:
         body = json.load(resp)
-    api.update({"reachable": True, "latency_ms": round((datetime.datetime.utcnow() - t0).total_seconds() * 1000), "model_version": body.get("model_version"), "model_sha256": body.get("model_sha256")})
+    return body, round((datetime.datetime.utcnow() - t0).total_seconds() * 1000)
+try:
+    body, first_ms = None, None
+    for attempt in range(2):
+        try:
+            body, first_ms = health(90); break
+        except Exception as e:
+            if attempt == 1: raise
+    body, warm_ms = health(30)
+    api.update({"reachable": True, "latency_ms": warm_ms, "cold_start_ms": first_ms if first_ms > 5000 else None, "model_version": body.get("model_version"), "model_sha256": body.get("model_sha256")})
 except Exception as e:
     api["error"] = f"{type(e).__name__}"
 

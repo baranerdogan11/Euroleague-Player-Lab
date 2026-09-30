@@ -3,4 +3,4 @@
 {"date": "2026-09-25", "at": "2026-09-25T21:02:47Z", "ok": true, "games": 10, "shots": 1299, "players": 320, "failures": 0, "ci": true, "run_id": "36189131248"}
 {"date": "2026-09-28", "at": "2026-09-28T11:17:51Z", "ok": true, "games": 10, "shots": 1299, "players": 320, "failures": 0, "ci": true, "run_id": "36412514772"}
 {"date": "2026-09-29", "at": "2026-09-29T21:02:03Z", "ok": true, "games": 18, "shots": 2360, "players": 324, "failures": 0, "ci": true, "run_id": "36630378528"}
-{"date": "2026-09-30", "at": "2026-09-30T08:53:36Z", "ok": true, "games": 18, "shots": 2360, "players": 324, "failures": 0, "ci": true, "run_id": "36692417771"}
+{"date": "2026-09-30", "at": "2026-09-30T12:31:28Z", "ok": true, "games": 18, "shots": 2360, "players": 324, "failures": 0, "ci": false, "run_id": null}
