@@ -186,6 +186,14 @@ git add -A && git commit -m "Update after round" && git push   # GitHub Pages re
 ## Layout
 
 - `index.html`: the page (loads a club's JSON when it is selected); `monitor.html`: the status page
+- `teams/E2026/roster.json`: the search index, compare peers and leaderboard names, fetched after first paint
+- `p/<pid>.html`: one static page per player (name, card, bio, career) carrying his Open Graph tags, canonical to itself, forwarding to the app by script; `cards/<pid>.jpg`: his 1200x630 share card, redrawn only when name, number, club, position or photo change (`cards/manifest.json` holds the input hashes); `og/home.png`: the home card
+- `sitemap.xml`, `robots.txt`, `404.html`: search engines get every player page and none of the code or data folders; a mistyped address lands on a page with the club grid and the player search
+- `manifest.webmanifest`, `icons/`, `sw.js`: installable, with an offline shell; the page and JSON go network-first, photos, crests and fonts cache-first for thirty days, the worker stamped with the build so old caches drop
+- `fonts/`: Barlow and Barlow Condensed served from this origin (latin woff2 for the page, TTF for the cards; OFL licence alongside)
+- `feed.json`, `feed.xml`: one entry per rebuild that added games or shots; `cal/<CLUB>.ics`: every fixture of the club with results as they land, linked from the fixtures ticker
+- `embed.html?club=<CODE>&pid=<PID>`: the shot chart and zone table alone, for an iframe; the Embed button on a player page copies the snippet
+- `logos/<CODE>.webp`: the crests the site serves, 128 px, made from the feed's PNGs
 
 ### Opening page
 

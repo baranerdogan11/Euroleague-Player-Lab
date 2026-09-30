@@ -6,6 +6,8 @@
 <meta name="description" content="Shot charts, shooting profiles and season stats for every Euroleague player, rebuilt within minutes of every final.">
 <meta name="theme-color" content="#060708">
 <link rel="manifest" href="manifest.webmanifest">
+<link rel="alternate" type="application/rss+xml" title="Euroleague Player Lab updates" href="feed.xml">
+<link rel="alternate" type="application/feed+json" title="Euroleague Player Lab updates" href="feed.json">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 <meta property="og:site_name" content="Euroleague Player Lab">
@@ -119,7 +121,8 @@ h1 span span{display:block;color:var(--club2)}
 .bio summary::-webkit-details-marker{display:none}
 /* ticker */
 .ticker{display:flex;overflow:hidden;background:var(--white);color:#000;font-family:var(--cond);font-weight:700;font-size:16px;letter-spacing:.06em;text-transform:uppercase;border:1px solid var(--line);border-top:0}
-.ticker .lab{position:relative;z-index:1;background:var(--club);color:#fff;padding:9px 24px 9px 16px;font-weight:900;flex:none;clip-path:polygon(0 0,100% 0,calc(100% - 10px) 100%,0 100%);text-shadow:0 1px 0 rgba(0,0,0,.3)}
+.ticker .lab{position:relative;z-index:1;background:var(--club);color:#fff;padding:9px 24px 9px 16px;font-weight:900;flex:none;clip-path:polygon(0 0,100% 0,calc(100% - 10px) 100%,0 100%);text-shadow:0 1px 0 rgba(0,0,0,.3);text-decoration:none}
+.ticker a.lab::after{content:"+";margin-left:8px;font-weight:700;opacity:.7}.ticker a.lab:hover::after{opacity:1}
 .ticker .run{display:flex;gap:28px;padding:9px 14px;white-space:nowrap;animation:run 60s linear infinite}
 .ticker .run span b{color:#0f7a4a}.ticker .run span b.l{color:#c8362b}
 .ticker:hover .run{animation-play-state:paused}
@@ -547,7 +550,7 @@ body.cv-on .top,body.cv-on .wrap{display:none}
         <div><b>Compare</b><p>Any player against any other at his position, per 40 minutes and per possession, with the position median beside them.</p></div>
       </div>
     </section>
-    <p class="cv-foot"><span id="cv-built"></span><a href="monitor.html">System status</a><span>Data: Euroleague official feeds</span></p>
+    <p class="cv-foot"><span id="cv-built"></span><a href="monitor.html">System status</a><a href="feed.xml" title="Updates feed (RSS)">Updates feed</a><span>Data: Euroleague official feeds</span></p>
   </div>
 </main>
 <header class="top">
@@ -565,14 +568,14 @@ body.cv-on .top,body.cv-on .wrap{display:none}
     <div class="ph"><div class="num" id="num"></div><img id="photo" alt="" width="360" height="480" decoding="async"></div>
     <div class="bio" id="bio"></div>
     <div class="lt">
-      <div class="tagrow"><div class="tag"><img id="club-logo" alt="" width="20" height="20"><span id="club-name"></span><span id="pos"></span></div><div class="pnav"><button type="button" id="prev" aria-label="Previous player" title="Previous player">&lsaquo;</button><button type="button" id="next" aria-label="Next player" title="Next player">&rsaquo;</button><button type="button" id="share" title="Copy a link to this player">Copy link</button></div></div>
+      <div class="tagrow"><div class="tag"><img id="club-logo" alt="" width="20" height="20"><span id="club-name"></span><span id="pos"></span></div><div class="pnav"><button type="button" id="prev" aria-label="Previous player" title="Previous player">&lsaquo;</button><button type="button" id="next" aria-label="Next player" title="Next player">&rsaquo;</button><button type="button" id="share" title="Copy a link to this player">Copy link</button><button type="button" id="embed" title="Copy an iframe that shows this player's shot chart on your own site">Embed</button></div></div>
       <h1 id="name"><span id="nm"></span></h1>
       <div class="facts" id="facts"></div>
     </div>
   </section>
-  <div class="ticker"><div class="lab" id="ticker-lab">Season</div><div class="run" id="run"></div></div>
+  <div class="ticker"><a class="lab" id="ticker-lab" href="#" title="Add this club's fixtures to your calendar (.ics)">Season</a><div class="run" id="run"></div></div>
   <div class="fail" id="fail" hidden><b>Data unavailable</b><span id="fail-sub"></span><button class="btn" id="retry" type="button">Retry</button></div>
-  <section class="opener" id="opener" hidden><div class="head"><b>Season opener</b><span id="opener-sub"></span></div><div class="roster" id="roster"></div></section>
+  <section class="opener" id="opener" hidden><div class="head"><b>Season opener</b><span id="opener-sub"></span><a class="lnk" id="opener-cal" href="#" style="margin-left:auto">Add fixtures to calendar</a></div><div class="roster" id="roster"></div></section>
   <div class="tiles" id="tiles"></div>
   <div class="band-foot"><div class="band-ctl"><div class="seg" id="f-rate"><button aria-pressed="true" data-v="pg">Per game</button><button aria-pressed="false" data-v="p40">Per 40 min</button></div><select id="stat-game" aria-label="Game"></select></div><span id="band-legend"></span></div>
   <div class="role" id="role" hidden></div>
@@ -664,7 +667,7 @@ body.cv-on .top,body.cv-on .wrap{display:none}
   </details>
 
 
-  <div class="foot"><span><a href="monitor.html">System status</a> · Data: Euroleague official feeds · Photos: Euroleague media days</span><span id="foot-status">Euroleague Player Lab</span></div>
+  <div class="foot"><span><a href="monitor.html">System status</a> · <a href="feed.xml">Updates feed</a> · Data: Euroleague official feeds · Photos: Euroleague media days</span><span id="foot-status">Euroleague Player Lab</span></div>
 </div>
 <div class="tip" id="tip"></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -770,6 +773,7 @@ function renderOpener(){
   $('#opener').hidden = !none; $('#tiles').hidden = none; $('#f-rate').closest('.band-foot').hidden = none;
   if (!none) return;
   const nx = t.upcoming && t.upcoming[0];
+  $('#opener-cal').href = `cal/${state.team}.ics`;
   $('#opener-sub').textContent = nx ? `Round ${nx.round} · ${nx.home === realCode() ? 'vs ' + shortName(nx.away) : '@ ' + shortName(nx.home)} · ${fmtDate(nx.date)}` : '';
   $('#roster').innerHTML = t.players.map((p, i) => { const n = nameOf(p.name); return `<a href="#${state.team}/${p.pid}" data-i="${i}"><i>${p.dorsal || ''}</i><img src="${p.photo || PLACEHOLDER}" alt="" loading="lazy" decoding="async"><b>${n.first} ${n.sur}</b><small>${p.position || ''}</small></a>`; }).join('');
 }
@@ -805,7 +809,7 @@ function renderTicker(){
   const fixtures = up.map((g, i) => `<span>${i === 0 ? 'Next: ' : ''}R${g.round} ${g.home === realCode() ? 'vs ' + shortName(g.away) : '@ ' + shortName(g.home)} · ${fmtDate(g.date)}</span>`);
   let items = results.concat(fixtures);
   if (!items.length) items = ['<span>The season has not started</span>'];
-  $('#ticker-lab').textContent = 'Fixtures';
+  $('#ticker-lab').textContent = 'Fixtures'; $('#ticker-lab').href = `cal/${state.team}.ics`;
   const run = $('#run'); run.classList.add('static'); run.innerHTML = items.join('');
   if (!matchMedia('(prefers-reduced-motion: reduce)').matches && run.scrollWidth > run.parentElement.clientWidth - $('#ticker-lab').offsetWidth) { run.innerHTML = items.join('') + items.join(''); run.classList.remove('static'); run.style.animationDuration = Math.max(24, items.length * 4) + 's'; }
 }
@@ -1264,6 +1268,13 @@ $('#share').addEventListener('click', async () => {
   if (navigator.share && PHONE.matches) { try { await navigator.share({title: `${n.first} ${n.sur} · ${shortName(state.team)} · Player Lab`, url}); return; } catch (e) { if (e.name === 'AbortError') return; } }   // phones: the system share sheet
   try { await navigator.clipboard.writeText(url); } catch (e) { const i = document.createElement('input'); i.value = url; document.body.appendChild(i); i.select(); document.execCommand('copy'); i.remove(); }
   toast('Link copied'); b.classList.add('ok'); b.textContent = 'Copied'; setTimeout(() => { b.classList.remove('ok'); b.textContent = 'Copy link'; }, 1800);
+});
+$('#embed').addEventListener('click', async () => {
+  if (!team()) return;
+  const src = new URL(`embed.html?club=${state.team}&pid=${player().pid}`, location.href).href, n = nameOf(player().name), b = $('#embed');
+  const code = `<iframe src="${src}" width="600" height="760" style="border:0;max-width:100%" loading="lazy" title="${n.first} ${n.sur} shot chart · Euroleague Player Lab"></iframe>`;
+  try { await navigator.clipboard.writeText(code); } catch (e) { const i = document.createElement('input'); i.value = code; document.body.appendChild(i); i.select(); document.execCommand('copy'); i.remove(); }
+  toast('Embed code copied'); b.classList.add('ok'); b.textContent = 'Copied'; setTimeout(() => { b.classList.remove('ok'); b.textContent = 'Embed'; }, 1800);
 });
 $('#retry').addEventListener('click', () => route());
 $('#cmp').addEventListener('change', e => { state.cmp = e.target.value || null; renderCompare(); });

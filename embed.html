@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Shot chart · Euroleague Player Lab</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="icons/icon-192.png">
+<style>
+@font-face{font-family:'Barlow Condensed';font-weight:700;font-display:swap;src:url(fonts/cond-700.woff2) format('woff2')}
+@font-face{font-family:'Barlow Condensed';font-style:italic;font-weight:900;font-display:swap;src:url(fonts/cond-900i.woff2) format('woff2')}
+@font-face{font-family:'Barlow';font-weight:400;font-display:swap;src:url(fonts/barlow-400.woff2) format('woff2')}
+:root{--bg:#0e1013;--line:#24272e;--ink:#fff;--ink2:#c6cbd4;--muted:#8a919f;--floor:#0c1016;--paint:#12161e;--miss:#8a91a0;--hit:#f26f21;--club2:#f26f21}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:13px/1.4 Barlow,system-ui,sans-serif;padding:10px}
+.head{display:flex;align-items:baseline;gap:10px;margin:0 0 8px}.head b{font-family:'Barlow Condensed',Impact,sans-serif;font-style:italic;font-weight:900;font-size:22px;text-transform:uppercase;letter-spacing:.02em}.head b span{color:var(--club2)}.head small{color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;letter-spacing:.14em;text-transform:uppercase}
+.court{width:100%;height:auto;display:block;border:1px solid var(--line);background:var(--floor)}
+.court .line{fill:none;stroke:#4d5566;stroke-width:6;vector-effect:non-scaling-stroke}.court .floor{fill:var(--floor)}.court .paint{fill:var(--paint)}
+.court .made{fill:var(--hit);stroke:var(--floor);stroke-width:3}.court .miss{fill:none;stroke:var(--miss);stroke-width:5}.court .missx{stroke:var(--miss);stroke-width:5;stroke-linecap:round}
+.cap{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:8px 0 0;color:var(--ink2)}.cap b{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink)}
+table{border-collapse:collapse;width:100%;margin-top:8px;font-variant-numeric:tabular-nums}th{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);text-align:right;padding:5px 6px;border-bottom:2px solid var(--line)}td{padding:5px 6px;border-bottom:1px solid var(--line);text-align:right;color:var(--ink2);font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:15px}th:first-child,td:first-child{text-align:left}td:first-child{font-family:Barlow,sans-serif;font-size:12.5px;color:var(--ink)}td.k{color:#fff;font-weight:700}
+.foot{margin-top:8px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);display:flex;justify-content:space-between}.foot a{color:var(--club2);text-decoration:none}
+.none{color:var(--muted);padding:30px 0;text-align:center}
+</style>
+<div class="head" id="head"></div>
+<svg class="court" id="court" viewBox="-30 0 1580 1440" role="img" aria-label="Half-court shot chart"></svg>
+<div class="cap" id="cap"></div>
+<table id="zones" hidden><thead><tr><th>Zone</th><th>FGM / FGA</th><th>FG%</th><th>Share</th></tr></thead><tbody></tbody></table>
+<div class="foot"><span id="upd"></span><a id="link" href="./" target="_top">elplayerlab.com</a></div>
+<script>
+// the same court geometry as the app (cm, basket at origin) drawn from the club's JSON; no filters, one player, one season
+const $ = s => document.querySelector(s), q = new URLSearchParams(location.search), club = (q.get('club') || '').toUpperCase(), pid = q.get('pid') || '';
+const X = x => x + 760, Y = y => 1260 - y, pct = (m, a) => a ? (100 * m / a).toFixed(1) + '%' : '–';
+const zoneOf = (x, y, pts) => { const d = Math.hypot(x, y); if (pts === 3) return y < 141.5 ? 'c3' : 'a3'; if (d < 150) return 'rim'; if (Math.abs(x) < 245 && y < 422.5) return 'paint'; return 'mid'; };
+const ZONES = {rim: 'At the rim', paint: 'Paint (non-rim)', mid: 'Mid-range', c3: 'Corner 3', a3: 'Above-break 3'};
+const twoPt = () => `M${X(-660)} ${Y(-157.5)} L${X(-660)} ${Y(141.5)} A675 675 0 0 1 ${X(660)} ${Y(141.5)} L${X(660)} ${Y(-157.5)} Z`;
+const cap = s => s.toLowerCase().replace(/(^|[\s\-'.])(\S)/g, (m, p, c) => p + c.toUpperCase());
+const base = `<rect class="floor" x="${X(-750)}" y="${Y(1242.5)}" width="1500" height="1400"/><rect class="paint" x="${X(-245)}" y="${Y(422.5)}" width="490" height="580" fill-opacity=".9"/><g class="lines"><rect class="line" x="${X(-750)}" y="${Y(1242.5)}" width="1500" height="1400"/><rect class="line" x="${X(-245)}" y="${Y(422.5)}" width="490" height="580"/><circle class="line" cx="${X(0)}" cy="${Y(422.5)}" r="180"/><path class="line" d="M${X(-125)} ${Y(0)} A125 125 0 0 1 ${X(125)} ${Y(0)}"/><path class="line" d="${twoPt()}"/><line class="line" x1="${X(-90)}" y1="${Y(-37.5)}" x2="${X(90)}" y2="${Y(-37.5)}" style="stroke:#c9d2e8"/><circle class="line" cx="${X(0)}" cy="${Y(0)}" r="22.5" style="stroke:var(--club2)"/><path class="line" d="M${X(-180)} ${Y(1242.5)} A180 180 0 0 0 ${X(180)} ${Y(1242.5)}"/></g><g id="shots"></g>`;
+$('#court').innerHTML = base;
+(async () => {
+  try {
+    const season = q.get('season') || 'E2026';
+    const [idx, t] = await Promise.all([fetch(`teams/${season}/index.json`).then(r => r.json()), fetch(`teams/${season}/${club}.json`).then(r => r.json())]);
+    const c = (idx.clubs || []).find(x => x.code === club) || {}, p = t.players.find(x => x.pid === pid) || t.players[0];
+    if (c.accent) { const [r, g, b] = [1, 3, 5].map(i => parseInt(c.accent.slice(i, i + 2), 16)); const lum = (.2126 * r + .7152 * g + .0722 * b) / 255, mx = Math.max(r, g, b), mn = Math.min(r, g, b), sat = mx === mn ? 0 : (mx - mn) / (255 - Math.abs(mx + mn - 255)); document.documentElement.style.setProperty('--club2', c.accent); if (!(sat < .2 || lum > .8)) document.documentElement.style.setProperty('--hit', c.accent); }
+    const [sur, first] = p.name.split(',').map(s => s.trim());
+    $('#head').innerHTML = `<b>${cap(first || '')} <span>${cap(sur)}</span></b><small>${c.short || club} · ${idx.label || ''}</small>`;
+    $('#link').href = `./#${club}/${p.pid}`; document.title = `${cap(first || '')} ${cap(sur)} · shot chart · Euroleague Player Lab`;
+    const shots = p.cur.shots;
+    $('#shots').innerHTML = shots.map(s => { const x = X(s[1]), y = Y(s[2]); return s[3] ? `<circle class="made" cx="${x}" cy="${y}" r="17"/>` : `<circle class="miss" cx="${x}" cy="${y}" r="15"/><line class="missx" x1="${x - 7}" y1="${y - 7}" x2="${x + 7}" y2="${y + 7}"/><line class="missx" x1="${x + 7}" y1="${y - 7}" x2="${x - 7}" y2="${y + 7}"/>`; }).join('');
+    const m = shots.filter(s => s[3]).length;
+    $('#cap').innerHTML = shots.length ? `<b>${m} / ${shots.length} made · ${pct(m, shots.length)}</b><span>${p.cur.tot.gp} game${p.cur.tot.gp === 1 ? '' : 's'} · all shots</span>` : `<b>No games yet</b>`;
+    if (shots.length) {
+      const z = {}; Object.keys(ZONES).forEach(k => z[k] = {m: 0, a: 0}); shots.forEach(s => { const v = z[zoneOf(s[1], s[2], s[4])]; v.a++; v.m += s[3]; });
+      $('#zones tbody').innerHTML = Object.entries(ZONES).map(([k, l]) => `<tr><td>${l}</td><td>${z[k].a ? `${z[k].m} / ${z[k].a}` : '–'}</td><td class="k">${pct(z[k].m, z[k].a)}</td><td>${z[k].a ? (100 * z[k].a / shots.length).toFixed(0) + '%' : '–'}</td></tr>`).join('');
+      $('#zones').hidden = false;
+    }
+    $('#upd').textContent = idx.built ? `Updated ${idx.built.replace(' UTC', '')} UTC` : '';
+  } catch (e) { $('#head').innerHTML = '<b>Shot chart</b>'; $('#cap').innerHTML = '<span class="none">This chart could not load. Check the club code and player id in the address.</span>'; }
+})();
+</script>
+</html>

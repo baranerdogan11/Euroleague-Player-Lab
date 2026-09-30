@@ -483,7 +483,7 @@ open(os.path.join(ROOT, "sitemap.xml"), "w", encoding="utf-8").write('<?xml vers
 open(os.path.join(ROOT, "robots.txt"), "w", encoding="utf-8").write("User-agent: *\nAllow: /\nDisallow: /build.py\nDisallow: /README.md\nDisallow: /model/\nDisallow: /tests/\nDisallow: /warehouse/\nDisallow: /cache/\nDisallow: /service/\nDisallow: /teams/\nDisallow: /data/\n"
     + f"Sitemap: {SITE}sitemap.xml\n")
 club_grid = "".join(f'<a href="/#{c["club"]}"><img src="/{c["logo"]}" alt="" width="34" height="34" loading="lazy">{html.escape(c["short"] or c["club"])}</a>' for c in clubs if c["logo"])
-open(os.path.join(ROOT, "404.html"), "w", encoding="utf-8").write(f'''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Page not found · Euroleague Player Lab</title><meta name="robots" content="noindex">
+open(os.path.join(ROOT, "404.html"), "w", encoding="utf-8").write(f'''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Page not found · Euroleague Player Lab</title><meta name="robots" content="noindex"><link rel="icon" href="/icons/icon-192.png">
 <style>@font-face{{font-family:'Barlow Condensed';font-style:italic;font-weight:900;font-display:swap;src:url(/fonts/cond-900i.woff2) format('woff2')}}@font-face{{font-family:'Barlow Condensed';font-weight:700;font-display:swap;src:url(/fonts/cond-700.woff2) format('woff2')}}
 body{{margin:0;background:#060708;color:#c6cbd4;font:15px/1.5 Barlow,system-ui,sans-serif}}.bar{{height:6px;background:repeating-linear-gradient(-60deg,#1f2b47 0 18px,#f26f21 18px 22px,#1f2b47 22px 40px)}}main{{max-width:1180px;margin:0 auto;padding:48px 20px 64px}}
 h1{{font-family:'Barlow Condensed',Impact,sans-serif;font-style:italic;font-weight:900;font-size:clamp(56px,10vw,120px);line-height:.85;margin:0;text-transform:uppercase;color:#fff}}h1 span{{color:#f26f21;display:block}}p{{max-width:56ch;font-size:17px}}
@@ -508,6 +508,54 @@ q.addEventListener('input', async () => {{
 }});
 </script></body></html>''')
 print("sitemap.xml, robots.txt, 404.html written")
+# build feed: one item per build that changed the game or shot count, newest first, as JSON Feed and RSS
+hist_path = os.path.join(W, "run_history.jsonl")
+runs = [json.loads(l) for l in open(hist_path, encoding="utf-8") if l.strip()] if os.path.exists(hist_path) else []
+items, prev = [], None
+for r in runs:
+    if not r.get("ok"):
+        continue
+    key = (r.get("games"), r.get("shots"))
+    if key != prev:
+        items.append(r)
+    prev = key
+items = items[-40:][::-1]
+def item_text(r):
+    return f"{r.get('games', 0)} games in, {r.get('shots', 0):,} shots charted, {r.get('players', 0)} players with stats."
+feed = {"version": "https://jsonfeed.org/version/1.1", "title": "Euroleague Player Lab: updates", "home_page_url": SITE, "feed_url": SITE + "feed.json",
+        "description": "One entry per rebuild that added games or shots.",
+        "items": [{"id": r.get("run_id") or r["at"], "url": SITE, "title": f"Update {r['at'][:16].replace('T', ' ')} UTC: {r.get('games', 0)} games, {r.get('shots', 0):,} shots", "content_text": item_text(r), "date_published": r["at"]} for r in items]}
+json.dump(feed, open(os.path.join(ROOT, "feed.json"), "w"), indent=1)
+def rfc822(iso):
+    return datetime.datetime.strptime(iso, "%Y-%m-%dT%H:%M:%SZ").strftime("%a, %d %b %Y %H:%M:%S +0000")
+open(os.path.join(ROOT, "feed.xml"), "w", encoding="utf-8").write('<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0"><channel>'
+    f"<title>Euroleague Player Lab: updates</title><link>{SITE}</link><description>One entry per rebuild that added games or shots.</description>"
+    + "".join(f"<item><title>{html.escape(i['title'])}</title><link>{SITE}</link><guid isPermaLink=\"false\">{html.escape(i['id'])}</guid><pubDate>{rfc822(i['date_published'])}</pubDate><description>{html.escape(i['content_text'])}</description></item>" for i in feed["items"])
+    + "</channel></rss>\n")
+# fixture calendars: one .ics per club with every game of the season, results filled in as they land
+CAL = os.path.join(ROOT, "cal"); os.makedirs(CAL, exist_ok=True)
+club_name = {c["club"]: c["name"] for c in clubs}
+ics_esc = lambda s: str(s).replace("\\", "\\\\").replace(";", "\\;").replace(",", "\\,")
+stamp = datetime.datetime.utcnow().strftime("%Y%m%dT%H%M%SZ")
+for c in clubs:
+    code = c["club"]
+    gs = rows("select game, round, phase, date_utc, home, away, home_score, away_score, played from games where ? in (home, away) order by date_utc", code)
+    ev = []
+    for g in gs:
+        if not g["date_utc"]:
+            continue
+        start = g["date_utc"]; end = start + datetime.timedelta(hours=2)
+        title = f"R{g['round']} {club_name.get(g['home'], g['home'])} vs {club_name.get(g['away'], g['away'])}"
+        desc = f"Final {g['home_score']}-{g['away_score']}" if g["played"] else "Euroleague fixture"
+        ev.append("BEGIN:VEVENT\r\n" + f"UID:el{SEASON}-g{g['game']}@elplayerlab.com\r\nDTSTAMP:{stamp}\r\nDTSTART:{start.strftime('%Y%m%dT%H%M%SZ')}\r\nDTEND:{end.strftime('%Y%m%dT%H%M%SZ')}\r\n"
+                  f"SUMMARY:{ics_esc(title)}\r\nDESCRIPTION:{ics_esc(desc)}\r\nURL:{SITE}#{code}\r\nEND:VEVENT\r\n")
+    body = ("BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//Euroleague Player Lab//EN\r\nCALSCALE:GREGORIAN\r\nMETHOD:PUBLISH\r\n"
+            f"X-WR-CALNAME:{ics_esc(c['name'])} · Euroleague {label(SEASON)}\r\nX-WR-TIMEZONE:UTC\r\n" + "".join(ev) + "END:VCALENDAR\r\n")
+    path = os.path.join(CAL, f"{code}.ics")
+    old = open(path, encoding="utf-8").read() if os.path.exists(path) else ""
+    if re.sub(r"DTSTAMP:\S+", "", old) != re.sub(r"DTSTAMP:\S+", "", body):   # rewrite only when a fixture or result changed, not on every build
+        open(path, "w", encoding="utf-8", newline="").write(body)
+print(f"feed.json, feed.xml ({len(items)} items), cal/*.ics ({len(clubs)} clubs) written")
 
 # position medians for the compare table (same labels as the page)
 def compare_metrics(cur):
