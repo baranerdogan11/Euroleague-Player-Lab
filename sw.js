@@ -1,6 +1,6 @@
 // Euroleague Player Lab service worker: the page and every JSON go network-first (a rebuild is never masked), the heavy
 // static files (photos, crests, fonts, the 3D library) cache-first for thirty days so a club already opened reads offline.
-const V = 'pl-2026-10-01_2021_UTC';
+const V = 'pl-2026-10-01_2031_UTC';
 const STATIC = /\/(photos|logos|fonts|icons)\/|cdnjs\.cloudflare\.com/;
 const DAY = 864e5, TTL = 30 * DAY;
 self.addEventListener('install', e => { self.skipWaiting(); });
