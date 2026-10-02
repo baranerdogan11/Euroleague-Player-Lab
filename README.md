@@ -210,6 +210,16 @@ because phones restore the last player they showed; once the reader has entered 
 back/forward keep their place. The header wordmark returns to the cover, so the app stays one hash-routed
 page with no second document to keep in step.
 
+### Languages
+
+The page is in English or Turkish, switched with the two flags at the top right (header and opening page) and
+remembered in the browser (`localStorage` `pl-lang`; a first visit follows the browser language). Every static
+text, title, label and placeholder keeps its English as a key (`data-t`, scanned at boot), every dynamic string
+goes through `t('English text', {placeholders})`, and `lang/tr.json` maps the English to Turkish; `build.py`
+inlines it into the page so switching is instant and re-renders the current page without a reload. Dates and
+thousands separators follow the language. Club and player names, stat abbreviations shared by Turkish
+broadcasters (PIR, FG%, xFG%) and the status, share and embed pages stay in English.
+
 ### League leaderboards
 
 Four boards, points, rebounds and assists a game and three-point percentage, are precomputed in `build.py`

@@ -78,12 +78,17 @@ select:disabled{opacity:.5;cursor:default}
 .btn{background:var(--club2);color:var(--on);border:0;font-family:var(--cond);font-weight:800;font-size:15px;letter-spacing:.16em;text-transform:uppercase;padding:0 22px;cursor:pointer;flex:none;clip-path:polygon(10px 0,100% 0,100% 100%,0 100%);transition:filter .15s}
 .btn:hover{filter:brightness(1.1)}
 .toolbar .btn{padding:7px 16px;font-size:13px;letter-spacing:.14em;clip-path:polygon(8px 0,100% 0,100% 100%,0 100%);margin-left:auto}
-.live{margin-left:auto;display:flex;align-items:center;gap:10px;padding:0 18px;font-family:var(--cond);font-weight:700;letter-spacing:.12em;font-size:11px;line-height:1.25;color:var(--ink2);text-transform:uppercase;flex:none}
-.live span{display:block;max-width:150px}
-.live i{width:9px;height:9px;border-radius:50%;background:#ff3b3b;box-shadow:0 0 0 4px rgba(255,59,59,.22);animation:pulse 2.4s ease-in-out infinite}
-.live b{color:#fff;font-size:18px;letter-spacing:.04em}
-.live.stale i{background:#ffb020;box-shadow:0 0 0 4px rgba(255,176,32,.22);animation:none}
-@keyframes pulse{0%,100%{box-shadow:0 0 0 4px rgba(255,59,59,.22)}50%{box-shadow:0 0 0 7px rgba(255,59,59,.08)}}
+/* language switch: two flags at the right of the bar, the current one in colour with the house underline */
+.lang{margin-left:auto;display:flex;align-items:stretch;flex:none;border-left:1px solid var(--line)}
+.lang button{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;width:56px;min-height:40px;padding:0;background:transparent;border:0;cursor:pointer;color:var(--muted);font-family:var(--cond);font-weight:700;font-size:10px;letter-spacing:.18em;line-height:1;transition:color .15s}
+.lang svg{width:22px;height:15px;display:block;opacity:.45;filter:grayscale(1);transition:opacity .15s,filter .15s}
+.lang button:hover{color:var(--ink2)}
+.lang button:hover svg{opacity:.85;filter:grayscale(.3)}
+.lang button[aria-pressed="true"]{color:var(--ink);cursor:default}
+.lang button[aria-pressed="true"] svg{opacity:1;filter:none}
+.lang button[aria-pressed="true"]::after{content:"";position:absolute;left:14px;right:14px;bottom:0;height:3px;background:var(--club2);transform:skewX(-14deg)}
+.lang button:focus-visible{outline:2px solid var(--club2);outline-offset:-3px}
+.top .id span b{font-weight:800;color:#000;font-style:normal}
 .wrap{max-width:1280px;margin:0 auto;padding:0 20px 60px}
 /* hero, the lower third */
 .hero{position:relative;display:grid;grid-template-columns:400px 236px minmax(0,1fr);min-height:400px;margin-top:22px;background:linear-gradient(100deg,color-mix(in srgb,var(--club) 22%,var(--bg2)) 0%,var(--bg2) 60%);overflow:hidden;border:1px solid var(--line)}
@@ -194,7 +199,7 @@ h1 span span{display:block;color:var(--club2)}
 .court .zs{font-family:var(--sans);font-weight:500;font-size:34px;fill:#d6dcea;text-anchor:middle;paint-order:stroke;stroke:var(--floor);stroke-width:8}
 .shot{transform-box:fill-box;transform-origin:center;animation:pop .32s cubic-bezier(.2,1.4,.4,1) both}
 @keyframes pop{from{opacity:0;transform:scale(.2)}to{opacity:1;transform:scale(1)}}
-@media (prefers-reduced-motion:reduce){.shot{animation:none}.live i{animation:none}.ticker{overflow-x:auto;scrollbar-width:thin}.ticker .run{animation:none}.tile::after,.split .bar i.fill,.gauge .t i,.zone-bar,.progress,.toast{transition:none}.sk{animation:none}
+@media (prefers-reduced-motion:reduce){.shot{animation:none}.lang button,.lang svg{transition:none}.ticker{overflow-x:auto;scrollbar-width:thin}.ticker .run{animation:none}.tile::after,.split .bar i.fill,.gauge .t i,.zone-bar,.progress,.toast{transition:none}.sk{animation:none}
   .lb-list.go-l,.lb-list.go-r,.lb-title b.swap{animation:none}.lb-row a::after,.lb-arrow,.lb-dots button,.lb-row a,.lb summary::after{transition:none}}
 .court3d{position:relative;width:100%;aspect-ratio:4/3;background:var(--floor);overflow:hidden}
 .court3d canvas{display:block;width:100%;height:100%;touch-action:pan-y}
@@ -295,7 +300,7 @@ td.w{color:var(--good)} td.l{color:var(--bad)}
 .foot a:hover{text-decoration:underline}
 .loading{opacity:.5;pointer-events:none;transition:opacity .2s}
 @media (max-width:1000px){.hero{grid-template-columns:300px 196px minmax(0,1fr);min-height:340px}.bio{padding-bottom:26px}.bio dd{font-size:16px}.hero .ph img{height:340px}h1{font-size:84px}.tiles{grid-template-columns:repeat(12,1fr)}.tile{grid-column:span 3;border-bottom:1px solid var(--line)}.tile:nth-child(n+5){grid-column:span 4}.tile:nth-child(4n){border-right:0}.tile:nth-last-child(-n+3){border-bottom:0}.grid{grid-template-columns:1fr}}
-@media (max-width:760px){.top{flex-wrap:wrap;height:auto}.top .id{order:-2;flex:1 1 auto;height:46px;clip-path:none;font-size:20px;padding:0 14px}.top .id span{display:none}.live{order:-1;margin-left:0;flex:none;height:46px;padding:0 12px;border-bottom:1px solid var(--line)}.live span{display:none}.sel{border-right:0;padding:0 12px;height:46px}.sel.team,.sel.player{flex:1 1 100%;border-bottom:1px solid var(--line)}.search{flex:1 1 100%;height:44px;border-right:0}.dd-btn{font-size:17px;padding:10px 30px 10px 0}.wrap{padding:0 12px 48px}.hero{grid-template-columns:1fr;min-height:0}.bio{order:3;padding:0 20px 22px}.bio dl{grid-template-columns:1fr 1fr;gap:12px 16px}.bio dl>div:first-child,.bio .career{grid-column:1/-1}.hero::before{width:100%;left:0;background:linear-gradient(180deg,var(--club) 0%,var(--club) 45%,transparent 46%)}.hero .ph{padding-top:16px}.hero .ph img{height:280px}.hero .ph .num{font-size:170px;bottom:-16px}h1{font-size:64px}.facts{font-size:16px;gap:14px}.tiles{grid-template-columns:repeat(12,1fr)}.tile{padding:12px 8px 10px}.tile b{font-size:30px}.tile span{font-size:10.5px;letter-spacing:.12em}.tile i{font-size:11px;right:8px;top:10px}.panel .in{padding:0 12px 14px}.gauges,.xfg-row{grid-template-columns:1fr}}
+@media (max-width:760px){.top{flex-wrap:wrap;height:auto}.top .id{order:-2;flex:1 1 auto;height:46px;clip-path:none;font-size:20px;padding:0 14px}.top .id span{display:none}.sel{border-right:0;padding:0 12px;height:46px}.sel.team,.sel.player{flex:1 1 100%;border-bottom:1px solid var(--line)}.search{flex:1 1 100%;height:44px;border-right:0}.dd-btn{font-size:17px;padding:10px 30px 10px 0}.wrap{padding:0 12px 48px}.hero{grid-template-columns:1fr;min-height:0}.bio{order:3;padding:0 20px 22px}.bio dl{grid-template-columns:1fr 1fr;gap:12px 16px}.bio dl>div:first-child,.bio .career{grid-column:1/-1}.hero::before{width:100%;left:0;background:linear-gradient(180deg,var(--club) 0%,var(--club) 45%,transparent 46%)}.hero .ph{padding-top:16px}.hero .ph img{height:280px}.hero .ph .num{font-size:170px;bottom:-16px}h1{font-size:64px}.facts{font-size:16px;gap:14px}.tiles{grid-template-columns:repeat(12,1fr)}.tile{padding:12px 8px 10px}.tile b{font-size:30px}.tile span{font-size:10.5px;letter-spacing:.12em}.tile i{font-size:11px;right:8px;top:10px}.panel .in{padding:0 12px 14px}.gauges,.xfg-row{grid-template-columns:1fr}}
 /* header search */
 .search{display:flex;align-items:center;position:relative;flex:0 1 250px;min-width:150px;padding:0 12px 0 14px;border-right:1px solid var(--line)}
 .search input{width:100%;background:transparent;border:0;border-bottom:2px solid var(--line2);color:var(--ink);font-family:var(--cond);font-weight:700;font-size:16px;letter-spacing:.06em;text-transform:uppercase;padding:6px 0 4px;min-width:0;border-radius:0}
@@ -351,7 +356,7 @@ td .st{display:inline-block;color:var(--club2);font-style:normal;font-family:var
 .log tbody tr.on td{background:rgba(255,255,255,.07);color:var(--ink)}
 .log tbody tr.on td:nth-child(3)::after{content:"in view";display:inline-block;margin-left:8px;padding:1px 6px;font-family:var(--cond);font-size:11px;letter-spacing:.12em;text-transform:uppercase;background:var(--club2);color:var(--on);vertical-align:1px}
 .log tbody tr:focus-visible{outline:2px solid var(--club2);outline-offset:-2px}
-@media (min-width:761px) and (max-width:1100px){.top .id span{display:none}.top .id{font-size:20px;padding:0 20px 0 16px}.dd-btn{font-size:16px;padding:14px 30px 14px 0}.live{padding:0 14px}.live b{font-size:15px}.live span{display:none}.search{flex:0 1 190px;min-width:130px}}
+@media (min-width:761px) and (max-width:1100px){.top .id span{display:none}.top .id{font-size:20px;padding:0 20px 0 16px}.dd-btn{font-size:16px;padding:14px 30px 14px 0}.lang button{width:48px}.search{flex:0 1 190px;min-width:130px}}
 /* leaderboards: league scope, so the panel stays on house grey and the club accent marks only the viewed player */
 #cmp-panel,#lb-panel{margin-top:18px}
 .lb-head{display:flex;align-items:center;gap:12px;margin:0 0 14px}
@@ -460,6 +465,8 @@ body.cv-on .top,body.cv-on .wrap{display:none}
 .cv-foot{margin:40px 0 0;font-family:var(--cond);letter-spacing:.14em;text-transform:uppercase;font-size:12px;color:var(--muted);display:flex;gap:10px 22px;flex-wrap:wrap;align-items:center}
 .cv-foot a{color:var(--club2);text-decoration:none}
 .cv-foot a:hover{text-decoration:underline}
+.cv .lang{position:absolute;top:24px;right:24px;margin:0;border:1px solid var(--line);background:var(--panel);clip-path:polygon(8px 0,100% 0,100% 100%,0 100%);height:46px;z-index:2}
+.cv .lang button{width:54px;height:44px}
 @media (max-width:1000px){.cv-court{right:-28%;width:760px;opacity:.05}.cv-clubs{grid-template-columns:repeat(5,minmax(0,1fr))}.cv-feats{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:760px){.cv{min-height:0}.cv-in{padding:36px 14px 48px}.cv-court{display:none}.cv-lede{font-size:15.5px}.cv-nums{grid-template-columns:repeat(2,minmax(0,1fr))}.cv-nums li:nth-child(2n){border-right:0}.cv-nums li:nth-child(-n+2){border-bottom:1px solid var(--line)}.cv-nums b{font-size:32px}.cv-clubs{grid-template-columns:repeat(4,minmax(0,1fr))}.cv-go{width:100%;text-align:center}}
 /* page transition: a broadcast wipe in the destination club's colours covers the swap between the opening page and a club, or between clubs */
@@ -488,7 +495,8 @@ body.cv-on .top,body.cv-on .wrap{display:none}
 @media (max-width:760px){
   .top{position:sticky;top:0;z-index:40;flex-wrap:nowrap;height:52px;background:var(--bg2)}
   .top .id{order:0;flex:none;height:52px;font-size:18px;padding:0 12px 0 12px}
-  .live{display:none}
+  .lang{order:10;height:52px;border-left:1px solid var(--line)}.lang button{width:44px;height:52px;gap:3px;color:var(--ink2)}.lang button svg{opacity:1;filter:none}.lang button[aria-pressed="true"]{display:none}.top .id{padding:0 10px}
+  .cv .lang{top:12px;right:12px;height:44px}.cv .lang button{width:48px;display:flex}.cv .lang button[aria-pressed="true"]{display:flex}
   .sel.team{flex:none;width:54px;height:52px;padding:0;border-bottom:0;border-right:1px solid var(--line);justify-content:center;position:static}
   .sel.team img{width:30px;height:30px}
   .sel.team .dd{position:static}.sel.team .dd-btn{position:absolute;left:auto;top:0;width:54px;height:52px;margin-left:-54px;padding:0;font-size:0}.sel.team .dd-btn::after{display:none}.sel.team .dd-list{left:6px;right:6px;top:52px}
@@ -535,7 +543,11 @@ body.cv-on .top,body.cv-on .wrap{display:none}
   <div class="cv-glow"></div>
   <div class="cv-court"><svg viewBox="0 0 1500 1400" aria-hidden="true"><g class="l"><rect x="6" y="6" width="1488" height="1388"/><rect x="505" y="820" width="490" height="574"/><circle cx="750" cy="820" r="180"/><path d="M90 1394 L90 1119 A675 675 0 0 1 1410 1119 L1410 1394"/><circle cx="750" cy="1260" r="22.5"/><path d="M570 1394 A180 180 0 0 0 930 1394"/></g></svg></div>
   <div class="cv-in">
-    <p class="cv-eyebrow"><i></i>Euroleague <span id="cv-season"></span></p>
+    <div class="lang cv-lang" role="group" aria-label="Language">
+    <button type="button" data-lang="tr" aria-pressed="false" aria-label="Türkçe" title="Türkçe"><svg viewBox="0 0 22 15" aria-hidden="true"><rect width="22" height="15" fill="#e30a17"/><circle cx="8" cy="7.5" r="4" fill="#fff"/><circle cx="9.1" cy="7.5" r="3.25" fill="#e30a17"/><polygon fill="#fff" points="11.5,7.5 12.7,7.1 12.7,5.8 13.5,6.8 14.8,6.4 14,7.5 14.8,8.6 13.5,8.2 12.7,9.2 12.7,7.9"/></svg><span aria-hidden="true">TR</span></button>
+    <button type="button" data-lang="en" aria-pressed="false" aria-label="English" title="English"><svg viewBox="0 0 22 15" aria-hidden="true"><rect width="22" height="15" fill="#b22234"/><path stroke="#fff" stroke-width="1.154" d="M0 1.73H22M0 4.04H22M0 6.35H22M0 8.65H22M0 10.96H22M0 13.27H22"/><rect width="8.8" height="8.08" fill="#3c3b6e"/><path stroke="#fff" stroke-width=".75" stroke-linecap="round" stroke-dasharray=".1 1.6" d="M1 1.2H8.3M1.8 2.6H8.3M1 4H8.3M1.8 5.4H8.3M1 6.8H8.3"/></svg><span aria-hidden="true">EN</span></button>
+  </div>
+    <p class="cv-eyebrow no-t"><i></i>Euroleague <span id="cv-season"></span></p>
     <h1 class="cv-h1" aria-label="Player Lab">Player<span>Lab</span></h1>
     <p class="cv-lede">Every shot, every player, every club. Shot charts in two dimensions and three, shooting profiles that separate the shots a player takes from what he adds to them, and season stats rebuilt within minutes of every final.</p>
     <div class="cv-cta">
@@ -556,16 +568,19 @@ body.cv-on .top,body.cv-on .wrap{display:none}
         <div><b>Compare</b><p>Any player against any other at his position, per 40 minutes and per possession, with the position median beside them.</p></div>
       </div>
     </section>
-    <p class="cv-foot"><span id="cv-built"></span><a href="monitor.html">System status</a><a href="feed.xml" title="Updates feed (RSS)">Updates feed</a><span>Data: Euroleague official feeds</span></p>
+    <p class="cv-foot"><a href="monitor.html">System status</a><a href="feed.xml" title="Updates feed (RSS)">Updates feed</a><span>Data: Euroleague official feeds</span></p>
   </div>
 </main>
 <header class="top">
-  <a class="id" href="#" title="Back to the opening page">Player Lab<span>Euroleague</span></a>
+  <a class="id no-t" href="#" title="Back to the opening page">Player Lab<span>Euroleague <b id="tag-season"></b></span></a>
   <div class="sel team"><img id="crest-img" alt="" width="26" height="26"><select id="team" aria-label="Team"></select></div>
   <div class="sel player"><select id="player" aria-label="Player"></select></div>
   <div class="search"><input type="search" id="q" placeholder="Find a player" aria-label="Find a player across all clubs" autocomplete="off" spellcheck="false" role="combobox" aria-expanded="false" aria-controls="q-list" aria-autocomplete="list"><kbd>/</kbd><ul class="dd-list" id="q-list" role="listbox" aria-label="Players" hidden></ul><button type="button" class="q-x" id="q-x" aria-label="Close search" hidden>&times;</button></div>
   <button type="button" class="q-btn" id="q-btn" aria-label="Find a player"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M15.5 15.5L21 21" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button>
-  <div class="live"><i></i><b id="tag-season"></b><span id="tag-sub">Updated after every game</span></div>
+  <div class="lang" role="group" aria-label="Language">
+    <button type="button" data-lang="tr" aria-pressed="false" aria-label="Türkçe" title="Türkçe"><svg viewBox="0 0 22 15" aria-hidden="true"><rect width="22" height="15" fill="#e30a17"/><circle cx="8" cy="7.5" r="4" fill="#fff"/><circle cx="9.1" cy="7.5" r="3.25" fill="#e30a17"/><polygon fill="#fff" points="11.5,7.5 12.7,7.1 12.7,5.8 13.5,6.8 14.8,6.4 14,7.5 14.8,8.6 13.5,8.2 12.7,9.2 12.7,7.9"/></svg><span aria-hidden="true">TR</span></button>
+    <button type="button" data-lang="en" aria-pressed="false" aria-label="English" title="English"><svg viewBox="0 0 22 15" aria-hidden="true"><rect width="22" height="15" fill="#b22234"/><path stroke="#fff" stroke-width="1.154" d="M0 1.73H22M0 4.04H22M0 6.35H22M0 8.65H22M0 10.96H22M0 13.27H22"/><rect width="8.8" height="8.08" fill="#3c3b6e"/><path stroke="#fff" stroke-width=".75" stroke-linecap="round" stroke-dasharray=".1 1.6" d="M1 1.2H8.3M1.8 2.6H8.3M1 4H8.3M1.8 5.4H8.3M1 6.8H8.3"/></svg><span aria-hidden="true">EN</span></button>
+  </div>
 </header>
 <div class="progress" id="progress"></div>
 <div class="wipe" id="wipe" aria-hidden="true"><b></b><i></i></div>
@@ -679,8 +694,37 @@ body.cv-on .top,body.cv-on .wrap{display:none}
 <div class="tip" id="tip"></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script>
-const META = {"season": "E2026", "label": "2026-27", "min_sd": 5.5, "model": {"version": "2026-09-30", "trained_on": "E2025", "logloss": 0.6264, "auc": 0.6829, "n_shots": 51750}, "clubs": [{"code": "IST", "name": "Anadolu Efes Istanbul", "short": "Anadolu Efes", "country": "Turkiye", "city": "ISTANBUL", "logo": "logos/IST.webp", "base": "#002D74", "accent": "#00A7E1"}, {"code": "MIL", "name": "Armani Olimpia Milan", "short": "Milan", "country": "Italy", "city": "Milan", "logo": "logos/MIL.webp", "base": "#8E1610", "accent": "#F0342B"}, {"code": "BES", "name": "Besiktas Istanbul", "short": "Besiktas", "country": "Turkiye", "city": "ISTANBUL", "logo": "logos/BES.webp", "base": "#2A2A2A", "accent": "#FFFFFF"}, {"code": "RED", "name": "Crvena Zvezda Meridianbet Belgrade", "short": "Crvena Zvezda", "country": "Serbia", "city": "BELGRADE", "logo": "logos/RED.webp", "base": "#A3121A", "accent": "#FF3B44"}, {"code": "DUB", "name": "Dubai Basketball", "short": "Dubai", "country": "United Arab Emirates", "city": "Dubai", "logo": "logos/DUB.webp", "base": "#1A1714", "accent": "#C69C4D"}, {"code": "BAR", "name": "FC Barcelona", "short": "FC Barcelona", "country": "Spain", "city": "BARCELONA", "logo": "logos/BAR.webp", "base": "#023485", "accent": "#EDBB00"}, {"code": "MUN", "name": "FC Bayern Munich", "short": "Bayern Munich", "country": "Germany", "city": "Munich", "logo": "logos/MUN.webp", "base": "#8F0F25", "accent": "#EE3149"}, {"code": "ULK", "name": "Fenerbahce Tarfin Istanbul", "short": "Fenerbahce", "country": "Turkiye", "city": "Istanbul", "logo": "logos/ULK.webp", "base": "#0A2F5E", "accent": "#FFED00"}, {"code": "HTA", "name": "Hapoel IBI Tel Aviv", "short": "Hapoel TLV", "country": "Israel", "city": "Tel Aviv", "logo": "logos/HTA.webp", "base": "#9E1218", "accent": "#FF3B44"}, {"code": "BAS", "name": "Kosner Baskonia Vitoria-Gasteiz", "short": "Baskonia", "country": "Spain", "city": "VITORIA-GASTEIZ", "logo": "logos/BAS.webp", "base": "#0A2240", "accent": "#E4213C"}, {"code": "ASV", "name": "LDLC ASVEL Villeurbanne", "short": "LDLC ASVEL", "country": "France", "city": "Lyon", "logo": "logos/ASV.webp", "base": "#1C1C1C", "accent": "#A7ABB3"}, {"code": "TEL", "name": "Maccabi Rapyd Tel Aviv", "short": "Maccabi", "country": "Israel", "city": "Tel Aviv", "logo": "logos/TEL.webp", "base": "#1B2F6E", "accent": "#FFD500"}, {"code": "OLY", "name": "Olympiacos Piraeus", "short": "Olympiacos", "country": "Greece", "city": "PIRAEUS", "logo": "logos/OLY.webp", "base": "#9B0A18", "accent": "#F03A4A"}, {"code": "PAN", "name": "Panathinaikos AKTOR Athens", "short": "Panathinaikos", "country": "Greece", "city": "ATHENS", "logo": "logos/PAN.webp", "base": "#0B6B3A", "accent": "#22D37A"}, {"code": "PRS", "name": "Paris Basketball", "short": "Paris", "country": "France", "city": "Paris", "logo": "logos/PRS.webp", "base": "#151515", "accent": "#E63927"}, {"code": "PAR", "name": "Partizan Mozzart Bet Belgrade", "short": "Partizan", "country": "Serbia", "city": "BELGRADE", "logo": "logos/PAR.webp", "base": "#2A2A2A", "accent": "#FFFFFF"}, {"code": "MAD", "name": "Real Madrid", "short": "Real Madrid", "country": "Spain", "city": "Madrid", "logo": "logos/MAD.webp", "base": "#0B3F8F", "accent": "#FEBE10"}, {"code": "PAM", "name": "Valencia Basket", "short": "Valencia", "country": "Spain", "city": "VALENCIA", "logo": "logos/PAM.webp", "base": "#0A3792", "accent": "#FF6C0E"}, {"code": "VIR", "name": "Virtus Bologna", "short": "Virtus Bologna", "country": "Italy", "city": "BOLOGNA", "logo": "logos/VIR.webp", "base": "#2A2A2A", "accent": "#FFFFFF"}, {"code": "ZAL", "name": "Zalgiris Kaunas", "short": "Zalgiris", "country": "Lithuania", "city": "Kaunas", "logo": "logos/ZAL.webp", "base": "#146734", "accent": "#3FD07A"}], "league_n": 78, "pool_rule": "3+ games, 10+ minutes a game", "league": {"season": "E2026", "shots": 3164, "zones": {"rim": {"att": 771, "fg": 0.7211, "ppa": 1.442}, "paint": {"att": 752, "fg": 0.4508, "ppa": 0.902}, "mid": {"att": 342, "fg": 0.424, "ppa": 0.848}, "c3": {"att": 160, "fg": 0.325, "ppa": 0.975}, "a3": {"att": 1139, "fg": 0.3494, "ppa": 1.048}, "three": {"att": 1299, "fg": 0.3464, "ppa": 1.039}}, "splits": {"fg2": 0.5576, "fg3": 0.3464, "fg": 0.4709, "ft": 0.7903, "ts": 0.5835}, "by_pos": {"Center": {"att": 450, "zones": {"rim": {"share": 0.4844, "fg": 0.7661}, "paint": {"share": 0.2689, "fg": 0.3967}, "mid": {"share": 0.0733, "fg": 0.2727}, "c3": {"share": 0.0333, "fg": 0.2667}, "a3": {"share": 0.14, "fg": 0.5397}}}, "Guard": {"att": 1593, "zones": {"rim": {"share": 0.1701, "fg": 0.6642}, "paint": {"share": 0.2367, "fg": 0.4509}, "mid": {"share": 0.1237, "fg": 0.4264}, "c3": {"share": 0.0483, "fg": 0.3377}, "a3": {"share": 0.4212, "fg": 0.3413}}}, "Forward": {"att": 1121, "zones": {"rim": {"share": 0.2516, "fg": 0.7411}, "paint": {"share": 0.2266, "fg": 0.4764}, "mid": {"share": 0.0999, "fg": 0.4643}, "c3": {"share": 0.0607, "fg": 0.3235}, "a3": {"share": 0.3613, "fg": 0.3333}}}}}, "def_adjusted": true, "ratings": {"MAD": {"g": 3, "pace": 78.0, "ortg": 110.7, "drtg": 117.1}, "HTA": {"g": 3, "pace": 77.6, "ortg": 114.7, "drtg": 113.4}, "ZAL": {"g": 3, "pace": 76.9, "ortg": 109.2, "drtg": 109.2}, "OLY": {"g": 3, "pace": 78.8, "ortg": 124.0, "drtg": 116.8}, "PAM": {"g": 2, "pace": 82.7, "ortg": 125.2, "drtg": 110.1}, "MUN": {"g": 2, "pace": 74.8, "ortg": 108.2, "drtg": 122.9}, "PRS": {"g": 3, "pace": 75.9, "ortg": 102.3, "drtg": 114.6}, "PAR": {"g": 2, "pace": 74.2, "ortg": 123.9, "drtg": 104.4}, "PAN": {"g": 2, "pace": 76.2, "ortg": 126.6, "drtg": 99.0}, "BAS": {"g": 2, "pace": 83.5, "ortg": 105.9, "drtg": 129.9}, "VIR": {"g": 3, "pace": 76.6, "ortg": 108.4, "drtg": 112.8}, "RED": {"g": 3, "pace": 79.0, "ortg": 98.7, "drtg": 99.5}, "DUB": {"g": 2, "pace": 73.2, "ortg": 117.6, "drtg": 112.1}, "BAR": {"g": 2, "pace": 73.5, "ortg": 119.7, "drtg": 119.7}, "ASV": {"g": 2, "pace": 76.8, "ortg": 106.1, "drtg": 114.6}, "IST": {"g": 3, "pace": 78.4, "ortg": 105.4, "drtg": 106.2}, "TEL": {"g": 2, "pace": 79.1, "ortg": 105.6, "drtg": 122.1}, "MIL": {"g": 2, "pace": 73.8, "ortg": 110.4, "drtg": 119.8}, "BES": {"g": 2, "pace": 79.6, "ortg": 127.6, "drtg": 118.8}, "ULK": {"g": 2, "pace": 74.7, "ortg": 119.2, "drtg": 96.5}}, "medians": {"Guard": {"Minutes a game": 20.467, "Points per 40": 19.599, "Usage": 24.7, "True shooting": 0.505, "Assists per 40": 4.585, "Assist rate": 20.4, "Turnover rate": 14.4, "Rebounds per 40": 4.977, "Rebound rate": 6.7, "Share of shots from three": 0.484, "Shot quality": 1.056, "Shooting skill per 100": -1.04, "On / off per 40": -0.1, "PIR per 40": 16.0, "3P%": 0.333}, "Forward": {"Minutes a game": 18.5, "Points per 40": 13.393, "Usage": 15.3, "True shooting": 0.564, "Assists per 40": 2.247, "Assist rate": 9.3, "Turnover rate": 10.8, "Rebounds per 40": 6.27, "Rebound rate": 9.9, "Share of shots from three": 0.5, "Shot quality": 1.098, "Shooting skill per 100": -0.18, "On / off per 40": -0.1, "PIR per 40": 15.434}, "Center": {"Minutes a game": 16.767, "Points per 40": 12.081, "Usage": 17.1, "True shooting": 0.68, "Assists per 40": 0.966, "Assist rate": 3.6, "Turnover rate": 20.4, "Rebounds per 40": 9.393, "Rebound rate": 15.2, "Share of shots from three": 0.0, "Shot quality": 1.191, "Shooting skill per 100": -0.05, "On / off per 40": 0.1, "PIR per 40": 15.656}}, "leaders": {"rounds": 2, "min_gp": 2, "min_3pa": 15, "min_mpg": 10.0, "att_settled": 15, "provisional": false, "n": {"pg": 198, "fg3": 14}, "top_3pa": 27, "pts": [["P009862", 44, 2], ["P003469", 60, 3], ["P013369", 40, 2], ["P009849", 57, 3], ["P012608", 38, 2], ["P011286", 38, 2], ["P007975", 37, 2], ["P012640", 51, 3], ["P009846", 50, 3], ["P014734", 33, 2]], "reb": [["P008192", 26, 3], ["P003842", 17, 2], ["P009846", 25, 3], ["P005791", 24, 3], ["P014168", 15, 2], ["P012788", 22, 3], ["P014108", 22, 3], ["P012878", 14, 2], ["P000898", 20, 3], ["P012796", 13, 2]], "ast": [["P012707", 23, 3], ["P013369", 15, 2], ["P009863", 14, 2], ["P011052", 14, 2], ["P009048", 20, 3], ["P007027", 18, 3], ["P012608", 12, 2], ["P013699", 11, 2], ["P010568", 16, 3], ["P010042", 16, 3]], "fg3": [["P009849", 11, 22], ["P012707", 7, 15], ["P012611", 7, 16], ["P012080", 6, 15], ["P014163", 7, 18], ["P011987", 7, 19], ["P008099", 5, 15], ["P015143", 5, 15], ["P013380", 4, 15], ["P014005", 5, 19]]}, "priors": {"league_quality": 1.0994, "k_skill": 274.2, "k_quality": 11.2, "reference_season": "E2025", "tau_skill": 0.0694}, "built": "2026-10-02 08:50 UTC", "path": "teams/E2026/", "status": {"checked_at": "2026-10-02T08:50:40Z", "games": 24, "shots": 3164, "players": 324, "tests": 26, "ok": true, "failures": 0, "warnings": 0}, "n_players": 316};
+const META = {"season": "E2026", "label": "2026-27", "min_sd": 5.5, "model": {"version": "2026-09-30", "trained_on": "E2025", "logloss": 0.6264, "auc": 0.6829, "n_shots": 51750}, "clubs": [{"code": "IST", "name": "Anadolu Efes Istanbul", "short": "Anadolu Efes", "country": "Turkiye", "city": "ISTANBUL", "logo": "logos/IST.webp", "base": "#002D74", "accent": "#00A7E1"}, {"code": "MIL", "name": "Armani Olimpia Milan", "short": "Milan", "country": "Italy", "city": "Milan", "logo": "logos/MIL.webp", "base": "#8E1610", "accent": "#F0342B"}, {"code": "BES", "name": "Besiktas Istanbul", "short": "Besiktas", "country": "Turkiye", "city": "ISTANBUL", "logo": "logos/BES.webp", "base": "#2A2A2A", "accent": "#FFFFFF"}, {"code": "RED", "name": "Crvena Zvezda Meridianbet Belgrade", "short": "Crvena Zvezda", "country": "Serbia", "city": "BELGRADE", "logo": "logos/RED.webp", "base": "#A3121A", "accent": "#FF3B44"}, {"code": "DUB", "name": "Dubai Basketball", "short": "Dubai", "country": "United Arab Emirates", "city": "Dubai", "logo": "logos/DUB.webp", "base": "#1A1714", "accent": "#C69C4D"}, {"code": "BAR", "name": "FC Barcelona", "short": "FC Barcelona", "country": "Spain", "city": "BARCELONA", "logo": "logos/BAR.webp", "base": "#023485", "accent": "#EDBB00"}, {"code": "MUN", "name": "FC Bayern Munich", "short": "Bayern Munich", "country": "Germany", "city": "Munich", "logo": "logos/MUN.webp", "base": "#8F0F25", "accent": "#EE3149"}, {"code": "ULK", "name": "Fenerbahce Tarfin Istanbul", "short": "Fenerbahce", "country": "Turkiye", "city": "Istanbul", "logo": "logos/ULK.webp", "base": "#0A2F5E", "accent": "#FFED00"}, {"code": "HTA", "name": "Hapoel IBI Tel Aviv", "short": "Hapoel TLV", "country": "Israel", "city": "Tel Aviv", "logo": "logos/HTA.webp", "base": "#9E1218", "accent": "#FF3B44"}, {"code": "BAS", "name": "Kosner Baskonia Vitoria-Gasteiz", "short": "Baskonia", "country": "Spain", "city": "VITORIA-GASTEIZ", "logo": "logos/BAS.webp", "base": "#0A2240", "accent": "#E4213C"}, {"code": "ASV", "name": "LDLC ASVEL Villeurbanne", "short": "LDLC ASVEL", "country": "France", "city": "Lyon", "logo": "logos/ASV.webp", "base": "#1C1C1C", "accent": "#A7ABB3"}, {"code": "TEL", "name": "Maccabi Rapyd Tel Aviv", "short": "Maccabi", "country": "Israel", "city": "Tel Aviv", "logo": "logos/TEL.webp", "base": "#1B2F6E", "accent": "#FFD500"}, {"code": "OLY", "name": "Olympiacos Piraeus", "short": "Olympiacos", "country": "Greece", "city": "PIRAEUS", "logo": "logos/OLY.webp", "base": "#9B0A18", "accent": "#F03A4A"}, {"code": "PAN", "name": "Panathinaikos AKTOR Athens", "short": "Panathinaikos", "country": "Greece", "city": "ATHENS", "logo": "logos/PAN.webp", "base": "#0B6B3A", "accent": "#22D37A"}, {"code": "PRS", "name": "Paris Basketball", "short": "Paris", "country": "France", "city": "Paris", "logo": "logos/PRS.webp", "base": "#151515", "accent": "#E63927"}, {"code": "PAR", "name": "Partizan Mozzart Bet Belgrade", "short": "Partizan", "country": "Serbia", "city": "BELGRADE", "logo": "logos/PAR.webp", "base": "#2A2A2A", "accent": "#FFFFFF"}, {"code": "MAD", "name": "Real Madrid", "short": "Real Madrid", "country": "Spain", "city": "Madrid", "logo": "logos/MAD.webp", "base": "#0B3F8F", "accent": "#FEBE10"}, {"code": "PAM", "name": "Valencia Basket", "short": "Valencia", "country": "Spain", "city": "VALENCIA", "logo": "logos/PAM.webp", "base": "#0A3792", "accent": "#FF6C0E"}, {"code": "VIR", "name": "Virtus Bologna", "short": "Virtus Bologna", "country": "Italy", "city": "BOLOGNA", "logo": "logos/VIR.webp", "base": "#2A2A2A", "accent": "#FFFFFF"}, {"code": "ZAL", "name": "Zalgiris Kaunas", "short": "Zalgiris", "country": "Lithuania", "city": "Kaunas", "logo": "logos/ZAL.webp", "base": "#146734", "accent": "#3FD07A"}], "league_n": 78, "pool_rule": "3+ games, 10+ minutes a game", "league": {"season": "E2026", "shots": 3164, "zones": {"rim": {"att": 771, "fg": 0.7211, "ppa": 1.442}, "paint": {"att": 752, "fg": 0.4508, "ppa": 0.902}, "mid": {"att": 342, "fg": 0.424, "ppa": 0.848}, "c3": {"att": 160, "fg": 0.325, "ppa": 0.975}, "a3": {"att": 1139, "fg": 0.3494, "ppa": 1.048}, "three": {"att": 1299, "fg": 0.3464, "ppa": 1.039}}, "splits": {"fg2": 0.5576, "fg3": 0.3464, "fg": 0.4709, "ft": 0.7903, "ts": 0.5835}, "by_pos": {"Center": {"att": 450, "zones": {"rim": {"share": 0.4844, "fg": 0.7661}, "paint": {"share": 0.2689, "fg": 0.3967}, "mid": {"share": 0.0733, "fg": 0.2727}, "c3": {"share": 0.0333, "fg": 0.2667}, "a3": {"share": 0.14, "fg": 0.5397}}}, "Guard": {"att": 1593, "zones": {"rim": {"share": 0.1701, "fg": 0.6642}, "paint": {"share": 0.2367, "fg": 0.4509}, "mid": {"share": 0.1237, "fg": 0.4264}, "c3": {"share": 0.0483, "fg": 0.3377}, "a3": {"share": 0.4212, "fg": 0.3413}}}, "Forward": {"att": 1121, "zones": {"rim": {"share": 0.2516, "fg": 0.7411}, "paint": {"share": 0.2266, "fg": 0.4764}, "mid": {"share": 0.0999, "fg": 0.4643}, "c3": {"share": 0.0607, "fg": 0.3235}, "a3": {"share": 0.3613, "fg": 0.3333}}}}}, "def_adjusted": true, "ratings": {"MAD": {"g": 3, "pace": 78.0, "ortg": 110.7, "drtg": 117.1}, "HTA": {"g": 3, "pace": 77.6, "ortg": 114.7, "drtg": 113.4}, "ZAL": {"g": 3, "pace": 76.9, "ortg": 109.2, "drtg": 109.2}, "OLY": {"g": 3, "pace": 78.8, "ortg": 124.0, "drtg": 116.8}, "PAM": {"g": 2, "pace": 82.7, "ortg": 125.2, "drtg": 110.1}, "MUN": {"g": 2, "pace": 74.8, "ortg": 108.2, "drtg": 122.9}, "PRS": {"g": 3, "pace": 75.9, "ortg": 102.3, "drtg": 114.6}, "PAR": {"g": 2, "pace": 74.2, "ortg": 123.9, "drtg": 104.4}, "PAN": {"g": 2, "pace": 76.2, "ortg": 126.6, "drtg": 99.0}, "BAS": {"g": 2, "pace": 83.5, "ortg": 105.9, "drtg": 129.9}, "VIR": {"g": 3, "pace": 76.6, "ortg": 108.4, "drtg": 112.8}, "RED": {"g": 3, "pace": 79.0, "ortg": 98.7, "drtg": 99.5}, "DUB": {"g": 2, "pace": 73.2, "ortg": 117.6, "drtg": 112.1}, "BAR": {"g": 2, "pace": 73.5, "ortg": 119.7, "drtg": 119.7}, "ASV": {"g": 2, "pace": 76.8, "ortg": 106.1, "drtg": 114.6}, "IST": {"g": 3, "pace": 78.4, "ortg": 105.4, "drtg": 106.2}, "TEL": {"g": 2, "pace": 79.1, "ortg": 105.6, "drtg": 122.1}, "MIL": {"g": 2, "pace": 73.8, "ortg": 110.4, "drtg": 119.8}, "BES": {"g": 2, "pace": 79.6, "ortg": 127.6, "drtg": 118.8}, "ULK": {"g": 2, "pace": 74.7, "ortg": 119.2, "drtg": 96.5}}, "medians": {"Guard": {"Minutes a game": 20.467, "Points per 40": 19.599, "Usage": 24.7, "True shooting": 0.505, "Assists per 40": 4.585, "Assist rate": 20.4, "Turnover rate": 14.4, "Rebounds per 40": 4.977, "Rebound rate": 6.7, "Share of shots from three": 0.484, "Shot quality": 1.056, "Shooting skill per 100": -1.04, "On / off per 40": -0.1, "PIR per 40": 16.0, "3P%": 0.333}, "Forward": {"Minutes a game": 18.5, "Points per 40": 13.393, "Usage": 15.3, "True shooting": 0.564, "Assists per 40": 2.247, "Assist rate": 9.3, "Turnover rate": 10.8, "Rebounds per 40": 6.27, "Rebound rate": 9.9, "Share of shots from three": 0.5, "Shot quality": 1.098, "Shooting skill per 100": -0.18, "On / off per 40": -0.1, "PIR per 40": 15.434}, "Center": {"Minutes a game": 16.767, "Points per 40": 12.081, "Usage": 17.1, "True shooting": 0.68, "Assists per 40": 0.966, "Assist rate": 3.6, "Turnover rate": 20.4, "Rebounds per 40": 9.393, "Rebound rate": 15.2, "Share of shots from three": 0.0, "Shot quality": 1.191, "Shooting skill per 100": -0.05, "On / off per 40": 0.1, "PIR per 40": 15.656}}, "leaders": {"rounds": 2, "min_gp": 2, "min_3pa": 15, "min_mpg": 10.0, "att_settled": 15, "provisional": false, "n": {"pg": 198, "fg3": 14}, "top_3pa": 27, "pts": [["P009862", 44, 2], ["P003469", 60, 3], ["P013369", 40, 2], ["P009849", 57, 3], ["P012608", 38, 2], ["P011286", 38, 2], ["P007975", 37, 2], ["P012640", 51, 3], ["P009846", 50, 3], ["P014734", 33, 2]], "reb": [["P008192", 26, 3], ["P003842", 17, 2], ["P009846", 25, 3], ["P005791", 24, 3], ["P014168", 15, 2], ["P012788", 22, 3], ["P014108", 22, 3], ["P012878", 14, 2], ["P000898", 20, 3], ["P012796", 13, 2]], "ast": [["P012707", 23, 3], ["P013369", 15, 2], ["P009863", 14, 2], ["P011052", 14, 2], ["P009048", 20, 3], ["P007027", 18, 3], ["P012608", 12, 2], ["P013699", 11, 2], ["P010568", 16, 3], ["P010042", 16, 3]], "fg3": [["P009849", 11, 22], ["P012707", 7, 15], ["P012611", 7, 16], ["P012080", 6, 15], ["P014163", 7, 18], ["P011987", 7, 19], ["P008099", 5, 15], ["P015143", 5, 15], ["P013380", 4, 15], ["P014005", 5, 19]]}, "priors": {"league_quality": 1.0994, "k_skill": 274.2, "k_quality": 11.2, "reference_season": "E2025", "tau_skill": 0.0694}, "built": "2026-10-02 14:31 UTC", "path": "teams/E2026/", "status": {"checked_at": "2026-10-02T08:50:40Z", "games": 24, "shots": 3164, "players": 324, "tests": 26, "ok": true, "failures": 0, "warnings": 0}, "n_players": 316};
 const $ = s => document.querySelector(s);
+// ---- language: English or Turkish, chosen with the flags at the top right and remembered in this browser; the Turkish
+// dictionary (lang/tr.json) is inlined by the build, keyed by the English text, with {name} placeholders
+const LANGS = ['en', 'tr'];
+let LANG = (() => { try { const v = localStorage.getItem('pl-lang'); if (LANGS.includes(v)) return v; } catch (e) {} return (navigator.language || '').toLowerCase().startsWith('tr') ? 'tr' : 'en'; })();
+const T = {tr: {"+/- per game": "Maç başına +/-", "2P": "2P", "3 point shooting": "Üç sayılık şut", "3+ games, 10+ minutes a game": "3+ maç, maç başına 10+ dakika", "3-point percentage": "Üç sayılık isabet yüzdesi", "3D": "3D", "3D view is unavailable in this browser": "3D görünüm bu tarayıcıda kullanılamıyor", "3D view unavailable · showing the 2D chart": "3D görünüm kullanılamıyor · 2D harita gösteriliyor", "3P": "3P", "3P%": "3P%", "95% interval {a} to {b}%": "%95 aralık %{a} ile %{b} arası", "<b>{n}</b> game": "<b>{n}</b> maç", "<b>{n}</b> games": "<b>{n}</b> maç", "<b>{n}</b> start": "<b>{n}</b> ilk beş", "<b>{n}</b> starts": "<b>{n}</b> ilk beş", "Above-break 3": "Köşe dışı 3", "Add fixtures to calendar": "Fikstürü takvime ekle", "Add this club's fixtures to your calendar (.ics)": "Bu kulübün fikstürünü takvimine ekle (.ics)", "against the defences faced": "karşılaşılan savunmalara göre", "All": "Tümü", "All 3s": "Tüm 3'ler", "all games": "tüm maçlar", "and-one": "faullü sayı", "Any": "Hepsi", "Any player against any other at his position, per 40 minutes and per possession, with the position median beside them.": "Herhangi bir oyuncu, aynı mevkideki bir başkasıyla; 40 dakika başına ve pozisyon başına, yanında mevki medyanıyla.", "Assist rate": "Asist oranı", "assisted": "asistli", "Assisted": "Asistli", "Assists": "Asist", "Assists per 40": "40 dakikada asist", "Assists per game": "Maç başına asist", "Ast": "Ast", "Ast%": "Ast%", "At the rim": "Pota altı", "At {n} attempts the 95% interval is {w} points wide, so makes over attempts beside each percentage is the number to read.": "{n} denemede %95 aralık {w} puan genişliğinde; bu yüzden her yüzdenin yanındaki isabet/deneme sayısı asıl bakılması gereken rakam.", "Away": "Deplasman", "Back to the season": "Sezona dön", "Behind rim": "Çember arkası", "bench": "yedek", "Blk": "Blk", "blocked": "bloklandı", "Blocks": "Blok", "Broadcast": "Yayın", "Career": "Kariyer", "Center": "Pivot", "Centers": "Pivotlar", "Choose a {pos} to compare": "Karşılaştırmak için bir {pos} seç", "Close search": "Aramayı kapat", "Club name": "Kulüp adı", "Clubs": "Kulüpler", "Compare": "Karşılaştır", "Compare with": "Şununla karşılaştır", "Continue": "Devam", "Copied": "Kopyalandı", "Copy a link to this player": "Bu oyuncunun bağlantısını kopyala", "Copy an iframe that shows this player's shot chart on your own site": "Bu oyuncunun şut haritasını kendi sitende gösteren iframe kodunu kopyala", "Copy link": "Bağlantıyı kopyala", "Corner 3": "Köşe 3", "Data unavailable": "Veri yok", "Data: Euroleague official feeds": "Veri: Euroleague resmi kaynakları", "Date": "Tarih", "Date of birth": "Doğum tarihi", "Did not play": "Oynamadı", "did not play": "oynamadı", "dnp": "oyn.", "dnp: did not play, –: not in the squad": "oyn.: oynamadı, –: kadroda değil", "Done": "Tamam", "down": "düşüş", "Drag to orbit · scroll or pinch to zoom": "Döndürmek için sürükle · yakınlaştırmak için kaydır ya da sıkıştır", "Early · 0 to 6 s": "Erken · 0–6 sn", "Embed": "Göm", "Embed code copied": "Gömme kodu kopyalandı", "EN": "EN", "English": "English", "Euroleague career": "Euroleague kariyeri", "Euroleague Player Lab": "Euroleague Player Lab", "Every attempt on the floor, grouped by zone against the league, or replayed in 3D with the ball in flight.": "Sahadaki her deneme; bölgelere göre ligle kıyaslanmış ya da topun uçuşuyla birlikte 3D olarak yeniden oynatılmış.", "Every shot, every player, every club. Shot charts in two dimensions and three, shooting profiles that separate the shots a player takes from what he adds to them, and season stats rebuilt within minutes of every final.": "Her şut, her oyuncu, her kulüp. İki ve üç boyutlu şut haritaları, oyuncunun attığı şutları onlara kattığı değerden ayıran şut profilleri ve her maçın bitiminden dakikalar sonra yeniden hesaplanan sezon istatistikleri.", "Expected FG% for a league-average shooter on his shots": "Attığı şutlarda lig ortalaması bir şutörün beklenen isabet yüzdesi", "expected points per attempt on his shots": "attığı şutlarda deneme başına beklenen sayı", "FG%": "FG%", "FGM / FGA": "İsabet / Deneme", "Find a player": "Oyuncu ara", "Find a player across all clubs": "Tüm kulüplerde oyuncu ara", "First game": "İlk maç", "Fixtures": "Fikstür", "Forward": "Forvet", "Forwards": "Forvetler", "from the bench": "yedekten", "FT": "FT", "Game": "Maç", "Game log": "Maç kaydı", "Games": "Maç", "Guard": "Oyun kurucu", "Guards": "Oyun kurucular", "Half-court shot chart": "Yarı saha şut haritası", "Height": "Boy", "High": "Yüksek", "him": "o", "Him": "O", "his bio and career are above.": "biyografisi ve kariyeri yukarıda.", "Home": "İç saha", "How this is measured": "Nasıl ölçülüyor", "in {n} game": "{n} maçta", "in {n} games": "{n} maçta", "L": "M", "Lab": "Lab", "Language": "Dil", "Last 5 games": "Son 5 maç", "Late · 18 s and over": "Geç · 18 sn ve üzeri", "Leaderboards": "Liderlik tabloları", "league": "lig", "League leaders": "Lig liderleri", "lg": "lig", "Lg": "Lig", "lines at 20 and 40 (minutes, usage %)": "çizgiler 20 ve 40'ta (dakika, kullanım %)", "Link copied": "Bağlantı kopyalandı", "Loading": "Yükleniyor", "Loading 3D court…": "3D saha yükleniyor…", "loan": "kiralık", "made": "isabet", "Made": "İsabet", "Metric": "Ölçüt", "Mid": "Orta", "Mid · 7 to 17 s": "Orta · 7–17 sn", "Mid-range": "Orta mesafe", "min": "dk", "Min": "Dk", "Minutes": "Dakika", "minutes": "dakika", "Minutes a game": "Maç başına dakika", "Minutes per game": "Maç başına dakika", "Minutes, last {n}": "Dakika, son {n}", "Missed": "Kaçan", "NBA": "NBA", "NCAA": "NCAA", "New data since you opened this page": "Sayfayı açtığından beri yeni veri geldi", "Next": "Sonraki", "next": "sonraki", "Next leaderboard": "Sonraki tablo", "Next player": "Sonraki oyuncu", "No attempts in this selection": "Bu seçimde deneme yok", "No Euroleague minutes yet": "Henüz Euroleague'de süre almadı", "no games": "maç yok", "No games played yet": "Henüz maç oynanmadı", "No games played yet.": "Henüz maç oynanmadı.", "No games yet": "Henüz maç yok", "No minutes in the club's {n} game so far": "Kulübün şimdiye kadarki {n} maçında süre almadı", "No minutes in the club's {n} games so far": "Kulübün şimdiye kadarki {n} maçında süre almadı", "No player has {n} three-point attempts yet": "Henüz {n} üç sayılık denemeye ulaşan oyuncu yok", "No player matches": "Eşleşen oyuncu yok", "not in the squad": "kadroda değil", "Not in the squad": "Kadroda değil", "Not on this roster this season": "Bu sezon bu kadroda değil", "Not yet qualified": "Henüz barajı geçmedi", "of {n}": "/ {n}", "On / off per 40": "Sahada / dışında, 40 dk başına", "Open his page": "Sayfasını aç", "Open the app": "Uygulamayı aç", "Opens at {n} attempts": "{n} denemede açılır", "Opp DRtg": "Rakip DRtg", "Opponent": "Rakip", "Orbit": "Döndür", "Orbit on · drag to look around": "Döndürme açık · bakmak için sürükle", "OT": "OT", "Pace": "Tempo", "Paint": "Boyalı alan", "Paint (non-rim)": "Boyalı alan (pota dışı)", "pct": "yüzd.", "per 100": "100 başına", "Per 40 min": "40 dk başına", "Per 40 minutes": "40 dakika başına", "Per game": "Maç başına", "Pick a club": "Kulüp seç", "PIR": "PIR", "PIR per 40": "40 dakikada PIR", "player": "oyuncu", "Player": "Oyuncu", "Player Lab": "Player Lab", "players": "oyuncular", "Players": "Oyuncular", "Points": "Sayı", "points above expectation": "beklentinin üzerindeki sayı", "Points above expectation, {n} attempts": "Beklentinin üzerindeki sayı, {n} deneme", "points per 100 attempts above a league-average shooter, shrunk": "100 denemede lig ortalaması bir şutöre göre fazladan sayı, ortalamaya çekilmiş", "Points per 40": "40 dakikada sayı", "Points per attempt, his vs a league-average shooter": "Deneme başına sayı, kendisi ve lig ortalaması bir şutör", "Points per game": "Maç başına sayı", "points per shooting possession, halved so 50% is a coin flip; free throws count 0.44 of a possession, so a perfect night can pass 100%": "şut pozisyonu başına sayının yarısı, yani %50 yazı tura demek; serbest atışlar 0,44 pozisyon sayıldığından kusursuz bir gece %100'ü aşabilir", "points per shooting possession, halved; free throws count 0.44 of a possession, so a perfect night can pass 100%": "şut pozisyonu başına sayının yarısı; serbest atışlar 0,44 pozisyon sayıldığından kusursuz bir gece %100'ü aşabilir", "points, last {n} games": "sayı, son {n} maç", "Points, rebounds, assists and three-point percentage across all twenty clubs.": "Yirmi kulübün tamamında sayı, ribaund, asist ve üç sayılık isabet yüzdesi.", "Position median": "Mevki medyanı", "Position median from the {n} eligible {pos}.": "Mevki medyanı, barajı geçen {n} {pos} üzerinden.", "Previous leaderboard": "Önceki tablo", "Previous player": "Önceki oyuncu", "provisional": "geçici", "PT": "PT", "Pts": "Sayı", "pts": "sayı", "pts / 100 attempts above expectation": "100 denemede beklentinin üzerindeki sayı", "Q": "Ç", "R": "H", "Raw": "Ham", "Raw {v} on {n} attempts": "{n} denemede ham {v}", "Rd": "Hf", "Reb": "Rib", "Rebound rate": "Ribaund oranı", "Rebounds": "Ribaund", "Rebounds per 40": "40 dakikada ribaund", "Rebounds per game": "Maç başına ribaund", "Refresh": "Yenile", "Replay": "Tekrar oynat", "Replay the shot sequence": "Şut dizisini tekrar oynat", "Result": "Sonuç", "Retry": "Tekrar dene", "Rim": "Pota altı", "Rim FG%": "Pota altı FG%", "Role": "Rol", "Round 1 played, so every average above is one game.": "1. hafta oynandı; yukarıdaki her ortalama tek maça dayanıyor.", "Round {n}": "{n}. hafta", "S": "İ", "scaled to 40 minutes": "40 dakikaya ölçeklenmiş", "sd": "ss", "Season": "Sezon", "season": "sezon", "Season curve of shooting skill": "Şut becerisinin sezon eğrisi", "Season opener": "Sezon açılışı", "Season stats": "Sezon istatistikleri", "See the league leaders": "Lig liderlerine bak", "Share": "Pay", "share of available rebounds he took while on court": "sahadayken alınabilecek ribaundlardan aldığı pay", "Share of shots from three": "Üç sayılık şutların payı", "share of team possessions he ends with a shot, free throws or a turnover while on court": "sahadayken takım pozisyonlarının şut, serbest atış ya da top kaybıyla bitirdiği payı", "share of teammate field goals he assisted while on court": "sahadayken takım arkadaşlarının isabetlerinde asist yaptığı pay", "Shooting by zone": "Bölgelere göre şut", "Shooting profile": "Şut profili", "Shooting skill": "Şut becerisi", "Shooting skill per 100": "100 denemede şut becerisi", "Shot chart": "Şut haritası", "Shot diet": "Şut dağılımı", "Shot diet vs {pos} · share of attempts by zone": "Şut dağılımı, {pos} kıyası · bölgelere göre deneme payı", "Shot quality": "Şut kalitesi", "Shot quality is the value of the shots he takes (a league-average shooter would score this much per attempt on them). Shooting skill is what he scores on top of that: scoring above the expectation for where and when the shot was taken (the model does not see the defender, the dribble or the shot clock, so shot creation is part of it). Both are shrunk toward the league (skill: {k} attempts of prior weight, so {att} attempts carry {share}% of the estimate). Percentiles are against {season} players with 100+ attempts.": "Şut kalitesi, attığı şutların değeridir (lig ortalaması bir şutör bu şutlarda deneme başına bu kadar sayı üretirdi). Şut becerisi ise bunun üzerine eklediğidir: şutun atıldığı yere ve zamana göre beklentinin üzerindeki skor (model savunmacıyı, dribblingi ve şut saatini görmez; dolayısıyla şut yaratma da bunun içindedir). İkisi de lig ortalamasına çekilir (beceri: {k} denemelik ön ağırlık; yani {att} deneme, tahminin %{share}'ini taşır). Yüzdelikler, {season} sezonunda 100+ denemesi olan oyunculara göredir.", "Shot quality vs shooting skill": "Şut kalitesi ve şut becerisi", "Shot timing · seconds into the possession": "Şut zamanlaması · pozisyonun kaçıncı saniyesi", "Shots": "Şut", "Shots charted": "Haritalanan şut", "Show all {n}": "Tümünü göster ({n})", "Show fewer": "Daha az göster", "Show this game across the page": "Bu maçı tüm sayfada göster", "shrunk estimate by attempt": "denemeye göre ortalamaya çekilmiş tahmin", "small sample": "küçük örneklem", "Started": "İlk beş", "started": "ilk beş", "Starts": "İlk beş", "steady": "sabit", "Steals": "Top çalma", "Stl": "TÇ", "System status": "Sistem durumu", "Tap Orbit to look around · pinch to zoom": "Bakmak için Döndür'e dokun · yakınlaştırmak için sıkıştır", "Team": "Takım", "team score margin while he was on court in this game": "bu maçta sahadayken takımın skor farkı", "team score margin while he was on court, per game ({pm} over {n} games)": "sahadayken takımın skor farkı, maç başına ({n} maçta {pm})", "the change beats his usual game-to-game spread ({sd} min)": "değişim, maçtan maça olağan dalgalanmasını ({sd} dk) aşıyor", "The club has not played yet": "Kulüp henüz maç oynamadı", "The gate is {n} attempts while the season is young, and rises to {m}, the minimum the rest of this app requires before it prints a 3-point percentage. The league leader has {top} attempts.": "Sezonun başında baraj {n} deneme; sonra {m} denemeye çıkar, bu da uygulamanın geri kalanının üç sayılık yüzdesi yazmadan önce istediği asgari sayıdır. Lig liderinin {top} denemesi var.", "The league leader has {top}. This board opens at {n}, the same number of attempts the rest of the app requires before it prints a 3-point percentage.": "Lig liderinde {top} var. Bu tablo {n} denemede açılır; uygulamanın geri kalanı da üç sayılık yüzdesi yazmadan önce aynı sayıyı ister.", "The season has not started": "Sezon henüz başlamadı", "The season has not started.": "Sezon henüz başlamadı.", "this game only": "yalnız bu maç", "This page could not be drawn ({err}). Try again or pick another club.": "Bu sayfa çizilemedi ({err}). Tekrar dene ya da başka bir kulüp seç.", "Through round {r}. Qualifying takes {g} of {r} games at {mpg} minutes a game.": "{r}. hafta itibarıyla. Baraj: {r} maçın {g} tanesinde maç başına {mpg} dakika.", "Through round {r}. Qualifying takes {n} three-point attempts.": "{r}. hafta itibarıyla. Baraj: {n} üç sayılık deneme.", "to": "–", "too few attempts for a point rank": "sıralama için yeterli deneme yok", "too few for a point rank": "sıralama için yeterli değil", "Top {k} of {n} qualified": "Barajı geçen {n} oyuncudan ilk {k}", "Tov": "TK", "TR": "TR", "True shooting": "Gerçek şut yüzdesi", "Turnover rate": "Top kaybı oranı", "Turnovers": "Top kaybı", "turnovers per 100 plays he used": "kullandığı 100 pozisyonda top kaybı", "Türkçe": "Türkçe", "unassisted": "asistsiz", "Unassisted": "Asistsiz", "underline: rank among {n} rotation players ({rule}), longer is better, turnovers inverted": "alt çizgi: {n} rotasyon oyuncusu arasındaki sıra ({rule}), uzun olan daha iyi, top kaybı ters çevrilmiş", "underline: rank among {n} {pos} (3+ games, 10+ min), longer is better, turnover rate inverted": "alt çizgi: {n} {pos} arasındaki sıra (3+ maç, 10+ dk), uzun olan daha iyi, top kaybı oranı ters çevrilmiş", "up": "yükseliş", "Updates feed": "Güncelleme akışı", "Updates feed (RSS)": "Güncelleme akışı (RSS)", "Usage": "Kullanım oranı", "usage": "kullanım oranı", "Usage per game": "Maç başına kullanım oranı", "vs": "vs", "W": "G", "Weight": "Kilo", "What his shots are worth to an average shooter, and the points he adds on top of them.": "Attığı şutların ortalama bir şutör için değeri ve bunun üzerine eklediği sayılar.", "What is inside": "İçinde neler var", "Window": "Aralık", "xFG%": "xFG%", "Zone": "Bölge", "Zones": "Bölgeler", "{a} to {b} pct": "{a}–{b}. yüzdelik", "{club} did not load ({err}). Check the connection and try again.": "{club} yüklenemedi ({err}). Bağlantıyı kontrol edip tekrar dene.", "{g}+ games, {mpg}+ minutes a game": "{g}+ maç, maç başına {mpg}+ dakika", "{k} of the last {n}": "son {n} içinden {k}", "{m} of the {a} three-point attempts this board needs": "Bu tablonun istediği {a} üç sayılık denemeden {m} tanesi", "{m} of {a}": "{m} / {a}", "{m} of {a} attempts": "{a} denemeden {m} tanesi", "{m} of {a} games at {mpg} minutes a game": "{a} maçın {m} tanesinde maç başına {mpg} dakika", "{name} against another {pos}, per 40 minutes and per possession where it matters.": "{name} başka bir {pos} ile karşı karşıya; 40 dakika başına ve önemli olduğu yerde pozisyon başına.", "{name} is not on any board yet: no games played.": "{name} henüz hiçbir tabloda değil: maç oynamadı.", "{n} attempts": "{n} deneme", "{n} game": "{n} maç", "{n} games": "{n} maç", "{n} player qualifies": "{n} oyuncu barajı geçti", "{n} players qualify": "{n} oyuncu barajı geçti", "{n} s into the possession": "pozisyonun {n}. saniyesi", "{n} spell": "{n} dönem", "{n} spells": "{n} dönem", "{n} yrs": "{n} yaş", "{n}+ three-point attempts": "{n}+ üç sayılık deneme", "{ord} percentile among {n} {pos}": "{n} {pos} arasında {ord}. yüzdelik", "{pts} points on {n} shooting possessions": "{n} şut pozisyonunda {pts} sayı", "{p}% chance he is above a league-average shooter": "lig ortalaması bir şutörün üzerinde olma ihtimali %{p}"}};
+const t = (s, v) => { let o = LANG !== 'en' && T[LANG] && T[LANG][s] != null ? T[LANG][s] : s; if (v) for (const k in v) o = o.split('{' + k + '}').join(v[k]); return o; };
+const LOCALE = () => LANG === 'tr' ? 'tr-TR' : 'en-GB';
+const plural = (n, one, many) => t(n === 1 ? one : many, {n});
+// static text: every element whose content is one text node, and every title, aria-label and placeholder, keeps its English as the key
+function i18nScan(){
+  document.querySelectorAll('body *').forEach(el => {
+    if (el.closest('script, style, .no-t')) return;
+    if (el.childNodes.length === 1 && el.firstChild.nodeType === 3 && el.textContent.trim() && /[A-Za-z]/.test(el.textContent)) el.dataset.t = el.textContent.trim();
+    for (const a of ['title', 'aria-label', 'placeholder']) if (el.hasAttribute(a) && /[A-Za-z]/.test(el.getAttribute(a))) el.dataset['t' + a.replace('-', '')] = el.getAttribute(a);
+  });
+}
+function applyLang(){
+  document.documentElement.lang = LANG;
+  document.querySelectorAll('[data-t]').forEach(el => { el.textContent = t(el.dataset.t); });
+  for (const [a, k] of [['title', 'ttitle'], ['aria-label', 'tarialabel'], ['placeholder', 'tplaceholder']]) document.querySelectorAll(`[data-${k}]`).forEach(el => el.setAttribute(a, t(el.dataset[k])));
+  document.querySelectorAll('.lang button').forEach(b => b.setAttribute('aria-pressed', b.dataset.lang === LANG));
+}
+function setLang(l){
+  if (!LANGS.includes(l) || l === LANG) return;
+  LANG = l; try { localStorage.setItem('pl-lang', l); } catch (e) {}
+  applyLang();
+  if (typeof COVER !== 'undefined') COVER.render();
+  if (state.data) { renderOpener(); renderGames(); renderPlayer(); DD.team.refresh(); DD.player.refresh(); DD.statGame.refresh(); DD.cmp.refresh(); const n = nameOf(player().name); document.title = `${n.first} ${n.sur} · ${shortName(state.team)} · Player Lab`; }
+}
 const CLUBS = Object.fromEntries(META.clubs.map(c => [c.code, c]));
 const shortName = code => (CLUBS[code] && CLUBS[code].short) || code;
 const PLACEHOLDER = "data:image/svg+xml;utf8," + encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 360 480'><defs><linearGradient id='g' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='#343841'/><stop offset='1' stop-color='#131519'/></linearGradient></defs><circle cx='180' cy='150' r='80' fill='url(#g)'/><path d='M40 480 C40 330 110 280 180 280 C250 280 320 330 320 480Z' fill='url(#g)'/></svg>`);
@@ -699,14 +743,14 @@ const f1 = v => (Math.round(v * 10) / 10).toFixed(1);
 const cap = s => s.toLowerCase().replace(/(^|[\s\-'.])(\S)/g, (m, p, c) => p + c.toUpperCase()).replace(/\bJr\.?/, 'Jr.').replace(/\bIv\b/, 'IV').replace(/\bIii\b/, 'III').replace(/\bIi\b/, 'II');
 const nameOf = n => { const [sur, first] = n.split(',').map(s => s.trim()); return {first: cap(first || ''), sur: cap(sur)}; };
 const age = b => { if (!b) return null; const d = new Date(b), n = new Date(); let a = n.getFullYear() - d.getFullYear(); if (n < new Date(n.getFullYear(), d.getMonth(), d.getDate())) a--; return a; };
-const fmtDate = s => new Date(s + 'T12:00:00').toLocaleDateString('en-GB', {day: 'numeric', month: 'short'});
+const fmtDate = s => new Date(s + 'T12:00:00').toLocaleDateString(LOCALE(), {day: 'numeric', month: 'short'});
 const LG = META.league || null, MIN_ATT = 10;
 const seasonLabel = s => s ? s.replace('E', '').replace(/(\d{4})/, (m, y) => y + '-' + (+y + 1).toString().slice(2)) : '';
 const wilson = (m, a) => { if (!a) return null; const z = 1.96, p = m / a, d = 1 + z * z / a, c = p + z * z / (2 * a), h = z * Math.sqrt(p * (1 - p) / a + z * z / (4 * a * a)); return [(c - h) / d, (c + h) / d]; };
-const ord = n => n + (n % 100 >= 11 && n % 100 <= 13 ? 'th' : ['th', 'st', 'nd', 'rd'][Math.min(n % 10, 4)] === undefined ? 'th' : (n % 10 === 1 ? 'st' : n % 10 === 2 ? 'nd' : n % 10 === 3 ? 'rd' : 'th'));
+const ord = n => LANG === 'tr' ? `${n}.` : n + (n % 100 >= 11 && n % 100 <= 13 ? 'th' : (n % 10 === 1 ? 'st' : n % 10 === 2 ? 'nd' : n % 10 === 3 ? 'rd' : 'th'));
 const erf = x => { const s = x < 0 ? -1 : 1; x = Math.abs(x); const t = 1 / (1 + .3275911 * x); return s * (1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - .284496736) * t + .254829592) * t * Math.exp(-x * x)); };
 const tsOf = (pts, fga, fta) => (fga + 0.44 * fta) ? pts / (2 * (fga + 0.44 * fta)) : null;
-const ival = (m, a) => { const w = wilson(m, a); return w ? `95% interval ${(100 * w[0]).toFixed(0)} to ${(100 * w[1]).toFixed(0)}%` : ''; };
+const ival = (m, a) => { const w = wilson(m, a); return w ? t('95% interval {a} to {b}%', {a: (100 * w[0]).toFixed(0), b: (100 * w[1]).toFixed(0)}) : ''; };
 
 // ---- colourways: base tints panels and the hero wedge, accent carries marks, controls and the surname
 const hexRgb = h => { const n = parseInt(h.replace('#', ''), 16); return [n >> 16 & 255, n >> 8 & 255, n & 255]; };
@@ -729,7 +773,8 @@ function applyPalette(c){
 // ---- court geometry (cm, basket at origin, y toward half court) -> SVG (basket at bottom)
 const X = x => x + 760, Y = y => 1260 - y;
 const zoneOf = (x, y, pts) => { const d = Math.hypot(x, y); if (pts === 3) return y < 141.5 ? 'c3' : 'a3'; if (d < 150) return 'rim'; if (Math.abs(x) < 245 && y < 422.5) return 'paint'; return 'mid'; };
-const ZONES = {rim: 'At the rim', paint: 'Paint (non-rim)', mid: 'Mid-range', c3: 'Corner 3', a3: 'Above-break 3'};
+const ZONES_EN = {rim: 'At the rim', paint: 'Paint (non-rim)', mid: 'Mid-range', c3: 'Corner 3', a3: 'Above-break 3'};
+const ZONES = new Proxy(ZONES_EN, {get: (o, k) => k in o ? t(o[k]) : o[k]});
 const twoPtPath = () => `M${X(-660)} ${Y(-157.5)} L${X(-660)} ${Y(141.5)} A675 675 0 0 1 ${X(660)} ${Y(141.5)} L${X(660)} ${Y(-157.5)} Z`;
 function courtBase(){
   return `<rect class="floor" x="${X(-750)}" y="${Y(1242.5)}" width="1500" height="1400"/>
@@ -756,7 +801,7 @@ function playerShots(){
   return ds().shots.filter(s => (state.game === 'all' || s[0] === +state.game) && (state.result === 'all' || (state.result === 'made') === !!s[3]) && (state.ast === 'all' || (s[3] && s[11] != null && (state.ast === 'ast') === (s[11] === 1))));
 }
 const realCode = () => team().real_code || team().code;
-const gameLabel = g => { const t = team(), home = g.home === (g.own || realCode()), opp = home ? g.away : g.home, ts = home ? g.hs : g.as, os = home ? g.as : g.hs; return {opp: shortName(opp), home, res: ts > os ? 'W' : 'L', score: `${ts}-${os}`, txt: `R${g.round} · ${home ? 'vs' : '@'} ${shortName(opp)}`}; };
+const gameLabel = g => { const home = g.home === (g.own || realCode()), opp = home ? g.away : g.home, ts = home ? g.hs : g.as, os = home ? g.as : g.hs; return {opp: shortName(opp), home, res: ts > os ? t('W') : t('L'), score: `${ts}-${os}`, txt: `${t('R')}${g.round} · ${home ? t('vs') : '@'} ${shortName(opp)}`}; };
 
 // ---- loading
 async function loadTeam(code){
@@ -764,7 +809,7 @@ async function loadTeam(code){
     const wrap = document.querySelector('.wrap'), bar = $('#progress');
     wrap.classList.add('loading'); bar.className = 'progress on';
     try { const r = await fetch(`${META.path}${code}.json?v=${encodeURIComponent(META.built || '')}`); if (!r.ok) throw new Error(`HTTP ${r.status}`); cache[code] = await r.json(); }   // stamped with the build time so a new build never reads a cached club file
-    catch (e) { wrap.classList.remove('loading'); bar.className = 'progress'; $('#fail').hidden = false; $('#fail-sub').textContent = `${(CLUBS[code] || {}).name || code} did not load (${e.message || e}). Check the connection and try again.`; return false; }
+    catch (e) { wrap.classList.remove('loading'); bar.className = 'progress'; $('#fail').hidden = false; $('#fail-sub').textContent = t('{club} did not load ({err}). Check the connection and try again.', {club: (CLUBS[code] || {}).name || code, err: e.message || e}); return false; }
     wrap.classList.remove('loading'); bar.className = 'progress done'; setTimeout(() => { if (bar.className === 'progress done') bar.className = 'progress'; }, 500);
   }
   $('#fail').hidden = true;
@@ -772,35 +817,35 @@ async function loadTeam(code){
   const c = CLUBS[code];
   applyPalette(c);
   $('#crest-img').src = c.logo || ''; $('#club-logo').src = c.logo || ''; $('#club-name').textContent = c.name;
-  renderOpener(); renderPlayers(); markStale();
+  renderOpener(); renderPlayers();
   return true;
 }
 function renderOpener(){
-  const t = team(), none = !t.games_played;
+  const tm = team(), none = !tm.games_played;
   $('#opener').hidden = !none; $('#tiles').hidden = none; $('#f-rate').closest('.band-foot').hidden = none;
   if (!none) return;
-  const nx = t.upcoming && t.upcoming[0];
+  const nx = tm.upcoming && tm.upcoming[0];
   $('#opener-cal').href = `cal/${state.team}.ics`;
-  $('#opener-sub').textContent = nx ? `Round ${nx.round} · ${nx.home === realCode() ? 'vs ' + shortName(nx.away) : '@ ' + shortName(nx.home)} · ${fmtDate(nx.date)}` : '';
-  $('#roster').innerHTML = t.players.map((p, i) => { const n = nameOf(p.name); return `<a href="#${state.team}/${p.pid}" data-i="${i}"><i>${p.dorsal || ''}</i><img src="${p.photo || PLACEHOLDER}" alt="" loading="lazy" decoding="async"><b>${n.first} ${n.sur}</b><small>${p.position || ''}</small></a>`; }).join('');
+  $('#opener-sub').textContent = nx ? `${t('Round {n}', {n: nx.round})} · ${nx.home === realCode() ? t('vs') + ' ' + shortName(nx.away) : '@ ' + shortName(nx.home)} · ${fmtDate(nx.date)}` : '';
+  $('#roster').innerHTML = tm.players.map((p, i) => { const n = nameOf(p.name); return `<a href="#${state.team}/${p.pid}" data-i="${i}"><i>${p.dorsal || ''}</i><img src="${p.photo || PLACEHOLDER}" alt="" loading="lazy" decoding="async"><b>${n.first} ${n.sur}</b><small>${t(p.position || '')}</small></a>`; }).join('');
 }
 function skeleton(){
-  $('#nm').innerHTML = '<span class="sk">Loading</span><span class="sk">Player</span>'; $('#club-name').innerHTML = '<span class="sk">Club name</span>';
+  $('#nm').innerHTML = `<span class="sk">${t('Loading')}</span><span class="sk">${t('Player')}</span>`; $('#club-name').innerHTML = `<span class="sk">${t('Club name')}</span>`;
   $('#facts').innerHTML = '<span class="sk">Country</span><span class="sk">0 games</span>';
   $('#bio').innerHTML = '<dl><div><dt class="sk">Date of birth</dt><dd class="sk">1 January 1990</dd></div><div><dt class="sk">Height</dt><dd class="sk">200 cm</dd></div><div><dt class="sk">Weight</dt><dd class="sk">90 kg</dd></div></dl>';
   $('#tiles').innerHTML = Array.from({length: 7}, () => '<div class="tile na"><b class="sk">00.0</b><span class="sk">Points</span></div>').join('');
 }
 function renderPlayers(){
-  const t = team(), sel = $('#player');
-  sel.innerHTML = t.players.map((p, i) => { const n = nameOf(p.name); return `<option value="${i}">#${p.dorsal || '–'} ${n.first} ${n.sur}</option>`; }).join('');
+  const tm = team(), sel = $('#player');
+  sel.innerHTML = tm.players.map((p, i) => { const n = nameOf(p.name); return `<option value="${i}">#${p.dorsal || '–'} ${n.first} ${n.sur}</option>`; }).join('');
   // a club opens on the first player in its menu, the lowest jersey number, whether or not he has played yet
   sel.value = 0; state.player = 0; state.game = 'all';
   renderGames(); renderPlayer();
 }
 function renderGames(){
   const games = ds().games;
-  const html = games.length ? `<option value="all">All games (${games.length})</option>` + games.map((g, i) => { const l = gameLabel(g); return `<option value="${i}">${l.txt} · ${l.res} ${l.score}</option>`; }).join('') : '<option value="all">No games yet</option>';
-  const sel = $('#stat-game'); sel.innerHTML = html.replace('All games', 'Season'); sel.disabled = !games.length; sel.value = String(state.game);
+  const html = games.length ? `<option value="all">${t('Season')} (${games.length})</option>` + games.map((g, i) => { const l = gameLabel(g); return `<option value="${i}">${l.txt} · ${l.res} ${l.score}</option>`; }).join('') : `<option value="all">${t('No games yet')}</option>`;
+  const sel = $('#stat-game'); sel.innerHTML = html; sel.disabled = !games.length; sel.value = String(state.game);
 }
 // one game in view for the whole page: the stats band, the role tiles, the shot chart and the highlighted log row follow it
 function setGame(v){
@@ -809,53 +854,53 @@ function setGame(v){
 }
 const gameRow = () => state.game === 'all' ? null : ds().log.find(r => r[0] === +state.game) || null;
 function renderTicker(){
-  const d = ds(), games = d.games, t = team();
+  const d = ds(), games = d.games, tm = team();
   // the last five results with the player's line, then the club's next ten fixtures; rebuilt within minutes of every final
-  const up = (t.upcoming || []).slice(0, 10);
-  const results = d.log.slice(-5).map(r => { const g = games[r[0]], l = gameLabel(g); return `<span>${l.txt} <b class="${l.res === 'W' ? '' : 'l'}">${l.res} ${l.score}</b> · ${r[2]} pts · ${r[14]} PIR</span>`; });
-  const fixtures = up.map((g, i) => `<span>${i === 0 ? 'Next: ' : ''}R${g.round} ${g.home === realCode() ? 'vs ' + shortName(g.away) : '@ ' + shortName(g.home)} · ${fmtDate(g.date)}</span>`);
+  const up = (tm.upcoming || []).slice(0, 10);
+  const results = d.log.slice(-5).map(r => { const g = games[r[0]], l = gameLabel(g); return `<span>${l.txt} <b class="${l.res === t('W') ? '' : 'l'}">${l.res} ${l.score}</b> · ${r[2]} ${t('pts')} · ${r[14]} PIR</span>`; });
+  const fixtures = up.map((g, i) => `<span>${i === 0 ? t('Next') + ': ' : ''}${t('R')}${g.round} ${g.home === realCode() ? t('vs') + ' ' + shortName(g.away) : '@ ' + shortName(g.home)} · ${fmtDate(g.date)}</span>`);
   let items = results.concat(fixtures);
-  if (!items.length) items = ['<span>The season has not started</span>'];
-  $('#ticker-lab').textContent = 'Fixtures'; $('#ticker-lab').href = `cal/${state.team}.ics`;
+  if (!items.length) items = [`<span>${t('The season has not started')}</span>`];
+  $('#ticker-lab').textContent = t('Fixtures'); $('#ticker-lab').href = `cal/${state.team}.ics`;
   const run = $('#run'); run.classList.add('static'); run.innerHTML = items.join('');
   if (!matchMedia('(prefers-reduced-motion: reduce)').matches && run.scrollWidth > run.parentElement.clientWidth - $('#ticker-lab').offsetWidth) { run.innerHTML = items.join('') + items.join(''); run.classList.remove('static'); run.style.animationDuration = Math.max(24, items.length * 4) + 's'; }
 }
 function renderPlayer(){
-  const p = player(), t = team(), n = nameOf(p.name), d = ds(), tot = d.tot, gp = tot.gp || 1, played = tot.gp > 0, pc = d.pct || {};
+  const p = player(), tm = team(), n = nameOf(p.name), d = ds(), tot = d.tot, gp = tot.gp || 1, played = tot.gp > 0, pc = d.pct || {};
   $('#photo').src = p.photo || PLACEHOLDER; $('#photo').alt = `${n.first} ${n.sur}`; $('#num').textContent = p.dorsal || '';
-  $('#pos').textContent = `${p.dorsal ? '· #' + p.dorsal + ' ' : ''}· ${p.position || ''}`; $('#nm').innerHTML = `${n.first}<span>${n.sur}</span>`;
+  $('#pos').textContent = `${p.dorsal ? '· #' + p.dorsal + ' ' : ''}· ${t(p.position || '')}`; $('#nm').innerHTML = `${n.first}<span>${n.sur}</span>`;
   const a = age(p.birth);
-  const dob = p.birth ? new Date(p.birth + 'T12:00:00').toLocaleDateString('en-GB', {day: 'numeric', month: 'long', year: 'numeric'}) : null;
+  const dob = p.birth ? new Date(p.birth + 'T12:00:00').toLocaleDateString(LOCALE(), {day: 'numeric', month: 'long', year: 'numeric'}) : null;
   const yrs = s => s.from == null ? '' : s.to == null || s.to === s.from ? String(s.from) : `${s.from}-${String(s.to).slice(2)}`;
   const career = p.career || [], CAP = 7;
-  const spells = career.map((s, i) => `<li class="${i === 0 ? 'cur' : ''}${i >= CAP ? ' more' : ''}"><b title="${s.name}${s.league ? ' · ' + s.league : ''}">${s.name}</b>${s.league ? `<i>${s.league}</i>` : ''}<span>${yrs(s)}</span></li>`).join('');
-  const cl = p.career_src === 'wikipedia' ? 'Career' : 'Euroleague career';
-  $('#bio').innerHTML = `<dl>${dob ? `<div><dt>Date of birth</dt><dd><span class="full">${dob}${a ? ` <small>${a} yrs</small>` : ''}</span><span class="short">${a ? `${a} yrs` : dob}</span></dd></div>` : ''}${p.height ? `<div><dt>Height</dt><dd>${p.height} cm</dd></div>` : ''}${p.weight ? `<div><dt>Weight</dt><dd>${p.weight} kg</dd></div>` : ''}${spells ? `<div class="career"><dt>${cl}</dt><dd><details${PHONE.matches ? '' : ' open'}><summary>${cl} · ${career.length} spell${career.length === 1 ? '' : 's'}</summary><ol>${spells}</ol>${career.length > CAP ? `<button type="button" class="lnk" id="bio-more">Show all ${career.length}</button>` : ''}</details></dd></div>` : ''}</dl>`;
-  const more = $('#bio-more'); if (more) more.addEventListener('click', () => { $('#bio').classList.toggle('all'); more.textContent = $('#bio').classList.contains('all') ? 'Show fewer' : `Show all ${career.length}`; });
+  const spells = career.map((s, i) => `<li class="${i === 0 ? 'cur' : ''}${i >= CAP ? ' more' : ''}"><b title="${s.name}${s.league ? ' · ' + t(s.league) : ''}">${s.name}</b>${s.league ? `<i>${t(s.league)}</i>` : ''}<span>${yrs(s)}</span></li>`).join('');
+  const cl = p.career_src === 'wikipedia' ? t('Career') : t('Euroleague career');
+  $('#bio').innerHTML = `<dl>${dob ? `<div><dt>${t('Date of birth')}</dt><dd><span class="full">${dob}${a ? ` <small>${t('{n} yrs', {n: a})}</small>` : ''}</span><span class="short">${a ? t('{n} yrs', {n: a}) : dob}</span></dd></div>` : ''}${p.height ? `<div><dt>${t('Height')}</dt><dd>${p.height} cm</dd></div>` : ''}${p.weight ? `<div><dt>${t('Weight')}</dt><dd>${p.weight} kg</dd></div>` : ''}${spells ? `<div class="career"><dt>${cl}</dt><dd><details${PHONE.matches ? '' : ' open'}><summary>${cl} · ${plural(career.length, '{n} spell', '{n} spells')}</summary><ol>${spells}</ol>${career.length > CAP ? `<button type="button" class="lnk" id="bio-more">${t('Show all {n}', {n: career.length})}</button>` : ''}</details></dd></div>` : ''}</dl>`;
+  const more = $('#bio-more'); if (more) more.addEventListener('click', () => { $('#bio').classList.toggle('all'); more.textContent = $('#bio').classList.contains('all') ? t('Show fewer') : t('Show all {n}', {n: career.length}); });
   $('#facts').innerHTML = [p.country ? `<span>${p.country.replace('United States of America', 'USA')}</span>` : '',
-    played ? `<span><b>${tot.gp}</b> game${tot.gp === 1 ? '' : 's'}</span>${tot.starts ? `<span><b>${tot.starts}</b> start${tot.starts === 1 ? '' : 's'}</span>` : ''}<span><b>${f1(tot.min / gp)}</b> min</span>` : `<span><b>0</b> games</span>`].join('');
+    played ? `<span>${plural(tot.gp, '<b>{n}</b> game', '<b>{n}</b> games')}</span>${tot.starts ? `<span>${plural(tot.starts, '<b>{n}</b> start', '<b>{n}</b> starts')}</span>` : ''}<span><b>${f1(tot.min / gp)}</b> ${t('min')}</span>` : `<span>${t('<b>{n}</b> games', {n: 0})}</span>`].join('');
   // no minutes yet: the splits, zones and shot tools would be a page of dashes, so one line says when he plays instead
-  const nx = t.upcoming && t.upcoming[0], nxTxt = nx ? `Round ${nx.round} ${nx.home === realCode() ? 'vs ' + shortName(nx.away) : '@ ' + shortName(nx.home)} · ${fmtDate(nx.date)}` : null;
-  $('#stats-none').hidden = played; $('#stats-none-sub').textContent = played ? '' : `${t.games_played ? `No minutes in the club's ${t.games_played} game${t.games_played === 1 ? '' : 's'} so far` : 'The club has not played yet'}${nxTxt ? ` · next: ${nxTxt}` : ''} · his bio and career are above.`;
+  const nx = tm.upcoming && tm.upcoming[0], nxTxt = nx ? `${t('Round {n}', {n: nx.round})} ${nx.home === realCode() ? t('vs') + ' ' + shortName(nx.away) : '@ ' + shortName(nx.home)} · ${fmtDate(nx.date)}` : null;
+  $('#stats-none').hidden = played; $('#stats-none-sub').textContent = played ? '' : `${tm.games_played ? plural(tm.games_played, "No minutes in the club's {n} game so far", "No minutes in the club's {n} games so far") : t('The club has not played yet')}${nxTxt ? ` · ${t('next')}: ${nxTxt}` : ''} · ${t('his bio and career are above.')}`;
   ['#splits', '#xfg', '#zone-cap'].forEach(id => { $(id).hidden = !played; }); $('#zones').closest('.scroll').hidden = !played; $('.toolbar').hidden = !played;
   renderTiles(); renderRole(); renderForm(); LB.mark(); requestAnimationFrame(scrollEnds); $('#f-ast').hidden = !d.shots.some(s => s[11] != null); if ($('#f-ast').hidden) { state.ast = 'all'; $('#f-ast').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x.dataset.v === 'all')); }
   const xf = d.xfg;
-  $('#xfg').innerHTML = xf ? `<div class="xfg-row"><div><b>${(100 * xf.xfg).toFixed(1)}%</b><span>Expected FG% for a league-average shooter on his shots</span></div><div><b>${((xf.pts / xf.att) || 0).toFixed(2)} <i>vs</i> ${(xf.xpts / xf.att).toFixed(2)}</b><span>Points per attempt, his vs a league-average shooter</span></div><div class="${xf.pts - xf.xpts >= 0 ? 'up' : 'down'}"><b>${xf.pts - xf.xpts >= 0 ? '+' : ''}${(xf.pts - xf.xpts).toFixed(1)}</b><span>Points above expectation, ${xf.att} attempts</span></div></div>` : '';
+  $('#xfg').innerHTML = xf ? `<div class="xfg-row"><div><b>${(100 * xf.xfg).toFixed(1)}%</b><span>${t('Expected FG% for a league-average shooter on his shots')}</span></div><div><b>${((xf.pts / xf.att) || 0).toFixed(2)} <i>${t('vs')}</i> ${(xf.xpts / xf.att).toFixed(2)}</b><span>${t('Points per attempt, his vs a league-average shooter')}</span></div><div class="${xf.pts - xf.xpts >= 0 ? 'up' : 'down'}"><b>${xf.pts - xf.xpts >= 0 ? '+' : ''}${(xf.pts - xf.xpts).toFixed(1)}</b><span>${t('Points above expectation, {n} attempts', {n: xf.att})}</span></div></div>` : '';
   const fga = tot.fga2 + tot.fga3, ts = (fga + 0.44 * tot.fta) ? tot.pts / (2 * (fga + 0.44 * tot.fta)) : 0;
   const rows = [['2P', tot.fgm2, tot.fga2, tot.fga2 ? tot.fgm2 / tot.fga2 : 0], ['3P', tot.fgm3, tot.fga3, tot.fga3 ? tot.fgm3 / tot.fga3 : 0], ['FG', tot.fgm2 + tot.fgm3, fga, fga ? (tot.fgm2 + tot.fgm3) / fga : 0], ['FT', tot.ftm, tot.fta, tot.ftm / (tot.fta || 1)], ['TS', null, null, ts, fga + 0.44 * tot.fta]];
   const lgs = LG ? {'2P': LG.splits.fg2, '3P': LG.splits.fg3, 'FG': LG.splits.fg, 'FT': LG.splits.ft, 'TS': LG.splits.ts} : {};
-  $('#splits').innerHTML = rows.map(([k, m, at, v, sp]) => { const w = m !== null && at ? wilson(m, at) : null, small = (m !== null && at > 0 && at < MIN_ATT) || (sp != null && sp > 0 && sp < MIN_ATT), lg = lgs[k]; return `<div class="split${small ? ' small' : ''}" data-tip="${m !== null && at ? `${m} of ${at} · ${ival(m, at)}${small ? ' · small sample' : ''}` : sp != null ? `${tot.pts} points on ${sp.toFixed(1)} shooting possessions${small ? ' · small sample' : ''} · points per shooting possession, halved; free throws count 0.44 of a possession, so a perfect night can pass 100%` : ''}${lg != null ? ` · league ${(100 * lg).toFixed(1)}%` : ''}"><span class="k">${k}%</span><div class="bar"><i class="fill" style="width:${played ? Math.min(100, v * 100) : 0}%"></i></div><div class="v"><b>${played ? (v * 100).toFixed(1) : '–'}</b>${m !== null && played ? `${m}/${at}` : ''}</div></div>`; }).join('');
+  $('#splits').innerHTML = rows.map(([k, m, at, v, sp]) => { const w = m !== null && at ? wilson(m, at) : null, small = (m !== null && at > 0 && at < MIN_ATT) || (sp != null && sp > 0 && sp < MIN_ATT), lg = lgs[k]; return `<div class="split${small ? ' small' : ''}" data-tip="${m !== null && at ? `${t('{m} of {a}', {m, a: at})} · ${ival(m, at)}${small ? ' · ' + t('small sample') : ''}` : sp != null ? `${t('{pts} points on {n} shooting possessions', {pts: tot.pts, n: sp.toFixed(1)})}${small ? ' · ' + t('small sample') : ''} · ${t('points per shooting possession, halved; free throws count 0.44 of a possession, so a perfect night can pass 100%')}` : ''}${lg != null ? ` · ${t('league')} ${(100 * lg).toFixed(1)}%` : ''}"><span class="k">${k}%</span><div class="bar"><i class="fill" style="width:${played ? Math.min(100, v * 100) : 0}%"></i></div><div class="v"><b>${played ? (v * 100).toFixed(1) : '–'}</b>${m !== null && played ? `${m}/${at}` : ''}</div></div>`; }).join('');
   const lg = $('#log tbody');
   const RT = META.ratings || {};
   // club games he missed sit in the log too: DNP (in the box, no minutes) or not in the squad
   const seq = [...d.log.map(r => ({r, g: d.games[r[0]], date: d.games[r[0]].date})), ...(d.absent || []).map(a => ({a, g: a, date: a.date}))].sort((p, q) => p.date < q.date ? -1 : p.date > q.date ? 1 : 0);
   lg.innerHTML = seq.map(({r, a, g}) => { const l = gameLabel(g), opp = l.home ? g.away : g.home, rt = RT[opp];
-    if (a) return `<tr class="dnp"><td>${g.round}</td><td>${fmtDate(g.date)}</td><td>${l.home ? 'vs' : '@'} ${l.opp}</td><td class="${l.res === 'W' ? 'w' : 'l'}">${l.res} ${l.score}</td><td colspan="14">${a.kind === 'DNP' ? 'Did not play' : 'Not in the squad'}</td></tr>`;
-    return `<tr data-g="${r[0]}" tabindex="0" title="Show this game across the page" class="${String(state.game) === String(r[0]) ? 'on' : ''}"><td>${g.round}</td><td>${fmtDate(g.date)}</td><td>${l.home ? 'vs' : '@'} ${l.opp}</td><td class="${l.res === 'W' ? 'w' : 'l'}">${l.res} ${l.score}</td><td>${r[16] ? '<i class="st" data-tip="Started">S</i>' : ''}${r[1]}</td><td class="k">${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td><td>${r[5]}</td><td>${r[6]}</td><td>${r[7]}</td><td>${r[8]}/${r[9]}</td><td>${r[10]}/${r[11]}</td><td>${r[12]}/${r[13]}</td><td>${r[14]}</td><td>${r[15] ?? ''}</td><td>${g.poss != null ? g.poss.toFixed(0) : '–'}</td><td>${rt ? rt.drtg.toFixed(1) : '–'}</td></tr>`; }).join('');
+    if (a) return `<tr class="dnp"><td>${g.round}</td><td>${fmtDate(g.date)}</td><td>${l.home ? t('vs') : '@'} ${l.opp}</td><td class="${l.res === t('W') ? 'w' : 'l'}">${l.res} ${l.score}</td><td colspan="14">${a.kind === 'DNP' ? t('Did not play') : t('Not in the squad')}</td></tr>`;
+    return `<tr data-g="${r[0]}" tabindex="0" title="${t('Show this game across the page')}" class="${String(state.game) === String(r[0]) ? 'on' : ''}"><td>${g.round}</td><td>${fmtDate(g.date)}</td><td>${l.home ? t('vs') : '@'} ${l.opp}</td><td class="${l.res === t('W') ? 'w' : 'l'}">${l.res} ${l.score}</td><td>${r[16] ? `<i class="st" data-tip="${t('Started')}">${t('S')}</i>` : ''}${r[1]}</td><td class="k">${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td><td>${r[5]}</td><td>${r[6]}</td><td>${r[7]}</td><td>${r[8]}/${r[9]}</td><td>${r[10]}/${r[11]}</td><td>${r[12]}/${r[13]}</td><td>${r[14]}</td><td>${r[15] ?? ''}</td><td>${g.poss != null ? g.poss.toFixed(0) : '–'}</td><td>${rt ? rt.drtg.toFixed(1) : '–'}</td></tr>`; }).join('');
   const ha = {H: {g: 0, pts: 0, fga: 0, fta: 0}, A: {g: 0, pts: 0, fga: 0, fta: 0}};
   d.log.forEach(r => { const g = d.games[r[0]], side = gameLabel(g).home ? ha.H : ha.A; side.g++; side.pts += r[2]; side.fga += r[9] + r[11]; side.fta += r[13]; });
-  const haTxt = s => s.g ? `${(s.pts / s.g).toFixed(1)} pts, ${tsOf(s.pts, s.fga, s.fta) != null ? (100 * tsOf(s.pts, s.fga, s.fta)).toFixed(1) + '% TS' : ''} in ${s.g} game${s.g === 1 ? '' : 's'}` : 'no games';
-  $('#ha').hidden = !d.log.length; $('#ha').textContent = `Home: ${haTxt(ha.H)} · Away: ${haTxt(ha.A)}`;
+  const haTxt = s => s.g ? `${(s.pts / s.g).toFixed(1)} ${t('pts')}, ${tsOf(s.pts, s.fga, s.fta) != null ? (100 * tsOf(s.pts, s.fga, s.fta)).toFixed(1) + '% TS' : ''} ${plural(s.g, 'in {n} game', 'in {n} games')}` : t('no games');
+  $('#ha').hidden = !d.log.length; $('#ha').textContent = `${t('Home')}: ${haTxt(ha.H)} · ${t('Away')}: ${haTxt(ha.A)}`;
   renderTrend();
   renderCompareOptions();
   $('#log-none').hidden = d.log.length > 0; $('#log-panel .scroll').hidden = d.log.length === 0;
@@ -869,11 +914,11 @@ function renderTiles(){
   const COL = {pts: 2, reb: 3, ast: 4, stl: 5, blk: 6, tov: 7, pir: 14};
   const val = k => !played ? '–' : row ? (p40 ? (row[1] ? f1(row[COL[k]] * 40 / row[1]) : '–') : String(row[COL[k]])) : p40 ? (d.per40 ? f1(d.per40[k]) : '–') : f1(tot[k] / gp);
   const tiles = [['pts', 'Points'], ['reb', 'Rebounds'], ['ast', 'Assists'], ['stl', 'Steals'], ['blk', 'Blocks'], ['tov', 'Turnovers'], ['pir', 'PIR']];
-  $('#tiles').innerHTML = tiles.map(([k, l]) => `<div class="tile ${played ? '' : 'na'}" style="--p:${pc[k] ?? 0}%"><b>${val(k)}</b><span>${l}</span></div>`).join('');
+  $('#tiles').innerHTML = tiles.map(([k, l]) => `<div class="tile ${played ? '' : 'na'}" style="--p:${pc[k] ?? 0}%"><b>${val(k)}</b><span>${t(l)}</span></div>`).join('');
   const gl = row ? gameLabel(d.games[row[0]]) : null;
-  $('#band-legend').innerHTML = row ? `${gl.txt} · <b class="${gl.res === 'W' ? 'w' : 'l'}">${gl.res} ${gl.score}</b> · ${fmtDate(d.games[row[0]].date)} · ${row[1]} min${p40 ? ' · scaled to 40 minutes' : ''}` : d.pct ? `${p40 ? 'Per 40 minutes' : 'Per game'} · underline: rank among ${META.league_n} rotation players (${META.pool_rule}), longer is better, turnovers inverted` : '';
-  if (row) { $('#band-legend').insertAdjacentHTML('beforeend', `<span class="sep"> · </span><button type="button" class="lnk" id="to-season">Back to the season</button>`); $('#to-season').addEventListener('click', () => setGame('all')); }
-  if (LB.ok) { $('#band-legend').insertAdjacentHTML('beforeend', `${d.pct || row ? '<span class="sep"> · </span>' : ''}<button type="button" class="lnk">See the league leaders</button>`); $('#band-legend button:last-child').addEventListener('click', toLb); }
+  $('#band-legend').innerHTML = row ? `${gl.txt} · <b class="${gl.res === t('W') ? 'w' : 'l'}">${gl.res} ${gl.score}</b> · ${fmtDate(d.games[row[0]].date)} · ${row[1]} ${t('min')}${p40 ? ' · ' + t('scaled to 40 minutes') : ''}` : d.pct ? `${p40 ? t('Per 40 minutes') : t('Per game')} · ${t('underline: rank among {n} rotation players ({rule}), longer is better, turnovers inverted', {n: META.league_n, rule: t(META.pool_rule)})}` : '';
+  if (row) { $('#band-legend').insertAdjacentHTML('beforeend', `<span class="sep"> · </span><button type="button" class="lnk" id="to-season">${t('Back to the season')}</button>`); $('#to-season').addEventListener('click', () => setGame('all')); }
+  if (LB.ok) { $('#band-legend').insertAdjacentHTML('beforeend', `${d.pct || row ? '<span class="sep"> · </span>' : ''}<button type="button" class="lnk">${t('See the league leaders')}</button>`); $('#band-legend button:last-child').addEventListener('click', toLb); }
 }
 function renderRole(){
   const d = ds(), row = gameRow(), gi = row ? d.log.indexOf(row) : -1, r = row ? (d.role_g || [])[gi] || {} : d.role, pp = row ? {} : d.pct_pos || {}, el = $('#role');
@@ -882,11 +927,12 @@ function renderRole(){
   if (!r || !tot.gp) { el.hidden = true; $('#role-foot').hidden = true; return; }
   el.hidden = false; $('#role-foot').hidden = false;
   const ts = tsOf(tot.pts, tot.fga2 + tot.fga3, tot.fta);
-  const items = [['usg', 'Usage', r.usg, '%', 'share of team possessions he ends with a shot, free throws or a turnover while on court'], ['ts', 'True shooting', ts != null ? (100 * ts).toFixed(1) : null, '%', `points per shooting possession, halved so 50% is a coin flip; free throws count 0.44 of a possession, so a perfect night can pass 100%${(tot.fga2 + tot.fga3 + 0.44 * tot.fta) < MIN_ATT ? ' · small sample' : ''}`],
-    ['ast_pct', 'Assist rate', r.ast_pct, '%', 'share of teammate field goals he assisted while on court'], ['tov_pct', 'Turnover rate', r.tov_pct, '%', 'turnovers per 100 plays he used'],
-    ['reb_pct', 'Rebound rate', r.reb_pct, '%', 'share of available rebounds he took while on court'], ['plusminus', row ? '+/-' : '+/- per game', row ? (row[15] ?? null) : tot.gp ? Math.round(10 * (tot.plusminus || 0) / tot.gp) / 10 : null, '', row ? `team score margin while he was on court in this game` : `team score margin while he was on court, per game (${(tot.plusminus || 0) >= 0 ? '+' : ''}${tot.plusminus || 0} over ${tot.gp} game${tot.gp > 1 ? 's' : ''})`]];
-  el.innerHTML = items.map(([k, l, v, u, tip]) => { const few = k === 'ts' && (tot.fga2 + tot.fga3 + 0.44 * tot.fta) < MIN_ATT; return `<div class="${few ? 'small' : ''}" style="--p:${pp[k] ?? 0}%" data-tip="${tip}${pp[k] != null ? ` · ${ord(pp[k])} percentile among ${d.pos_n} ${(d.pos_group || 'player').toLowerCase()}s` : ''}"><b>${v == null ? '–' : (k === 'plusminus' && v > 0 ? '+' : '') + v}${v == null ? '' : u}</b><span>${l}</span>${pp[k] != null ? `<small>${ord(pp[k])} pct</small>` : ''}</div>`; }).join('');
-  $('#role-legend').textContent = row ? `Role · this game only · ${row[1]} minutes` : d.pct_pos ? `Role · underline: rank among ${d.pos_n} ${(d.pos_group || 'player').toLowerCase()}s (3+ games, 10+ min), longer is better, turnover rate inverted` : '';
+  const posN = t(d.pos_group ? d.pos_group + 's' : 'players'), lowPos = s => s.toLowerCase();
+  const items = [['usg', t('Usage'), r.usg, '%', t('share of team possessions he ends with a shot, free throws or a turnover while on court')], ['ts', t('True shooting'), ts != null ? (100 * ts).toFixed(1) : null, '%', `${t('points per shooting possession, halved so 50% is a coin flip; free throws count 0.44 of a possession, so a perfect night can pass 100%')}${(tot.fga2 + tot.fga3 + 0.44 * tot.fta) < MIN_ATT ? ' · ' + t('small sample') : ''}`],
+    ['ast_pct', t('Assist rate'), r.ast_pct, '%', t('share of teammate field goals he assisted while on court')], ['tov_pct', t('Turnover rate'), r.tov_pct, '%', t('turnovers per 100 plays he used')],
+    ['reb_pct', t('Rebound rate'), r.reb_pct, '%', t('share of available rebounds he took while on court')], ['plusminus', row ? '+/-' : t('+/- per game'), row ? (row[15] ?? null) : tot.gp ? Math.round(10 * (tot.plusminus || 0) / tot.gp) / 10 : null, '', row ? t('team score margin while he was on court in this game') : t('team score margin while he was on court, per game ({pm} over {n} games)', {pm: ((tot.plusminus || 0) >= 0 ? '+' : '') + (tot.plusminus || 0), n: tot.gp})]];
+  el.innerHTML = items.map(([k, l, v, u, tip]) => { const few = k === 'ts' && (tot.fga2 + tot.fga3 + 0.44 * tot.fta) < MIN_ATT; return `<div class="${few ? 'small' : ''}" style="--p:${pp[k] ?? 0}%" data-tip="${tip}${pp[k] != null ? ` · ${t('{ord} percentile among {n} {pos}', {ord: ord(pp[k]), n: d.pos_n, pos: lowPos(posN)})}` : ''}"><b>${v == null ? '–' : (k === 'plusminus' && v > 0 ? '+' : '') + v}${v == null ? '' : u}</b><span>${l}</span></div>`; }).join('');
+  $('#role-legend').textContent = row ? `${t('Role')} · ${t('this game only')} · ${row[1]} ${t('minutes')}` : d.pct_pos ? `${t('Role')} · ${t('underline: rank among {n} {pos} (3+ games, 10+ min), longer is better, turnover rate inverted', {n: d.pos_n, pos: lowPos(posN)})}` : '';
   $('#role-foot').hidden = !(row || d.pct_pos);
 }
 function renderForm(){
@@ -898,7 +944,7 @@ function renderForm(){
   const w = 120, h = 26, mx = Math.max(...pts, 1), sx = i => 2 + i / (pts.length - 1) * (w - 4), sy = v => h - 2 - v / mx * (h - 4);
   const spark = `<svg viewBox="0 0 ${w} ${h}" width="${w}" height="${h}"><path d="M${pts.map((v, i) => `${sx(i).toFixed(1)} ${sy(v).toFixed(1)}`).join(' L')}" fill="none" stroke="var(--club2)" stroke-width="2" stroke-linejoin="round"/><circle cx="${sx(pts.length - 1).toFixed(1)}" cy="${sy(pts[pts.length - 1]).toFixed(1)}" r="3" fill="var(--club2)"/></svg>`;
   const arrow = v => v > 0.5 ? '▲' : v < -0.5 ? '▼' : '▶';
-  el.innerHTML = `<span><small>Last 5 games</small> <b>${last.p36.toFixed(1)}</b> pts / 36 <small>(season ${season.p36.toFixed(1)}) ${arrow(last.p36 - season.p36)}</small></span><span><b>${last.ts != null ? (100 * last.ts).toFixed(1) + '%' : '–'}</b> TS <small>(${season.ts != null ? (100 * season.ts).toFixed(1) + '%' : '–'})</small></span>${spark}<small>points, last ${pts.length} games</small>`;
+  el.innerHTML = `<span><small>${t('Last 5 games')}</small> <b>${last.p36.toFixed(1)}</b> ${t('pts')} / 36 <small>(${t('season')} ${season.p36.toFixed(1)}) ${arrow(last.p36 - season.p36)}</small></span><span><b>${last.ts != null ? (100 * last.ts).toFixed(1) + '%' : '–'}</b> TS <small>(${season.ts != null ? (100 * season.ts).toFixed(1) + '%' : '–'})</small></span>${spark}<small>${t('points, last {n} games', {n: pts.length})}</small>`;
 }
 // minutes and role game by game: bars for minutes (filled when he started), usage as a line, missed games as gaps, and a
 // last-five-against-season read on minutes flagged only when the change beats his own game-to-game spread
@@ -914,15 +960,15 @@ function renderTrend(){
   const seq = [...log.map((r, i) => ({date: d.games[r[0]].date, round: d.games[r[0]].round, min: r[1], usg: (d.role_g || [])[i] ? d.role_g[i].usg : null, start: !!r[16]})),
     ...(d.absent || []).map(a => ({date: a.date, round: a.round, min: null, kind: a.kind}))].sort((p, q) => p.date < q.date ? -1 : p.date > q.date ? 1 : 0);
   const W = Math.max(180, seq.length * 18), H = 48, bw = 12, x = i => 2 + i * 18, y = v => H - 4 - Math.min(40, v) / 40 * (H - 10);
-  const bars = seq.map((s, i) => s.min == null ? `<text x="${x(i) + bw / 2}" y="${H - 7}" class="gap" data-tip="R${s.round} · ${s.kind === 'DNP' ? 'did not play' : 'not in the squad'}">${s.kind === 'DNP' ? 'dnp' : '–'}</text>`
-    : `<rect x="${x(i)}" y="${y(s.min)}" width="${bw}" height="${Math.max(1, H - 4 - y(s.min))}" class="${s.start ? 'st' : 'bn'}" data-tip="R${s.round} · ${s.min} min · ${s.start ? 'started' : 'from the bench'}"/>`).join('');
+  const bars = seq.map((s, i) => s.min == null ? `<text x="${x(i) + bw / 2}" y="${H - 7}" class="gap" data-tip="${t('R')}${s.round} · ${s.kind === 'DNP' ? t('did not play') : t('not in the squad')}">${s.kind === 'DNP' ? t('dnp') : '–'}</text>`
+    : `<rect x="${x(i)}" y="${y(s.min)}" width="${bw}" height="${Math.max(1, H - 4 - y(s.min))}" class="${s.start ? 'st' : 'bn'}" data-tip="${t('R')}${s.round} · ${s.min} ${t('min')} · ${s.start ? t('started') : t('from the bench')}"/>`).join('');
   const pts = seq.map((s, i) => s.usg == null ? null : `${x(i) + bw / 2} ${y(s.usg)}`).filter(Boolean);
-  const usage = (pts.length > 1 ? `<path d="M${pts.join(' L')}" class="ln"/>` : '') + seq.map((s, i) => s.usg == null ? '' : `<circle cx="${x(i) + bw / 2}" cy="${y(s.usg)}" r="2.6" class="dt" data-tip="R${s.round} · usage ${s.usg}%"/>`).join('');
+  const usage = (pts.length > 1 ? `<path d="M${pts.join(' L')}" class="ln"/>` : '') + seq.map((s, i) => s.usg == null ? '' : `<circle cx="${x(i) + bw / 2}" cy="${y(s.usg)}" r="2.6" class="dt" data-tip="${t('R')}${s.round} · ${t('usage')} ${s.usg}%"/>`).join('');
   const grid = `<line x1="0" x2="${W}" y1="${y(20)}" y2="${y(20)}" class="gr"/><line x1="0" x2="${W}" y1="${y(40)}" y2="${y(40)}" class="gr"/>`;
-  el.innerHTML = `<div class="tsum"><span><small>Minutes, last ${lastN}</small> <b>${last.toFixed(1)}</b> <small>season ${season.toFixed(1)}</small> <i class="${flag ? (diff > 0 ? 'up' : 'down') : ''}">${flag ? (diff > 0 ? '▲ up' : '▼ down') : '▶ steady'}</i></span><span><small>Starts</small> <b>${starts}</b> <small>of ${n}${n > lastN ? ` · ${lastStarts} of the last ${lastN}` : ''}</small></span></div>
-    <div class="trow"><span>Minutes</span><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMinYMid meet" role="img" aria-label="Minutes per game">${grid}${bars}</svg></div>
-    <div class="trow"><span>Usage</span><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMinYMid meet" role="img" aria-label="Usage per game">${grid}${usage}</svg></div>
-    <div class="tleg"><i class="st"></i>started<i class="bn"></i>bench · lines at 20 and 40 (minutes, usage %)${(d.absent || []).length ? ' · dnp: did not play, –: not in the squad' : ''}${flag ? ` · the change beats his usual game-to-game spread (${sd.toFixed(1)} min)` : ''}</div>`;
+  el.innerHTML = `<div class="tsum"><span><small>${t('Minutes, last {n}', {n: lastN})}</small> <b>${last.toFixed(1)}</b> <small>${t('season')} ${season.toFixed(1)}</small> <i class="${flag ? (diff > 0 ? 'up' : 'down') : ''}">${flag ? (diff > 0 ? '▲ ' + t('up') : '▼ ' + t('down')) : '▶ ' + t('steady')}</i></span><span><small>${t('Starts')}</small> <b>${starts}</b> <small>${t('of {n}', {n})}${n > lastN ? ` · ${t('{k} of the last {n}', {k: lastStarts, n: lastN})}` : ''}</small></span></div>
+    <div class="trow"><span>${t('Minutes')}</span><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMinYMid meet" role="img" aria-label="${t('Minutes per game')}">${grid}${bars}</svg></div>
+    <div class="trow"><span>${t('Usage')}</span><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMinYMid meet" role="img" aria-label="${t('Usage per game')}">${grid}${usage}</svg></div>
+    <div class="tleg"><i class="st"></i>${t('started')}<i class="bn"></i>${t('bench')} · ${t('lines at 20 and 40 (minutes, usage %)')}${(d.absent || []).length ? ' · ' + t('dnp: did not play, –: not in the squad') : ''}${flag ? ` · ${t('the change beats his usual game-to-game spread ({sd} min)', {sd: sd.toFixed(1)})}` : ''}</div>`;
 }
 function renderTiming(shots){
   const rows = shots.filter(s => s[14] != null), cap = $('#time-cap'), tb = $('#timing');
@@ -930,28 +976,30 @@ function renderTiming(shots){
   cap.hidden = false; tb.hidden = false;
   const b = {early: [0, 0, 0, 0], mid: [0, 0, 0, 0], late: [0, 0, 0, 0]};
   rows.forEach(s => { const k = s[14] <= 6 ? 'early' : s[14] >= 18 ? 'late' : 'mid', v = b[k]; v[0]++; v[1] += s[3]; if (s[9] != null) { v[2] += s[9]; v[3]++; } });
-  const lab = {early: 'Early · 0 to 6 s', mid: 'Mid · 7 to 17 s', late: 'Late · 18 s and over'};
-  tb.querySelector('tbody').innerHTML = Object.entries(b).map(([k, v]) => `<tr class="${v[0] && v[0] < MIN_ATT ? 'small' : ''}" data-tip="${v[0] ? `${v[1]} of ${v[0]} · ${ival(v[1], v[0])}${v[0] && v[0] < MIN_ATT ? ' · small sample' : ''}` : ''}"><td>${lab[k]}</td><td>${v[0] ? `${v[1]} / ${v[0]}` : '–'}</td><td class="k">${pct(v[1], v[0])}</td><td class="lg">${v[3] ? (100 * v[2] / v[3]).toFixed(1) + '%' : '–'}</td><td>${(100 * v[0] / rows.length).toFixed(0)}%</td></tr>`).join('');
+  const lab = {early: t('Early · 0 to 6 s'), mid: t('Mid · 7 to 17 s'), late: t('Late · 18 s and over')};
+  tb.querySelector('tbody').innerHTML = Object.entries(b).map(([k, v]) => `<tr class="${v[0] && v[0] < MIN_ATT ? 'small' : ''}" data-tip="${v[0] ? `${t('{m} of {a}', {m: v[1], a: v[0]})} · ${ival(v[1], v[0])}${v[0] && v[0] < MIN_ATT ? ' · ' + t('small sample') : ''}` : ''}"><td>${lab[k]}</td><td>${v[0] ? `${v[1]} / ${v[0]}` : '–'}</td><td class="k">${pct(v[1], v[0])}</td><td class="lg">${v[3] ? (100 * v[2] / v[3]).toFixed(1) + '%' : '–'}</td><td>${(100 * v[0] / rows.length).toFixed(0)}%</td></tr>`).join('');
 }
 function renderDiet(zs, total){
   const d = ds(), cap = $('#diet-cap'), el = $('#diet'), ref = LG && LG.by_pos && LG.by_pos[d.pos_group];
   if (!total || total < MIN_ATT || !ref) { cap.hidden = true; el.hidden = true; return; }
   cap.hidden = false; el.hidden = false;
-  const keys = [['rim', 'Rim', 1], ['paint', 'Paint', .7], ['mid', 'Mid', null], ['c3', 'Corner 3', 'b1'], ['a3', 'Above-break 3', 'b2']];
+  const keys = [['rim', t('Rim'), 1], ['paint', t('Paint'), .7], ['mid', t('Mid'), null], ['c3', t('Corner 3'), 'b1'], ['a3', t('Above-break 3'), 'b2']];
   const colour = c => c === null ? 'rgba(138,145,160,.55)' : c === 'b1' ? 'rgba(79,142,247,.95)' : c === 'b2' ? 'rgba(79,142,247,.55)' : hexA(state.hit, c);
   const bar = shares => `<div class="stack">${keys.map(([k, l, c]) => `<i style="width:${(100 * shares[k]).toFixed(1)}%;background:${colour(c)}" title="${l} ${(100 * shares[k]).toFixed(0)}%"></i>`).join('')}</div>`;
   const mine = Object.fromEntries(keys.map(([k]) => [k, zs[k].a / total])), pos = Object.fromEntries(keys.map(([k]) => [k, ref.zones[k].share]));
-  cap.textContent = `Shot diet vs ${(d.pos_group || 'player').toLowerCase()}s · share of attempts by zone`;
-  el.innerHTML = `<div class="row"><span>Him</span>${bar(mine)}</div><div class="row"><span>${(d.pos_group || 'Player')}s</span>${bar(pos)}</div><div class="leg">${keys.map(([k, l, c]) => `<i style="background:${colour(c)}"></i>${l} ${(100 * mine[k]).toFixed(0)}% <span style="color:var(--muted)">(${(100 * pos[k]).toFixed(0)}%)</span>`).join('')}</div>`;
+  const posN = t(d.pos_group ? d.pos_group + 's' : 'players');
+  cap.textContent = t('Shot diet vs {pos} · share of attempts by zone', {pos: posN.toLowerCase()});
+  el.innerHTML = `<div class="row"><span>${t('Him')}</span>${bar(mine)}</div><div class="row"><span>${posN}</span>${bar(pos)}</div><div class="leg">${keys.map(([k, l, c]) => `<i style="background:${colour(c)}"></i>${l} ${(100 * mine[k]).toFixed(0)}% <span style="color:var(--muted)">(${(100 * pos[k]).toFixed(0)}%)</span>`).join('')}</div>`;
 }
 function renderCompareOptions(){
   const d = ds(), me = player(), sel = $('#cmp'), panel = $('#cmp-panel');
   const peers = ROSTER.list.filter(r => r.pos === d.pos_group && r.pid !== me.pid);
   if (!d.tot.gp || !peers.length) { panel.hidden = true; return; }
   panel.hidden = false;
-  $('#cmp-sub').textContent = `${nameOf(me.name).sur} against another ${(d.pos_group || 'player').toLowerCase()}, per 40 minutes and per possession where it matters.${d.pos_n >= 10 ? ` Position median from the ${d.pos_n} eligible ${(d.pos_group || 'player').toLowerCase()}s.` : ''}`;
+  const pos1 = t(d.pos_group || 'player').toLowerCase(), posN = t(d.pos_group ? d.pos_group + 's' : 'players').toLowerCase();
+  $('#cmp-sub').textContent = `${t('{name} against another {pos}, per 40 minutes and per possession where it matters.', {name: nameOf(me.name).sur, pos: pos1})}${d.pos_n >= 10 ? ' ' + t('Position median from the {n} eligible {pos}.', {n: d.pos_n, pos: posN}) : ''}`;
   const keep = state.cmp && peers.some(r => r.pid === state.cmp) ? state.cmp : '';
-  sel.innerHTML = `<option value="">Choose a ${(d.pos_group || 'player').toLowerCase()} to compare</option>` + peers.sort((a, b) => a.club.localeCompare(b.club) || nameOf(a.name).sur.localeCompare(nameOf(b.name).sur)).map(r => `<option value="${r.pid}">${shortName(r.club)} · #${r.dorsal || '–'} ${nameOf(r.name).first} ${nameOf(r.name).sur}</option>`).join('');
+  sel.innerHTML = `<option value="">${t('Choose a {pos} to compare', {pos: pos1})}</option>` + peers.sort((a, b) => a.club.localeCompare(b.club) || nameOf(a.name).sur.localeCompare(nameOf(b.name).sur)).map(r => `<option value="${r.pid}">${shortName(r.club)} · #${r.dorsal || '–'} ${nameOf(r.name).first} ${nameOf(r.name).sur}</option>`).join('');
   sel.value = keep; state.cmp = keep || null;
   renderCompare();
 }
@@ -962,10 +1010,10 @@ async function renderCompare(){
   if (!cache[r.club]) { try { cache[r.club] = await (await fetch(`${META.path}${r.club}.json?v=${encodeURIComponent(META.built || '')}`)).json(); } catch (e) { tb.hidden = true; return; } }
   const other = cache[r.club].players.find(p => p.pid === r.pid); if (!other || state.cmp !== r.pid) return;
   const pool = (META.medians || {})[d.pos_group] || {};
-  const line = (label, f, fmt, higher = true) => { const a = f(d), b = f(other.cur), m = pool[label]; const win = a != null && b != null ? (higher ? a > b : a < b) : null; return `<tr><td>${label}</td><td class="${win === true ? 'win me' : 'me'}">${fmt(a)}</td><td class="${win === false ? 'win' : ''}">${fmt(b)}</td><td class="lg">${fmt(m)}</td></tr>`; };
+  const line = (label, f, fmt, higher = true) => { const a = f(d), b = f(other.cur), m = pool[label]; const win = a != null && b != null ? (higher ? a > b : a < b) : null; return `<tr><td>${t(label)}</td><td class="${win === true ? 'win me' : 'me'}">${fmt(a)}</td><td class="${win === false ? 'win' : ''}">${fmt(b)}</td><td class="lg">${fmt(m)}</td></tr>`; };
   const per40 = (c, k) => c.tot.min ? c.tot[k] * 40 / c.tot.min : null, rate = (c, m, a) => c.tot[a] ? c.tot[m] / c.tot[a] : null, role = (c, k) => c.role ? c.role[k] : null, z = c => zoneStats(c.shots);
   const f1s = v => v == null ? '–' : v.toFixed(1), pc = v => v == null ? '–' : (100 * v).toFixed(1) + '%', pcs = v => v == null ? '–' : v.toFixed(1) + '%', sgn = v => v == null ? '–' : (v >= 0 ? '+' : '') + v.toFixed(1);
-  $('#cmp-a').textContent = `${nameOf(me.name).sur}`; $('#cmp-b').innerHTML = `<a href="#${r.club}/${r.pid}" title="Open his page">${nameOf(other.name).sur} · ${shortName(r.club)}</a>`;
+  $('#cmp-a').textContent = `${nameOf(me.name).sur}`; $('#cmp-b').innerHTML = `<a href="#${r.club}/${r.pid}" title="${t('Open his page')}">${nameOf(other.name).sur} · ${shortName(r.club)}</a>`;
   tb.querySelector('tbody').innerHTML = [
     line('Minutes a game', c => c.tot.gp ? c.tot.min / c.tot.gp : null, f1s), line('Points per 40', c => per40(c, 'pts'), f1s), line('Usage', c => role(c, 'usg'), pcs),
     line('True shooting', c => tsOf(c.tot.pts, c.tot.fga2 + c.tot.fga3, c.tot.fta), pc), line('3P%', c => rate(c, 'fgm3', 'fga3'), pc), line('Assists per 40', c => per40(c, 'ast'), f1s), line('Assist rate', c => role(c, 'ast_pct'), pcs), line('Turnover rate', c => role(c, 'tov_pct'), pcs, false), line('Rebounds per 40', c => per40(c, 'reb'), f1s), line('Rebound rate', c => role(c, 'reb_pct'), pcs),
@@ -978,14 +1026,14 @@ function renderProfile(p, d){
   if (!pr || !META.priors) { panel.hidden = true; return; }
   panel.hidden = false;
   const P = META.priors, per100 = v => (100 * v).toFixed(1);
-  $('#prof-sub').textContent = `Shot quality is the value of the shots he takes (a league-average shooter would score this much per attempt on them). Shooting skill is what he scores on top of that: scoring above the expectation for where and when the shot was taken (the model does not see the defender, the dribble or the shot clock, so shot creation is part of it). Both are shrunk toward the league (skill: ${Math.round(P.k_skill)} attempts of prior weight, so ${pr.att} attempts carry ${(100 * pr.att / (pr.att + P.k_skill)).toFixed(0)}% of the estimate). Percentiles are against ${P.reference_season.replace('E','').replace(/(\d{4})/, (m,y)=>y+'-'+(+y+1).toString().slice(2))} players with 100+ attempts.`;
-  const gauge = (bar, dot, pt, lo, hi, minAtt) => { const b = $(bar), u = $(dot), ranged = lo != null && hi != null; b.style.left = ranged ? lo + '%' : '0'; b.style.width = ranged ? Math.max(1, hi - lo) + '%' : (pt ?? 0) + '%'; u.hidden = pt == null || pr.att < minAtt; u.style.left = (pt ?? 0) + '%'; return pt == null ? '' : pr.att < minAtt ? (ranged ? `${ord(Math.round(lo))} to ${ord(Math.round(hi))} pct · ${pr.att} attempts` : '') : `${ord(Math.round(pt))} pct${ranged ? ` (${Math.round(lo)} to ${Math.round(hi)})` : ''} · ${pr.att} attempts`; };
-  $('#pq').innerHTML = `${pr.quality_shrunk.toFixed(2)}<small>lg ${P.league_quality.toFixed(2)}</small>`;
-  const qtxt = gauge('#pq-bar', '#pq-dot', pr.quality_pct, pr.quality_pct_lo, pr.quality_pct_hi, 30); $('#pq-pct').textContent = qtxt; $('#pq').closest('.gauge').dataset.tip = `Raw ${pr.quality.toFixed(2)} on ${pr.att} attempts${pr.att < 30 ? ' · too few for a point rank' : ''}`;
+  $('#prof-sub').textContent = t('Shot quality is the value of the shots he takes (a league-average shooter would score this much per attempt on them). Shooting skill is what he scores on top of that: scoring above the expectation for where and when the shot was taken (the model does not see the defender, the dribble or the shot clock, so shot creation is part of it). Both are shrunk toward the league (skill: {k} attempts of prior weight, so {att} attempts carry {share}% of the estimate). Percentiles are against {season} players with 100+ attempts.', {k: Math.round(P.k_skill), att: pr.att, share: (100 * pr.att / (pr.att + P.k_skill)).toFixed(0), season: seasonLabel(P.reference_season)});
+  const gauge = (bar, dot, pt, lo, hi, minAtt) => { const b = $(bar), u = $(dot), ranged = lo != null && hi != null; b.style.left = ranged ? lo + '%' : '0'; b.style.width = ranged ? Math.max(1, hi - lo) + '%' : (pt ?? 0) + '%'; u.hidden = pt == null || pr.att < minAtt; u.style.left = (pt ?? 0) + '%'; return pt == null ? '' : pr.att < minAtt ? (ranged ? `${t('{a} to {b} pct', {a: ord(Math.round(lo)), b: ord(Math.round(hi))})} · ${t('{n} attempts', {n: pr.att})}` : '') : `${ord(Math.round(pt))} ${t('pct')}${ranged ? ` (${Math.round(lo)} ${t('to')} ${Math.round(hi)})` : ''} · ${t('{n} attempts', {n: pr.att})}`; };
+  $('#pq').innerHTML = `${pr.quality_shrunk.toFixed(2)}<small>${t('lg')} ${P.league_quality.toFixed(2)}</small>`;
+  const qtxt = gauge('#pq-bar', '#pq-dot', pr.quality_pct, pr.quality_pct_lo, pr.quality_pct_hi, 30); $('#pq-pct').textContent = qtxt; $('#pq').closest('.gauge').dataset.tip = `${t('Raw {v} on {n} attempts', {v: pr.quality.toFixed(2), n: pr.att})}${pr.att < 30 ? ' · ' + t('too few for a point rank') : ''}`;
   const sgn = pr.skill_shrunk >= 0 ? '+' : '';
   $('#ps').innerHTML = `${sgn}${per100(pr.skill_shrunk)}<small>± ${per100(pr.skill_sd)}</small>`;
-  const stxt = gauge('#ps-bar', '#ps-dot', pr.skill_pct, pr.skill_pct_lo, pr.skill_pct_hi, 50), pAbove = pr.skill_sd ? 0.5 * (1 + erf(pr.skill_shrunk / (pr.skill_sd * Math.SQRT2))) : null, xa = d.xfg && d.xfg.pae_adj != null ? ` · ${d.xfg.pae_adj >= 0 ? '+' : ''}${d.xfg.pae_adj.toFixed(1)} against the defences faced` : '';
-  $('#ps-pct').textContent = stxt; $('#ps').closest('.gauge').dataset.tip = `Raw ${pr.skill >= 0 ? '+' : ''}${per100(pr.skill)} per 100 · ${pr.pae >= 0 ? '+' : ''}${pr.pae.toFixed(1)} points above expectation${xa}${pAbove != null ? ` · ${(100 * pAbove).toFixed(0)}% chance he is above a league-average shooter` : ''}${pr.att < 50 ? ' · too few attempts for a point rank' : ''}`;
+  const stxt = gauge('#ps-bar', '#ps-dot', pr.skill_pct, pr.skill_pct_lo, pr.skill_pct_hi, 50), pAbove = pr.skill_sd ? 0.5 * (1 + erf(pr.skill_shrunk / (pr.skill_sd * Math.SQRT2))) : null, xa = d.xfg && d.xfg.pae_adj != null ? ` · ${d.xfg.pae_adj >= 0 ? '+' : ''}${d.xfg.pae_adj.toFixed(1)} ${t('against the defences faced')}` : '';
+  $('#ps-pct').textContent = stxt; $('#ps').closest('.gauge').dataset.tip = `${t('Raw')} ${pr.skill >= 0 ? '+' : ''}${per100(pr.skill)} ${t('per 100')} · ${pr.pae >= 0 ? '+' : ''}${pr.pae.toFixed(1)} ${t('points above expectation')}${xa}${pAbove != null ? ` · ${t('{p}% chance he is above a league-average shooter', {p: (100 * pAbove).toFixed(0)})}` : ''}${pr.att < 50 ? ' · ' + t('too few attempts for a point rank') : ''}`;
   // season curve of shrunk skill with ±1 sd band, x = attempts
   const c = pr.curve, W = 640, H = 220, L = 46, R = 16, T = 14, B = 30;
   if (!c.length) { $('#curve').innerHTML = ''; return; }
@@ -994,13 +1042,13 @@ function renderProfile(p, d){
   let s = `<line class="ax" x1="${L}" x2="${W - R}" y1="${H - B}" y2="${H - B}"/><line class="ax" x1="${L}" x2="${L}" y1="${T}" y2="${H - B}"/><line class="zero" x1="${L}" x2="${W - R}" y1="${y(0)}" y2="${y(0)}"/>`;
   [lim, lim / 2, 0, -lim / 2, -lim].forEach(v => s += `<text x="${L - 6}" y="${y(v) + 4}" text-anchor="end">${v > 0 ? '+' : ''}${(100 * v).toFixed(0)}</text>`);
   [0, 0.25, 0.5, 0.75, 1].forEach(f => s += `<text x="${x(f * maxA)}" y="${H - 10}" text-anchor="middle">${Math.round(f * maxA)}</text>`);
-  s += `<text x="${W - R}" y="${T + 2}" text-anchor="end">pts / 100 attempts above expectation</text>`;
+  s += `<text x="${W - R}" y="${T + 2}" text-anchor="end">${t('pts / 100 attempts above expectation')}</text>`;
   const pts = c.map(r => [x(r[1]), y(r[3])]), up = c.map(r => [x(r[1]), y(r[3] + r[4])]), lo = c.map(r => [x(r[1]), y(r[3] - r[4])]);
   s += `<path class="band" d="M${[...up, ...lo.slice().reverse()].map(q => q.join(' ')).join(' L')} Z"/>`;
   s += `<path class="ln" d="M${pts.map(q => q.join(' ')).join(' L')}"/>`;
   const last = pts[pts.length - 1]; s += `<circle class="end" cx="${last[0]}" cy="${last[1]}" r="4"/>`;
   $('#curve').innerHTML = s;
-  $('#curve-legend').innerHTML = `<span><i style="width:18px;height:3px;background:var(--club2);display:inline-block;vertical-align:middle;margin-right:6px"></i>shrunk estimate by attempt</span><span><i style="width:18px;height:10px;background:var(--club2);opacity:.2;display:inline-block;vertical-align:middle;margin-right:6px"></i>± 1 sd</span>`;
+  $('#curve-legend').innerHTML = `<span><i style="width:18px;height:3px;background:var(--club2);display:inline-block;vertical-align:middle;margin-right:6px"></i>${t('shrunk estimate by attempt')}</span><span><i style="width:18px;height:10px;background:var(--club2);opacity:.2;display:inline-block;vertical-align:middle;margin-right:6px"></i>± 1 ${t('sd')}</span>`;
 }
 function zoneStats(shots){
   const z = {}; Object.keys(ZONES).forEach(k => z[k] = {m: 0, a: 0, x: 0, xa: 0, am: 0, ak: 0});
@@ -1010,35 +1058,35 @@ function zoneStats(shots){
 function renderChart(animate){
   state.timers.forEach(clearTimeout); state.timers = []; tip.pin = null; hideTip();
   const svg = $('#court'); svg.innerHTML = courtBase();
-  const t = team(), d = ds(), games = d.games, shots = playerShots();
+  const tm = team(), d = ds(), games = d.games, shots = playerShots();
   const layer = svg.querySelector('#shots-layer'), zl = svg.querySelector('#zones-layer');
   const tableShots = d.shots.filter(s => state.game === 'all' || s[0] === +state.game);
   const zs = zoneStats(tableShots), total = tableShots.length || 1;
   const lgz = k => LG && LG.zones[k] ? LG.zones[k].fg : null;
   const zoneRow = (k, l, v, cls = '') => { const share = v.a / total, lg = lgz(k), p = v.a ? v.m / v.a : null, small = v.a > 0 && v.a < MIN_ATT, diff = p != null && lg != null ? p - lg : null;
     const bg = diff == null || small ? 'transparent' : diff >= 0 ? hexA(state.hit, Math.min(.55, .08 + diff * 2.2)) : `rgba(79,142,247,${Math.min(.55, .08 - diff * 2.2).toFixed(2)})`;
-    const title = v.a ? `${v.m} of ${v.a} · ${ival(v.m, v.a)}${small ? ' · small sample' : ''}${lg != null ? ` · league ${(100 * lg).toFixed(1)}%` : ''}` : '';
+    const title = v.a ? `${t('{m} of {a}', {m: v.m, a: v.a})} · ${ival(v.m, v.a)}${small ? ' · ' + t('small sample') : ''}${lg != null ? ` · ${t('league')} ${(100 * lg).toFixed(1)}%` : ''}` : '';
     return `<tr class="${cls}${small ? ' small' : ''}" data-tip="${title}"><td>${l}</td><td>${v.a ? `${v.m} / ${v.a}` : '–'}</td><td class="k"><span class="cell" style="background:${bg}">${pct(v.m, v.a)}</span></td><td class="lg">${lg != null ? (100 * lg).toFixed(1) + '%' : '–'}</td><td class="lg">${v.xa ? (100 * v.x / v.xa).toFixed(1) + '%' : '–'}</td><td class="lg">${v.ak ? (100 * v.am / v.ak).toFixed(0) + '%' : '–'}</td><td>${v.a ? (share * 100).toFixed(0) + '%' : '–'}<span class="zone-bar" style="width:${Math.round(share * 40)}px"></span></td></tr>`; };
   const threes = {m: zs.c3.m + zs.a3.m, a: zs.c3.a + zs.a3.a, x: zs.c3.x + zs.a3.x, xa: zs.c3.xa + zs.a3.xa, am: zs.c3.am + zs.a3.am, ak: zs.c3.ak + zs.a3.ak};
   $('#zones tbody').innerHTML = ['rim', 'paint', 'mid'].map(k => zoneRow(k, ZONES[k], zs[k])).join('')
-    + `<tr class="grp"><td colspan="7">3 point shooting</td></tr>`
-    + zoneRow('c3', ZONES.c3, zs.c3, 'sub') + zoneRow('a3', ZONES.a3, zs.a3, 'sub') + zoneRow('three', 'All 3s', threes, 'tot');
-  $('#zone-cap').textContent = `Shooting by zone · ${state.game === 'all' ? 'all games' : gameLabel(games[+state.game]).txt}${LG ? ` · league ${seasonLabel(LG.season)}` : ''}`;
+    + `<tr class="grp"><td colspan="7">${t('3 point shooting')}</td></tr>`
+    + zoneRow('c3', ZONES.c3, zs.c3, 'sub') + zoneRow('a3', ZONES.a3, zs.a3, 'sub') + zoneRow('three', t('All 3s'), threes, 'tot');
+  $('#zone-cap').textContent = `${t('Shooting by zone')} · ${state.game === 'all' ? t('all games') : gameLabel(games[+state.game]).txt}${LG ? ` · ${t('league')} ${seasonLabel(LG.season)}` : ''}`;
   renderTiming(tableShots); renderDiet(zs, tableShots.length);
   const empty = $('#empty');
   const is3d = state.view === '3d';
   $('#court').style.display = is3d ? 'none' : ''; $('#court3d').hidden = !is3d;
   if (!games.length) {   // nothing to draw in either view: clear the 3D scene of the previous player and explain the empty court
-    const nx = t.upcoming && t.upcoming[0];
-    const l = nx ? (nx.home === realCode() ? `vs ${shortName(nx.away)}` : `@ ${shortName(nx.home)}`) : null;
-    $('#empty-sub').textContent = nx ? `First game: Round ${nx.round} ${l} · ${fmtDate(nx.date)}` : 'The season has not started.';
-    empty.hidden = false; $('#cap').textContent = 'No games yet'; if (is3d) Shot3D.clear(); else Shot3D.stop(); return;
+    const nx = tm.upcoming && tm.upcoming[0];
+    const l = nx ? (nx.home === realCode() ? `${t('vs')} ${shortName(nx.away)}` : `@ ${shortName(nx.home)}`) : null;
+    $('#empty-sub').textContent = nx ? `${t('First game')}: ${t('Round {n}', {n: nx.round})} ${l} · ${fmtDate(nx.date)}` : t('The season has not started.');
+    empty.hidden = false; $('#cap').textContent = t('No games yet'); if (is3d) Shot3D.clear(); else Shot3D.stop(); return;
   }
   empty.hidden = true;
   if (is3d) { Shot3D.play(shots, s => gameLabel(games[s[0]])); return; }
   Shot3D.stop();
   if (state.view === 'zones') {
-    const col = (k, m, a) => { if (!a || a < MIN_ATT) return 'rgba(120,128,144,.22)'; const lg = lgz(k) ?? 0.45; const t = Math.max(-1, Math.min(1, (m / a - lg) / 0.15)); return t >= 0 ? hexA(state.hit, 0.15 + 0.6 * t) : `rgba(79,142,247,${(0.15 + 0.55 * -t).toFixed(2)})`; };
+    const col = (k, m, a) => { if (!a || a < MIN_ATT) return 'rgba(120,128,144,.22)'; const lg = lgz(k) ?? 0.45; const tm = Math.max(-1, Math.min(1, (m / a - lg) / 0.15)); return tm >= 0 ? hexA(state.hit, 0.15 + 0.6 * tm) : `rgba(79,142,247,${(0.15 + 0.55 * -tm).toFixed(2)})`; };
     const lab = (k, x, y, small) => { const v = zs[k], few = v.a < MIN_ATT; return `<text class="zl" x="${x}" y="${y}" style="${small ? 'font-size:34px' : ''}${few ? ';fill:#c6cbd4' : ''}">${few ? `${v.m}/${v.a}` : pct(v.m, v.a)}</text><text class="zs" x="${x}" y="${y + (small ? 30 : 40)}" style="${small ? 'font-size:24px' : ''}">${few ? '' : `${v.m}/${v.a}`}</text>`; };
     zl.innerHTML = `<rect class="zone" x="${X(-750)}" y="${Y(1242.5)}" width="1500" height="1400" fill="${col('a3', zs.a3.m, zs.a3.a)}"/>
       <rect class="zone" x="${X(-750)}" y="${Y(141.5)}" width="90" height="299" fill="${col('c3', zs.c3.m, zs.c3.a)}"/><rect class="zone" x="${X(660)}" y="${Y(141.5)}" width="90" height="299" fill="${col('c3', zs.c3.m, zs.c3.a)}"/>
@@ -1047,7 +1095,7 @@ function renderChart(animate){
       <circle class="zone" cx="${X(0)}" cy="${Y(0)}" r="150" fill="${col('rim', zs.rim.m, zs.rim.a)}"/>`;
     svg.querySelector('#labels-layer').innerHTML = `${lab('a3', X(0), Y(820))}${lab('c3', X(-705), Y(30), true)}${lab('c3', X(705), Y(30), true)}${lab('mid', X(-430), Y(330))}${lab('paint', X(0), Y(300))}${lab('rim', X(0), Y(70))}`;
     svg.querySelector('.paint').style.display = 'none';
-    const zm = tableShots.filter(s => s[3]).length; $('#cap').textContent = `${zm} / ${tableShots.length} made · ${pct(zm, tableShots.length)}${state.game !== 'all' ? ' · ' + gameLabel(games[+state.game]).txt : ''}`;
+    const zm = tableShots.filter(s => s[3]).length; $('#cap').textContent = `${zm} / ${tableShots.length} ${t('made')} · ${pct(zm, tableShots.length)}${state.game !== 'all' ? ' · ' + gameLabel(games[+state.game]).txt : ''}`;
     return;
   }
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -1060,7 +1108,7 @@ function renderChart(animate){
       el.setAttribute('class', 'shot');
       el.innerHTML = s[3] ? `<circle class="made" cx="${x}" cy="${y}" r="17"/>` : `<circle class="miss" cx="${x}" cy="${y}" r="15"/><line class="missx" x1="${x - 7}" y1="${y - 7}" x2="${x + 7}" y2="${y + 7}"/><line class="missx" x1="${x + 7}" y1="${y - 7}" x2="${x - 7}" y2="${y + 7}"/>`;
       const g = games[s[0]], l = gameLabel(g);
-      const html = `<b>${s[3] ? 'Made' : 'Missed'} ${s[4]}PT · ${ZONES[zoneOf(s[1], s[2], s[4])]}</b><br>${l.txt} · Q${s[5] > 40 ? 'OT' : Math.ceil(s[5] / 10)} · ${(Math.hypot(s[1], s[2]) / 100).toFixed(1)} m${s[9] != null ? ' · xFG ' + (100 * s[9]).toFixed(0) + '%' + (s[10] != null ? ' (him ' + (100 * s[10]).toFixed(0) + '%)' : '') : ''}${s[3] && s[11] != null ? (s[11] ? ' · assisted' : ' · unassisted') : ''}${s[12] ? ' · and-one' : ''}${s[13] ? ' · blocked' : ''}${s[14] != null ? ` · ${s[14]} s into the possession` : ''}`;
+      const html = `<b>${s[3] ? t('Made') : t('Missed')} ${s[4]}${t('PT')} · ${ZONES[zoneOf(s[1], s[2], s[4])]}</b><br>${l.txt} · ${t('Q')}${s[5] > 40 ? t('OT') : Math.ceil(s[5] / 10)} · ${(Math.hypot(s[1], s[2]) / 100).toFixed(1)} m${s[9] != null ? ' · xFG ' + (100 * s[9]).toFixed(0) + '%' + (s[10] != null ? ` (${t('him')} ` + (100 * s[10]).toFixed(0) + '%)' : '') : ''}${s[3] && s[11] != null ? (s[11] ? ' · ' + t('assisted') : ' · ' + t('unassisted')) : ''}${s[12] ? ' · ' + t('and-one') : ''}${s[13] ? ' · ' + t('blocked') : ''}${s[14] != null ? ` · ${t('{n} s into the possession', {n: s[14]})}` : ''}`;
       el.insertAdjacentHTML('beforeend', `<title>${html.replace(/<br>/g, ' · ').replace(/<[^>]+>/g, '')}</title>`);
       el.addEventListener('mousemove', e => { if (!tip.pin) showTip(e, html); });
       el.addEventListener('mouseleave', () => { if (!tip.pin) hideTip(); });
@@ -1070,7 +1118,7 @@ function renderChart(animate){
     };
     if (step) state.timers.push(setTimeout(draw, i * step)); else draw();
   });
-  const done = () => { const m = shots.filter(s => s[3]).length; capEl.textContent = shots.length ? `${m} / ${shots.length} made · ${pct(m, shots.length)}${state.game !== 'all' ? ' · ' + gameLabel(games[+state.game]).txt : ''}` : 'No attempts in this selection'; };
+  const done = () => { const m = shots.filter(s => s[3]).length; capEl.textContent = shots.length ? `${m} / ${shots.length} ${t('made')} · ${pct(m, shots.length)}${state.game !== 'all' ? ' · ' + gameLabel(games[+state.game]).txt : ''}` : t('No attempts in this selection'); };
   if (step) state.timers.push(setTimeout(done, shots.length * step + 200)); else done();
 }
 
@@ -1128,7 +1176,7 @@ const Shot3D = (() => {
     const span = () => { const [a, b] = [...ptrs.values()]; return Math.hypot(a[0] - b[0], a[1] - b[1]); };
     const zoom = f => { cam.dist = Math.max(6, Math.min(34, cam.dist * f)); };
     const orbitBtn = $('#orbit'); let hold = 0, holdAt = null;
-    const setOrbit = on => { host.classList.toggle('orbit', on); orbitBtn.setAttribute('aria-pressed', on); orbitBtn.textContent = on ? 'Done' : 'Orbit'; if (on) toast('Orbit on · drag to look around'); };
+    const setOrbit = on => { host.classList.toggle('orbit', on); orbitBtn.setAttribute('aria-pressed', on); orbitBtn.textContent = on ? t('Done') : t('Orbit'); if (on) toast(t('Orbit on · drag to look around')); };
     orbitBtn.addEventListener('click', () => setOrbit(!host.classList.contains('orbit')));
     el.addEventListener('pointerdown', e => { ptrs.set(e.pointerId, [e.clientX, e.clientY]); cam.drift = false; el.setPointerCapture(e.pointerId); if (ptrs.size === 2) { pinch = span(); drag = null; } else drag = {x: e.clientX, y: e.clientY};
       if (e.pointerType === 'touch' && !host.classList.contains('orbit')) { holdAt = [e.clientX, e.clientY]; clearTimeout(hold); hold = setTimeout(() => { if (holdAt) setOrbit(true); }, 350); } });
@@ -1179,14 +1227,14 @@ const Shot3D = (() => {
   }
   function mark(s){ const p = toWorld(s); const m = new THREE.Mesh(s[3] ? R.markMade : R.markMiss, s[3] ? R.madeMark : R.missMark); m.rotation.x = -Math.PI / 2; m.position.set(p.x, 0.012 + R.markers.children.length * 0.00002, p.z); R.markers.add(m); S.seen++; S.made += s[3]; }
   function clear(){ if (!R) return; S.flights.forEach(f => R.scene.remove(f.ball)); S.flights.length = 0; while (R.markers.children.length) R.markers.remove(R.markers.children[0]); }
-  function fail(){ const b = $('#f-view button[data-v="3d"]'); b.disabled = true; b.title = '3D view is unavailable in this browser'; $('#f-view button[data-v="dots"]').click(); toast('3D view unavailable · showing the 2D chart'); }
+  function fail(){ const b = $('#f-view button[data-v="3d"]'); b.disabled = true; b.title = t('3D view is unavailable in this browser'); $('#f-view button[data-v="dots"]').click(); toast(t('3D view unavailable · showing the 2D chart')); }
   function frame(now){
     if (!running || !vis) { raf = 0; return; }
     const dt = Math.min(0.05, (now - last) / 1000); last = now;
     if (S.playing) {
       S.timer += dt; const iv = 0.16;
       while (S.timer >= iv && S.i < S.list.length) { S.timer -= iv; launch(S.list[S.i++]); }
-      if (S.i >= S.list.length && !S.flights.length) { S.playing = false; S.doneAt = now; $('#cap').textContent = `${S.made} / ${S.list.length} made · ${pct(S.made, S.list.length)}`; }
+      if (S.i >= S.list.length && !S.flights.length) { S.playing = false; S.doneAt = now; $('#cap').textContent = `${S.made} / ${S.list.length} ${t('made')} · ${pct(S.made, S.list.length)}`; }
     }
     step(dt);
     if (cam.drift && !R.drag) { cam.az += dt * 0.05 * Math.sin(now / 9000); if (!S.playing && S.doneAt && now - S.doneAt > 6000) cam.drift = false; }   // the slow orbit settles a few seconds after the last shot lands
@@ -1194,12 +1242,12 @@ const Shot3D = (() => {
   }
   return {
     async play(list, labelOf){
-      const cap = $('#cap'); cap.textContent = 'Loading 3D court…';
+      const cap = $('#cap'); cap.textContent = t('Loading 3D court…');
       try { await load(); } catch (e) { fail(); return; }
       resize(); clear();
       S.list = list; S.labelOf = labelOf; S.i = 0; S.timer = 0; S.seen = 0; S.made = 0; S.doneAt = 0; cam.drift = true;
-      if (matchMedia('(prefers-reduced-motion: reduce)').matches) { list.forEach(mark); S.i = list.length; S.playing = false; cam.drift = false; cap.textContent = list.length ? `${S.made} / ${list.length} made · ${pct(S.made, list.length)}` : 'No attempts in this selection'; }   // no flights: every marker is placed at once
-      else { S.playing = true; cap.textContent = list.length ? `${list.length} attempts` : 'No attempts in this selection'; }
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) { list.forEach(mark); S.i = list.length; S.playing = false; cam.drift = false; cap.textContent = list.length ? `${S.made} / ${list.length} ${t('made')} · ${pct(S.made, list.length)}` : t('No attempts in this selection'); }   // no flights: every marker is placed at once
+      else { S.playing = true; cap.textContent = list.length ? t('{n} attempts', {n: list.length}) : t('No attempts in this selection'); }
       running = true; vis = inView(); wake();   // a new sequence always restarts the loop, whether it was stopped, asleep off-screen, or still running
       const hint = $('#hint3d'); hint.classList.remove('gone'); clearTimeout(hint.t); hint.t = setTimeout(() => hint.classList.add('gone'), 3000);   // phones: the hint fades once read
     },
@@ -1255,20 +1303,16 @@ function Dropdown(sel, item){
 // ---- wiring
 $('#tag-season').textContent = META.label;
 const toLb = () => { const p = $('#lb-panel'); p.open = true; p.scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start'}); };
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-const fmtBuilt = s => { const m = (s || '').match(/(\d{4})-(\d{2})-(\d{2}) (\d{2}:\d{2})/); return m ? `${+m[3]} ${MONTHS[+m[2] - 1]} ${m[4]} UTC` : s; };
+const fmtBuilt = s => { const m = (s || '').match(/(\d{4})-(\d{2})-(\d{2}) (\d{2}:\d{2})/); return m ? `${new Date(Date.UTC(+m[1], +m[2] - 1, +m[3])).toLocaleDateString(LOCALE(), {day: 'numeric', month: 'short', timeZone: 'UTC'})} ${m[4]} UTC` : s; };
 // the build stamp: when the page was last rebuilt, how many games it holds and whether the checks passed
-const builtMs = (() => { const m = (META.built || '').match(/(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2})/); return m ? Date.UTC(+m[1], +m[2] - 1, +m[3], +m[4], +m[5]) : 0; })();
 const ST = META.status || {};
-$('#tag-sub').textContent = META.built ? `Updated ${fmtBuilt(META.built)}${META.leaders && META.leaders.rounds ? ` · through R${META.leaders.rounds}` : ''}` : 'Updated after every game';
-$('#foot-status').innerHTML = META.built ? `<a href="monitor.html">Built ${fmtBuilt(META.built)}${ST.games != null ? ` · ${ST.games} game${ST.games === 1 ? '' : 's'}` : ''}${ST.ok != null ? ` · ${ST.failures ? 'checks failed' : 'checks passed'}` : ''}</a>` : 'Euroleague Player Lab';
-// a final that the build has not caught up with after 36 hours marks the live dot amber, so a stalled pipeline shows on the page itself
-function markStale(){ const t = team(), now = Date.now(); const lag = builtMs && now - builtMs > 36 * 3600e3 && (t && (t.upcoming || []).some(g => new Date(g.date + 'T22:00:00Z') < now - 24 * 3600e3)); $('.live').classList.toggle('stale', !!lag); $('.live i').title = lag ? `Last built ${fmtBuilt(META.built)}; a game since then is not in yet` : ''; if (lag) $('#tag-sub').textContent = `Update pending · built ${fmtBuilt(META.built)}`; }
+i18nScan(); applyLang();
+document.addEventListener('click', e => { const b = e.target.closest('.lang button'); if (!b || b.getAttribute('aria-pressed') === 'true') return; const had = document.activeElement === b; setLang(b.dataset.lang); if (had && b.offsetParent === null) { const v = [...b.parentElement.querySelectorAll('button')].find(x => x.offsetParent !== null); if (v) v.focus(); } });
 // a build newer than the one this tab holds (the page is cached for ten minutes): one line offers the fresh data
 async function checkFresh(){
   try {
     const st = await (await fetch(`${META.path}status.json`, {cache: 'no-store'})).json();
-    if (st && st.checked_at && ST.checked_at && st.checked_at > ST.checked_at) { const t = $('#toast'); clearTimeout(toastT); t.innerHTML = 'New data since you opened this page · <button type="button" class="lnk" id="refresh">Refresh</button>'; t.style.pointerEvents = 'auto'; t.classList.add('on'); $('#refresh').addEventListener('click', () => location.reload()); }
+    if (st && st.checked_at && ST.checked_at && st.checked_at > ST.checked_at) { const t = $('#toast'); clearTimeout(toastT); t.innerHTML = `${window.t('New data since you opened this page')} · <button type="button" class="lnk" id="refresh">${window.t('Refresh')}</button>`; t.style.pointerEvents = 'auto'; t.classList.add('on'); $('#refresh').addEventListener('click', () => location.reload()); }
   } catch (e) {}
 }
 document.querySelectorAll('thead th').forEach(t => t.setAttribute('scope', 'col'));
@@ -1303,14 +1347,14 @@ $('#share').addEventListener('click', async () => {
   const n = nameOf(player().name);
   if (navigator.share && PHONE.matches) { try { await navigator.share({title: `${n.first} ${n.sur} · ${shortName(state.team)} · Player Lab`, url}); return; } catch (e) { if (e.name === 'AbortError') return; } }   // phones: the system share sheet
   try { await navigator.clipboard.writeText(url); } catch (e) { const i = document.createElement('input'); i.value = url; document.body.appendChild(i); i.select(); document.execCommand('copy'); i.remove(); }
-  toast('Link copied'); b.classList.add('ok'); b.textContent = 'Copied'; setTimeout(() => { b.classList.remove('ok'); b.textContent = 'Copy link'; }, 1800);
+  toast(t('Link copied')); b.classList.add('ok'); b.textContent = t('Copied'); setTimeout(() => { b.classList.remove('ok'); b.textContent = t('Copy link'); }, 1800);
 });
 $('#embed').addEventListener('click', async () => {
   if (!team()) return;
   const src = new URL(`embed.html?club=${state.team}&pid=${player().pid}`, location.href).href, n = nameOf(player().name), b = $('#embed');
   const code = `<iframe src="${src}" width="600" height="760" style="border:0;max-width:100%" loading="lazy" title="${n.first} ${n.sur} shot chart · Euroleague Player Lab"></iframe>`;
   try { await navigator.clipboard.writeText(code); } catch (e) { const i = document.createElement('input'); i.value = code; document.body.appendChild(i); i.select(); document.execCommand('copy'); i.remove(); }
-  toast('Embed code copied'); b.classList.add('ok'); b.textContent = 'Copied'; setTimeout(() => { b.classList.remove('ok'); b.textContent = 'Embed'; }, 1800);
+  toast(t('Embed code copied')); b.classList.add('ok'); b.textContent = t('Copied'); setTimeout(() => { b.classList.remove('ok'); b.textContent = t('Embed'); }, 1800);
 });
 $('#retry').addEventListener('click', () => route());
 $('#cmp').addEventListener('change', e => { state.cmp = e.target.value || null; renderCompare(); });
@@ -1323,7 +1367,7 @@ $('#f-rate').querySelectorAll('button').forEach(b => b.addEventListener('click',
 });
 const DD = {
   team: Dropdown($('#team'), (op, head) => { const c = CLUBS[op.value]; return `${c && c.logo && !head ? `<img src="${c.logo}" alt="">` : ''}<span>${c.name}</span>`; }),
-  player: Dropdown($('#player'), (op, head) => { const p = team() && team().players[+op.value]; if (!p) return op.text; const n = nameOf(p.name); return head ? `#${p.dorsal || '–'} ${n.first} ${n.sur}` : `<span class="no">${p.dorsal || '–'}</span><span>${n.first} ${n.sur}</span><small>${(p.position || '').slice(0, 7)}</small>`; }),
+  player: Dropdown($('#player'), (op, head) => { const p = team() && team().players[+op.value]; if (!p) return op.text; const n = nameOf(p.name); return head ? `#${p.dorsal || '–'} ${n.first} ${n.sur}` : `<span class="no">${p.dorsal || '–'}</span><span>${n.first} ${n.sur}</span><small>${t(p.position || '').slice(0, 7)}</small>`; }),
   cmp: Dropdown($('#cmp'), (op, head) => { if (!op.value) return op.text; const r = ROSTER.byPid[op.value]; if (!r) return op.text; const c = CLUBS[r.club], n = nameOf(r.name); return head ? `${n.first} ${n.sur} · ${shortName(r.club)}` : `${c && c.logo ? `<img src="${c.logo}" alt="">` : ''}<span class="no">${r.dorsal || '–'}</span><span>${n.first} ${n.sur}</span><small>${shortName(r.club)}</small>`; }),
   statGame: Dropdown($('#stat-game'), (op, head) => { if (op.value === 'all' || !team()) return op.text; const g = ds().games[+op.value]; if (!g) return op.text; const l = gameLabel(g); return head ? `${l.txt} · ${l.res} ${l.score}` : `<span>${l.txt}</span><small class="${l.res === 'W' ? 'w' : 'l'}">${l.res} ${l.score}</small>`; })
 };
@@ -1337,7 +1381,7 @@ function bindSearch(q, list){
   const close = () => { list.hidden = true; q.setAttribute('aria-expanded', 'false'); q.removeAttribute('aria-activedescendant'); hi = -1; };
   const mark = () => { [...list.children].forEach((li, i) => { li.classList.toggle('hi', i === hi); li.setAttribute('aria-selected', i === hi); }); if (hi >= 0) q.setAttribute('aria-activedescendant', `q-opt-${hi}`); else q.removeAttribute('aria-activedescendant'); };
   const go = x => { location.hash = `${x.r.club}/${x.r.pid}`; q.value = ''; close(); q.blur(); $('.top').classList.remove('q-on'); };
-  const show = () => { if (!q.value.trim()) { close(); return; } hits = findPlayers(q.value); list.innerHTML = hits.length ? hits.map((x, i) => { const c = CLUBS[x.r.club] || {}; return `<li role="option" id="q-opt-${i}" data-i="${i}" aria-selected="false">${c.logo ? `<img src="${c.logo}" alt="">` : ''}<span class="no">${x.r.dorsal || '–'}</span><span>${x.n.first} ${x.n.sur}</span><small>${shortName(x.r.club)}</small></li>`; }).join('') : '<li class="none">No player matches</li>'; list.hidden = false; q.setAttribute('aria-expanded', 'true'); hi = hits.length ? 0 : -1; mark(); };
+  const show = () => { if (!q.value.trim()) { close(); return; } hits = findPlayers(q.value); list.innerHTML = hits.length ? hits.map((x, i) => { const c = CLUBS[x.r.club] || {}; return `<li role="option" id="q-opt-${i}" data-i="${i}" aria-selected="false">${c.logo ? `<img src="${c.logo}" alt="">` : ''}<span class="no">${x.r.dorsal || '–'}</span><span>${x.n.first} ${x.n.sur}</span><small>${shortName(x.r.club)}</small></li>`; }).join('') : `<li class="none">${t('No player matches')}</li>`; list.hidden = false; q.setAttribute('aria-expanded', 'true'); hi = hits.length ? 0 : -1; mark(); };
   q.addEventListener('input', show); q.addEventListener('focus', show);
   if (q.id === 'q') {
     $('#q-btn').addEventListener('click', () => { $('.top').classList.add('q-on'); $('#q-x').hidden = false; q.focus(); });   // phones: the field opens over the bar from the icon
@@ -1361,7 +1405,7 @@ document.addEventListener('keydown', e => { if (e.key === '/' && !e.ctrlKey && !
 const LB = (() => {
   const L = META.leaders, panel = $('#lb-panel');
   if (!L) return {ok: false, mark(){}};
-  const BOARDS = [{k: 'pts', t: 'Points per game'}, {k: 'reb', t: 'Rebounds per game'}, {k: 'ast', t: 'Assists per game'}, {k: 'fg3', t: '3-point percentage'}];
+  const BOARDS = [{k: 'pts', t: 'Points per game'}, {k: 'reb', t: 'Rebounds per game'}, {k: 'ast', t: 'Assists per game'}, {k: 'fg3', t: '3-point percentage'}];   // titles pass through t() when painted
   const RANK_I = {pts: 0, reb: 1, ast: 2, fg3: 3};
   const list = $('#lb-list'), dots = $('#lb-dots'), reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
   let at = 0, swiped = false, down = null;
@@ -1371,10 +1415,10 @@ const LB = (() => {
   // headline, the one secondary number, and the hover line, per board
   const cell = (k, row) => k === 'fg3'
     ? `${(100 * row[1] / row[2]).toFixed(1)}<i>%</i><u>${row[1]}/${row[2]}</u>`
-    : `${f1(row[1] / row[2])}<u>${row[2]} game${row[2] === 1 ? '' : 's'}</u>`;
+    : `${f1(row[1] / row[2])}<u>${plural(row[2], '{n} game', '{n} games')}</u>`;
   const titleOf = (k, n, row) => k === 'fg3'
-    ? `${n} · ${row[1]} of ${row[2]} · ${ival(row[1], row[2])}`
-    : `${n} · ${row[1]} in ${row[2]} game${row[2] === 1 ? '' : 's'}${row[2] < 3 ? ' · small sample' : ''}`;
+    ? `${n} · ${t('{m} of {a}', {m: row[1], a: row[2]})} · ${ival(row[1], row[2])}`
+    : `${n} · ${row[1]} ${plural(row[2], 'in {n} game', 'in {n} games')}${row[2] < 3 ? ' · ' + t('small sample') : ''}`;
   function rowHtml(k, row, rank, i, lead, pin, mixed){
     const r = ROSTER.byPid[row[0]]; if (!r) return '';
     const nm = nameOf(r.name), c = CLUBS[r.club] || {}, v = valOf(k, row);
@@ -1396,12 +1440,12 @@ const LB = (() => {
     const me = player(), r = ROSTER.byPid[me.pid]; if (!r || !ds().tot.gp) return '';
     const rank = (r.lr || [])[RANK_I[k]] || 0;
     if (rank && rank <= 10) return '';
-    const t = ds().tot, row = k === 'fg3' ? [me.pid, t.fgm3, t.fga3] : [me.pid, t[k], t.gp];
+    const tt = ds().tot, row = k === 'fg3' ? [me.pid, tt.fgm3, tt.fga3] : [me.pid, tt[k], tt.gp];
     if (rank) return rowHtml(k, row, rank, 10, lead, true, mixed);
     const nm = nameOf(me.name), c = CLUBS[state.team] || {};
-    const why = k === 'fg3' ? `${t.fga3} of ${L.min_3pa} attempts` : `${t.gp} of ${L.min_gp} game${L.min_gp === 1 ? '' : 's'}`;
-    const longWhy = k === 'fg3' ? `${t.fga3} of the ${L.min_3pa} three-point attempts this board needs` : `${t.gp} of ${L.min_gp} game${L.min_gp === 1 ? '' : 's'} at ${L.min_mpg} minutes a game`;
-    return `<li class="lb-row pin me" data-pid="${me.pid}" style="--p:0%"><a href="#${state.team}/${me.pid}" title="Not yet qualified: ${longWhy}">
+    const why = k === 'fg3' ? t('{m} of {a} attempts', {m: tt.fga3, a: L.min_3pa}) : t(L.min_gp === 1 ? '{m} of {a} game' : '{m} of {a} games', {m: tt.gp, a: L.min_gp});
+    const longWhy = k === 'fg3' ? t('{m} of the {a} three-point attempts this board needs', {m: tt.fga3, a: L.min_3pa}) : t('{m} of {a} games at {mpg} minutes a game', {m: tt.gp, a: L.min_gp, mpg: L.min_mpg});
+    return `<li class="lb-row pin me" data-pid="${me.pid}" style="--p:0%"><a href="#${state.team}/${me.pid}" title="${t('Not yet qualified')}: ${longWhy}">
       <span class="lb-rank">–</span>
       <span class="lb-ph"><img src="${photoOf(r)}" alt="" loading="lazy" decoding="async" draggable="false"></span>
       <img class="lb-crest" src="${c.logo || ''}" alt="" loading="lazy" draggable="false">
@@ -1412,28 +1456,28 @@ const LB = (() => {
     const w = wilson(Math.round(0.36 * L.min_3pa), L.min_3pa);
     const width = w ? Math.round(100 * (w[1] - w[0])) : null;
     if (k === 'fg3') {
-      const tail = width ? ` At ${L.min_3pa} attempts the 95% interval is ${width} points wide, so makes over attempts beside each percentage is the number to read.` : '';
+      const tail = width ? ' ' + t('At {n} attempts the 95% interval is {w} points wide, so makes over attempts beside each percentage is the number to read.', {n: L.min_3pa, w: width}) : '';
       return L.provisional
-        ? `The gate is ${L.min_3pa} attempts while the season is young, and rises to ${L.att_settled}, the minimum the rest of this app requires before it prints a 3-point percentage. The league leader has ${L.top_3pa} attempts.${tail}`
-        : `Through round ${L.rounds}. Qualifying takes ${L.min_3pa} three-point attempts.${tail}`;
+        ? t('The gate is {n} attempts while the season is young, and rises to {m}, the minimum the rest of this app requires before it prints a 3-point percentage. The league leader has {top} attempts.', {n: L.min_3pa, m: L.att_settled, top: L.top_3pa}) + tail
+        : t('Through round {r}. Qualifying takes {n} three-point attempts.', {r: L.rounds, n: L.min_3pa}) + tail;
     }
-    if (L.rounds <= 1) return 'Round 1 played, so every average above is one game.';
-    return `Through round ${L.rounds}. Qualifying takes ${L.min_gp} of ${L.rounds} games at ${L.min_mpg} minutes a game.`;
+    if (L.rounds <= 1) return t('Round 1 played, so every average above is one game.');
+    return t('Through round {r}. Qualifying takes {g} of {r} games at {mpg} minutes a game.', {r: L.rounds, g: L.min_gp, mpg: L.min_mpg});
   }
   function paint(dir){
     const b = BOARDS[at], rows = L[b.k] || [], n = L.n[b.k === 'fg3' ? 'fg3' : 'pg'];
     const lead = rows.length ? valOf(b.k, rows[0]) : 0, mixed = rows.some(r => r[2] >= (b.k === 'fg3' ? MIN_ATT : 3));
-    list.innerHTML = !ROSTER.loaded ? '<li class="lb-none"><b>Loading</b></li>' : rows.length
+    list.innerHTML = !ROSTER.loaded ? `<li class="lb-none"><b>${t('Loading')}</b></li>` : rows.length
       ? rows.map((row, i) => rowHtml(b.k, row, i + 1, i, lead, false, mixed)).join('') + pinHtml(b.k, lead, mixed)
       : `<li class="lb-none">${b.k === 'fg3'
-          ? `<b>No player has ${L.min_3pa} three-point attempts yet</b><span>The league leader has ${L.top_3pa}. This board opens at ${L.min_3pa}, the same number of attempts the rest of the app requires before it prints a 3-point percentage.</span>`
-          : '<b>No games played yet</b>'}</li>`;
-    $('#lb-name').textContent = b.t;
+          ? `<b>${t('No player has {n} three-point attempts yet', {n: L.min_3pa})}</b><span>${t('The league leader has {top}. This board opens at {n}, the same number of attempts the rest of the app requires before it prints a 3-point percentage.', {top: L.top_3pa, n: L.min_3pa})}</span>`
+          : `<b>${t('No games played yet')}</b>`}</li>`;
+    $('#lb-name').textContent = t(b.t);
     $('#lb-sub').textContent = rows.length
-      ? (n > rows.length ? `Top ${rows.length} of ${n} qualified` : `${n} player${n === 1 ? '' : 's'} qualify`) +
-        (b.k === 'fg3' ? ` · ${L.min_3pa}+ three-point attempts${L.provisional ? ', provisional' : ''}` : ` · ${L.min_gp}+ game${L.min_gp === 1 ? '' : 's'}, ${L.min_mpg}+ minutes a game`)
-      : (b.k === 'fg3' ? `Opens at ${L.min_3pa} attempts` : '');
-    $('#lb-foot').textContent = (state.data && player() && !ds().tot.gp ? `${nameOf(player().name).sur} is not on any board yet: no games played. ` : '') + foot(b.k);
+      ? (n > rows.length ? t('Top {k} of {n} qualified', {k: rows.length, n}) : plural(n, '{n} player qualifies', '{n} players qualify')) +
+        (b.k === 'fg3' ? ` · ${t('{n}+ three-point attempts', {n: L.min_3pa})}${L.provisional ? ', ' + t('provisional') : ''}` : ` · ${t('{g}+ games, {mpg}+ minutes a game', {g: L.min_gp, mpg: L.min_mpg})}`)
+      : (b.k === 'fg3' ? t('Opens at {n} attempts', {n: L.min_3pa}) : '');
+    $('#lb-foot').textContent = (state.data && player() && !ds().tot.gp ? t('{name} is not on any board yet: no games played.', {name: nameOf(player().name).sur}) + ' ' : '') + foot(b.k);
     [...dots.children].forEach((d, i) => d.setAttribute('aria-pressed', i === at));
     if (dir && !reduced()) {
       const cls = dir < 0 ? 'go-l' : 'go-r'; list.classList.remove('go-l', 'go-r'); void list.offsetWidth; list.classList.add(cls);
@@ -1445,7 +1489,7 @@ const LB = (() => {
     requestAnimationFrame(() => requestAnimationFrame(() => els.forEach(el => el.style.setProperty('--p', el.dataset.p))));
   }
   const go = d => { at = (at + d + BOARDS.length) % BOARDS.length; paint(d); };
-  dots.innerHTML = BOARDS.map((b, i) => `<button type="button" aria-pressed="${i === 0}" aria-label="${b.t}" title="${b.t}"></button>`).join('');
+  dots.innerHTML = BOARDS.map((b, i) => `<button type="button" aria-pressed="${i === 0}" aria-label="${t(b.t)}" title="${t(b.t)}"></button>`).join('');
   dots.addEventListener('click', e => { const i = [...dots.children].indexOf(e.target.closest('button')); if (i >= 0 && i !== at) { const d = i > at ? 1 : -1; at = i; paint(d); } });
   $('#lb-prev').addEventListener('click', () => go(-1));
   $('#lb-next').addEventListener('click', () => go(1));
@@ -1474,18 +1518,20 @@ const LB = (() => {
 // ---- opening page: rendered once, shown whenever the URL carries no club
 const COVER = (() => {
   const el = $('#cover'), first = META.clubs[0];
-  const n = v => (v || 0).toLocaleString('en-GB');
   $('#cv-season').textContent = META.label;
   const st = META.status || {};
-  $('#cv-nums').innerHTML = [[META.clubs.length, 'Clubs'], [META.n_players, 'Players'], [st.games, 'Games'], [st.shots, 'Shots charted']]
-    .map(([v, k]) => `<li><b>${n(v)}</b><span>${k}</span></li>`).join('');
   $('#cv-clubs').innerHTML = META.clubs.map(c => `<a href="#${c.code}" title="${c.name}"><img src="${c.logo || ''}" alt="" width="34" height="34" loading="lazy" decoding="async"><span>${c.short || c.code}</span></a>`).join('');
-  $('#cv-built').textContent = META.built ? `Built ${fmtBuilt(META.built)}${st.games != null ? ` · ${st.games} game${st.games === 1 ? '' : 's'}` : ''}` : 'Updated after every game';
   const last = (() => { try { return JSON.parse(localStorage.getItem('pl-last')); } catch (e) { return null; } })();
   const go = $('#cv-go');
-  if (last && last.hash && CLUBS[last.hash.split('/')[0]]) go.innerHTML = `Continue<small>${esc(last.name)}</small>`;
+  function render(){
+    const n = v => (v || 0).toLocaleString(LOCALE());
+    $('#cv-nums').innerHTML = [[META.clubs.length, 'Clubs'], [META.n_players, 'Players'], [st.games, 'Games'], [st.shots, 'Shots charted']].map(([v, k]) => `<li><b>${n(v)}</b><span>${t(k)}</span></li>`).join('');
+    if (last && last.hash && CLUBS[last.hash.split('/')[0]]) go.innerHTML = `${t('Continue')}<small>${esc(last.name)}</small>`; else go.textContent = t('Open the app');
+  }
+  render();
   go.addEventListener('click', () => { location.hash = last && last.hash && CLUBS[last.hash.split('/')[0]] ? last.hash : first.code; });
   return {
+    render,
     show(){ applyPalette({base: '#1f2b47', accent: '#f26f21'}); document.body.classList.add('cv-on'); el.hidden = false; document.title = 'Euroleague Player Lab'; scrollTo(0, 0); },
     hide(){ document.body.classList.remove('cv-on'); el.hidden = true; }
   };
@@ -1525,7 +1571,7 @@ async function go(){
   const code = h[0];
   if (state.team !== code) { $('#team').value = code; if (!await loadTeam(code)) return false; }
   let i = h[1] ? team().players.findIndex(p => p.pid === h[1]) : 0;
-  if (h[1] && i < 0) { i = 0; toast('Not on this roster this season'); }   // a stale link (a transfer, a typo) lands on the club's first player
+  if (h[1] && i < 0) { i = 0; toast(t('Not on this roster this season')); }   // a stale link (a transfer, a typo) lands on the club's first player
   if (i !== state.player) { $('#player').value = i; state.player = i; state.game = 'all'; renderGames(); renderPlayer(); }
   if (h[2] === 'zones' || h[2] === '3d') { const b = $(`#f-view button[data-v="${h[2]}"]`); if (b.getAttribute('aria-pressed') !== 'true') b.click(); }
   const want = `#${code}/${player().pid}${h[2] === 'zones' || h[2] === '3d' ? '/' + h[2] : ''}`;
@@ -1551,7 +1597,7 @@ async function route(){
       const newPage = booted && (toCover !== onCover || (!toCover && state.team && state.team !== h[0]));
       if (newPage && !WIPE.up) await WIPE.cover(toCover ? HOUSE : CLUBS[h[0]]);
       try { await go(); }
-      catch (e) { console.error(e); $('#fail').hidden = false; $('#fail-sub').textContent = `This page could not be drawn (${e.message || e}). Try again or pick another club.`; }   // a fault never leaves the screen covered
+      catch (e) { console.error(e); $('#fail').hidden = false; $('#fail-sub').textContent = t('This page could not be drawn ({err}). Try again or pick another club.', {err: e.message || e}); }   // a fault never leaves the screen covered
       if (newPage) { scrollTo(0, 0); await settled(); }
       if (!toCover) { try { sessionStorage.setItem('pl-in', '1'); } catch (e) {} }
       booted = true;
