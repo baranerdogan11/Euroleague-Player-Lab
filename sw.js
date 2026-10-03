@@ -1,7 +1,7 @@
 // Euroleague Player Lab service worker: the page and every JSON go network-first (a rebuild is never masked), the heavy
 // static files (photos, crests, fonts, the 3D library) cache-first for thirty days so a club already opened reads offline.
 <<<<<<< HEAD
-const V = 'pl-2026-10-02_2031_UTC';
+const V = 'pl-2026-10-03_0827_UTC';
 =======
 const V = 'pl-2026-10-02_1430_UTC';
 >>>>>>> Turkish and English, switched with two flags at the top right
