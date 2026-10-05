@@ -2,7 +2,11 @@
 // static files (photos, crests, fonts, the 3D library) cache-first for thirty days so a club already opened reads offline.
 <<<<<<< HEAD
 <<<<<<< HEAD
-const V = 'pl-2026-10-05_0929_UTC';
+<<<<<<< HEAD
+const V = 'pl-2026-10-05_1109_UTC';
+=======
+const V = 'pl-2026-10-05_1108_UTC';
+>>>>>>> Turkish mode keeps Latin capitals
 =======
 const V = 'pl-2026-10-05_0853_UTC';
 >>>>>>> Drop the shots-charted count from the opening page

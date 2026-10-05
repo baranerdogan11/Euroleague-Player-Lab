@@ -713,7 +713,8 @@ function i18nScan(){
   });
 }
 function applyLang(){
-  document.documentElement.lang = LANG;
+  document.documentElement.lang = 'en';   // kept at 'en' on purpose: with lang="tr" the browser uppercases every i as İ (OLYMPİACOS), and the owner wants Latin capitals
+  document.documentElement.dataset.lang = LANG;
   document.querySelectorAll('[data-t]').forEach(el => { el.textContent = t(el.dataset.t); });
   for (const [a, k] of [['title', 'ttitle'], ['aria-label', 'tarialabel'], ['placeholder', 'tplaceholder']]) document.querySelectorAll(`[data-${k}]`).forEach(el => el.setAttribute(a, t(el.dataset[k])));
   document.querySelectorAll('.lang button').forEach(b => b.setAttribute('aria-pressed', b.dataset.lang === LANG));
