@@ -2,7 +2,7 @@
 // static files (photos, crests, fonts, the 3D library) cache-first for thirty days so a club already opened reads offline.
 <<<<<<< HEAD
 <<<<<<< HEAD
-const V = 'pl-2026-10-05_0853_UTC';
+const V = 'pl-2026-10-05_0854_UTC';
 =======
 const V = 'pl-2026-10-05_0853_UTC';
 >>>>>>> Drop the shots-charted count from the opening page
