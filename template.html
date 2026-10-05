@@ -445,7 +445,7 @@ body.cv-on .top,body.cv-on .wrap{display:none}
 .cv-search input{font-size:19px;padding:8px 0 6px}
 .cv-search kbd{right:6px}
 .cv-search .dd-list{left:0;right:0;top:calc(100% + 4px)}
-.cv-nums{list-style:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));margin:44px 0 0;padding:0;border:1px solid var(--line);background:var(--bg2)}
+.cv-nums{list-style:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin:44px 0 0;padding:0;border:1px solid var(--line);background:var(--bg2)}
 .cv-nums li{padding:16px 16px 14px;border-right:1px solid var(--line)}
 .cv-nums li:last-child{border-right:0}
 .cv-nums b{display:block;font-family:var(--cond);font-weight:900;font-style:italic;font-size:40px;line-height:.95;font-variant-numeric:tabular-nums}
@@ -468,7 +468,7 @@ body.cv-on .top,body.cv-on .wrap{display:none}
 .cv .lang{position:absolute;top:24px;right:24px;margin:0;border:1px solid var(--line);background:var(--panel);clip-path:polygon(8px 0,100% 0,100% 100%,0 100%);height:46px;z-index:2}
 .cv .lang button{width:54px;height:44px}
 @media (max-width:1000px){.cv-court{right:-28%;width:760px;opacity:.05}.cv-clubs{grid-template-columns:repeat(5,minmax(0,1fr))}.cv-feats{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media (max-width:760px){.cv{min-height:0}.cv-in{padding:36px 14px 48px}.cv-court{display:none}.cv-lede{font-size:15.5px}.cv-nums{grid-template-columns:repeat(2,minmax(0,1fr))}.cv-nums li:nth-child(2n){border-right:0}.cv-nums li:nth-child(-n+2){border-bottom:1px solid var(--line)}.cv-nums b{font-size:32px}.cv-clubs{grid-template-columns:repeat(4,minmax(0,1fr))}.cv-go{width:100%;text-align:center}}
+@media (max-width:760px){.cv{min-height:0}.cv-in{padding:36px 14px 48px}.cv-court{display:none}.cv-lede{font-size:15.5px}.cv-nums{grid-template-columns:repeat(3,minmax(0,1fr))}.cv-nums b{font-size:32px}.cv-clubs{grid-template-columns:repeat(4,minmax(0,1fr))}.cv-go{width:100%;text-align:center}}
 /* page transition: a broadcast wipe in the destination club's colours covers the swap between the opening page and a club, or between clubs */
 .wipe{position:fixed;inset:0;z-index:100;pointer-events:none;overflow:hidden;display:none}
 .wipe.on{display:block}
@@ -1525,7 +1525,7 @@ const COVER = (() => {
   const go = $('#cv-go');
   function render(){
     const n = v => (v || 0).toLocaleString(LOCALE());
-    $('#cv-nums').innerHTML = [[META.clubs.length, 'Clubs'], [META.n_players, 'Players'], [st.games, 'Games'], [st.shots, 'Shots charted']].map(([v, k]) => `<li><b>${n(v)}</b><span>${t(k)}</span></li>`).join('');
+    $('#cv-nums').innerHTML = [[META.clubs.length, 'Clubs'], [META.n_players, 'Players'], [st.games, 'Games']].map(([v, k]) => `<li><b>${n(v)}</b><span>${t(k)}</span></li>`).join('');
     if (last && last.hash && CLUBS[last.hash.split('/')[0]]) go.innerHTML = `${t('Continue')}<small>${esc(last.name)}</small>`; else go.textContent = t('Open the app');
   }
   render();
