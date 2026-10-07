@@ -2,14 +2,14 @@
  "season": "E2026",
  "tables": {
   "clubs": 20,
-  "players": 324,
-  "careers": 1378,
-  "careers_wiki": 2367,
-  "roster_stints": 326,
+  "players": 325,
+  "careers": 1380,
+  "careers_wiki": 2382,
+  "roster_stints": 327,
   "games": 380,
-  "box": 719,
-  "shots": 3940,
-  "events": 17353,
-  "shot_context": 3940
+  "box": 743,
+  "shots": 4081,
+  "events": 17999,
+  "shot_context": 4081
  }
 }
