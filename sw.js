@@ -4,7 +4,11 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
-const V = 'pl-2026-10-10_0849_UTC';
+<<<<<<< HEAD
+const V = 'pl-2026-10-10_1048_UTC';
+=======
+const V = 'pl-2026-10-10_1048_UTC';
+>>>>>>> Standings in the top menu
 =======
 const V = 'pl-2026-10-08_1536_UTC';
 >>>>>>> Minutes and usage trend as rows that read like the log

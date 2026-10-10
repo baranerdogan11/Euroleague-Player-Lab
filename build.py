@@ -657,6 +657,25 @@ def club_ratings():
     return {c: {"g": r["g"], "pace": round(r["poss"] / r["g"], 1), "ortg": round(100 * r["pf"] / r["poss"], 1), "drtg": round(100 * r["pa"] / r["poss"], 1)} for c, r in out.items() if r["poss"]}
 
 
+def standings():
+    """Record and standings from the played games: wins first, then point difference, then points for; every club listed."""
+    rec = {c["club"]: {"code": c["club"], "gp": 0, "w": 0, "l": 0, "pf": 0, "pa": 0, "hw": 0, "hl": 0, "aw": 0, "al": 0, "form": [], "streak": 0} for c in clubs}
+    for g in rows("select home, away, home_score, away_score, date, game from games where played order by date, game"):
+        for side, own, opp, home in ((g["home"], g["home_score"], g["away_score"], True), (g["away"], g["away_score"], g["home_score"], False)):
+            r = rec.get(side)
+            if not r:
+                continue
+            won = own > opp
+            r["gp"] += 1; r["pf"] += own; r["pa"] += opp; r["w" if won else "l"] += 1
+            r[("h" if home else "a") + ("w" if won else "l")] += 1
+            r["form"].append(1 if won else 0)
+            r["streak"] = (r["streak"] + 1) if (won and r["streak"] >= 0) else (r["streak"] - 1) if (not won and r["streak"] <= 0) else (1 if won else -1)
+    out = sorted(rec.values(), key=lambda r: (-r["w"], r["l"], -(r["pf"] - r["pa"]), -r["pf"]))
+    for i, r in enumerate(out):
+        r["pos"] = i + 1; r["diff"] = r["pf"] - r["pa"]; r["form"] = r["form"][-5:]
+    return out
+
+
 LEADERS, LB_RANK = leaderboards()
 if LEADERS is None:
     LEADERS, LB_RANK = None, {k: {} for k in ("pts", "reb", "ast", "fg3")}
@@ -672,7 +691,7 @@ MIN_SD = round(float(con.execute(f"select median(sd) from (select player, stddev
 meta = {"season": SEASON, "label": label(SEASON), "min_sd": MIN_SD, "model": {"version": card["version"], "trained_on": card["trained_on"], "logloss": card["metrics_test"][card["chosen"]]["logloss"],
                                                            "auc": card["metrics_test"][card["chosen"]]["auc"], "n_shots": card["n_shots"]} if card else None, "clubs": [{"code": c["club"], "name": c["name"], "short": c["short"], "country": c["country"], "city": c["city"], "logo": c["logo"], "base": PALETTES.get(c["club"], DEFAULT_PALETTE)[0], "accent": PALETTES.get(c["club"], DEFAULT_PALETTE)[1]} for c in clubs],
         "league_n": league_n, "pool_rule": "3+ games, 10+ minutes a game", "league": league, "def_adjusted": DEF_ADJ is not None,
-        "ratings": club_ratings(), "medians": medians, "leaders": LEADERS,
+        "ratings": club_ratings(), "standings": standings(), "medians": medians, "leaders": LEADERS,
         "roster": [{"pid": p["pid"], "name": p["name"], "club": code, "dorsal": p["dorsal"], "pos": p["cur"]["pos_group"], "ph": 1 if p["photo"] else 0,
                     "lr": [LB_RANK[k].get(p["pid"], 0) for k in ("pts", "reb", "ast", "fg3")]} for code, ps in collected.items() for p in ps],
         "priors": {"league_quality": PRIORS["league_quality"], "k_skill": PRIORS["k_skill"], "k_quality": PRIORS["k_quality"], "reference_season": PRIORS["reference_season"],

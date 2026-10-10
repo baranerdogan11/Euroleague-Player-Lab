@@ -442,6 +442,37 @@ td .st{display:inline-block;color:var(--club2);font-style:normal;font-family:var
   .lb-ph{width:30px;height:38px;clip-path:polygon(0 0,100% 0,calc(100% - 5px) 100%,0 100%)}.lb-crest{width:20px;height:20px}.lb-name b{font-size:17px}.lb-name b.fn{display:none}.lb-name b.ini{display:inline}.lb-val{font-size:25px}.lb-val u{font-size:10px}}
 /* opening page: shown only when the URL carries no club, so every deep link goes straight to the app */
 body.cv-on .top,body.cv-on .wrap{display:none}
+/* standings page: the header stays, the club content gives way to the table */
+.st-lnk{display:flex;align-items:center;gap:8px;padding:0 18px;border-left:1px solid var(--line);font-family:var(--cond);font-weight:700;font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink2);text-decoration:none;flex:none;position:relative;transition:color .15s}
+.st-lnk:hover{color:var(--ink)}
+.st-lnk svg{display:none}
+body.st-on .st-lnk{color:var(--ink)}
+body.st-on .st-lnk::after{content:"";position:absolute;left:14px;right:14px;bottom:0;height:3px;background:var(--club2);transform:skewX(-14deg)}
+body.st-on .wrap>*{display:none}
+body.st-on.no-team .sel.team,body.st-on.no-team .sel.player{display:none}
+body.st-on .wrap>#standings{display:block}
+#standings{margin-top:22px}
+#standings .in{padding:0 18px 18px}
+#standings .sub{margin:0 0 12px}
+.st-tab td,.st-tab th{padding:9px 8px}
+.st-tab th:first-child,.st-tab td:first-child{text-align:right;width:1%;color:var(--muted);font-family:var(--cond);font-weight:800;font-style:italic;font-size:18px}
+.st-tab th:nth-child(2),.st-tab td:nth-child(2){text-align:left}
+.st-tab td.club{font-family:var(--cond);font-weight:800;font-size:17px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink);padding-left:4px}
+.st-tab td.club a{display:flex;align-items:center;gap:10px;color:inherit;text-decoration:none}
+.st-tab td.club img{width:24px;height:24px;object-fit:contain}
+.st-tab td.club a:hover span{text-decoration:underline}
+.st-tab td.w{color:var(--good)}.st-tab td.l{color:var(--bad)}
+.st-tab td.k{color:#fff;font-weight:800}
+.st-tab td.up{color:var(--good)}.st-tab td.down{color:var(--bad)}
+.st-tab tr.me td{background:rgba(255,255,255,.05)}
+.st-tab tr.me td:first-child{color:var(--club2)}
+.st-tab .form{display:inline-flex;gap:3px;vertical-align:middle;border:0;padding:0;background:none}
+.st-tab .form i{width:12px;height:12px;display:block;transform:skewX(-14deg);background:var(--line2)}
+.st-tab .form i.w{background:var(--good)}.st-tab .form i.l{background:var(--bad)}
+.st-tab tr.cut td{border-bottom:2px solid var(--club2)}
+.st-foot{font-size:12px;color:var(--muted);margin:12px 0 0}
+.st-foot b{color:var(--ink2);font-weight:600}
+.st-tab .short{display:none}
 .cv{position:relative;min-height:calc(100vh - 6px);overflow:hidden;display:flex;flex-direction:column;justify-content:center}
 .cv-court{position:absolute;right:-16%;top:50%;transform:translateY(-50%);width:min(980px,86vw);opacity:.07;pointer-events:none;z-index:0}
 .cv-court svg{width:100%;height:auto;display:block}
@@ -521,7 +552,9 @@ body.cv-on .top,body.cv-on .wrap{display:none}
   .q-btn{display:grid;place-items:center;width:52px;height:52px;flex:none;background:transparent;border:0;border-left:1px solid var(--line);color:var(--ink);cursor:pointer}
   .search{display:none;position:absolute;left:0;right:0;top:0;height:52px;background:var(--bg2);padding:0 12px;flex:none;border-right:0;z-index:2}
   .top.q-on .search{display:flex}
-  .cv-search{order:-1;flex:1 1 100%;max-width:none;display:flex;position:relative;height:48px;background:none;padding:0;left:auto;right:auto;top:auto}.cv-search kbd{display:none}.q-x{display:grid;place-items:center;width:44px;height:44px;flex:none;background:transparent;border:0;color:var(--ink2);font-size:26px;line-height:1;cursor:pointer}
+  .cv-search{order:-1;flex:1 1 100%;max-width:none;display:flex;position:relative;height:48px;background:none;padding:0;left:auto;right:auto;top:auto}.cv-search kbd{display:none}
+  .st-lnk{order:9;width:44px;height:52px;padding:0;justify-content:center}.st-lnk span{display:none}.st-lnk svg{display:block}.top .id{font-size:17px;padding:0 9px}
+  .st-tab th:nth-child(n+7),.st-tab td:nth-child(n+7){display:none}.st-tab td,.st-tab th{padding:8px 5px}.st-tab td.club{font-size:14px;width:auto}.st-tab td.club img{width:20px;height:20px}.st-tab .full{display:none}.st-tab .short{display:inline}.st-tab th:first-child,.st-tab td:first-child{font-size:15px}.st-tab .form i{width:10px;height:10px}.q-x{display:grid;place-items:center;width:44px;height:44px;flex:none;background:transparent;border:0;color:var(--ink2);font-size:26px;line-height:1;cursor:pointer}
   .search input{font-size:17px;padding:10px 0 8px}.search kbd{display:none}.search .dd-list{left:0;right:0;top:100%}
   .facts{font-size:15px;gap:12px}
   .bio{padding:0 16px 14px}
@@ -594,6 +627,7 @@ body.cv-on .top,body.cv-on .wrap{display:none}
   <div class="sel player"><select id="player" aria-label="Player"></select></div>
   <div class="search"><input type="search" id="q" placeholder="Find a player" aria-label="Find a player across all clubs" autocomplete="off" spellcheck="false" role="combobox" aria-expanded="false" aria-controls="q-list" aria-autocomplete="list"><kbd>/</kbd><ul class="dd-list" id="q-list" role="listbox" aria-label="Players" hidden></ul><button type="button" class="q-x" id="q-x" aria-label="Close search" hidden>&times;</button></div>
   <button type="button" class="q-btn" id="q-btn" aria-label="Find a player"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M15.5 15.5L21 21" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button>
+  <a class="st-lnk" id="st-lnk" href="#standings" title="Standings"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><span>Standings</span></a>
   <div class="lang" role="group" aria-label="Language">
     <button type="button" data-lang="tr" aria-pressed="false" aria-label="Türkçe" title="Türkçe"><svg viewBox="0 0 22 15" aria-hidden="true"><rect width="22" height="15" fill="#e30a17"/><circle cx="8" cy="7.5" r="4" fill="#fff"/><circle cx="9.1" cy="7.5" r="3.25" fill="#e30a17"/><polygon fill="#fff" points="11.5,7.5 12.7,7.1 12.7,5.8 13.5,6.8 14.8,6.4 14,7.5 14.8,8.6 13.5,8.2 12.7,9.2 12.7,7.9"/></svg><span aria-hidden="true">TR</span></button>
     <button type="button" data-lang="en" aria-pressed="false" aria-label="English" title="English"><svg viewBox="0 0 22 15" aria-hidden="true"><rect width="22" height="15" fill="#b22234"/><path stroke="#fff" stroke-width="1.154" d="M0 1.73H22M0 4.04H22M0 6.35H22M0 8.65H22M0 10.96H22M0 13.27H22"/><rect width="8.8" height="8.08" fill="#3c3b6e"/><path stroke="#fff" stroke-width=".75" stroke-linecap="round" stroke-dasharray=".1 1.6" d="M1 1.2H8.3M1.8 2.6H8.3M1 4H8.3M1.8 5.4H8.3M1 6.8H8.3"/></svg><span aria-hidden="true">EN</span></button>
@@ -706,6 +740,14 @@ body.cv-on .top,body.cv-on .wrap{display:none}
   </details>
 
 
+  <section class="panel" id="standings" hidden>
+    <h2>Standings</h2>
+    <div class="in">
+      <p class="sub" id="st-sub"></p>
+      <div class="scroll"><table class="st-tab"><thead><tr><th>#</th><th>Club</th><th>W</th><th>L</th><th>+/-</th><th>Last 5</th><th>PF</th><th>PA</th><th>Home</th><th>Away</th><th>Streak</th></tr></thead><tbody id="st-body"></tbody></table></div>
+      <p class="st-foot" id="st-foot"></p>
+    </div>
+  </section>
   <div class="foot"><span><a href="monitor.html">System status</a> · <a href="feed.xml">Updates feed</a> · Data: Euroleague official feeds · Photos: Euroleague media days</span><span id="foot-status">Euroleague Player Lab</span></div>
 </div>
 <div class="tip" id="tip"></div>
@@ -741,6 +783,7 @@ function setLang(l){
   LANG = l; try { localStorage.setItem('pl-lang', l); } catch (e) {}
   applyLang();
   if (typeof COVER !== 'undefined') COVER.render();
+  if (typeof STAND !== 'undefined' && document.body.classList.contains('st-on')) STAND.render();
   if (state.data) { renderOpener(); renderGames(); renderPlayer(); DD.team.refresh(); DD.player.refresh(); DD.statGame.refresh(); DD.cmp.refresh(); const n = nameOf(player().name); document.title = `${n.first} ${n.sur} · ${shortName(state.team)} · Player Lab`; }
 }
 const CLUBS = Object.fromEntries(META.clubs.map(c => [c.code, c]));
@@ -1554,6 +1597,24 @@ const COVER = (() => {
   };
 })();
 
+// ---- standings: record and table from META.standings, the viewed club highlighted, a club row opens its page
+const STAND = (() => {
+  const el = $('#standings');
+  function render(){
+    const S = META.standings || [], played = S.reduce((a, r) => a + r.gp, 0) / 2, rounds = META.leaders && META.leaders.rounds;
+    $('#st-sub').textContent = `${t('Euroleague {label} regular season', {label: META.label})} · ${plural(played, '{n} game played', '{n} games played')}${rounds ? ` · ${t('through R{n}', {n: rounds})}` : ''}`;
+    $('#st-body').innerHTML = S.map(r => { const c = CLUBS[r.code] || {}, me = state.team === r.code;
+      const form = r.form.map(w => `<i class="${w ? 'w' : 'l'}" title="${w ? t('W') : t('L')}"></i>`).join('');
+      const streak = r.streak ? `${r.streak > 0 ? t('W') : t('L')}${Math.abs(r.streak)}` : '–';
+      return `<tr class="${me ? 'me' : ''}${r.pos === 6 || r.pos === 10 ? ' cut' : ''}"><td>${r.pos}</td><td class="club"><a href="#${r.code}"><img src="${c.logo || ''}" alt="" width="24" height="24" loading="lazy"><span class="full">${c.name || r.code}</span><span class="short">${c.short || r.code}</span></a></td><td class="k w">${r.w}</td><td class="l">${r.l}</td><td class="${r.diff > 0 ? 'up' : r.diff < 0 ? 'down' : ''}">${r.diff > 0 ? '+' : ''}${r.diff}</td><td><span class="form">${form || '–'}</span></td><td>${r.pf}</td><td>${r.pa}</td><td>${r.hw}-${r.hl}</td><td>${r.aw}-${r.al}</td><td class="${r.streak > 0 ? 'up' : r.streak < 0 ? 'down' : ''}">${streak}</td></tr>`; }).join('');
+    $('#st-foot').innerHTML = `${t('Ordered by wins, then point difference, then points scored; the official table applies head-to-head records when clubs are level.')} <b>${t('Lines mark the top six (straight to the playoffs) and places seven to ten (play-in).')}</b>`;
+  }
+  return {
+    render,
+    show(){ applyPalette(HOUSE); document.body.classList.add('st-on'); document.body.classList.toggle('no-team', !state.team); el.hidden = false; render(); document.title = `${t('Standings')} · Player Lab`; },   // straight from the cover there is no club yet, so the two empty pickers stay out of the bar
+    hide(){ document.body.classList.remove('st-on'); el.hidden = true; }
+  };
+})();
 // ---- page transition: the opening page and every club are separate pages to the reader, so moving between them
 // runs through a wipe in the destination's colours; the new page is swapped in and scrolled to the top while it is
 // covered, so no scroll position ever carries over. Player changes inside a club stay instant.
@@ -1583,6 +1644,8 @@ const WIPE = (() => {
 const settled = () => Promise.race([pause(1500), Promise.all([...document.querySelectorAll('#photo, #crest-img, #club-logo')].map(img => (img.complete || !img.getAttribute('src')) ? null : new Promise(r => { img.addEventListener('load', r, {once: true}); img.addEventListener('error', r, {once: true}); })))]);
 async function go(){
   const h = location.hash.replace('#', '').split('/');
+  if (h[0] === 'standings') { COVER.hide(); STAND.show(); return true; }
+  STAND.hide();
   if (!CLUBS[h[0]]) { COVER.show(); return true; }    // no club in the URL: the opening page, not a silent fallback
   COVER.hide();
   const code = h[0];
@@ -1610,13 +1673,14 @@ async function route(){
       // showed); once the reader has entered the app in this tab, reloads and back/forward keep their place
       let entered = false; try { entered = !!sessionStorage.getItem('pl-in'); } catch (e) {}
       if (!booted && CLUBS[h[0]] && !entered) { history.replaceState(null, '', location.pathname + location.search); h = ['']; }
-      const toCover = !CLUBS[h[0]], onCover = document.body.classList.contains('cv-on');
-      const newPage = booted && (toCover !== onCover || (!toCover && state.team && state.team !== h[0]));
-      if (newPage && !WIPE.up) await WIPE.cover(toCover ? HOUSE : CLUBS[h[0]]);
+      const toStand = h[0] === 'standings', onStand = document.body.classList.contains('st-on');
+      const toCover = !toStand && !CLUBS[h[0]], onCover = document.body.classList.contains('cv-on');
+      const newPage = booted && (toStand !== onStand || toCover !== onCover || (!toCover && !toStand && state.team && state.team !== h[0]));
+      if (newPage && !WIPE.up) await WIPE.cover(toCover || toStand ? HOUSE : CLUBS[h[0]]);
       try { await go(); }
       catch (e) { console.error(e); $('#fail').hidden = false; $('#fail-sub').textContent = t('This page could not be drawn ({err}). Try again or pick another club.', {err: e.message || e}); }   // a fault never leaves the screen covered
       if (newPage) { scrollTo(0, 0); await settled(); }
-      if (!toCover) { try { sessionStorage.setItem('pl-in', '1'); } catch (e) {} }
+      if (!toCover && !toStand) { try { sessionStorage.setItem('pl-in', '1'); } catch (e) {} }
       booted = true;
     } while (queued);
     await WIPE.reveal();

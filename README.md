@@ -21,6 +21,7 @@ in order.
 - Play-by-play context on every shot: assisted or unassisted, and-ones, blocks, seconds into the possession; an assisted/unassisted filter on the chart, an assisted share per zone and a shot-timing table
 - Shot diet against the position average, form over the last five games, home and away split, rest days, game pace and opponent defensive rating in the log
 - Compare with any player of the same position, next to the position median
+- Standings: record and table for all twenty clubs from the played games (wins, then point difference, then points scored; the official table settles ties on head-to-head), with last five, home and away records and streak; `#standings` in the top menu
 - Game log, with the club games he missed (did not play, or not in the squad), a start mark, and a minutes and usage trend: bars per game, starts filled, the last five against the season, flagged only when the change beats his own game-to-game spread
 - 2D and 3D shot charts: the 3D view (Three.js, loaded on demand) replays every attempt as a ball in flight with camera presets and orbit
 - Before a club's first game the page shows the roster and the date of the opener; stats and charts fill in as games are played

@@ -323,5 +323,19 @@
  "{n} start": "{n} ilk beş",
  "{n} starts": "{n} ilk beş",
  "last {n}": "son {n}",
- "a full bar is 40": "tam çubuk 40"
+ "a full bar is 40": "tam çubuk 40",
+ "Standings": "Puan durumu",
+ "Club": "Kulüp",
+ "+/-": "+/-",
+ "Last 5": "Son 5",
+ "PF": "A",
+ "PA": "Y",
+ "Streak": "Seri",
+ "#": "#",
+ "Euroleague {label} regular season": "Euroleague {label} normal sezon",
+ "{n} game played": "{n} maç oynandı",
+ "{n} games played": "{n} maç oynandı",
+ "Ordered by wins, then point difference, then points scored; the official table applies head-to-head records when clubs are level.": "Sıralama galibiyet, sonra averaj, sonra atılan sayıya göredir; resmi tabloda eşitlik halinde ikili maçlar esas alınır.",
+ "Lines mark the top six (straight to the playoffs) and places seven to ten (play-in).": "Çizgiler ilk altıyı (doğrudan play-off) ve yedi ile on arasını (play-in) işaretler.",
+ "through R{n}": "{n}. haftaya kadar"
 }
