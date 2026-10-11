@@ -104,3 +104,6 @@ manifest = json.load(open(manifest_path)) if os.path.exists(manifest_path) else 
 manifest["tables"].update({"events": n_ev, "shot_context": n_ctx})
 json.dump(manifest, open(manifest_path, "w"), indent=1)
 print(f"{SEASON}: {len(by_game)} games with play-by-play, {n_ev} events, {n_ctx} shots with context")
+# the lineup layer (who was on the floor, from these events) follows directly, so the pipeline needs no extra step
+import subprocess
+subprocess.run([sys.executable, os.path.join(ROOT, "lineups.py"), SEASON], check=True)

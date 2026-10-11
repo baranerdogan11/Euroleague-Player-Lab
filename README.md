@@ -21,6 +21,7 @@ in order.
 - Play-by-play context on every shot: assisted or unassisted, and-ones, blocks, seconds into the possession; an assisted/unassisted filter on the chart, an assisted share per zone and a shot-timing table
 - Shot diet against the position average, form over the last five games, home and away split, rest days, game pace and opponent defensive rating in the log
 - Compare with any player of the same position, next to the position median
+- Lineups: every five-man unit's minutes, possessions, offensive and defensive rating and net rating, and every player's on/off (the club's net rating with him on the floor against on the bench), filtered by club and a minutes floor; who was on the floor is reconstructed from the substitution log (`lineups.py`) and checked against every box-score minute count; `#lineups` in the top menu
 - Standings: record and table for all twenty clubs from the played games (wins, then point difference, then points scored; the official table settles ties on head-to-head), with last five, home and away records and streak; `#standings` in the top menu
 - Game log, with the club games he missed (did not play, or not in the squad), a start mark, and a minutes and usage trend: bars per game, starts filled, the last five against the season, flagged only when the change beats his own game-to-game spread
 - 2D and 3D shot charts: the 3D view (Three.js, loaded on demand) replays every attempt as a ball in flight with camera presets and orbit
@@ -41,8 +42,9 @@ of the day, and can be started by hand from the Actions tab. Each run:
 4. runs the raw-feed gate (`checks.py`)
 5. builds the warehouse (`warehouse.py`): six Parquet tables under `warehouse/E2026/`, the silver layer, then the
    play-by-play layer (`events.py`): every event of every game and, per shot, whether it was assisted, an and-one,
-   blocked, and how many seconds into the possession it came; see [`warehouse/SCHEMA.md`](warehouse/SCHEMA.md)
-6. runs 26 SQL assertions over the warehouse (`warehouse_tests.py`): key uniqueness, referential integrity,
+   blocked, and how many seconds into the possession it came; then the lineup layer (`lineups.py`, launched by `events.py`): who was on the
+   floor for every second of every game, from the starters and the substitution events; see [`warehouse/SCHEMA.md`](warehouse/SCHEMA.md)
+6. runs 30 SQL assertions over the warehouse (`warehouse_tests.py`): key uniqueness, referential integrity,
    schedule completeness, per player per game reconciliation of plotted attempts and makes with the box score, and
    play-by-play assists reconciled with the box score per club per game; any failure stops the run before anything
    is published (one distance check is a warning only)
@@ -173,7 +175,7 @@ curl -X POST localhost:8000/predict -H 'content-type: application/json' \
 | Layer | Where | Produced by | Tests |
 |---|---|---|---|
 | Bronze | `cache/E2026/` (raw feed JSON, not committed) | `fetch_season.py` | `checks.py` |
-| Silver | `warehouse/E2026/*.parquet` | `warehouse.py` | `warehouse_tests.py` (23 assertions), `tests/test_warehouse.py` (real-game fixture) |
+| Silver | `warehouse/E2026/*.parquet` | `warehouse.py` | `warehouse_tests.py` (30 assertions), `tests/test_warehouse.py` (real-game fixture) |
 | Gold | `teams/E2026/*.json`, `index.html` | `build.py` | rendered site |
 
 ## Update by hand

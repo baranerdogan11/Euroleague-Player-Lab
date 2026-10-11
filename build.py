@@ -657,6 +657,47 @@ def club_ratings():
     return {c: {"g": r["g"], "pace": round(r["poss"] / r["g"], 1), "ortg": round(100 * r["pf"] / r["poss"], 1), "drtg": round(100 * r["pa"] / r["poss"], 1)} for c, r in out.items() if r["poss"]}
 
 
+def lineups_json():
+    """Five-man lineups and per-player on/off from the reconstructed stints (lineups.py), written to teams/<season>/lineups.json
+    for the Lineups page, which fetches it on demand. Possessions follow the site's estimate (FGA - OREB + TOV + 0.44 FTA), one
+    count per side, so offensive rating divides by the lineup's own possessions and defensive rating by the opponent's."""
+    st_path = os.path.join(W, "stints.parquet")
+    if not os.path.exists(st_path):
+        return None
+    con.execute(f"create or replace view stints as select * from read_parquet('{st_path}')")
+    poss = lambda r, k="": round(r[k + "fga"] - r[k + "oreb"] + r[k + "tov"] + 0.44 * r[k + "fta"], 1)
+    def rate(pts, opp, po, pd):
+        o = round(100 * pts / po, 1) if po >= 1 else None; d = round(100 * opp / pd, 1) if pd >= 1 else None
+        return {"o": o, "d": d, "n": round(o - d, 1) if o is not None and d is not None else None}
+    names = {}                                  # raw "SURNAME, FIRST" as the feed gives it; the page splits and cases it like every other name
+    def name_of(pid):
+        if pid not in names:
+            r = rows("select name from players where player = ?", pid)
+            names[pid] = r[0]["name"] if r else pid
+        return names[pid]
+    sums = "count(distinct game) g, sum(sec) sec, sum(pts) pts, sum(opp_pts) opp, sum(fga) fga, sum(oreb) oreb, sum(tov) tov, sum(fta) fta, sum(opp_fga) opp_fga, sum(opp_oreb) opp_oreb, sum(opp_tov) opp_tov, sum(opp_fta) opp_fta"
+    lineups = []
+    for r in rows(f"select club, players, {sums} from stints group by club, players having sum(sec) >= 120"):
+        po, pd = poss(r), poss(r, "opp_")
+        lineups.append({"c": r["club"], "p": sorted(r["players"], key=lambda pid: name_of(pid).partition(",")[0].strip()), "g": r["g"], "s": r["sec"], "pts": r["pts"], "opp": r["opp"], "poss": round((po + pd) / 2), **rate(r["pts"], r["opp"], po, pd)})
+    lineups.sort(key=lambda l: (-(l["n"] if l["n"] is not None else -999), -l["s"]))
+    team = {r["club"]: r for r in rows(f"select club, {sums} from stints group by club")}
+    onoff = {}
+    for r in rows(f"select club, player, {sums} from (select club, unnest(players) player, * exclude (club, players) from stints) group by club, player having sum(sec) >= 60"):
+        tm = team[r["club"]]
+        off = {k: tm[k] - r[k] for k in ("sec", "pts", "opp", "fga", "oreb", "tov", "fta", "opp_fga", "opp_oreb", "opp_tov", "opp_fta")}
+        on_r, off_r = rate(r["pts"], r["opp"], poss(r), poss(r, "opp_")), rate(off["pts"], off["opp"], poss(off), poss(off, "opp_"))
+        onoff.setdefault(r["club"], []).append({"pid": r["player"], "g": r["g"], "s": r["sec"], "off_s": off["sec"], "pm": r["pts"] - r["opp"], "off_pm": off["pts"] - off["opp"], "on": on_r, "off": off_r,
+                                                "diff": round(on_r["n"] - off_r["n"], 1) if on_r["n"] is not None and off_r["n"] is not None else None, "tg": tm["g"]})
+        name_of(r["player"])
+    for ps in onoff.values():
+        ps.sort(key=lambda p: -p["s"])
+    out = {"season": SEASON, "built": datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC"), "games": {c: t["g"] for c, t in team.items()}, "names": names, "lineups": lineups, "onoff": onoff,
+           "n_all": con.execute("select count(*) from (select club, players from stints group by 1, 2)").fetchone()[0]}
+    json.dump(out, open(os.path.join(OUT, "lineups.json"), "w"), separators=(",", ":"), ensure_ascii=False)
+    return {"n": len(lineups), "n_all": out["n_all"], "players": sum(len(v) for v in onoff.values())}
+
+
 def standings():
     """Record and standings from the played games: wins first, then point difference, then points for; every club listed."""
     rec = {c["club"]: {"code": c["club"], "gp": 0, "w": 0, "l": 0, "pf": 0, "pa": 0, "hw": 0, "hl": 0, "aw": 0, "al": 0, "form": [], "streak": 0} for c in clubs}
@@ -691,7 +732,7 @@ MIN_SD = round(float(con.execute(f"select median(sd) from (select player, stddev
 meta = {"season": SEASON, "label": label(SEASON), "min_sd": MIN_SD, "model": {"version": card["version"], "trained_on": card["trained_on"], "logloss": card["metrics_test"][card["chosen"]]["logloss"],
                                                            "auc": card["metrics_test"][card["chosen"]]["auc"], "n_shots": card["n_shots"]} if card else None, "clubs": [{"code": c["club"], "name": c["name"], "short": c["short"], "country": c["country"], "city": c["city"], "logo": c["logo"], "base": PALETTES.get(c["club"], DEFAULT_PALETTE)[0], "accent": PALETTES.get(c["club"], DEFAULT_PALETTE)[1]} for c in clubs],
         "league_n": league_n, "pool_rule": "3+ games, 10+ minutes a game", "league": league, "def_adjusted": DEF_ADJ is not None,
-        "ratings": club_ratings(), "standings": standings(), "medians": medians, "leaders": LEADERS,
+        "ratings": club_ratings(), "standings": standings(), "lineups": lineups_json(), "medians": medians, "leaders": LEADERS,
         "roster": [{"pid": p["pid"], "name": p["name"], "club": code, "dorsal": p["dorsal"], "pos": p["cur"]["pos_group"], "ph": 1 if p["photo"] else 0,
                     "lr": [LB_RANK[k].get(p["pid"], 0) for k in ("pts", "reb", "ast", "fg3")]} for code, ps in collected.items() for p in ps],
         "priors": {"league_quality": PRIORS["league_quality"], "k_skill": PRIORS["k_skill"], "k_quality": PRIORS["k_quality"], "reference_season": PRIORS["reference_season"],

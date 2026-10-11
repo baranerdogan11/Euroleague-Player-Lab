@@ -15,6 +15,10 @@ for t in ["clubs", "players", "roster_stints", "games", "box", "shots"]:
 for t in ["events", "shot_context"]:      # play-by-play layer, present once events.py has run
     p = os.path.join(W, t + ".parquet")
     con.execute(f"create view {t} as select * from read_parquet('{p}')" if os.path.exists(p) else f"create view {t} as select null::int game, null::int seq, null::varchar club, null::varchar playtype where false")
+p = os.path.join(W, "stints.parquet")      # lineup layer (lineups.py)
+con.execute(f"create view stints as select * from read_parquet('{p}')" if os.path.exists(p) else "create view stints as select null::int game, null::varchar club, null::int stint, null::varchar[] players, null::int sec, null::int pts, null::int opp_pts where false")
+p = os.path.join(W, "oncourt.parquet")
+con.execute(f"create view oncourt as select * from read_parquet('{p}')" if os.path.exists(p) else "create view oncourt as select null::int game, null::varchar player, null::varchar club, null::int sec, null::double box_min where false")
 
 # (name, query returning the number of offending rows)
 TESTS = [
@@ -55,6 +59,12 @@ TESTS = [
           select e.game, e.club, count(*) filter (where e.playtype = 'AS') as a, (select sum(ast) from box b where b.game = e.game and b.club = e.club) as b
           from events e where e.club is not null group by e.game, e.club having a != b)"""),
     ("events: every shot in a game with play-by-play has a context row", "select count(*) from shots s left join shot_context c using (game, seq) where s.game in (select distinct game from events) and c.game is null"),
+    ("stints: five players on the floor in every stint", "select count(*) from stints where len(players) != 5"),
+    ("stints: points per club per game reconcile with the final score", """
+        select count(*) from (select s.game, s.club, sum(s.pts) p from stints s group by 1, 2) x join games g using (game)
+        where x.p != case when x.club = g.home then g.home_score else g.away_score end"""),
+    ("stints: both clubs cover the whole game (40 minutes plus overtimes, within 5 seconds)", "select count(*) from (select game, club, sum(sec) s from stints group by 1, 2) x where s < 2395 or least((s - 2400) % 300, 300 - (s - 2400) % 300) > 5"),
+    ("oncourt: reconstructed minutes agree with the box score within a minute", "select count(*) from oncourt where abs(sec / 60.0 - box_min) > 1.0"),
 ]
 # warnings: reported and counted, never fail the run
 WARNINGS = [
