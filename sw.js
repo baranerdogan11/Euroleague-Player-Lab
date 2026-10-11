@@ -5,7 +5,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
-const V = 'pl-2026-10-10_1048_UTC';
+const V = 'pl-2026-10-11_0910_UTC';
 =======
 const V = 'pl-2026-10-10_1048_UTC';
 >>>>>>> Standings in the top menu
