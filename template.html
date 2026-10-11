@@ -1715,7 +1715,10 @@ const LINE = (() => {
     controls();
     const games = D ? Object.values(D.games).reduce((a, b) => a + b, 0) / 2 : 0, rounds = META.leaders && META.leaders.rounds;
     if (document.body.classList.contains('ln-on')) document.title = `${t('Lineups')} · Player Lab`;
-    $('#ln-sub').textContent = `${t('Euroleague {label} regular season', {label: META.label})} · ${plural(games, '{n} game played', '{n} games played')}${rounds ? ` · ${t('through R{n}', {n: rounds})}` : ''}`;
+    const span = rounds ? t('{g} games through R{r}', {g: games, r: rounds}) : t('{g} games', {g: games});
+    $('#ln-sub').textContent = st.tab === 'five'
+      ? t('Every five that has shared the floor this season ({n} different units across {span}) and how the score moved per 100 possessions while it was out there.', {n: D ? D.n_all.toLocaleString(LOCALE()) : '…', span})
+      : t('Each club\'s rating per 100 possessions with a player on the floor against with him on the bench, across {span}.', {span});
     if (!D) { wrap.innerHTML = `<p class="ln-empty">${t('Loading…')}</p>`; return; }
     wrap.innerHTML = st.tab === 'five' ? five() : onoff();
     if (typeof scrollEnds === 'function') scrollEnds();   // the scroll-hint fade only while the table really overflows
