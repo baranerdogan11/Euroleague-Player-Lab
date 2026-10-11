@@ -1717,7 +1717,7 @@ const LINE = (() => {
     if (document.body.classList.contains('ln-on')) document.title = `${t('Lineups')} · Player Lab`;
     const span = rounds ? t('{g} games through R{r}', {g: games, r: rounds}) : t('{g} games', {g: games});
     $('#ln-sub').textContent = st.tab === 'five'
-      ? t('Every five that has shared the floor this season ({n} different units across {span}) and how the score moved per 100 possessions while it was out there.', {n: D ? D.n_all.toLocaleString(LOCALE()) : '…', span})
+      ? t('Every five that has shared the floor this season and how the score moved per 100 possessions while it was out there.')
       : t('Each club\'s rating per 100 possessions with a player on the floor against with him on the bench, across {span}.', {span});
     if (!D) { wrap.innerHTML = `<p class="ln-empty">${t('Loading…')}</p>`; return; }
     wrap.innerHTML = st.tab === 'five' ? five() : onoff();
