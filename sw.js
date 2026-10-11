@@ -6,7 +6,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
-const V = 'pl-2026-10-11_1751_UTC';
+const V = 'pl-2026-10-11_1752_UTC';
 =======
 const V = 'pl-2026-10-11_1740_UTC';
 >>>>>>> 02ac42f (Lineups page: five-man units and on/off ratings)
