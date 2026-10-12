@@ -88,9 +88,9 @@ html[data-look="club"] .search{padding:8px 12px;border-right:1px solid color-mix
 html[data-look="club"] .q-btn{color:var(--club-ink);border-left:1px solid color-mix(in srgb,var(--club-ink) 18%,transparent)}
 html[data-look="club"] .st-lnk{border-left:1px solid color-mix(in srgb,var(--club-ink) 18%,transparent);font-family:var(--sans);font-weight:600;font-size:15px;letter-spacing:.02em;text-transform:none;color:var(--club-ink);opacity:.86}
 html[data-look="club"] .st-lnk:hover{color:var(--club-ink);opacity:1}
-html[data-look="club"] body.st-on #st-lnk,html[data-look="club"] body.ln-on #ln-lnk,html[data-look="club"] body.cmp-on #cmp-lnk{color:var(--club-ink);opacity:1}
+html[data-look="club"] body.st-on #st-lnk,html[data-look="club"] body.ln-on #ln-lnk,html[data-look="club"] body.cmp-on #cmp-lnk,html[data-look="club"] body.ld-on #ld-lnk{color:var(--club-ink);opacity:1}
 html[data-look="club"] body.st-on .st-lnk::after{content:none}
-html[data-look="club"] body.st-on #st-lnk::after,html[data-look="club"] body.ln-on #ln-lnk::after,html[data-look="club"] body.cmp-on #cmp-lnk::after{content:"";position:absolute;left:14px;right:14px;bottom:0;height:3px;background:var(--club2);transform:none}
+html[data-look="club"] body.st-on #st-lnk::after,html[data-look="club"] body.ln-on #ln-lnk::after,html[data-look="club"] body.cmp-on #cmp-lnk::after,html[data-look="club"] body.ld-on #ld-lnk::after{content:"";position:absolute;left:14px;right:14px;bottom:0;height:3px;background:var(--club2);transform:none}
 html[data-look="club"] .lang{border-left:1px solid color-mix(in srgb,var(--club-ink) 18%,transparent)}
 html[data-look="club"] .lang button{color:var(--club-ink);opacity:.7;font-family:var(--sans);font-weight:700;font-size:11px}
 html[data-look="club"] .lang button:hover{color:var(--club-ink);opacity:1}
@@ -781,6 +781,8 @@ body.st-on.no-team .sel.team,body.st-on.no-team .sel.player,body.ln-on.no-team .
 body.st-on .wrap>#standings,body.ln-on .wrap>#lineups{display:block}
 body.cmp-on .wrap>*{display:none}
 body.cmp-on .wrap>#cmp-panel{display:block}
+body.ld-on .wrap>*,body.cb-on .wrap>*{display:none}
+body.ld-on .wrap>#leaders,body.cb-on .wrap>#club{display:block}
 body:not(.cmp-on) .cmp-who,body:not(.cmp-on) .cmp-pick,body:not(.cmp-on) .cmp-vs,body:not(.cmp-on) #cmp-page,body:not(.cmp-on) #cmp-empty{display:none!important}
 body:not(.cmp-on) .cmp-hero,body:not(.cmp-on) .cmp-side{display:contents}
 body.cmp-on #cmp-open,body.cmp-on .cmp-row .cmp-lab{display:none}
@@ -1151,7 +1153,7 @@ html[data-look="club"] .cv-foot a{color:var(--cold)}
   html[data-look="club"] body.menu-on .st-lnk span{display:inline}
   html[data-look="club"] body.menu-on .st-lnk svg{display:block;color:var(--club)}
   html[data-look="club"] body.menu-on .st-lnk::after{content:none!important}
-  html[data-look="club"] body.menu-on.st-on #st-lnk,html[data-look="club"] body.menu-on.ln-on #ln-lnk,html[data-look="club"] body.menu-on.cmp-on #cmp-lnk{box-shadow:inset 4px 0 var(--club2);color:var(--club)}
+  html[data-look="club"] body.menu-on.st-on #st-lnk,html[data-look="club"] body.menu-on.ln-on #ln-lnk,html[data-look="club"] body.menu-on.cmp-on #cmp-lnk,html[data-look="club"] body.menu-on.ld-on #ld-lnk{box-shadow:inset 4px 0 var(--club2);color:var(--club)}
   html[data-look="club"] body.menu-on .lang{display:flex;order:12;flex:1 1 100%;height:52px;justify-content:flex-start;gap:4px;padding:0 10px;border:0;border-top:1px solid var(--line);background:var(--panel)}
   html[data-look="club"] body.menu-on .lang button{display:flex;width:60px;height:52px;color:var(--ink2);opacity:.8}
   html[data-look="club"] body.menu-on .lang button[aria-pressed="true"]{display:flex;color:var(--ink);opacity:1}
@@ -1225,6 +1227,7 @@ html[data-look="club"] .cv-foot a{color:var(--cold)}
   <a class="st-lnk" id="cmp-lnk" href="#compare" title="Compare"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M4 8h13M14 4l4 4-4 4M20 16H7M10 12l-4 4 4 4" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Compare</span></a>
   <a class="st-lnk" id="ln-lnk" href="#lineups" title="Lineups"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="12" cy="6" r="2.4" fill="currentColor"/><circle cx="5" cy="11" r="2.4" fill="currentColor"/><circle cx="19" cy="11" r="2.4" fill="currentColor"/><circle cx="8" cy="18" r="2.4" fill="currentColor"/><circle cx="16" cy="18" r="2.4" fill="currentColor"/></svg><span>Lineups</span></a>
   <a class="st-lnk" id="st-lnk" href="#standings" title="Standings"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><span>Standings</span></a>
+  <a class="st-lnk" id="ld-lnk" href="#leaders" title="Leaders"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M5 20V10M12 20V4M19 20v-7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><span>Leaders</span></a>
   <div class="lang" role="group" aria-label="Language">
     <button type="button" data-lang="tr" aria-pressed="false" aria-label="Türkçe" title="Türkçe"><svg viewBox="0 0 22 15" aria-hidden="true"><rect width="22" height="15" fill="#e30a17"/><circle cx="8" cy="7.5" r="4" fill="#fff"/><circle cx="9.1" cy="7.5" r="3.25" fill="#e30a17"/><polygon fill="#fff" points="11.5,7.5 12.7,7.1 12.7,5.8 13.5,6.8 14.8,6.4 14,7.5 14.8,8.6 13.5,8.2 12.7,9.2 12.7,7.9"/></svg><span aria-hidden="true">TR</span></button>
     <button type="button" data-lang="en" aria-pressed="false" aria-label="English" title="English"><svg viewBox="0 0 22 15" aria-hidden="true"><rect width="22" height="15" fill="#b22234"/><path stroke="#fff" stroke-width="1.154" d="M0 1.73H22M0 4.04H22M0 6.35H22M0 8.65H22M0 10.96H22M0 13.27H22"/><rect width="8.8" height="8.08" fill="#3c3b6e"/><path stroke="#fff" stroke-width=".75" stroke-linecap="round" stroke-dasharray=".1 1.6" d="M1 1.2H8.3M1.8 2.6H8.3M1 4H8.3M1.8 5.4H8.3M1 6.8H8.3"/></svg><span aria-hidden="true">EN</span></button>
@@ -1371,6 +1374,8 @@ html[data-look="club"] .cv-foot a{color:var(--cold)}
       <p class="st-foot" id="st-foot"></p>
     </div>
   </section>
+  <section class="panel" id="leaders" hidden></section>
+  <section class="panel" id="club" hidden></section>
   <section class="panel" id="lineups" hidden>
     <h2>Lineups</h2>
     <div class="in">
@@ -2448,6 +2453,9 @@ const CMP = (() => {
     render(){ if (state.data) renderCompareOptions(); }
   };
 })();
+// ---- Leaders page (#leaders) and club page (#CODE): skeleton, filled by the page modules below
+const LEAD = {async show(){ document.body.classList.add('ld-on'); $('#leaders').hidden = false; }, hide(){ document.body.classList.remove('ld-on'); $('#leaders').hidden = true; }};
+const CLUB = {async show(code){ document.body.classList.add('cb-on'); $('#club').hidden = false; }, hide(){ document.body.classList.remove('cb-on'); $('#club').hidden = true; }};
 const HOUSE = {base: '#1f2b47', accent: '#f26f21'};
 const pause = ms => new Promise(r => setTimeout(r, ms));
 const WIPE = (() => {
@@ -2473,14 +2481,17 @@ const WIPE = (() => {
 const settled = () => Promise.race([pause(1500), Promise.all([...document.querySelectorAll('#photo, #crest-img, #club-logo')].map(img => (img.complete || !img.getAttribute('src')) ? null : new Promise(r => { img.addEventListener('load', r, {once: true}); img.addEventListener('error', r, {once: true}); })))]);
 async function go(){
   const h = location.hash.replace('#', '').split('/');
-  if (h[0] === 'standings') { COVER.hide(); LINE.hide(); CMP.hide(); STAND.show(); return true; }
-  if (h[0] === 'lineups') { COVER.hide(); STAND.hide(); CMP.hide(); await LINE.show(); return true; }
-  if (h[0] === 'compare') { COVER.hide(); STAND.hide(); LINE.hide(); await CMP.show(); return true; }
-  STAND.hide(); LINE.hide(); CMP.hide();
-  if (!CLUBS[h[0]]) { COVER.show(); return true; }    // no club in the URL: the opening page, not a silent fallback
+  if (h[0] === 'standings') { COVER.hide(); LINE.hide(); CMP.hide(); LEAD.hide(); CLUB.hide(); STAND.show(); return true; }
+  if (h[0] === 'lineups') { COVER.hide(); STAND.hide(); CMP.hide(); LEAD.hide(); CLUB.hide(); await LINE.show(); return true; }
+  if (h[0] === 'compare') { COVER.hide(); STAND.hide(); LINE.hide(); LEAD.hide(); CLUB.hide(); await CMP.show(); return true; }
+  if (h[0] === 'leaders') { COVER.hide(); STAND.hide(); LINE.hide(); CMP.hide(); CLUB.hide(); await LEAD.show(); return true; }
+  STAND.hide(); LINE.hide(); CMP.hide(); LEAD.hide();
+  if (!CLUBS[h[0]]) { CLUB.hide(); COVER.show(); return true; }    // no club in the URL: the opening page, not a silent fallback
   COVER.hide();
   const code = h[0];
   if (state.team !== code) { $('#team').value = code; if (!await loadTeam(code)) return false; }
+  if (!h[1]) { await CLUB.show(code); return true; }   // #CODE alone is the club page; #CODE/PID a player
+  CLUB.hide();
   let i = h[1] ? team().players.findIndex(p => p.pid === h[1]) : 0;
   if (h[1] && i < 0) { i = 0; toast(t('Not on this roster this season')); }   // a stale link (a transfer, a typo) lands on the club's first player
   if (i !== state.player) { $('#player').value = i; state.player = i; state.game = 'all'; renderGames(); renderPlayer(); }
@@ -2504,7 +2515,7 @@ async function route(){
       // showed); once the reader has entered the app in this tab, reloads and back/forward keep their place
       let entered = false; try { entered = !!sessionStorage.getItem('pl-in'); } catch (e) {}
       if (!booted && CLUBS[h[0]] && !entered) { history.replaceState(null, '', location.pathname + location.search); h = ['']; }
-      const PAGES = {standings: 'st-on', lineups: 'ln-on', compare: 'cmp-on'}, cur = Object.keys(PAGES).find(k => document.body.classList.contains(PAGES[k])) || null;
+      const PAGES = {standings: 'st-on', lineups: 'ln-on', compare: 'cmp-on', leaders: 'ld-on'}, cur = Object.keys(PAGES).find(k => document.body.classList.contains(PAGES[k])) || null;
       const toStand = !!PAGES[h[0]], onStand = !!cur;
       const switchPage = toStand && cur !== null && cur !== h[0];
       const toCover = !toStand && !CLUBS[h[0]], onCover = document.body.classList.contains('cv-on');
