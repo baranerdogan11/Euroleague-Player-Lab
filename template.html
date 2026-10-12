@@ -4,7 +4,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Euroleague Player Lab</title>
 <meta name="description" content="Shot charts, shooting profiles and season stats for every Euroleague player, rebuilt within minutes of every final.">
-<meta name="theme-color" content="#060708">
+<meta name="theme-color" content="#1f2b47">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="alternate" type="application/rss+xml" title="Euroleague Player Lab updates" href="feed.xml">
 <link rel="alternate" type="application/feed+json" title="Euroleague Player Lab updates" href="feed.json">
@@ -868,7 +868,17 @@ html[data-look="club"] .st-tile .note{grid-column:1/-1;font-family:var(--sans);f
 html[data-look="club"] .st-tile a{color:inherit;text-decoration:none}html[data-look="club"] .st-tile a:hover span{text-decoration:underline}
 /* the standings table on white */
 html[data-look="club"] .st-tab,html[data-look="club"] .ln-tab{border-collapse:separate;border-spacing:0}
-html[data-look="club"] .st-tab th,html[data-look="club"] .ln-tab th{font-family:var(--sans);font-weight:600;font-size:12px;letter-spacing:.08em;color:var(--muted);background:var(--panel2);border-bottom:1px solid var(--line2);padding:10px 10px}
+html[data-look="club"] .st-tab th,html[data-look="club"] .ln-tab th{font-family:var(--sans);font-weight:600;font-size:12px;letter-spacing:.06em;color:var(--muted);background:var(--panel2);border-bottom:1px solid var(--line2);padding:8px 8px;white-space:normal;line-height:1.2;vertical-align:bottom}
+/* desktop: the lineups tables must fit the panel; the names cell takes what is left and wraps, the numbers stay compact, the sideways scroll is for narrow screens only */
+html[data-look="club"] .ln-tab{table-layout:auto}
+html[data-look="club"] .ln-tab td{padding:0 8px;font-size:15px}
+html[data-look="club"] .ln-tab th.l,html[data-look="club"] .ln-tab td.l{text-align:left}
+html[data-look="club"] .ln-tab td.five{width:99%;min-width:180px;white-space:normal}
+html[data-look="club"] .ln-tab td.name{white-space:normal;min-width:140px}
+html[data-look="club"] .ln-tab th{max-width:90px}
+html[data-look="club"] .ln-tab td.pair{white-space:nowrap}
+html[data-look="club"] .ln-tab .chip{display:block;margin:4px 0 0;width:max-content}
+@media (min-width:1001px){html[data-look="club"] #ln-wrap{overflow-x:visible;mask-image:none;-webkit-mask-image:none}}
 html[data-look="club"] .st-tab td,html[data-look="club"] .ln-tab td{font-family:var(--sans);font-weight:500;font-size:16px;color:var(--ink2);height:48px;padding:0 10px;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums;white-space:nowrap}
 html[data-look="club"] .st-tab .form{flex-wrap:nowrap}
 html[data-look="club"] .st-tab tbody tr:nth-child(even) td,html[data-look="club"] .ln-tab tbody tr:nth-child(even) td{background:#f8f9fb}
@@ -918,7 +928,7 @@ html[data-look="club"] .ln-tab .oobar{display:flex;width:84px;height:8px;border-
 html[data-look="club"] .ln-tab .oobar i{display:block;height:100%}
 html[data-look="club"] .ln-tab .oobar i.on{background:var(--good)}html[data-look="club"] .ln-tab .oobar i.off{background:var(--bad)}
 html[data-look="club"] .ln-tab td.oo{text-align:right;line-height:1.1;padding-top:6px;padding-bottom:6px}
-html[data-look="club"] .ln-tab .chip{display:inline-block;margin-left:10px;padding:3px 10px;border-radius:999px;background:var(--club2);color:var(--on);font-family:var(--sans);font-weight:700;font-size:11px;letter-spacing:.06em;text-transform:uppercase;vertical-align:2px}
+html[data-look="club"] .ln-tab .chip{padding:3px 10px;border-radius:999px;background:var(--club2);color:var(--on);font-family:var(--sans);font-weight:700;font-size:11px;letter-spacing:.06em;text-transform:uppercase}
 html[data-look="club"] .ln-empty{font-size:15px}
 @media (max-width:760px){
   html[data-look="club"] #standings .in,html[data-look="club"] #lineups .in{padding:0 12px 16px}
@@ -943,7 +953,6 @@ html[data-look="club"] .ln-empty{font-size:15px}
   html[data-look="club"] .ln-tab td.five{font-size:14px}
   html[data-look="club"] .ln-tab td.crest .medal{width:28px;height:28px}html[data-look="club"] .ln-tab td.crest .medal img{width:20px;height:20px}
   html[data-look="club"] .ln-tab .nbar{width:40px;margin-left:6px}
-  html[data-look="club"] .ln-tab .chip{display:block;margin:4px 0 0;width:max-content}
 }
 /* ---- end Club Edition standings and lineups ---- */
 .cv{position:relative;min-height:calc(100vh - 6px);overflow:hidden;display:flex;flex-direction:column;justify-content:center}
@@ -1114,6 +1123,58 @@ html[data-look="club"] .cv-foot a{color:var(--cold)}
   .prof-chart text{font-size:19px}.prof-chart .ln{stroke-width:3.5}.prof-chart .end{r:6}
   .hud3d{flex-direction:column;align-items:stretch;gap:6px;left:8px;top:8px;right:8px}.hud-row{width:100%}.hud-row .seg{display:flex;flex:1}.hud-row .seg button{flex:1 1 0;text-align:center;padding:9px 4px;font-size:11px;letter-spacing:.06em;white-space:nowrap}.orbit-seg{flex:0 0 auto}.orbit-seg button{padding:9px 12px}.hint3d{align-self:flex-start;font-size:11px}
 }
+/* ---- Club Edition phone chrome (agent 6): a 56px club band with the crest, Find and Menu; the Menu sheet holds the player, the pages and the language; a fixed bottom bar carries the five pages ---- */
+.q-btn .q-l,.menu-btn,.tabbar{display:none}
+@media (max-width:760px){
+  html[data-look="club"] .top{display:flex;flex-wrap:wrap;align-items:center;height:auto;min-height:56px;background:var(--club);color:var(--club-ink);box-shadow:0 1px 2px rgba(11,13,16,.12)}
+  html[data-look="club"] .top .id{order:0;flex:none;height:36px;margin:10px 0 10px 8px;padding:0 14px 0 10px;font-size:19px}
+  html[data-look="club"] .sel.team{order:1;flex:1 1 0;min-width:0;width:auto;height:56px;padding:0 4px 0 8px;border:0;display:flex;align-items:center;justify-content:flex-start;gap:8px;position:relative}
+  html[data-look="club"] .sel.team img{width:30px;height:30px;padding:2px;flex:none}
+  html[data-look="club"] .sel.team .dd{position:static;flex:1 1 auto;min-width:0}
+  html[data-look="club"] .sel.team .dd-btn{position:static;width:100%;height:44px;margin:0;padding:0 20px 0 0;font-size:15px;font-weight:600;color:var(--club-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:left}
+  html[data-look="club"] .sel.team .dd-btn::after{display:block;right:4px;border-color:var(--club-ink)}
+  html[data-look="club"] .sel.team .dd-list{left:8px;right:8px;top:56px}
+  html[data-look="club"] .q-btn,html[data-look="club"] .menu-btn{order:2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;width:56px;height:56px;flex:none;border:0;background:transparent;color:var(--club-ink);font:600 10px/1 var(--sans);letter-spacing:.04em;text-transform:uppercase;cursor:pointer;padding:0}
+  html[data-look="club"] .menu-btn{order:3}
+  html[data-look="club"] .q-btn svg,html[data-look="club"] .menu-btn svg{width:22px;height:22px;display:block}
+  html[data-look="club"] .q-btn .q-l{display:block}
+  html[data-look="club"] .menu-btn[aria-expanded="true"]{background:color-mix(in srgb,var(--club-ink) 14%,transparent)}
+  /* the sheet: the player, the pages and the language live in the header but only show when the menu is open */
+  html[data-look="club"] .sel.player,html[data-look="club"] .st-lnk,html[data-look="club"] .lang{display:none}
+  html[data-look="club"] body.menu-on .sel.player{display:flex;order:10;flex:1 1 100%;height:56px;padding:0 12px;border:0;border-top:1px solid var(--line);background:var(--panel);color:var(--ink)}
+  html[data-look="club"] body.menu-on .sel.player .dd-btn{color:var(--ink);font-size:16px;padding:12px 28px 12px 0}
+  html[data-look="club"] body.menu-on .sel.player .dd-btn::after{border-color:var(--ink2)}
+  html[data-look="club"] body.menu-on .st-lnk{display:flex;order:11;flex:1 1 100%;width:auto;height:52px;justify-content:flex-start;gap:12px;padding:0 16px;border:0;border-top:1px solid var(--line);background:var(--panel);color:var(--ink);opacity:1;font-size:16px}
+  html[data-look="club"] body.menu-on .st-lnk span{display:inline}
+  html[data-look="club"] body.menu-on .st-lnk svg{display:block;color:var(--club)}
+  html[data-look="club"] body.menu-on .st-lnk::after{content:none!important}
+  html[data-look="club"] body.menu-on.st-on #st-lnk,html[data-look="club"] body.menu-on.ln-on #ln-lnk,html[data-look="club"] body.menu-on.cmp-on #cmp-lnk{box-shadow:inset 4px 0 var(--club2);color:var(--club)}
+  html[data-look="club"] body.menu-on .lang{display:flex;order:12;flex:1 1 100%;height:52px;justify-content:flex-start;gap:4px;padding:0 10px;border:0;border-top:1px solid var(--line);background:var(--panel)}
+  html[data-look="club"] body.menu-on .lang button{display:flex;width:60px;height:52px;color:var(--ink2);opacity:.8}
+  html[data-look="club"] body.menu-on .lang button[aria-pressed="true"]{display:flex;color:var(--ink);opacity:1}
+  html[data-look="club"] body.menu-on .lang button[aria-pressed="true"]::after{background:var(--club2)}
+  html[data-look="club"] body.menu-on .lang svg{opacity:1}
+  /* the search opens over the band from Find or from the bottom bar */
+  html[data-look="club"] .search{display:none;position:absolute;left:0;right:0;top:0;height:56px;padding:6px 8px;background:var(--club);border:0;z-index:2}
+  html[data-look="club"] .top.q-on .search{display:flex;align-items:center}
+  html[data-look="club"] .search input{min-height:44px;margin:0;padding:8px 44px 8px 14px;font-size:16px}
+  html[data-look="club"] .q-x{color:var(--club-ink)}
+  /* the bottom bar */
+  html[data-look="club"] .tabbar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:39;padding-bottom:env(safe-area-inset-bottom);background:var(--panel);border-top:1px solid var(--line);box-shadow:0 -1px 2px rgba(11,13,16,.06)}
+  html[data-look="club"] .tabbar>*{flex:1 1 0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:56px;border:0;background:none;color:var(--muted);font:600 10.5px/1 var(--sans);letter-spacing:.04em;text-transform:uppercase;text-decoration:none;position:relative;cursor:pointer;padding:0}
+  html[data-look="club"] .tabbar svg{width:22px;height:22px;display:block}
+  html[data-look="club"] .tabbar>*:focus-visible{outline:2px solid var(--cold);outline-offset:-2px}
+  html[data-look="club"] body.st-on #tb-standings,html[data-look="club"] body.ln-on #tb-lineups,html[data-look="club"] body.cmp-on #tb-compare,html[data-look="club"] body:not(.st-on):not(.ln-on):not(.cmp-on) #tb-player{color:var(--club)}
+  html[data-look="club"] body.st-on #tb-standings::before,html[data-look="club"] body.ln-on #tb-lineups::before,html[data-look="club"] body.cmp-on #tb-compare::before,html[data-look="club"] body:not(.st-on):not(.ln-on):not(.cmp-on) #tb-player::before{content:"";position:absolute;left:12px;right:12px;top:0;height:3px;background:var(--club2)}
+  html[data-look="club"] body.cv-on .tabbar{display:none}
+  html[data-look="club"] body:not(.cv-on){padding-bottom:calc(60px + env(safe-area-inset-bottom))}
+  html[data-look="club"] body:not(.cv-on) .wrap{padding-bottom:24px}
+}
+.scroll-hint{display:none}
+@media (max-width:760px){html[data-look="club"] .scroll-hint{display:flex;align-items:center;gap:6px;margin:0 0 6px;font-size:13px;color:var(--muted)}html[data-look="club"] .scroll-hint::after{content:"→"}}
+@media (max-width:760px){html[data-look="club"] body.cmp-on .cmp-side.l{padding-bottom:44px}html[data-look="club"] body.cmp-on .cmp-side.r{padding-top:30px}}
+@media (max-width:760px){html[data-look="club"] .cmp-m .lab{white-space:normal;overflow:visible;text-overflow:clip;line-height:1.15;font-size:11.5px}}
+/* ---- end Club Edition phone chrome ---- */
 </style>
 <div class="bar"></div>
 <main class="cv" id="cover" hidden>
@@ -1156,7 +1217,8 @@ html[data-look="club"] .cv-foot a{color:var(--cold)}
   <div class="sel team"><img id="crest-img" alt="" width="26" height="26"><select id="team" aria-label="Team"></select></div>
   <div class="sel player"><select id="player" aria-label="Player"></select></div>
   <div class="search"><input type="search" id="q" placeholder="Find a player" aria-label="Find a player across all clubs" autocomplete="off" spellcheck="false" role="combobox" aria-expanded="false" aria-controls="q-list" aria-autocomplete="list"><kbd>/</kbd><ul class="dd-list" id="q-list" role="listbox" aria-label="Players" hidden></ul><button type="button" class="q-x" id="q-x" aria-label="Close search" hidden>&times;</button></div>
-  <button type="button" class="q-btn" id="q-btn" aria-label="Find a player"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M15.5 15.5L21 21" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button>
+  <button type="button" class="q-btn" id="q-btn" aria-label="Find a player"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M15.5 15.5L21 21" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg><span class="q-l">Find</span></button>
+  <button type="button" class="menu-btn" id="menu-btn" aria-expanded="false" aria-label="Menu"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><span>Menu</span></button>
   <a class="st-lnk" id="cmp-lnk" href="#compare" title="Compare"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M4 8h13M14 4l4 4-4 4M20 16H7M10 12l-4 4 4 4" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Compare</span></a>
   <a class="st-lnk" id="ln-lnk" href="#lineups" title="Lineups"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="12" cy="6" r="2.4" fill="currentColor"/><circle cx="5" cy="11" r="2.4" fill="currentColor"/><circle cx="19" cy="11" r="2.4" fill="currentColor"/><circle cx="8" cy="18" r="2.4" fill="currentColor"/><circle cx="16" cy="18" r="2.4" fill="currentColor"/></svg><span>Lineups</span></a>
   <a class="st-lnk" id="st-lnk" href="#standings" title="Standings"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><span>Standings</span></a>
@@ -1167,6 +1229,14 @@ html[data-look="club"] .cv-foot a{color:var(--cold)}
 </header>
 <div class="progress" id="progress"></div>
 <div class="wipe" id="wipe" aria-hidden="true"><b></b><i></i></div>
+<!-- Club Edition phones: the bottom bar with the five pages (agent 6); hidden on the cover, on wide screens and under the Broadcast look -->
+<nav class="tabbar" id="tabbar" aria-label="Pages">
+  <button type="button" id="tb-player"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4 20c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>Player</span></button>
+  <a id="tb-compare" href="#compare"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h13M14 4l4 4-4 4M20 16H7M10 12l-4 4 4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Compare</span></a>
+  <a id="tb-lineups" href="#lineups"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="6" r="2.4" fill="currentColor"/><circle cx="5" cy="11" r="2.4" fill="currentColor"/><circle cx="19" cy="11" r="2.4" fill="currentColor"/><circle cx="8" cy="18" r="2.4" fill="currentColor"/><circle cx="16" cy="18" r="2.4" fill="currentColor"/></svg><span>Lineups</span></a>
+  <a id="tb-standings" href="#standings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>Standings</span></a>
+  <button type="button" id="tb-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15.5 15.5L21 21" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><span>Search</span></button>
+</nav>
 <div class="wrap">
   <section class="hero" id="hero">
     <div class="ph"><div class="num" id="num"></div><img id="photo" alt="" width="360" height="480" decoding="async"></div>
@@ -1293,6 +1363,7 @@ html[data-look="club"] .cv-foot a{color:var(--cold)}
     <div class="in">
       <p class="sub" id="st-sub"></p>
       <div class="st-tiles" id="st-tiles" hidden></div>
+      <p class="scroll-hint">Scroll for more columns</p>
       <div class="scroll"><table class="st-tab"><thead><tr><th scope="col">#</th><th scope="col">Club</th><th scope="col">W</th><th scope="col">L</th><th scope="col">+/-</th><th scope="col">Last 5</th><th scope="col">PF</th><th scope="col">PA</th><th scope="col">Home</th><th scope="col">Away</th><th scope="col">Streak</th></tr></thead><tbody id="st-body"></tbody></table></div>
       <p class="st-foot" id="st-foot"></p>
     </div>
@@ -1307,6 +1378,7 @@ html[data-look="club"] .cv-foot a{color:var(--cold)}
         <div class="ln-sel"><label for="ln-min">Min</label><select id="ln-min" aria-label="Minimum minutes"></select></div>
       </div>
       <div class="ln-defs" id="ln-defs"></div>
+      <p class="scroll-hint">Scroll for more columns</p>
       <div class="scroll" id="ln-wrap"></div>
       <p class="ln-foot" id="ln-foot"></p>
     </div>
@@ -1545,7 +1617,7 @@ function renderTiles(){
   const val = k => !played ? '–' : row ? (p40 ? (row[1] ? f1(row[COL[k]] * 40 / row[1]) : '–') : String(row[COL[k]])) : p40 ? (d.per40 ? f1(d.per40[k]) : '–') : f1(tot[k] / gp);
   const tiles = [['pts', 'Points'], ['reb', 'Rebounds'], ['ast', 'Assists'], ['stl', 'Steals'], ['blk', 'Blocks'], ['tov', 'Turnovers'], ['pir', 'PIR']];
   // the rank in words beside the bar (Club Edition shows it, the Broadcast look hides it): percentiles come from the data, so "top 28%" never invents an absolute rank
-  const rk = v => v == null ? '' : `<small class="rk">${t('top {p}%', {p: Math.max(1, Math.round(100 - v))})}</small>`;
+  const rk = v => v == null || v < 50 ? '' : `<small class="rk">${t('top {p}%', {p: Math.max(1, Math.round(100 - v))})}</small>`;
   $('#tiles').innerHTML = tiles.map(([k, l]) => `<div class="tile ${played ? '' : 'na'}" style="--p:${pc[k] ?? 0}%"><b>${val(k)}</b><span>${t(l)}</span>${rk(pc[k])}</div>`).join('');
   const gl = row ? gameLabel(d.games[row[0]]) : null;
   $('#band-legend').innerHTML = row ? `${gl.txt} · <b class="${gl.res === t('W') ? 'w' : 'l'}">${gl.res} ${gl.score}</b> · ${fmtDate(d.games[row[0]].date)} · ${row[1]} ${t('min')}${p40 ? ' · ' + t('scaled to 40 minutes') : ''}` : d.pct ? `${p40 ? t('Per 40 minutes') : t('Per game')} · ${t('underline: rank among {n} rotation players ({rule}), longer is better, turnovers inverted', {n: META.league_n, rule: t(META.pool_rule)})}` : '';
@@ -1563,7 +1635,7 @@ function renderRole(){
   const items = [['usg', t('Usage'), r.usg, '%', t('share of team possessions he ends with a shot, free throws or a turnover while on court')], ['ts', t('True shooting'), ts != null ? (100 * ts).toFixed(1) : null, '%', `${t('points per shooting possession, halved so 50% is a coin flip; free throws count 0.44 of a possession, so a perfect night can pass 100%')}${(tot.fga2 + tot.fga3 + 0.44 * tot.fta) < MIN_ATT ? ' · ' + t('small sample') : ''}`],
     ['ast_pct', t('Assist rate'), r.ast_pct, '%', t('share of teammate field goals he assisted while on court')], ['tov_pct', t('Turnover rate'), r.tov_pct, '%', t('turnovers per 100 plays he used')],
     ['reb_pct', t('Rebound rate'), r.reb_pct, '%', t('share of available rebounds he took while on court')], ['plusminus', row ? '+/-' : t('+/- per game'), row ? (row[15] ?? null) : tot.gp ? Math.round(10 * (tot.plusminus || 0) / tot.gp) / 10 : null, '', row ? t('team score margin while he was on court in this game') : t('team score margin while he was on court, per game ({pm} over {n} games)', {pm: ((tot.plusminus || 0) >= 0 ? '+' : '') + (tot.plusminus || 0), n: tot.gp})]];
-  el.innerHTML = items.map(([k, l, v, u, tip]) => { const few = k === 'ts' && (tot.fga2 + tot.fga3 + 0.44 * tot.fta) < MIN_ATT; return `<div class="${few ? 'small' : ''}" style="--p:${pp[k] ?? 0}%" data-tip="${tip}${pp[k] != null ? ` · ${t('{ord} percentile among {n} {pos}', {ord: ord(pp[k]), n: d.pos_n, pos: lowPos(posN)})}` : ''}"><b>${v == null ? '–' : (k === 'plusminus' && v > 0 ? '+' : '') + v}${v == null ? '' : u}</b><span>${l}</span>${pp[k] != null ? `<small class="rk">${t('top {p}%', {p: Math.max(1, Math.round(100 - pp[k]))})}</small>` : ''}</div>`; }).join('');
+  el.innerHTML = items.map(([k, l, v, u, tip]) => { const few = k === 'ts' && (tot.fga2 + tot.fga3 + 0.44 * tot.fta) < MIN_ATT; return `<div class="${few ? 'small' : ''}" style="--p:${pp[k] ?? 0}%" data-tip="${tip}${pp[k] != null ? ` · ${t('{ord} percentile among {n} {pos}', {ord: ord(pp[k]), n: d.pos_n, pos: lowPos(posN)})}` : ''}"><b>${v == null ? '–' : (k === 'plusminus' && v > 0 ? '+' : '') + v}${v == null ? '' : u}</b><span>${l}</span>${pp[k] != null && pp[k] >= 50 ? `<small class="rk">${t('top {p}%', {p: Math.max(1, Math.round(100 - pp[k]))})}</small>` : ''}</div>`; }).join('');
   $('#role-legend').textContent = row ? `${t('Role')} · ${t('this game only')} · ${row[1]} ${t('minutes')}` : d.pct_pos ? `${t('Role')} · ${t('underline: rank among {n} {pos} (3+ games, 10+ min), longer is better, turnover rate inverted', {n: d.pos_n, pos: lowPos(posN)})}` : '';
   $('#role-foot').hidden = !(row || d.pct_pos);
 }
@@ -1633,6 +1705,8 @@ function renderCompareOptions(){
     $('#cmp-sub').textContent = t('Two {pos} side by side, per 40 minutes and per possession where it matters.', {pos: posN});
     const em = $('#cmp-empty'); em.hidden = false; em.textContent = d.tot.gp ? t('No other {pos} has qualified yet. Pick another player from the bar above.', {pos: pos1}) : t('{name} has no Euroleague minutes yet, so there is nothing to compare. Pick another player from the bar above.', {name: `${nameOf(me.name).first} ${nameOf(me.name).sur}`.trim()});
     cmpWho('l', me, state.team, d); cmpMeOptions();
+    sel.innerHTML = `<option value="">${t('Choose a {pos} to compare', {pos: pos1})}</option>`; if (typeof DD !== 'undefined' && DD.cmp) DD.cmp.refresh();   // the right-hand pill still names its purpose
+    $('#cmp-who-r').innerHTML = `<div class="cmp-club">${t('Opponent')}</div><p class="cmp-nm"><b>?</b></p>`;
     return;
   }
   panel.hidden = false; $('#cmp-empty').hidden = true;
@@ -1641,6 +1715,7 @@ function renderCompareOptions(){
     : `${t('{name} against another {pos}, per 40 minutes and per possession where it matters.', {name: nameOf(me.name).sur, pos: pos1})}${d.pos_n >= 10 ? ' ' + t('Position median from the {n} eligible {pos}.', {n: d.pos_n, pos: posN}) : ''}`;
   const keep = state.cmp && peers.some(r => r.pid === state.cmp) ? state.cmp : '';
   sel.innerHTML = `<option value="">${t('Choose a {pos} to compare', {pos: pos1})}</option>` + peers.sort((a, b) => a.club.localeCompare(b.club) || nameOf(a.name).sur.localeCompare(nameOf(b.name).sur)).map(r => `<option value="${r.pid}">${shortName(r.club)} · #${r.dorsal || '–'} ${nameOf(r.name).first} ${nameOf(r.name).sur}</option>`).join('');
+  if (typeof DD !== 'undefined' && DD.cmp) DD.cmp.refresh();
   sel.value = keep; state.cmp = keep || null;
   $('#cmp-open').textContent = t('Open compare');
   if (onPage) { cmpWho('l', me, state.team, d); cmpMeOptions(); }
@@ -2356,12 +2431,16 @@ const CMP = (() => {
     if (!CLUBS[code]) code = META.clubs[0].code;
     $('#team').value = code; if (!await loadTeam(code)) return false;
     let pid = null; try { pid = JSON.parse(localStorage.getItem('pl-last') || 'null').hash.split('/')[1]; } catch (e) {}
-    const i = Math.max(0, team().players.findIndex(p => p.pid === pid));
+    let i = team().players.findIndex(p => p.pid === pid);
+    if (i >= 0 && !((team().players[i].cur || {}).tot || {}).gp) i = -1;   // a remembered player without minutes gives way to the club's most-used one
+    if (i < 0) { let best = -1; team().players.forEach((p, j) => { const m = (p.cur && p.cur.tot && p.cur.tot.min) || 0; if (m > best) { best = m; i = j; } }); if (i < 0) i = 0; }   // no remembered player: the club's most-used one, never a roster entry without minutes
     state.player = i; $('#player').value = i; state.game = 'all'; renderGames(); renderPlayer(); DD.team.refresh(); DD.player.refresh(); DD.statGame.refresh();
     return true;
   }
   return {
-    async show(){ if (!await ensureTeam()) return; applyPalette(CLUBS[state.team]); document.body.classList.add('cmp-on'); document.body.classList.remove('no-team'); el.hidden = false; renderCompareOptions(); document.title = `${t('Compare')} · Player Lab`; },
+    async show(){ if (!await ensureTeam()) return;
+      if (!((ds().tot || {}).gp)) { let best = -1, j = state.player; team().players.forEach((p, k) => { const m = (p.cur && p.cur.tot && p.cur.tot.min) || 0; if (m > best) { best = m; j = k; } }); if (j !== state.player) { state.player = j; $('#player').value = j; state.game = 'all'; renderGames(); renderPlayer(); DD.player.refresh(); DD.statGame.refresh(); } }   // a roster entry without minutes has nothing to compare: the club's most-used player instead
+      applyPalette(CLUBS[state.team]); document.body.classList.add('cmp-on'); document.body.classList.remove('no-team'); el.hidden = false; renderCompareOptions(); document.title = `${t('Compare')} · Player Lab`; },
     hide(){ document.body.classList.remove('cmp-on'); if (state.data && ROSTER.loaded) renderCompareOptions(); },   // back on a player page the panel is the teaser again
     render(){ if (state.data) renderCompareOptions(); }
   };
@@ -2451,6 +2530,21 @@ if ('serviceWorker' in navigator && location.protocol === 'https:') addEventList
   checkFresh(); setInterval(checkFresh, 15 * 60e3);
   const dbg = +new URLSearchParams(location.search).get('debug3d');
   if (dbg) { await new Promise(r => setTimeout(r, 5000)); for (let k = 0; k < dbg; k++) Shot3D.tick(0.05); }
+})();
+// ---- Club Edition phone chrome (agent 6): the Menu sheet opens the player, the pages and the language inside the header; the bottom bar's Player and Search buttons act on the current state
+(() => {
+  const mb = $('#menu-btn'); if (!mb) return;
+  const setMenu = on => { document.body.classList.toggle('menu-on', on); mb.setAttribute('aria-expanded', on ? 'true' : 'false'); };
+  mb.addEventListener('click', () => setMenu(!document.body.classList.contains('menu-on')));
+  addEventListener('hashchange', () => setMenu(false));
+  document.addEventListener('click', e => { if (document.body.classList.contains('menu-on') && !e.target.closest('.top')) setMenu(false); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && document.body.classList.contains('menu-on')) { setMenu(false); mb.focus(); } });
+  $('#tb-player').addEventListener('click', () => {
+    let h = state.team && state.data ? `${state.team}/${player().pid}` : null;
+    if (!h) { try { h = (JSON.parse(localStorage.getItem('pl-last') || 'null') || {}).hash; } catch (e) {} }
+    location.hash = h && CLUBS[String(h).split('/')[0]] ? h : META.clubs[0].code;
+  });
+  $('#tb-search').addEventListener('click', () => { setMenu(false); $('#q-btn').click(); });
 })();
 </script>
 </html>

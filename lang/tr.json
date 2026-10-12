@@ -413,5 +413,10 @@
  "position median": "mevki medyanı",
  "Share of attempts by zone this season; darker means more of his shots come from there.": "Bu sezon bölgelere göre şut payı; koyu renk, şutlarının daha çoğunun oradan geldiğini gösterir.",
  "Fewer than {n} attempts": "{n} şuttan az",
- "Open {name}'s page": "{name} sayfasını aç"
+ "Open {name}'s page": "{name} sayfasını aç",
+ "Find": "Ara",
+ "Menu": "Menü",
+ "Search": "Arama",
+ "Pages": "Sayfalar",
+ "Scroll for more columns": "Diğer sütunlar için kaydırın"
 }
