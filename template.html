@@ -514,7 +514,6 @@ html[data-look="club"] .tile::after{left:14px;right:14px;bottom:10px;height:6px;
 html[data-look="club"] .tile::before{content:"";position:absolute;left:14px;right:14px;bottom:10px;height:6px;border-radius:3px;background:var(--panel2)}
 html[data-look="club"] .tile b{font-weight:var(--cond-w);font-style:normal;font-size:44px;line-height:1;color:var(--ink)}
 html[data-look="club"] .tile span{font-family:var(--sans);font-weight:600;font-size:12px;letter-spacing:.08em;color:var(--muted);margin:6px 0 16px}
-html[data-look="club"] .tile .rk,html[data-look="club"] .role .rk{display:block;position:absolute;right:14px;bottom:20px;font-family:var(--sans);font-weight:600;font-size:12px;letter-spacing:0;text-transform:none;color:var(--ink2)}
 html[data-look="club"] .tile small,html[data-look="club"] .role small{font-family:var(--sans);letter-spacing:.04em;color:var(--club)}
 html[data-look="club"] .tile.na b{color:var(--muted)}
 html[data-look="club"] .band-foot{font-family:var(--sans);font-size:14px;color:var(--muted);margin-top:12px}
@@ -524,7 +523,6 @@ html[data-look="club"] .role div::after{left:14px;right:14px;bottom:10px;height:
 html[data-look="club"] .role div::before{content:"";position:absolute;left:14px;right:14px;bottom:10px;height:5px;border-radius:3px;background:var(--panel2)}
 html[data-look="club"] .role b{font-weight:var(--cond-w);font-style:normal;font-size:32px;color:var(--ink)}
 html[data-look="club"] .role span{font-family:var(--sans);font-weight:600;font-size:12px;letter-spacing:.08em;color:var(--muted)}
-html[data-look="club"] .role .rk{bottom:22px;font-size:11.5px}
 html[data-look="club"] .role div.small b{color:var(--muted)}
 /* panels and their titles */
 html[data-look="club"] .panel h2,html[data-look="club"] .panel summary{font-weight:var(--cond-w);font-style:normal;font-size:30px;letter-spacing:.03em;padding:16px 20px 8px;color:var(--ink)}
@@ -1006,7 +1004,11 @@ html[data-look="club"] .ln-empty{font-size:15px}
 /* ---- Club Edition cover: a house-colour band with the thesis, then club cards on paper, each wearing its own colourway ---- */
 html[data-look="club"] .cv{min-height:0;display:block;overflow:visible;background:var(--bg)}
 html[data-look="club"] .cv-glow,html[data-look="club"] .cv-court,html[data-look="club"] .cv-h1,html[data-look="club"] .cv-eyebrow i{display:none}
-html[data-look="club"] .cv-hero{position:relative;min-height:60vh;display:flex;align-items:center}
+html[data-look="club"] .cv-hero{position:relative;min-height:60vh;display:flex;align-items:center;background:transparent;clip-path:none}
+html[data-look="club"] .cv-hero::before{content:"";position:absolute;inset:0;background:var(--club);clip-path:polygon(0 0,100% 0,100% calc(100% - 56px),calc(100% - 56px) 100%,0 100%);z-index:0}
+html[data-look="club"] .cv-hero-in{position:relative;z-index:3}
+html[data-look="club"] .cv-search{position:relative;z-index:6}
+html[data-look="club"] .cv-search .dd-list{z-index:7}
 html[data-look="club"] .cv-hero-in{padding:72px 24px 104px}
 html[data-look="club"] .cv-eyebrow{font-family:var(--sans);font-weight:600;font-size:13px;letter-spacing:.14em;color:var(--club-ink);opacity:.82}
 html[data-look="club"] .cv-round{display:inline}
@@ -1602,7 +1604,7 @@ function renderPlayer(){
   const ha = {H: {g: 0, pts: 0, fga: 0, fta: 0}, A: {g: 0, pts: 0, fga: 0, fta: 0}};
   d.log.forEach(r => { const g = d.games[r[0]], side = gameLabel(g).home ? ha.H : ha.A; side.g++; side.pts += r[2]; side.fga += r[9] + r[11]; side.fta += r[13]; });
   const haTxt = s => s.g ? `${(s.pts / s.g).toFixed(1)} ${t('pts')}, ${tsOf(s.pts, s.fga, s.fta) != null ? (100 * tsOf(s.pts, s.fga, s.fta)).toFixed(1) + '% TS' : ''} ${plural(s.g, 'in {n} game', 'in {n} games')}` : t('no games');
-  $('#ha').hidden = !d.log.length; $('#ha').textContent = `${t('Home')}: ${haTxt(ha.H)} · ${t('Away')}: ${haTxt(ha.A)}`;
+  $('#ha').hidden = true;
   renderTrend();
   renderCompareOptions();
   $('#log-none').hidden = d.log.length > 0; $('#log-panel .scroll').hidden = d.log.length === 0;
@@ -1617,7 +1619,7 @@ function renderTiles(){
   const val = k => !played ? '–' : row ? (p40 ? (row[1] ? f1(row[COL[k]] * 40 / row[1]) : '–') : String(row[COL[k]])) : p40 ? (d.per40 ? f1(d.per40[k]) : '–') : f1(tot[k] / gp);
   const tiles = [['pts', 'Points'], ['reb', 'Rebounds'], ['ast', 'Assists'], ['stl', 'Steals'], ['blk', 'Blocks'], ['tov', 'Turnovers'], ['pir', 'PIR']];
   // the rank in words beside the bar (Club Edition shows it, the Broadcast look hides it): percentiles come from the data, so "top 28%" never invents an absolute rank
-  const rk = v => v == null || v < 50 ? '' : `<small class="rk">${t('top {p}%', {p: Math.max(1, Math.round(100 - v))})}</small>`;
+  const rk = () => '';
   $('#tiles').innerHTML = tiles.map(([k, l]) => `<div class="tile ${played ? '' : 'na'}" style="--p:${pc[k] ?? 0}%"><b>${val(k)}</b><span>${t(l)}</span>${rk(pc[k])}</div>`).join('');
   const gl = row ? gameLabel(d.games[row[0]]) : null;
   $('#band-legend').innerHTML = row ? `${gl.txt} · <b class="${gl.res === t('W') ? 'w' : 'l'}">${gl.res} ${gl.score}</b> · ${fmtDate(d.games[row[0]].date)} · ${row[1]} ${t('min')}${p40 ? ' · ' + t('scaled to 40 minutes') : ''}` : d.pct ? `${p40 ? t('Per 40 minutes') : t('Per game')} · ${t('underline: rank among {n} rotation players ({rule}), longer is better, turnovers inverted', {n: META.league_n, rule: t(META.pool_rule)})}` : '';
@@ -1629,7 +1631,7 @@ function renderRole(){
   // for one game the totals are that game's line: [1] min, [2] pts, [8..13] 2P/3P/FT makes and attempts, [15] +/-
   const tot = row ? {gp: 1, pts: row[2], fga2: row[9], fga3: row[11], fta: row[13], plusminus: row[15], min: row[1]} : d.tot;
   if (!r || !tot.gp) { el.hidden = true; $('#role-foot').hidden = true; return; }
-  el.hidden = false; $('#role-foot').hidden = false;
+  el.hidden = false; $('#role-foot').hidden = true;
   const ts = tsOf(tot.pts, tot.fga2 + tot.fga3, tot.fta);
   const posN = t(d.pos_group ? d.pos_group + 's' : 'players'), lowPos = s => s.toLowerCase();
   const items = [['usg', t('Usage'), r.usg, '%', t('share of team possessions he ends with a shot, free throws or a turnover while on court')], ['ts', t('True shooting'), ts != null ? (100 * ts).toFixed(1) : null, '%', `${t('points per shooting possession, halved so 50% is a coin flip; free throws count 0.44 of a possession, so a perfect night can pass 100%')}${(tot.fga2 + tot.fga3 + 0.44 * tot.fta) < MIN_ATT ? ' · ' + t('small sample') : ''}`],
@@ -1637,7 +1639,7 @@ function renderRole(){
     ['reb_pct', t('Rebound rate'), r.reb_pct, '%', t('share of available rebounds he took while on court')], ['plusminus', row ? '+/-' : t('+/- per game'), row ? (row[15] ?? null) : tot.gp ? Math.round(10 * (tot.plusminus || 0) / tot.gp) / 10 : null, '', row ? t('team score margin while he was on court in this game') : t('team score margin while he was on court, per game ({pm} over {n} games)', {pm: ((tot.plusminus || 0) >= 0 ? '+' : '') + (tot.plusminus || 0), n: tot.gp})]];
   el.innerHTML = items.map(([k, l, v, u, tip]) => { const few = k === 'ts' && (tot.fga2 + tot.fga3 + 0.44 * tot.fta) < MIN_ATT; return `<div class="${few ? 'small' : ''}" style="--p:${pp[k] ?? 0}%" data-tip="${tip}${pp[k] != null ? ` · ${t('{ord} percentile among {n} {pos}', {ord: ord(pp[k]), n: d.pos_n, pos: lowPos(posN)})}` : ''}"><b>${v == null ? '–' : (k === 'plusminus' && v > 0 ? '+' : '') + v}${v == null ? '' : u}</b><span>${l}</span>${pp[k] != null && pp[k] >= 50 ? `<small class="rk">${t('top {p}%', {p: Math.max(1, Math.round(100 - pp[k]))})}</small>` : ''}</div>`; }).join('');
   $('#role-legend').textContent = row ? `${t('Role')} · ${t('this game only')} · ${row[1]} ${t('minutes')}` : d.pct_pos ? `${t('Role')} · ${t('underline: rank among {n} {pos} (3+ games, 10+ min), longer is better, turnover rate inverted', {n: d.pos_n, pos: lowPos(posN)})}` : '';
-  $('#role-foot').hidden = !(row || d.pct_pos);
+  $('#role-foot').hidden = true;
 }
 function renderForm(){
   const d = ds(), el = $('#form'), log = d.log;
@@ -1671,7 +1673,7 @@ function renderTrend(){
     const r = s.r, pm = r[15];
     return `<tr><td>${game}${r[16] ? `<small>${t('Start')}</small>` : ''}</td><td><div class="tb"><span class="tr"><i class="${r[16] ? '' : 'bn'}" style="width:${pc(r[1])}"></i></span><b>${r[1]}</b></div></td><td>${s.usg != null ? `<div class="tb u"><span class="tr"><i style="width:${pc(s.usg)}"></i></span><b>${s.usg}%</b></div>` : '–'}</td><td class="ln">${r[2]} ${t('pts')} · ${r[14]} PIR${pm != null ? ` · <span class="${pm > 0 ? 'up' : pm < 0 ? 'down' : ''}">${pm > 0 ? '+' : ''}${pm}</span>` : ''}</td></tr>`; }).join('');
   el.innerHTML = `<div class="scroll"><table class="ttab"><thead><tr><th>${t('Game')}</th><th>${t('Minutes')}</th><th>${t('Usage')}</th><th>${t('Line')}</th></tr></thead><tbody>${rows}</tbody>
-    <tfoot><tr><td>${t('Season')}</td><td colspan="3">${t('{v} min a game', {v: season.toFixed(1)})} · ${plural(starts, '{n} start', '{n} starts')} ${t('of {n}', {n})} · <i class="${flag ? (diff > 0 ? 'up' : 'down') : ''}">${flag ? (diff > 0 ? '▲ ' + t('up') : '▼ ' + t('down')) : '▶ ' + t('steady')}</i> <span class="sm">${t('last {n}', {n: lastN})}: ${last.toFixed(1)}${n > lastN ? `, ${t('{k} of the last {n}', {k: lastStarts, n: lastN})}` : ''}</span> · ${t('usage')} ${usgAvg != null ? `${usgAvg.toFixed(1)}%` : '–'} <span class="sm">(${t('a full bar is 40')})</span>${flag ? ` · ${t('the change beats his usual game-to-game spread ({sd} min)', {sd: sd.toFixed(1)})}` : ''}</td></tr></tfoot></table></div>`;
+    </table></div>`;
 }
 function renderTiming(shots){
   const rows = shots.filter(s => s[14] != null), cap = $('#time-cap'), tb = $('#timing');
@@ -2135,7 +2137,7 @@ const DD = {
   team: Dropdown($('#team'), (op, head) => { const c = CLUBS[op.value]; return `${c && c.logo && !head ? `<img src="${c.logo}" alt="">` : ''}<span>${c.name}</span>`; }),
   player: Dropdown($('#player'), (op, head) => { const p = team() && team().players[+op.value]; if (!p) return op.text; const n = nameOf(p.name); return head ? `#${p.dorsal || '–'} ${n.first} ${n.sur}` : `<span class="no">${p.dorsal || '–'}</span><span>${n.first} ${n.sur}</span><small>${t(p.position || '').slice(0, 7)}</small>`; }),
   cmpMe: Dropdown($('#cmp-me'), op => op.text),
-  cmp: Dropdown($('#cmp'), (op, head) => { if (!op.value) return op.text; const r = ROSTER.byPid[op.value]; if (!r) return op.text; const c = CLUBS[r.club], n = nameOf(r.name); return head ? `${n.first} ${n.sur} · ${shortName(r.club)}` : `${c && c.logo ? `<img src="${c.logo}" alt="">` : ''}<span class="no">${r.dorsal || '–'}</span><span>${n.first} ${n.sur}</span><small>${shortName(r.club)}</small>`; }),
+  cmp: Dropdown($('#cmp'), (op, head) => { if (!op.value) return op.text; const r = ROSTER.byPid[op.value]; if (!r) return op.text; const c = CLUBS[r.club], n = nameOf(r.name); return head ? `${n.first} ${n.sur}` : `${c && c.logo ? `<img src="${c.logo}" alt="">` : ''}<span class="no">${r.dorsal || '–'}</span><span>${n.first} ${n.sur}</span><small>${shortName(r.club)}</small>`; }),
   statGame: Dropdown($('#stat-game'), (op, head) => { if (op.value === 'all' || !team()) return op.text; const g = ds().games[+op.value]; if (!g) return op.text; const l = gameLabel(g); return head ? `${l.txt} · ${l.res} ${l.score}` : `<span>${l.txt}</span><small class="${l.res === 'W' ? 'w' : 'l'}">${l.res} ${l.score}</small>`; })
 };
 // ---- player search across every club: name, club and code, accents folded
