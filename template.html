@@ -242,6 +242,98 @@ h1 span span{display:block;color:var(--club2)}
 .cmp-row .dd{background:var(--panel);border:1px solid var(--line);max-width:420px}
 .cmp-row .dd .dd-btn{font-size:15px;padding:8px 32px 8px 12px}
 .cmp-row .dd-list{left:-1px;right:-1px}
+.cmp-lab{font-size:12.5px;color:var(--muted)}
+.cmp-open{white-space:nowrap}
+/* ---- Club Edition compare (agent 5): the page wears both clubs; --cb1/--ca1/--ci1 are the left club's base, accent and ink, --cb2/--ca2/--ci2 the right club's, set inline by renderCompare ---- */
+html[data-look="club"] #cmp-panel{--cb1:var(--club);--ca1:var(--club2);--ci1:var(--club-ink);--cb2:#1f2b47;--ca2:#f26f21;--ci2:#fff}
+html[data-look="club"] body:not(.cmp-on) .cmp-row{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center}
+html[data-look="club"] .cmp-open{display:inline-flex;align-items:center;min-height:44px;padding:0 18px;border-radius:999px;background:var(--club);color:var(--club-ink);font-family:var(--sans);font-weight:600;font-size:15px;text-decoration:none}
+html[data-look="club"] .cmp-open:hover{filter:brightness(1.1)}
+html[data-look="club"] body.cmp-on #cmp-panel{background:transparent;border:0;border-radius:0;padding:0}
+html[data-look="club"] body.cmp-on #cmp-panel>h2{padding:18px 0 4px;font-size:44px;letter-spacing:.03em}
+html[data-look="club"] body.cmp-on #cmp-panel>h2::before{width:8px;height:34px;background:var(--club2);transform:none;border-radius:2px}
+html[data-look="club"] body.cmp-on #cmp-panel .in{padding:0}
+html[data-look="club"] body.cmp-on #cmp-sub{font-size:17px;color:var(--ink2);max-width:78ch;margin:0 0 18px}
+html[data-look="club"] .cmp-hero{display:grid;grid-template-columns:1fr 1fr;position:relative;border-radius:8px;overflow:hidden;margin:0 0 22px}
+html[data-look="club"] .cmp-side{padding:26px 30px 24px;display:grid;align-content:start;gap:14px;min-height:250px}
+html[data-look="club"] .cmp-side.l{background:var(--cb1);color:var(--ci1)}
+html[data-look="club"] .cmp-side.r{background:var(--cb2);color:var(--ci2)}
+html[data-look="club"] .cmp-side.r .cmp-who,html[data-look="club"] .cmp-side.r .cmp-row{justify-self:end;text-align:right}
+html[data-look="club"] .cmp-club{display:flex;align-items:center;gap:10px;font-family:var(--sans);font-weight:600;font-size:14px;letter-spacing:.08em;text-transform:uppercase}
+html[data-look="club"] .cmp-side.r .cmp-club{flex-direction:row-reverse}
+html[data-look="club"] .cmp-side.l .cmp-club .medal{--ring:var(--ca1)}
+html[data-look="club"] .cmp-side.r .cmp-club .medal{--ring:var(--ca2)}
+html[data-look="club"] .cmp-club .medal{border-color:var(--ring,var(--club2))}
+html[data-look="club"] .cmp-nm{font-family:var(--cond);font-weight:var(--cond-w);font-size:72px;line-height:.92;text-transform:uppercase;letter-spacing:.02em;margin:2px 0 0}
+html[data-look="club"] .cmp-nm b{display:block;font-weight:var(--cond-w)}
+html[data-look="club"] .cmp-side.l .cmp-nm b{color:var(--ca1)}
+html[data-look="club"] .cmp-side.r .cmp-nm b{color:var(--ca2)}
+html[data-look="club"] .cmp-line{font-size:16px;opacity:.92}
+html[data-look="club"] .cmp-facts{display:flex;gap:26px;padding-top:12px;border-top:1px solid rgba(255,255,255,.22);font-size:14px}
+html[data-look="club"] .cmp-side.r .cmp-facts{justify-content:flex-end}
+html[data-look="club"] .cmp-facts span{display:block;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;opacity:.75}
+html[data-look="club"] .cmp-facts b{font-family:var(--cond);font-weight:var(--cond-w);font-size:22px}
+html[data-look="club"] body.cmp-on .cmp-pick,html[data-look="club"] body.cmp-on .cmp-row{display:flex;align-items:center;gap:10px;margin-top:4px}
+html[data-look="club"] body.cmp-on .cmp-lab{font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;color:inherit;opacity:.8}
+html[data-look="club"] body.cmp-on .cmp-sel{border:0;padding:0;flex:0 1 320px;max-width:320px;min-width:200px}
+html[data-look="club"] body.cmp-on .cmp-side .dd{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.35);color:inherit;min-height:44px;border-radius:999px}
+html[data-look="club"] body.cmp-on .cmp-side .dd .dd-btn{color:inherit;font-size:15px;padding:10px 34px 10px 16px}
+html[data-look="club"] body.cmp-on .cmp-side .dd .dd-btn::after{border-color:currentColor}
+html[data-look="club"] body.cmp-on .cmp-side .dd-list{color:var(--ink);text-align:left}
+html[data-look="club"] .cmp-vs{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:58px;height:58px;border-radius:50%;background:#fff;color:#0b0d10;font-family:var(--cond);font-size:26px;display:grid;place-items:center;box-shadow:0 0 0 4px rgba(0,0,0,.18)}
+html[data-look="club"] .cmp-h3{font-family:var(--cond);font-weight:var(--cond-w);font-size:30px;letter-spacing:.03em;text-transform:uppercase;margin:26px 0 2px;color:var(--ink)}
+html[data-look="club"] #cmp-page .sub{margin:0 0 14px}
+html[data-look="club"] .cmp-h2h{display:grid;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:18px 22px}
+html[data-look="club"] .cmp-m{display:grid;grid-template-columns:96px minmax(0,1fr) 96px;align-items:end;gap:14px;min-height:50px}
+html[data-look="club"] .cmp-m .v{font-family:var(--cond);font-weight:var(--cond-w);font-size:28px;line-height:1;color:var(--ink);font-variant-numeric:tabular-nums;padding-bottom:6px;display:flex;align-items:center;gap:6px}
+html[data-look="club"] .cmp-m .v.l{justify-content:flex-end;text-align:right}
+html[data-look="club"] .cmp-m .v i{width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-bottom:9px solid var(--good)}
+html[data-look="club"] .cmp-m .bars{position:relative;height:50px}
+html[data-look="club"] .cmp-m .lab{position:absolute;left:0;right:0;top:0;text-align:center;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html[data-look="club"] .cmp-m .lab small{letter-spacing:0;text-transform:none;margin-left:6px}
+html[data-look="club"] .cmp-m .mid{position:absolute;left:50%;top:22px;bottom:4px;width:2px;background:var(--line2);transform:translateX(-50%)}
+html[data-look="club"] .cmp-m .bl,html[data-look="club"] .cmp-m .br{position:absolute;bottom:8px;height:14px;max-width:50%}
+html[data-look="club"] .cmp-m .bl{right:50%;background:var(--cb1);border-radius:4px 0 0 4px}
+html[data-look="club"] .cmp-m .br{left:50%;background:var(--cb2);border-radius:0 4px 4px 0}
+html[data-look="club"] .cmp-m .bl.neg,html[data-look="club"] .cmp-m .br.neg{opacity:.35}
+html[data-look="club"] .cmp-m .ml,html[data-look="club"] .cmp-m .mr{position:absolute;bottom:4px;width:2px;height:22px;background:var(--cold)}
+html[data-look="club"] .cmp-m .ml{right:50%}
+html[data-look="club"] .cmp-m .mr{left:50%}
+html[data-look="club"] .cmp-cap{font-size:13px;color:var(--muted);margin:10px 0 0}
+html[data-look="club"] .cmp-cap i{display:inline-block;width:12px;height:2px;background:var(--cold);vertical-align:middle;margin:0 6px 0 2px}
+html[data-look="club"] .cmp-diet{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+html[data-look="club"] .cmp-court{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px 16px 12px}
+html[data-look="club"] .cmp-court h4{margin:0 0 8px;font-family:var(--cond);font-weight:var(--cond-w);font-size:22px;letter-spacing:.03em;text-transform:uppercase;color:var(--ink);display:flex;align-items:center;gap:10px}
+html[data-look="club"] .cmp-court h4 i{width:12px;height:12px;border-radius:3px;flex:none}
+html[data-look="club"] .cmp-court svg{display:block;width:100%;max-width:360px;margin:0 auto;height:auto}
+html[data-look="club"] .cmp-court .ln{fill:none;stroke:var(--line2);stroke-width:1.5}
+html[data-look="club"] .cmp-court .zn{stroke:none}
+html[data-look="club"] .cmp-court text{font-family:var(--sans);font-size:11px;fill:var(--ink2)}
+html[data-look="club"] .cmp-court text.n{font-family:var(--cond);font-size:22px;fill:var(--ink)}
+html[data-look="club"] .cmp-dz{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
+html[data-look="club"] .cmp-dz div{background:var(--panel2);border-radius:6px;padding:8px 6px;text-align:center}
+html[data-look="club"] .cmp-dz b{display:block;font-family:var(--cond);font-weight:var(--cond-w);font-size:22px;color:var(--ink)}
+html[data-look="club"] .cmp-dz span{font-size:11.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+html[data-look="club"] .cmp-acts{display:flex;flex-wrap:wrap;gap:12px;margin:22px 0 10px}
+html[data-look="club"] .cmp-acts a,html[data-look="club"] .cmp-acts button{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 20px;border-radius:999px;font-family:var(--sans);font-weight:600;font-size:15px;text-decoration:none;border:1px solid var(--line2);background:var(--panel);color:var(--ink);cursor:pointer}
+html[data-look="club"] .cmp-acts a.a1{background:var(--cb1);color:var(--ci1);border-color:var(--cb1)}
+html[data-look="club"] .cmp-acts a.a2{background:var(--cb2);color:var(--ci2);border-color:var(--cb2)}
+html[data-look="club"] .cmp-empty{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:28px 24px;font-size:17px;color:var(--ink2);max-width:70ch}
+@media (max-width:760px){
+  html[data-look="club"] .cmp-hero{grid-template-columns:1fr}
+  html[data-look="club"] .cmp-side{padding:20px 16px 18px;min-height:0}
+  html[data-look="club"] .cmp-side.r .cmp-who,html[data-look="club"] .cmp-side.r .cmp-row{justify-self:start;text-align:left}
+  html[data-look="club"] .cmp-side.r .cmp-club{flex-direction:row}
+  html[data-look="club"] .cmp-side.r .cmp-facts{justify-content:flex-start}
+  html[data-look="club"] .cmp-nm{font-size:44px}
+  html[data-look="club"] .cmp-vs{width:44px;height:44px;font-size:20px}
+  html[data-look="club"] body.cmp-on .cmp-sel{flex:1 1 auto;max-width:none;min-width:0}
+  html[data-look="club"] .cmp-h2h{padding:12px 10px}
+  html[data-look="club"] .cmp-m{grid-template-columns:58px minmax(0,1fr) 58px;gap:8px}
+  html[data-look="club"] .cmp-m .v{font-size:22px}
+  html[data-look="club"] .cmp-diet{grid-template-columns:1fr}
+}
+/* ---- end Club Edition compare ---- */
 #cmp-table td.me{color:var(--ink);font-weight:700}
 #cmp-table td.win{color:var(--club2)}
 #cmp-b a{color:var(--club2);text-decoration:none}#cmp-b a:hover{text-decoration:underline}
@@ -378,6 +470,166 @@ td.w{color:var(--good)} td.l{color:var(--bad)}
 .loading{opacity:.5;pointer-events:none;transition:opacity .2s}
 @media (max-width:1000px){.hero{grid-template-columns:300px 196px minmax(0,1fr);min-height:340px}.bio{padding-bottom:26px}.bio dd{font-size:16px}.hero .ph img{height:340px}h1{font-size:84px}.tiles{grid-template-columns:repeat(12,1fr)}.tile{grid-column:span 3;border-bottom:1px solid var(--line)}.tile:nth-child(n+5){grid-column:span 4}.tile:nth-child(4n){border-right:0}.tile:nth-last-child(-n+3){border-bottom:0}.grid{grid-template-columns:1fr}}
 @media (max-width:760px){.top{flex-wrap:wrap;height:auto}.top .id{order:-2;flex:1 1 auto;height:46px;clip-path:none;font-size:20px;padding:0 14px}.top .id span{display:none}.sel{border-right:0;padding:0 12px;height:46px}.sel.team,.sel.player{flex:1 1 100%;border-bottom:1px solid var(--line)}.search{flex:1 1 100%;height:44px;border-right:0}.dd-btn{font-size:17px;padding:10px 30px 10px 0}.wrap{padding:0 12px 48px}.hero{grid-template-columns:1fr;min-height:0}.bio{order:3;padding:0 20px 22px}.bio dl{grid-template-columns:1fr 1fr;gap:12px 16px}.bio dl>div:first-child,.bio .career{grid-column:1/-1}.hero::before{width:100%;left:0;background:linear-gradient(180deg,var(--club) 0%,var(--club) 45%,transparent 46%)}.hero .ph{padding-top:16px}.hero .ph img{height:280px}.hero .ph .num{font-size:170px;bottom:-16px}h1{font-size:64px}.facts{font-size:16px;gap:14px}.tiles{grid-template-columns:repeat(12,1fr)}.tile{padding:12px 8px 10px}.tile b{font-size:30px}.tile span{font-size:10.5px;letter-spacing:.12em}.tile i{font-size:11px;right:8px;top:10px}.panel .in{padding:0 12px 14px}.gauges,.xfg-row{grid-template-columns:1fr}}
+/* ---- Club Edition · player page (agent 3): hero band in the club colour, white panels, Bebas numbers, written ranks ---- */
+.tile .rk,.role .rk,.ticker .medal{display:none}
+html[data-look="club"] .hero{background:var(--club);color:var(--club-ink);border:0;border-radius:8px 8px 0 0;clip-path:polygon(0 0,100% 0,100% calc(100% - 44px),calc(100% - 44px) 100%,0 100%);grid-template-columns:380px 300px minmax(0,1fr);margin-top:20px}
+html[data-look="club"] .hero::before,html[data-look="club"] .hero::after{display:none}
+html[data-look="club"] .hero .ph .num{font-weight:var(--cond-w);font-style:normal;color:rgba(255,255,255,.1)}
+html[data-look="club"] .hero .lt{padding:26px 28px 34px 16px}
+html[data-look="club"] h1{font-weight:var(--cond-w);font-style:normal;font-size:clamp(76px,7.6vw,128px);line-height:.9;letter-spacing:.02em;color:var(--club-ink);margin:14px 0 8px}
+html[data-look="club"] h1 span span{color:var(--sur,var(--club2))}
+html[data-look="club"] .facts{font-family:var(--sans);font-weight:600;font-size:15px;letter-spacing:.08em;color:var(--club-ink);opacity:.92}
+html[data-look="club"] .facts b{color:var(--club-ink);font-weight:700}
+html[data-look="club"] .tag{border-radius:6px;clip-path:none;font-weight:var(--cond-w);font-size:16px;letter-spacing:.06em;padding:7px 14px 7px 10px;background:var(--panel);color:var(--ink)}
+html[data-look="club"] .tag #pos{color:var(--muted)}
+html[data-look="club"] .pnav{gap:6px}
+html[data-look="club"] .pnav button{height:44px;min-width:44px;padding:0 14px;border-radius:999px;clip-path:none;background:rgba(255,255,255,.14);color:var(--club-ink);font-family:var(--sans);font-weight:600;font-size:13px;letter-spacing:.04em;text-transform:none;border:1px solid rgba(255,255,255,.28)}
+html[data-look="club"] .pnav button:hover{filter:none;background:rgba(255,255,255,.26)}
+html[data-look="club"] .pnav button.ok{background:var(--club2);color:var(--on);border-color:transparent}
+html[data-look="club"] .pnav #prev,html[data-look="club"] .pnav #next{font-size:24px;font-weight:400;padding:0 0 3px}
+html[data-look="club"] .bio{align-self:center;background:var(--panel);color:var(--ink);border-radius:8px;padding:16px 16px 14px;margin:24px 8px 24px 0}
+html[data-look="club"] .bio dt{font-family:var(--sans);font-weight:600;font-size:12px;letter-spacing:.08em;color:var(--muted)}
+html[data-look="club"] .bio dd{font-family:var(--sans);font-weight:700;font-size:16px;letter-spacing:0;text-transform:none;color:var(--ink)}
+html[data-look="club"] .bio dd small{color:var(--muted);font-size:13px;letter-spacing:0}
+html[data-look="club"] .bio li{font-family:var(--sans);font-weight:500;font-size:14px;letter-spacing:0;text-transform:none;color:var(--ink2);line-height:1.4}
+html[data-look="club"] .bio li b{font-weight:600}
+html[data-look="club"] .bio li.cur b{color:var(--club)}
+html[data-look="club"] .bio li span{color:var(--muted)}
+html[data-look="club"] .bio li.cur span{color:var(--club);font-weight:700}
+html[data-look="club"] .bio li i{font-size:10px;letter-spacing:.1em}
+html[data-look="club"] .bio .lnk{font-family:var(--sans);font-weight:600;font-size:13px;letter-spacing:0;text-transform:none}
+html[data-look="club"] .bio summary{font-family:var(--sans)}
+/* fixtures strip: white, chips with the opponent crest */
+html[data-look="club"] .ticker{background:var(--panel);color:var(--ink);border:1px solid var(--line);border-top:0;border-radius:0 0 8px 8px;font-family:var(--sans);font-weight:600;font-size:14px;letter-spacing:0;text-transform:none}
+html[data-look="club"] .ticker .lab{background:var(--club);color:var(--club-ink);font-family:var(--cond);font-weight:var(--cond-w);font-size:17px;letter-spacing:.06em;text-transform:uppercase;text-shadow:none;clip-path:polygon(0 0,100% 0,calc(100% - 12px) 100%,0 100%);padding:0 26px 0 16px;display:flex;align-items:center}
+html[data-look="club"] .ticker .run{gap:10px;padding:8px 12px;align-items:center}
+html[data-look="club"] .ticker .run span{display:inline-flex;align-items:center;gap:8px;padding:5px 12px 5px 6px;border:1px solid var(--line);border-radius:999px;background:var(--bg)}
+html[data-look="club"] .ticker .run span b{color:var(--good);font-weight:700}html[data-look="club"] .ticker .run span b.l{color:var(--bad)}
+html[data-look="club"] .ticker .medal{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:#fff;border:1px solid var(--line);flex:none}
+html[data-look="club"] .ticker .medal img{width:18px;height:18px;object-fit:contain;display:block}
+/* stat tiles and role tiles: white cards, Bebas numbers, the rank bar and the rank in words */
+html[data-look="club"] .tiles{gap:12px;border:0;background:transparent;margin-top:20px}
+html[data-look="club"] .tile{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px 14px 16px}
+html[data-look="club"] .tile::after{left:14px;right:14px;bottom:10px;height:6px;border-radius:3px;background:var(--club2);width:calc(var(--p) * .8)}
+html[data-look="club"] .tile::before{content:"";position:absolute;left:14px;right:14px;bottom:10px;height:6px;border-radius:3px;background:var(--panel2)}
+html[data-look="club"] .tile b{font-weight:var(--cond-w);font-style:normal;font-size:44px;line-height:1;color:var(--ink)}
+html[data-look="club"] .tile span{font-family:var(--sans);font-weight:600;font-size:12px;letter-spacing:.08em;color:var(--muted);margin:6px 0 16px}
+html[data-look="club"] .tile .rk,html[data-look="club"] .role .rk{display:block;position:absolute;right:14px;bottom:20px;font-family:var(--sans);font-weight:600;font-size:12px;letter-spacing:0;text-transform:none;color:var(--ink2)}
+html[data-look="club"] .tile small,html[data-look="club"] .role small{font-family:var(--sans);letter-spacing:.04em;color:var(--club)}
+html[data-look="club"] .tile.na b{color:var(--muted)}
+html[data-look="club"] .band-foot{font-family:var(--sans);font-size:14px;color:var(--muted);margin-top:12px}
+html[data-look="club"] .role{gap:10px;border:0;background:transparent;margin-top:14px}
+html[data-look="club"] .role div{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px 30px}
+html[data-look="club"] .role div::after{left:14px;right:14px;bottom:10px;height:5px;border-radius:3px;opacity:1;width:calc(var(--p) * .8)}
+html[data-look="club"] .role div::before{content:"";position:absolute;left:14px;right:14px;bottom:10px;height:5px;border-radius:3px;background:var(--panel2)}
+html[data-look="club"] .role b{font-weight:var(--cond-w);font-style:normal;font-size:32px;color:var(--ink)}
+html[data-look="club"] .role span{font-family:var(--sans);font-weight:600;font-size:12px;letter-spacing:.08em;color:var(--muted)}
+html[data-look="club"] .role .rk{bottom:22px;font-size:11.5px}
+html[data-look="club"] .role div.small b{color:var(--muted)}
+/* panels and their titles */
+html[data-look="club"] .panel h2,html[data-look="club"] .panel summary{font-weight:var(--cond-w);font-style:normal;font-size:30px;letter-spacing:.03em;padding:16px 20px 8px;color:var(--ink)}
+html[data-look="club"] .panel h2::before,html[data-look="club"] .panel summary::before{transform:none;background:var(--club);border-radius:2px;height:26px}
+html[data-look="club"] .panel .in{padding:0 20px 20px}
+html[data-look="club"] .panel .sub{font-size:14px;color:var(--muted)}
+html[data-look="club"] .btn{border-radius:999px;clip-path:none;font-family:var(--sans);font-weight:700;font-size:13px;letter-spacing:.04em;text-transform:none;padding:0 18px;min-height:40px}
+html[data-look="club"] .toolbar .btn{padding:8px 16px;clip-path:none}
+html[data-look="club"] .form{background:var(--bg);border:1px solid var(--line);border-radius:8px;font-size:14px}
+html[data-look="club"] .form b{font-weight:var(--cond-w);font-style:normal;font-size:20px}
+html[data-look="club"] .trend{background:var(--bg);border-radius:8px}
+html[data-look="club"] .opener{background:var(--panel);border-radius:8px;overflow:hidden}
+html[data-look="club"] .opener .head b{font-weight:var(--cond-w);font-style:normal;font-size:28px}
+html[data-look="club"] .opener .head span{font-family:var(--sans);font-weight:500;font-size:15px;letter-spacing:0;text-transform:none}
+html[data-look="club"] .roster a{background:var(--panel)}
+html[data-look="club"] .roster a:hover,html[data-look="club"] .roster a.cur{background:var(--bg)}
+html[data-look="club"] .roster a i{font-style:normal;font-weight:var(--cond-w);color:var(--club)}
+html[data-look="club"] .fail b,html[data-look="club"] .empty b,html[data-look="club"] .lb-none b{font-weight:var(--cond-w);font-style:normal}
+html[data-look="club"] .fail{border-radius:8px}
+html[data-look="club"] .empty div{background:rgba(255,255,255,.94);border:1px solid var(--line);border-radius:8px;color:var(--ink)}
+/* 2D shot chart on white: court lines in the hairline colour, made shots green, misses grey */
+html[data-look="club"] .court-wrap{background:var(--panel);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+html[data-look="club"] .court .floor{fill:var(--panel)}
+html[data-look="club"] .court .paint{fill:var(--bg)}
+html[data-look="club"] .court .line{stroke:var(--line2)}
+html[data-look="club"] .court .made{fill:var(--good);stroke:#fff}
+html[data-look="club"] .court .miss,html[data-look="club"] .court .missx{stroke:var(--miss)}
+html[data-look="club"] .court .zone{stroke:#fff}
+html[data-look="club"] .court .zl{fill:var(--ink);stroke:#fff;font-weight:var(--cond-w)}
+html[data-look="club"] .court .zs{fill:var(--ink2);stroke:#fff}
+html[data-look="club"] .legend{font-family:var(--sans);font-size:13px;color:var(--ink2)}
+html[data-look="club"] .legend i.m{background:var(--good)}
+html[data-look="club"] .caption{font-size:14px}
+html[data-look="club"] .caption b{font-weight:var(--cond-w);font-size:18px;color:var(--ink)}
+html[data-look="club"] .court3d{border-radius:8px}
+/* season stats, zones, timing */
+html[data-look="club"] .split .k{font-family:var(--sans);font-weight:600;font-size:13px;letter-spacing:.04em;color:var(--ink2)}
+html[data-look="club"] .split .bar{height:10px;border-radius:5px;background:var(--panel2);overflow:hidden}
+html[data-look="club"] .split .bar i.fill{background:var(--club)}
+html[data-look="club"] .split .bar u.tick{background:var(--ink)}
+html[data-look="club"] .split .v{font-family:var(--sans);font-size:13px}
+html[data-look="club"] .split .v b{font-weight:var(--cond-w);font-style:normal;font-size:24px}
+html[data-look="club"] .xfg-row>div{border-radius:8px;background:var(--bg)}
+html[data-look="club"] .xfg-row b{font-weight:var(--cond-w);font-style:normal;font-size:30px}
+html[data-look="club"] .xfg-row span{font-size:12.5px}
+html[data-look="club"] table{font-family:var(--sans);font-size:14px}
+html[data-look="club"] th{font-family:var(--sans);font-weight:600;font-size:12px;letter-spacing:.08em;color:var(--muted);padding:10px 8px}
+html[data-look="club"] td{font-family:var(--sans);font-weight:500;font-size:15px;color:var(--ink2);padding:10px 8px}
+html[data-look="club"] td:first-child{font-size:15px;color:var(--ink)}
+html[data-look="club"] td.k,html[data-look="club"] #zones tr.tot td{color:var(--ink);font-weight:700}
+html[data-look="club"] tbody tr:hover td{background:rgba(11,13,16,.04)}
+html[data-look="club"] .zone-bar{transform:none;border-radius:4px;background:var(--club)}
+html[data-look="club"] .tbl-cap{font-family:var(--sans);font-weight:600;font-size:12.5px;letter-spacing:.08em;color:var(--muted)}
+html[data-look="club"] #zones td.k .cell{border-radius:4px}
+html[data-look="club"] #zones tr.grp td{font-family:var(--sans);font-weight:600;font-size:12px;letter-spacing:.08em}
+html[data-look="club"] .ttab td{font-family:var(--sans);font-weight:500;font-size:14px}
+html[data-look="club"] .ttab .tb i{border-radius:3px;background:var(--club)}
+html[data-look="club"] .ttab .tb i.bn{border-color:var(--club)}
+html[data-look="club"] .ttab .tb b{font-weight:var(--cond-w);font-style:normal;font-size:18px}
+html[data-look="club"] .log tbody tr.on td{background:rgba(11,13,16,.06)}
+html[data-look="club"] .log tbody tr.on td:nth-child(3)::after{border-radius:999px}
+html[data-look="club"] td .st{color:var(--club)}
+html[data-look="club"] .diet .stack{border-radius:4px}
+/* shot quality vs shooting skill */
+html[data-look="club"] .gauge{border-radius:8px;background:var(--bg)}
+html[data-look="club"] .gauge .k{font-family:var(--sans);font-weight:600;font-size:12px;letter-spacing:.08em}
+html[data-look="club"] .gauge b{font-weight:var(--cond-w);font-style:normal;font-size:52px;color:var(--ink)}
+html[data-look="club"] .gauge b small{font-style:normal}
+html[data-look="club"] .gauge .t{height:12px;border-radius:6px;background:var(--panel2);overflow:visible}
+html[data-look="club"] .gauge .t i{background:var(--club);border-radius:6px}
+html[data-look="club"] .gauge .t u{background:var(--club2);width:4px;border-radius:2px}
+html[data-look="club"] .gauge .u,html[data-look="club"] .gauge .pct{font-size:13px;color:var(--ink2)}
+html[data-look="club"] .how summary{font-family:var(--sans);font-weight:600;font-size:14px;letter-spacing:0;text-transform:none;color:var(--cold);text-decoration:underline}
+html[data-look="club"] .panel .how summary{font-size:14px;font-weight:600}
+html[data-look="club"] .prof-chart .band{fill:var(--club);fill-opacity:.12}
+html[data-look="club"] .prof-chart .ln{stroke:var(--club)}
+html[data-look="club"] .prof-chart .end{fill:var(--club2);stroke:var(--club);stroke-width:2}
+html[data-look="club"] .prof-chart text{font-size:12px;fill:var(--ink2)}
+html[data-look="club"] .prof-chart .zero{stroke:var(--ink2)}
+/* league leaders */
+html[data-look="club"] .lb-title b{font-weight:var(--cond-w);font-style:normal;font-size:30px}
+html[data-look="club"] .lb-title span{font-size:13px}
+html[data-look="club"] .lb-arrow{border-radius:999px;clip-path:none;font-weight:var(--cond-w)}
+html[data-look="club"] #lb-prev,html[data-look="club"] #lb-next{clip-path:none}
+html[data-look="club"] .lb-dots button::before{transform:none;border-radius:3px}
+html[data-look="club"] .lb-row a{border-radius:6px}
+html[data-look="club"] .lb-row a:hover{background:rgba(11,13,16,.04)}
+html[data-look="club"] .lb-row a::after{background:var(--line2)}
+html[data-look="club"] .lb-rank{font-weight:var(--cond-w);font-style:normal}
+html[data-look="club"] .lb-ph{border-radius:4px;clip-path:none}
+html[data-look="club"] .lb-name b{font-family:var(--sans);font-size:15px;letter-spacing:0;text-transform:none}
+html[data-look="club"] .lb-name b.fn{font-weight:500}html[data-look="club"] .lb-name b.sn{font-weight:700}
+html[data-look="club"] .lb-val{font-weight:var(--cond-w);font-style:normal;font-size:30px}
+html[data-look="club"] .lb-val u{font-size:11.5px}
+html[data-look="club"] .lb-row.me a{background:var(--club2);border-left-color:var(--club2)}
+html[data-look="club"] .lb-row.me a::after,html[data-look="club"] .lb-row.me a::before{background:rgba(0,0,0,.15)}
+html[data-look="club"] .lb-row.me .lb-val,html[data-look="club"] .lb-row.me .lb-val i,html[data-look="club"] .lb-row.me .lb-val u,html[data-look="club"] .lb-row.me .lb-name b,html[data-look="club"] .lb-row.me .lb-name small{color:var(--on)}
+html[data-look="club"] .lb-row.me .lb-rank{transform:none;border-radius:4px;background:rgba(0,0,0,.18);color:var(--on)}
+html[data-look="club"] .lb-foot{font-size:13px}
+html[data-look="club"] .lnk{color:var(--cold)}
+html[data-look="club"] .foot{font-family:var(--sans);letter-spacing:.04em;text-transform:none;font-size:13px}
+html[data-look="club"] .foot a{color:var(--cold)}
+@media (max-width:1000px){html[data-look="club"] .hero{grid-template-columns:300px 240px minmax(0,1fr)}html[data-look="club"] h1{font-size:76px}}
+@media (max-width:760px){html[data-look="club"] .hero{grid-template-columns:1fr;clip-path:polygon(0 0,100% 0,100% calc(100% - 28px),calc(100% - 28px) 100%,0 100%)}html[data-look="club"] .bio{margin:0 12px 16px;order:3}html[data-look="club"] .hero .lt{padding:0 16px 22px}html[data-look="club"] h1{font-size:64px}html[data-look="club"] .tile{padding:12px 10px 14px}html[data-look="club"] .tile b{font-size:34px}html[data-look="club"] .tile span{font-size:10.5px;margin:4px 0 14px}html[data-look="club"] .tile .rk{right:10px;bottom:18px;font-size:10.5px}html[data-look="club"] .tiles{gap:8px}html[data-look="club"] .role{gap:8px}html[data-look="club"] .panel .in{padding:0 12px 14px}}
+/* ---- end Club Edition · player page ---- */
 /* header search */
 .search{display:flex;align-items:center;position:relative;flex:0 1 250px;min-width:150px;padding:0 12px 0 14px;border-right:1px solid var(--line)}
 .search input{width:100%;background:transparent;border:0;border-bottom:2px solid var(--line2);color:var(--ink);font-family:var(--cond);font-weight:700;font-size:16px;letter-spacing:.06em;text-transform:uppercase;padding:6px 0 4px;min-width:0;border-radius:0}
@@ -528,6 +780,14 @@ body.st-on .st-lnk::after{content:"";position:absolute;left:14px;right:14px;bott
 body.st-on .wrap>*,body.ln-on .wrap>*{display:none}
 body.st-on.no-team .sel.team,body.st-on.no-team .sel.player,body.ln-on.no-team .sel.team,body.ln-on.no-team .sel.player{display:none}
 body.st-on .wrap>#standings,body.ln-on .wrap>#lineups{display:block}
+body.cmp-on .wrap>*{display:none}
+body.cmp-on .wrap>#cmp-panel{display:block}
+body:not(.cmp-on) .cmp-who,body:not(.cmp-on) .cmp-pick,body:not(.cmp-on) .cmp-vs,body:not(.cmp-on) #cmp-page,body:not(.cmp-on) #cmp-empty{display:none!important}
+body:not(.cmp-on) .cmp-hero,body:not(.cmp-on) .cmp-side{display:contents}
+body.cmp-on #cmp-open,body.cmp-on .cmp-row .cmp-lab{display:none}
+html:not([data-look="club"]) .cmp-who,html:not([data-look="club"]) .cmp-pick,html:not([data-look="club"]) .cmp-vs,html:not([data-look="club"]) #cmp-page{display:none!important}
+html:not([data-look="club"]) .cmp-hero,html:not([data-look="club"]) .cmp-side{display:contents}
+html[data-look="club"] body.cmp-on #cmp-table{display:none}
 body.ln-on #ln-lnk{color:var(--ink)}
 body.ln-on #ln-lnk::after{content:"";position:absolute;left:14px;right:14px;bottom:0;height:3px;background:var(--club2);transform:skewX(-14deg)}
 body.st-on #ln-lnk::after{display:none}
@@ -585,6 +845,107 @@ body.st-on #ln-lnk::after{display:none}
 .st-foot{font-size:12px;color:var(--muted);margin:12px 0 0}
 .st-foot b{color:var(--ink2);font-weight:600}
 .st-tab .short{display:none}
+
+/* ---- Club Edition: standings and lineups (agent 4). The tiles, cut rows, definitions and bars exist in the markup for both looks but only show under the club look. ---- */
+.st-tiles,.ln-defs,.st-tab tr.cutrow,.ln-tab .nbar,.ln-tab .oobar,.ln-tab .chip{display:none}
+.st-tab .form i{font-size:0}
+html[data-look="club"] #standings,html[data-look="club"] #lineups{margin-top:22px}
+html[data-look="club"] #standings h2,html[data-look="club"] #lineups h2{font-weight:var(--cond-w);font-style:normal;font-size:36px;letter-spacing:.03em;padding:18px 20px 6px;gap:14px}
+html[data-look="club"] #standings h2::before,html[data-look="club"] #lineups h2::before{width:8px;height:28px;background:var(--club2);transform:none;border-radius:2px}
+html[data-look="club"] #standings .in,html[data-look="club"] #lineups .in{padding:0 20px 20px}
+html[data-look="club"] #standings .sub,html[data-look="club"] #lineups .sub{font-family:var(--sans);font-size:16px;color:var(--ink2);margin:0 0 16px;max-width:80ch}
+html[data-look="club"] .st-foot,html[data-look="club"] .ln-foot{font-size:14px;color:var(--muted);margin-top:14px;max-width:110ch}
+html[data-look="club"] .st-foot b,html[data-look="club"] .ln-foot b{color:var(--ink2)}
+/* summary tiles above the standings table */
+html[data-look="club"] .st-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:0 0 18px}
+html[data-look="club"] .st-tile{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:14px 16px 12px;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;row-gap:2px;column-gap:12px;border-bottom:3px solid var(--club2)}
+html[data-look="club"] .st-tile .lab{grid-column:1/-1;font-family:var(--sans);font-weight:600;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+html[data-look="club"] .st-tile .val{font-family:var(--cond);font-weight:var(--cond-w);font-size:34px;line-height:1;color:var(--ink);letter-spacing:.02em;display:flex;align-items:center;gap:10px;min-width:0}
+html[data-look="club"] .st-tile .val span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+html[data-look="club"] .st-tile .val em{font-style:normal;color:var(--good)}
+html[data-look="club"] .st-tile .val .medal{width:36px;height:36px}html[data-look="club"] .st-tile .val .medal img{width:26px;height:26px}
+html[data-look="club"] .st-tile .note{grid-column:1/-1;font-family:var(--sans);font-size:14px;color:var(--muted)}
+html[data-look="club"] .st-tile a{color:inherit;text-decoration:none}html[data-look="club"] .st-tile a:hover span{text-decoration:underline}
+/* the standings table on white */
+html[data-look="club"] .st-tab,html[data-look="club"] .ln-tab{border-collapse:separate;border-spacing:0}
+html[data-look="club"] .st-tab th,html[data-look="club"] .ln-tab th{font-family:var(--sans);font-weight:600;font-size:12px;letter-spacing:.08em;color:var(--muted);background:var(--panel2);border-bottom:1px solid var(--line2);padding:10px 10px}
+html[data-look="club"] .st-tab td,html[data-look="club"] .ln-tab td{font-family:var(--sans);font-weight:500;font-size:16px;color:var(--ink2);height:48px;padding:0 10px;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums;white-space:nowrap}
+html[data-look="club"] .st-tab .form{flex-wrap:nowrap}
+html[data-look="club"] .st-tab tbody tr:nth-child(even) td,html[data-look="club"] .ln-tab tbody tr:nth-child(even) td{background:#f8f9fb}
+html[data-look="club"] .st-tab th:first-child,html[data-look="club"] .st-tab td:first-child,html[data-look="club"] .ln-tab th:first-child,html[data-look="club"] .ln-tab td:first-child{font-family:var(--sans);font-weight:600;font-style:normal;font-size:15px;color:var(--muted);padding-left:14px}
+html[data-look="club"] .st-tab td:first-child{box-shadow:inset 4px 0 0 var(--cb,var(--line2))}
+html[data-look="club"] .st-tab td.club{font-family:var(--sans);font-weight:600;font-size:16px;letter-spacing:0;text-transform:none;color:var(--ink);padding-left:6px}
+html[data-look="club"] .st-tab td.club a{gap:12px}
+html[data-look="club"] .st-tab td.club .medal{width:36px;height:36px;border-color:var(--ca,var(--club2))}html[data-look="club"] .st-tab td.club .medal img{width:26px;height:26px}
+html[data-look="club"] .st-tab td.k,html[data-look="club"] .ln-tab td.k{color:var(--ink);font-weight:700;font-size:17px}
+html[data-look="club"] .st-tab td.w{color:var(--ink)}html[data-look="club"] .st-tab td.l{color:var(--bad);font-weight:600}
+html[data-look="club"] .st-tab td.up,html[data-look="club"] .ln-tab td.up{color:var(--good);font-weight:700}
+html[data-look="club"] .st-tab td.down,html[data-look="club"] .ln-tab td.down{color:var(--bad);font-weight:700}
+html[data-look="club"] .st-tab tr.me td,html[data-look="club"] .ln-tab tr.me td{background:color-mix(in srgb,var(--club2) 10%,#fff)}
+html[data-look="club"] .st-tab tr.me td:first-child{color:var(--ink)}
+html[data-look="club"] .st-tab .form{gap:4px}
+html[data-look="club"] .st-tab .form i{width:20px;height:20px;transform:none;border-radius:4px;background:var(--line2);color:#fff;font-size:11px;font-style:normal;font-weight:700;display:grid;place-items:center;line-height:1}
+html[data-look="club"] .st-tab .form i.w{background:var(--good)}html[data-look="club"] .st-tab .form i.l{background:var(--bad)}
+html[data-look="club"] .st-tab tr.cut td{border-bottom:1px solid var(--line)}
+html[data-look="club"] .st-tab tr.cutrow{display:table-row}
+html[data-look="club"] .st-tab tr.cutrow td{height:30px;padding:0 14px;font-family:var(--sans);font-weight:600;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--club);background:color-mix(in srgb,var(--club2) 14%,#fff);border-top:2px solid var(--club2);border-bottom:2px solid var(--club2);text-align:left;box-shadow:none}
+html[data-look="club"] .st-tab tr.cutrow td::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--club2);margin-right:8px;vertical-align:1px}
+/* lineups: pill controls, the definitions strip, net bars, the most-used chip */
+html[data-look="club"] .ln-bar{gap:12px 14px;margin:0 0 14px}
+html[data-look="club"] .ln-bar .seg button{padding:8px 18px}
+html[data-look="club"] .ln-sel{height:44px;border-radius:999px;border:1px solid var(--line);background:var(--panel);padding:0 14px 0 16px;font-family:var(--sans);font-weight:600;font-size:15px;letter-spacing:0;text-transform:none;color:var(--ink)}
+html[data-look="club"] .ln-sel label{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+html[data-look="club"] .ln-sel select{padding-right:20px}
+html[data-look="club"] .ln-sel select:focus-visible{outline-color:var(--cold)}
+html[data-look="club"] .ln-sel::after{right:14px}
+html[data-look="club"] .ln-defs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:0 0 16px}
+html[data-look="club"] .ln-defs div{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:10px 14px;display:grid;grid-template-columns:auto minmax(0,1fr);gap:2px 12px;align-items:baseline}
+html[data-look="club"] .ln-defs b{grid-row:1/3;font-family:var(--cond);font-weight:var(--cond-w);font-size:26px;color:var(--club2);letter-spacing:.03em;line-height:1}
+html[data-look="club"] .ln-defs i{font-style:normal;font-family:var(--sans);font-weight:600;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink)}
+html[data-look="club"] .ln-defs span{font-family:var(--sans);font-size:14px;color:var(--muted);line-height:1.35}
+html[data-look="club"] .ln-tab td.crest{padding-right:0}
+html[data-look="club"] .ln-tab td.crest .medal{width:36px;height:36px;border-color:var(--ca,var(--club2))}html[data-look="club"] .ln-tab td.crest .medal img{width:26px;height:26px}
+html[data-look="club"] .ln-tab td.five{font-size:16px;font-weight:600;color:var(--ink);line-height:1.3;padding-top:6px;padding-bottom:6px}
+html[data-look="club"] .ln-tab td.five i{color:var(--line2);padding:0 4px}
+html[data-look="club"] .ln-tab td.name{font-size:16px;color:var(--ink)}
+html[data-look="club"] .ln-tab td.name small{font-family:var(--sans);font-weight:500;font-size:12px;letter-spacing:.02em;text-transform:none;color:var(--muted)}
+html[data-look="club"] .ln-tab td.pair{font-size:15px}html[data-look="club"] .ln-tab td.pair b{font-size:16px}html[data-look="club"] .ln-tab td.pair i{color:var(--line2)}
+html[data-look="club"] .ln-tab td.k.bar-cell{white-space:nowrap}
+html[data-look="club"] .ln-tab .nbar{display:inline-block;vertical-align:middle;width:64px;height:8px;border-radius:4px;background:var(--panel2);margin-left:10px;overflow:hidden}
+html[data-look="club"] .ln-tab .nbar i{display:block;height:100%;background:var(--good);border-radius:4px}
+html[data-look="club"] .ln-tab td.down .nbar i{background:var(--bad)}
+html[data-look="club"] .ln-tab .oobar{display:flex;width:84px;height:8px;border-radius:4px;overflow:hidden;background:var(--panel2);margin:4px 0 0 auto}
+html[data-look="club"] .ln-tab .oobar i{display:block;height:100%}
+html[data-look="club"] .ln-tab .oobar i.on{background:var(--good)}html[data-look="club"] .ln-tab .oobar i.off{background:var(--bad)}
+html[data-look="club"] .ln-tab td.oo{text-align:right;line-height:1.1;padding-top:6px;padding-bottom:6px}
+html[data-look="club"] .ln-tab .chip{display:inline-block;margin-left:10px;padding:3px 10px;border-radius:999px;background:var(--club2);color:var(--on);font-family:var(--sans);font-weight:700;font-size:11px;letter-spacing:.06em;text-transform:uppercase;vertical-align:2px}
+html[data-look="club"] .ln-empty{font-size:15px}
+@media (max-width:760px){
+  html[data-look="club"] #standings .in,html[data-look="club"] #lineups .in{padding:0 12px 16px}
+  html[data-look="club"] #standings h2,html[data-look="club"] #lineups h2{font-size:30px;padding:14px 12px 4px}
+  html[data-look="club"] .st-tiles{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  html[data-look="club"] .st-tile:first-child{grid-column:1/-1}
+  html[data-look="club"] .st-tile{padding:10px 12px 8px;border-radius:6px}
+  html[data-look="club"] .st-tile .val{font-size:24px;gap:6px}html[data-look="club"] .st-tile .val .medal{width:28px;height:28px}html[data-look="club"] .st-tile .val .medal img{width:20px;height:20px}
+  html[data-look="club"] .st-tile .note{font-size:12px}html[data-look="club"] .st-tile .lab{font-size:11px}
+  /* every column stays; the rank and club cells are sticky so the row never loses its name while the stats scroll */
+  html[data-look="club"] .st-tab th:nth-child(n+7),html[data-look="club"] .st-tab td:nth-child(n+7){display:table-cell}
+  html[data-look="club"] .st-tab th,html[data-look="club"] .st-tab td{padding:0 8px;font-size:15px;height:46px}
+  html[data-look="club"] .st-tab th:first-child,html[data-look="club"] .st-tab td:first-child{position:sticky;left:0;z-index:2;background:var(--panel);padding-left:10px;width:34px;min-width:34px}
+  html[data-look="club"] .st-tab th:nth-child(2),html[data-look="club"] .st-tab td.club{position:sticky;left:34px;z-index:2;background:var(--panel);width:auto;min-width:150px;max-width:170px;font-size:14px;padding-right:12px;box-shadow:4px 0 8px -4px rgba(11,13,16,.18)}
+  html[data-look="club"] .st-tab thead th{background:var(--panel2)}
+  html[data-look="club"] .st-tab td.club .medal{width:28px;height:28px}html[data-look="club"] .st-tab td.club .medal img{width:20px;height:20px}
+  html[data-look="club"] .st-tab .form i{width:16px;height:16px;font-size:10px}
+  html[data-look="club"] .st-tab tr.cutrow td{position:static;font-size:11px}
+  html[data-look="club"] .ln-defs{grid-template-columns:1fr;gap:6px}
+  html[data-look="club"] .ln-defs div{padding:8px 12px}html[data-look="club"] .ln-defs b{font-size:22px}
+  html[data-look="club"] .ln-tab td,html[data-look="club"] .ln-tab th{padding:0 6px;font-size:14.5px}
+  html[data-look="club"] .ln-tab td.five{font-size:14px}
+  html[data-look="club"] .ln-tab td.crest .medal{width:28px;height:28px}html[data-look="club"] .ln-tab td.crest .medal img{width:20px;height:20px}
+  html[data-look="club"] .ln-tab .nbar{width:40px;margin-left:6px}
+  html[data-look="club"] .ln-tab .chip{display:block;margin:4px 0 0;width:max-content}
+}
+/* ---- end Club Edition standings and lineups ---- */
 .cv{position:relative;min-height:calc(100vh - 6px);overflow:hidden;display:flex;flex-direction:column;justify-content:center}
 .cv-court{position:absolute;right:-16%;top:50%;transform:translateY(-50%);width:min(980px,86vw);opacity:.07;pointer-events:none;z-index:0}
 .cv-court svg{width:100%;height:auto;display:block}
@@ -615,8 +976,13 @@ body.st-on #ln-lnk::after{display:none}
 .cv-clubs{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
 .cv-clubs a{display:flex;flex-direction:column;align-items:center;gap:8px;padding:14px 6px 11px;background:var(--bg2);text-decoration:none;color:var(--ink2);transition:background .15s,color .15s}
 .cv-clubs a:hover{background:var(--panel2);color:var(--ink)}
+.cv-clubs .medal,.cv-clubs .txt{display:contents}
 .cv-clubs img{width:34px;height:34px;object-fit:contain;filter:drop-shadow(0 0 2.5px rgba(255,255,255,.45))}
-.cv-clubs span{font-family:var(--cond);font-weight:700;font-size:11px;letter-spacing:.1em;text-transform:uppercase;text-align:center;line-height:1.2}
+.cv-clubs .nm{font-family:var(--cond);font-weight:700;font-size:11px;letter-spacing:.1em;text-transform:uppercase;text-align:center;line-height:1.2}
+.cv-clubs .co{display:none}
+.cv-hero-in{position:relative;z-index:1;width:100%;max-width:1180px;margin:0 auto;padding:56px 24px 0}
+.cv-h1c{display:none}
+.cv-round{display:none}
 .cv-feats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
 .cv-feats div{background:var(--bg2);padding:16px 16px 18px}
 .cv-feats b{display:block;font-family:var(--cond);font-weight:800;font-size:17px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink)}
@@ -627,7 +993,53 @@ body.st-on #ln-lnk::after{display:none}
 .cv .lang{position:absolute;top:24px;right:24px;margin:0;border:1px solid var(--line);background:var(--panel);clip-path:polygon(8px 0,100% 0,100% 100%,0 100%);height:46px;z-index:2}
 .cv .lang button{width:54px;height:44px}
 @media (max-width:1000px){.cv-court{right:-28%;width:760px;opacity:.05}.cv-clubs{grid-template-columns:repeat(5,minmax(0,1fr))}.cv-feats{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media (max-width:760px){.cv{min-height:0}.cv-in{padding:36px 14px 48px}.cv-court{display:none}.cv-lede{font-size:15.5px}.cv-nums{grid-template-columns:repeat(3,minmax(0,1fr))}.cv-nums b{font-size:32px}.cv-clubs{grid-template-columns:repeat(4,minmax(0,1fr))}.cv-go{width:100%;text-align:center}}
+@media (max-width:760px){.cv{min-height:0}.cv-in{padding:36px 14px 48px}.cv-hero-in{padding:36px 14px 0}.cv-court{display:none}.cv-lede{font-size:15.5px}.cv-nums{grid-template-columns:repeat(3,minmax(0,1fr))}.cv-nums b{font-size:32px}.cv-clubs{grid-template-columns:repeat(4,minmax(0,1fr))}.cv-go{width:100%;text-align:center}}
+/* ---- Club Edition cover: a house-colour band with the thesis, then club cards on paper, each wearing its own colourway ---- */
+html[data-look="club"] .cv{min-height:0;display:block;overflow:visible;background:var(--bg)}
+html[data-look="club"] .cv-glow,html[data-look="club"] .cv-court,html[data-look="club"] .cv-h1,html[data-look="club"] .cv-eyebrow i{display:none}
+html[data-look="club"] .cv-hero{position:relative;min-height:60vh;display:flex;align-items:center}
+html[data-look="club"] .cv-hero-in{padding:72px 24px 104px}
+html[data-look="club"] .cv-eyebrow{font-family:var(--sans);font-weight:600;font-size:13px;letter-spacing:.14em;color:var(--club-ink);opacity:.82}
+html[data-look="club"] .cv-round{display:inline}
+html[data-look="club"] .cv-h1c{display:block;margin:18px 0 0;font-family:var(--cond);font-weight:var(--cond-w);font-style:normal;font-size:clamp(48px,7vw,96px);line-height:.96;letter-spacing:.02em;text-transform:uppercase;color:var(--club-ink);max-width:17ch;text-wrap:balance}
+html[data-look="club"] .cv-eyebrow{display:block;line-height:1.5}
+html[data-look="club"] .cv-h1c em{font-style:normal;color:var(--club2);display:block}
+html[data-look="club"] .cv-lede{max-width:60ch;margin:26px 0 0;font-size:19px;line-height:1.5;color:var(--club-ink)}
+html[data-look="club"] .cv-cta{margin:34px 0 0;gap:14px}
+html[data-look="club"] .cv-go{clip-path:none;border-radius:8px;font-family:var(--sans);font-weight:var(--sans-b);font-size:17px;letter-spacing:.01em;text-transform:none;min-height:48px;padding:12px 26px;transform:none}
+html[data-look="club"] .cv-go:hover{filter:brightness(1.06)}
+html[data-look="club"] .cv-go small{font-family:var(--sans);font-weight:400;font-size:12px;letter-spacing:0;text-transform:none;opacity:.85}
+html[data-look="club"] .cv-search{height:48px;max-width:420px}
+html[data-look="club"] .cv-search input{font-size:17px}
+html[data-look="club"] .cv .lang{top:22px;right:24px;height:44px;border-radius:999px;clip-path:none;background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.35);overflow:hidden}
+html[data-look="club"] .cv .lang button{width:52px;height:42px;color:var(--club-ink)}
+html[data-look="club"] .cv-in{padding:0 24px 56px}
+html[data-look="club"] .cv-nums{margin:-40px 0 0;position:relative;z-index:2;gap:12px;border:0;background:none}
+html[data-look="club"] .cv-nums li{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px 18px 14px}
+html[data-look="club"] .cv-nums b{font-weight:var(--cond-w);font-style:normal;font-size:40px;color:var(--ink);letter-spacing:.02em}
+html[data-look="club"] .cv-nums span{font-family:var(--sans);font-weight:600;font-size:13px;letter-spacing:.08em;color:var(--muted);margin-top:4px}
+html[data-look="club"] .cv-sec{margin:44px 0 0}
+html[data-look="club"] .cv-sec h2{font-weight:var(--cond-w);font-style:normal;font-size:30px;letter-spacing:.03em;gap:12px;margin:0 0 16px}
+html[data-look="club"] .cv-sec h2::before{width:6px;height:24px;background:var(--club2);transform:none;border-radius:2px}
+html[data-look="club"] .cv-clubs{grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;background:none;border:0}
+html[data-look="club"] .cv-clubs a{position:relative;overflow:hidden;flex-direction:row;align-items:center;gap:12px;padding:12px 14px 12px 22px;background:var(--panel);border:1px solid var(--line);border-radius:8px;color:var(--ink2);transition:border-color .15s}
+html[data-look="club"] .cv-clubs a::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--cb)}
+html[data-look="club"] .cv-clubs a::after{content:"";position:absolute;left:6px;top:0;bottom:0;width:2px;background:var(--ca)}
+html[data-look="club"] .cv-clubs a:hover{background:var(--panel);border-color:var(--line2);color:var(--ink)}
+html[data-look="club"] .cv-clubs .medal{display:inline-grid;flex:none;--club2:var(--ca)}
+html[data-look="club"] .cv-clubs img{width:28px;height:28px;filter:none}
+html[data-look="club"] .cv-clubs .nm{font-weight:var(--cond-w);font-size:24px;letter-spacing:.03em;text-align:left;line-height:1;color:var(--ink);display:block}
+html[data-look="club"] .cv-clubs .co{display:block;font-family:var(--sans);font-weight:600;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:3px}
+html[data-look="club"] .cv-clubs .txt{display:flex;flex-direction:column;align-items:flex-start;min-width:0}
+html[data-look="club"] .cv-feats{gap:12px;background:none;border:0}
+html[data-look="club"] .cv-feats div{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:20px 20px 22px}
+html[data-look="club"] .cv-feats b{font-weight:var(--cond-w);font-size:24px;letter-spacing:.03em;line-height:1.05}
+html[data-look="club"] .cv-feats p{margin:10px 0 0;font-size:15px;line-height:1.5;color:var(--ink2)}
+html[data-look="club"] .cv-foot{font-family:var(--sans);font-weight:600;font-size:13px;letter-spacing:.06em;color:var(--muted)}
+html[data-look="club"] .cv-foot a{color:var(--cold)}
+@media (max-width:1000px){html[data-look="club"] .cv-clubs{grid-template-columns:repeat(3,minmax(0,1fr))}html[data-look="club"] .cv-feats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:760px){html[data-look="club"] .cv-hero{min-height:0}html[data-look="club"] .cv-hero-in{padding:76px 16px 72px}html[data-look="club"] .cv-h1c{font-size:52px;max-width:none}html[data-look="club"] .cv-lede{font-size:17px}html[data-look="club"] .cv-cta{flex-direction:column;align-items:stretch}html[data-look="club"] .cv-go{order:0}html[data-look="club"] .cv-search{order:1;max-width:none}html[data-look="club"] .cv-in{padding:0 16px 48px}html[data-look="club"] .cv-nums{margin-top:-28px;gap:8px}html[data-look="club"] .cv-nums li{padding:12px 12px 10px}html[data-look="club"] .cv-nums b{font-size:30px}html[data-look="club"] .cv-clubs{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}html[data-look="club"] .cv-clubs a{padding:10px 10px 10px 18px;gap:10px}html[data-look="club"] .cv-clubs .nm{font-size:20px}html[data-look="club"] .cv-feats{grid-template-columns:1fr;gap:8px}html[data-look="club"] .cv-sec h2{font-size:26px}}
+/* ---- end Club Edition cover ---- */
 /* page transition: a broadcast wipe in the destination club's colours covers the swap between the opening page and a club, or between clubs */
 .wipe{position:fixed;inset:0;z-index:100;pointer-events:none;overflow:hidden;display:none}
 .wipe.on{display:block}
@@ -707,18 +1119,21 @@ body.st-on #ln-lnk::after{display:none}
 <main class="cv" id="cover" hidden>
   <div class="cv-glow"></div>
   <div class="cv-court"><svg viewBox="0 0 1500 1400" aria-hidden="true"><g class="l"><rect x="6" y="6" width="1488" height="1388"/><rect x="505" y="820" width="490" height="574"/><circle cx="750" cy="820" r="180"/><path d="M90 1394 L90 1119 A675 675 0 0 1 1410 1119 L1410 1394"/><circle cx="750" cy="1260" r="22.5"/><path d="M570 1394 A180 180 0 0 0 930 1394"/></g></svg></div>
-  <div class="cv-in">
+  <div class="cv-hero band cut-br"><div class="cv-hero-in">
     <div class="lang cv-lang" role="group" aria-label="Language">
     <button type="button" data-lang="tr" aria-pressed="false" aria-label="Türkçe" title="Türkçe"><svg viewBox="0 0 22 15" aria-hidden="true"><rect width="22" height="15" fill="#e30a17"/><circle cx="8" cy="7.5" r="4" fill="#fff"/><circle cx="9.1" cy="7.5" r="3.25" fill="#e30a17"/><polygon fill="#fff" points="11.5,7.5 12.7,7.1 12.7,5.8 13.5,6.8 14.8,6.4 14,7.5 14.8,8.6 13.5,8.2 12.7,9.2 12.7,7.9"/></svg><span aria-hidden="true">TR</span></button>
     <button type="button" data-lang="en" aria-pressed="false" aria-label="English" title="English"><svg viewBox="0 0 22 15" aria-hidden="true"><rect width="22" height="15" fill="#b22234"/><path stroke="#fff" stroke-width="1.154" d="M0 1.73H22M0 4.04H22M0 6.35H22M0 8.65H22M0 10.96H22M0 13.27H22"/><rect width="8.8" height="8.08" fill="#3c3b6e"/><path stroke="#fff" stroke-width=".75" stroke-linecap="round" stroke-dasharray=".1 1.6" d="M1 1.2H8.3M1.8 2.6H8.3M1 4H8.3M1.8 5.4H8.3M1 6.8H8.3"/></svg><span aria-hidden="true">EN</span></button>
   </div>
-    <p class="cv-eyebrow no-t"><i></i>Euroleague <span id="cv-season"></span></p>
+    <p class="cv-eyebrow no-t"><i></i>Euroleague <span id="cv-season"></span><span class="cv-round" id="cv-round"></span></p>
     <h1 class="cv-h1" aria-label="Player Lab">Player<span>Lab</span></h1>
+    <h1 class="cv-h1c"><span>Pick a club. Pick a player.</span> <em>See everything he does.</em></h1>
     <p class="cv-lede">Every shot, every player, every club. Shot charts in two dimensions and three, shooting profiles that separate the shots a player takes from what he adds to them, and season stats rebuilt within minutes of every final.</p>
     <div class="cv-cta">
       <button class="cv-go" id="cv-go" type="button">Open the app</button>
       <div class="search cv-search"><input type="search" id="cq" placeholder="Find a player" aria-label="Find a player across all clubs" autocomplete="off" spellcheck="false" role="combobox" aria-expanded="false" aria-controls="cq-list" aria-autocomplete="list"><kbd>/</kbd><ul class="dd-list" id="cq-list" role="listbox" aria-label="Players" hidden></ul></div>
     </div>
+  </div></div>
+  <div class="cv-in">
     <ul class="cv-nums" id="cv-nums"></ul>
     <section class="cv-sec">
       <h2>Pick a club</h2>
@@ -837,7 +1252,23 @@ body.st-on #ln-lnk::after{display:none}
     <h2>Compare</h2>
     <div class="in">
       <p class="sub" id="cmp-sub"></p>
-      <div class="cmp-row"><div class="sel" style="border:0;padding:0;flex:1;max-width:420px"><select id="cmp" aria-label="Compare with"></select></div></div>
+      <!-- Club Edition compare: on the player page only the picker row shows (a teaser); on #compare the hero, bars, shot diets and actions show -->
+      <div class="cmp-hero" id="cmp-hero">
+        <div class="cmp-side l" id="cmp-l"><div class="cmp-who" id="cmp-who-l"></div><div class="cmp-pick"><label class="cmp-lab" for="cmp-me">Change player</label><div class="sel cmp-sel"><select id="cmp-me" aria-label="Change player"></select></div></div></div>
+        <div class="cmp-side r" id="cmp-r"><div class="cmp-who" id="cmp-who-r"></div><div class="cmp-row"><label class="cmp-lab" for="cmp">Compare with</label><div class="sel cmp-sel" style="border:0;padding:0;flex:1;max-width:420px"><select id="cmp" aria-label="Compare with"></select></div><a class="cmp-open" id="cmp-open" href="#compare">Open compare</a></div></div>
+        <span class="cmp-vs" aria-hidden="true">VS</span>
+      </div>
+      <div class="cmp-page" id="cmp-page" hidden>
+        <h3 class="cmp-h3" id="cmp-h2h-t">Head to head</h3>
+        <p class="sub" id="cmp-h2h-sub"></p>
+        <div class="cmp-h2h" id="cmp-h2h"></div>
+        <p class="cmp-cap" id="cmp-cap"></p>
+        <h3 class="cmp-h3" id="cmp-diet-t">Shot diet</h3>
+        <p class="sub" id="cmp-diet-sub"></p>
+        <div class="cmp-diet" id="cmp-diet"></div>
+        <div class="cmp-acts" id="cmp-acts"></div>
+      </div>
+      <div class="cmp-empty" id="cmp-empty" hidden></div>
       <div style="overflow-x:auto"><table id="cmp-table" hidden><thead><tr><th>Metric</th><th id="cmp-a"></th><th id="cmp-b"></th><th>Position median</th></tr></thead><tbody></tbody></table></div>
     </div>
   </section>
@@ -861,7 +1292,8 @@ body.st-on #ln-lnk::after{display:none}
     <h2>Standings</h2>
     <div class="in">
       <p class="sub" id="st-sub"></p>
-      <div class="scroll"><table class="st-tab"><thead><tr><th>#</th><th>Club</th><th>W</th><th>L</th><th>+/-</th><th>Last 5</th><th>PF</th><th>PA</th><th>Home</th><th>Away</th><th>Streak</th></tr></thead><tbody id="st-body"></tbody></table></div>
+      <div class="st-tiles" id="st-tiles" hidden></div>
+      <div class="scroll"><table class="st-tab"><thead><tr><th scope="col">#</th><th scope="col">Club</th><th scope="col">W</th><th scope="col">L</th><th scope="col">+/-</th><th scope="col">Last 5</th><th scope="col">PF</th><th scope="col">PA</th><th scope="col">Home</th><th scope="col">Away</th><th scope="col">Streak</th></tr></thead><tbody id="st-body"></tbody></table></div>
       <p class="st-foot" id="st-foot"></p>
     </div>
   </section>
@@ -874,6 +1306,7 @@ body.st-on #ln-lnk::after{display:none}
         <div class="ln-sel"><label for="ln-club">Club</label><select id="ln-club" aria-label="Club"></select></div>
         <div class="ln-sel"><label for="ln-min">Min</label><select id="ln-min" aria-label="Minimum minutes"></select></div>
       </div>
+      <div class="ln-defs" id="ln-defs"></div>
       <div class="scroll" id="ln-wrap"></div>
       <p class="ln-foot" id="ln-foot"></p>
     </div>
@@ -915,6 +1348,7 @@ function setLang(l){
   if (typeof COVER !== 'undefined') COVER.render();
   if (typeof STAND !== 'undefined' && document.body.classList.contains('st-on')) STAND.render();
   if (typeof LINE !== 'undefined' && document.body.classList.contains('ln-on')) LINE.render();
+  if (typeof CMP !== 'undefined' && document.body.classList.contains('cmp-on')) CMP.render();
   if (state.data) { renderOpener(); renderGames(); renderPlayer(); DD.team.refresh(); DD.player.refresh(); DD.statGame.refresh(); DD.cmp.refresh(); const n = nameOf(player().name); document.title = `${n.first} ${n.sur} · ${shortName(state.team)} · Player Lab`; }
 }
 const CLUBS = Object.fromEntries(META.clubs.map(c => [c.code, c]));
@@ -1050,8 +1484,9 @@ function renderTicker(){
   const d = ds(), games = d.games, tm = team();
   // the last five results with the player's line, then the club's next ten fixtures; rebuilt within minutes of every final
   const up = (tm.upcoming || []).slice(0, 10);
-  const results = d.log.slice(-5).map(r => { const g = games[r[0]], l = gameLabel(g); return `<span>${l.txt} <b class="${l.res === t('W') ? '' : 'l'}">${l.res} ${l.score}</b> · ${r[2]} ${t('pts')} · ${r[14]} PIR</span>`; });
-  const fixtures = up.map((g, i) => `<span>${i === 0 ? t('Next') + ': ' : ''}${t('R')}${g.round} ${g.home === realCode() ? t('vs') + ' ' + shortName(g.away) : '@ ' + shortName(g.home)} · ${fmtDate(g.date)}</span>`);
+  const medal = code => { const c = CLUBS[code]; return c && c.logo ? `<i class="medal"><img src="${c.logo}" alt="" loading="lazy"></i>` : ''; };   // the opponent crest, shown by the Club Edition strip only
+  const results = d.log.slice(-5).map(r => { const g = games[r[0]], l = gameLabel(g); return `<span>${medal(l.home ? g.away : g.home)}${l.txt} <b class="${l.res === t('W') ? '' : 'l'}">${l.res} ${l.score}</b> · ${r[2]} ${t('pts')} · ${r[14]} PIR</span>`; });
+  const fixtures = up.map((g, i) => `<span>${medal(g.home === realCode() ? g.away : g.home)}${i === 0 ? t('Next') + ': ' : ''}${t('R')}${g.round} ${g.home === realCode() ? t('vs') + ' ' + shortName(g.away) : '@ ' + shortName(g.home)} · ${fmtDate(g.date)}</span>`);
   let items = results.concat(fixtures);
   if (!items.length) items = [`<span>${t('The season has not started')}</span>`];
   $('#ticker-lab').textContent = t('Fixtures'); $('#ticker-lab').href = `cal/${state.team}.ics`;
@@ -1062,6 +1497,8 @@ function renderPlayer(){
   const p = player(), tm = team(), n = nameOf(p.name), d = ds(), tot = d.tot, gp = tot.gp || 1, played = tot.gp > 0, pc = d.pct || {};
   $('#photo').src = p.photo || PLACEHOLDER; $('#photo').alt = `${n.first} ${n.sur}`; $('#num').textContent = p.dorsal || '';
   $('#pos').textContent = `${p.dorsal ? '· #' + p.dorsal + ' ' : ''}· ${t(p.position || '')}`; $('#nm').innerHTML = `${n.first}<span>${n.sur}</span>`;
+  // Club Edition hero: the surname wears the accent only when it reads against the club base (3:1 for display text); red-on-red clubs fall back to the band's text colour
+  if (state.base && state.accent) { const la = lum(state.accent), lb = lum(state.base), cr = (Math.max(la, lb) + .05) / (Math.min(la, lb) + .05); $('#name').style.setProperty('--sur', cr >= 3 ? 'var(--club2)' : 'var(--club-ink)'); }
   const a = age(p.birth);
   const dob = p.birth ? new Date(p.birth + 'T12:00:00').toLocaleDateString(LOCALE(), {day: 'numeric', month: 'long', year: 'numeric'}) : null;
   const yrs = s => s.from == null ? '' : s.to == null || s.to === s.from ? String(s.from) : `${s.from}-${String(s.to).slice(2)}`;
@@ -1107,7 +1544,9 @@ function renderTiles(){
   const COL = {pts: 2, reb: 3, ast: 4, stl: 5, blk: 6, tov: 7, pir: 14};
   const val = k => !played ? '–' : row ? (p40 ? (row[1] ? f1(row[COL[k]] * 40 / row[1]) : '–') : String(row[COL[k]])) : p40 ? (d.per40 ? f1(d.per40[k]) : '–') : f1(tot[k] / gp);
   const tiles = [['pts', 'Points'], ['reb', 'Rebounds'], ['ast', 'Assists'], ['stl', 'Steals'], ['blk', 'Blocks'], ['tov', 'Turnovers'], ['pir', 'PIR']];
-  $('#tiles').innerHTML = tiles.map(([k, l]) => `<div class="tile ${played ? '' : 'na'}" style="--p:${pc[k] ?? 0}%"><b>${val(k)}</b><span>${t(l)}</span></div>`).join('');
+  // the rank in words beside the bar (Club Edition shows it, the Broadcast look hides it): percentiles come from the data, so "top 28%" never invents an absolute rank
+  const rk = v => v == null ? '' : `<small class="rk">${t('top {p}%', {p: Math.max(1, Math.round(100 - v))})}</small>`;
+  $('#tiles').innerHTML = tiles.map(([k, l]) => `<div class="tile ${played ? '' : 'na'}" style="--p:${pc[k] ?? 0}%"><b>${val(k)}</b><span>${t(l)}</span>${rk(pc[k])}</div>`).join('');
   const gl = row ? gameLabel(d.games[row[0]]) : null;
   $('#band-legend').innerHTML = row ? `${gl.txt} · <b class="${gl.res === t('W') ? 'w' : 'l'}">${gl.res} ${gl.score}</b> · ${fmtDate(d.games[row[0]].date)} · ${row[1]} ${t('min')}${p40 ? ' · ' + t('scaled to 40 minutes') : ''}` : d.pct ? `${p40 ? t('Per 40 minutes') : t('Per game')} · ${t('underline: rank among {n} rotation players ({rule}), longer is better, turnovers inverted', {n: META.league_n, rule: t(META.pool_rule)})}` : '';
   if (row) { $('#band-legend').insertAdjacentHTML('beforeend', `<span class="sep"> · </span><button type="button" class="lnk" id="to-season">${t('Back to the season')}</button>`); $('#to-season').addEventListener('click', () => setGame('all')); }
@@ -1124,7 +1563,7 @@ function renderRole(){
   const items = [['usg', t('Usage'), r.usg, '%', t('share of team possessions he ends with a shot, free throws or a turnover while on court')], ['ts', t('True shooting'), ts != null ? (100 * ts).toFixed(1) : null, '%', `${t('points per shooting possession, halved so 50% is a coin flip; free throws count 0.44 of a possession, so a perfect night can pass 100%')}${(tot.fga2 + tot.fga3 + 0.44 * tot.fta) < MIN_ATT ? ' · ' + t('small sample') : ''}`],
     ['ast_pct', t('Assist rate'), r.ast_pct, '%', t('share of teammate field goals he assisted while on court')], ['tov_pct', t('Turnover rate'), r.tov_pct, '%', t('turnovers per 100 plays he used')],
     ['reb_pct', t('Rebound rate'), r.reb_pct, '%', t('share of available rebounds he took while on court')], ['plusminus', row ? '+/-' : t('+/- per game'), row ? (row[15] ?? null) : tot.gp ? Math.round(10 * (tot.plusminus || 0) / tot.gp) / 10 : null, '', row ? t('team score margin while he was on court in this game') : t('team score margin while he was on court, per game ({pm} over {n} games)', {pm: ((tot.plusminus || 0) >= 0 ? '+' : '') + (tot.plusminus || 0), n: tot.gp})]];
-  el.innerHTML = items.map(([k, l, v, u, tip]) => { const few = k === 'ts' && (tot.fga2 + tot.fga3 + 0.44 * tot.fta) < MIN_ATT; return `<div class="${few ? 'small' : ''}" style="--p:${pp[k] ?? 0}%" data-tip="${tip}${pp[k] != null ? ` · ${t('{ord} percentile among {n} {pos}', {ord: ord(pp[k]), n: d.pos_n, pos: lowPos(posN)})}` : ''}"><b>${v == null ? '–' : (k === 'plusminus' && v > 0 ? '+' : '') + v}${v == null ? '' : u}</b><span>${l}</span></div>`; }).join('');
+  el.innerHTML = items.map(([k, l, v, u, tip]) => { const few = k === 'ts' && (tot.fga2 + tot.fga3 + 0.44 * tot.fta) < MIN_ATT; return `<div class="${few ? 'small' : ''}" style="--p:${pp[k] ?? 0}%" data-tip="${tip}${pp[k] != null ? ` · ${t('{ord} percentile among {n} {pos}', {ord: ord(pp[k]), n: d.pos_n, pos: lowPos(posN)})}` : ''}"><b>${v == null ? '–' : (k === 'plusminus' && v > 0 ? '+' : '') + v}${v == null ? '' : u}</b><span>${l}</span>${pp[k] != null ? `<small class="rk">${t('top {p}%', {p: Math.max(1, Math.round(100 - pp[k]))})}</small>` : ''}</div>`; }).join('');
   $('#role-legend').textContent = row ? `${t('Role')} · ${t('this game only')} · ${row[1]} ${t('minutes')}` : d.pct_pos ? `${t('Role')} · ${t('underline: rank among {n} {pos} (3+ games, 10+ min), longer is better, turnover rate inverted', {n: d.pos_n, pos: lowPos(posN)})}` : '';
   $('#role-foot').hidden = !(row || d.pct_pos);
 }
@@ -1184,34 +1623,93 @@ function renderDiet(zs, total){
   el.innerHTML = `<div class="row"><span>${t('Him')}</span>${bar(mine)}</div><div class="row"><span>${posN}</span>${bar(pos)}</div><div class="leg">${keys.map(([k, l, c]) => `<i style="background:${colour(c)}"></i>${l} ${(100 * mine[k]).toFixed(0)}% <span style="color:var(--muted)">(${(100 * pos[k]).toFixed(0)}%)</span>`).join('')}</div>`;
 }
 function renderCompareOptions(){
-  const d = ds(), me = player(), sel = $('#cmp'), panel = $('#cmp-panel');
+  const d = ds(), me = player(), sel = $('#cmp'), panel = $('#cmp-panel'), onPage = document.body.classList.contains('cmp-on');
   const peers = ROSTER.list.filter(r => r.pos === d.pos_group && r.pid !== me.pid);
-  if (!d.tot.gp || !peers.length) { panel.hidden = true; return; }
-  panel.hidden = false;
   const pos1 = t(d.pos_group || 'player').toLowerCase(), posN = t(d.pos_group ? d.pos_group + 's' : 'players').toLowerCase();
-  $('#cmp-sub').textContent = `${t('{name} against another {pos}, per 40 minutes and per possession where it matters.', {name: nameOf(me.name).sur, pos: pos1})}${d.pos_n >= 10 ? ' ' + t('Position median from the {n} eligible {pos}.', {n: d.pos_n, pos: posN}) : ''}`;
+  if (!d.tot.gp || !peers.length) {
+    if (!onPage) { panel.hidden = true; return; }
+    // the compare page never goes blank: the empty state names the player and says why there is nothing to compare yet
+    panel.hidden = false; $('#cmp-page').hidden = true; $('#cmp-table').hidden = true;
+    $('#cmp-sub').textContent = t('Two {pos} side by side, per 40 minutes and per possession where it matters.', {pos: posN});
+    const em = $('#cmp-empty'); em.hidden = false; em.textContent = d.tot.gp ? t('No other {pos} has qualified yet. Pick another player from the bar above.', {pos: pos1}) : t('{name} has no Euroleague minutes yet, so there is nothing to compare. Pick another player from the bar above.', {name: `${nameOf(me.name).first} ${nameOf(me.name).sur}`.trim()});
+    cmpWho('l', me, state.team, d); cmpMeOptions();
+    return;
+  }
+  panel.hidden = false; $('#cmp-empty').hidden = true;
+  $('#cmp-sub').textContent = onPage
+    ? `${t('Two {pos} side by side, per 40 minutes and per possession where it matters.', {pos: posN})}${d.pos_n >= 10 ? ' ' + t('Position median from the {n} eligible {pos}.', {n: d.pos_n, pos: posN}) : ''}`
+    : `${t('{name} against another {pos}, per 40 minutes and per possession where it matters.', {name: nameOf(me.name).sur, pos: pos1})}${d.pos_n >= 10 ? ' ' + t('Position median from the {n} eligible {pos}.', {n: d.pos_n, pos: posN}) : ''}`;
   const keep = state.cmp && peers.some(r => r.pid === state.cmp) ? state.cmp : '';
   sel.innerHTML = `<option value="">${t('Choose a {pos} to compare', {pos: pos1})}</option>` + peers.sort((a, b) => a.club.localeCompare(b.club) || nameOf(a.name).sur.localeCompare(nameOf(b.name).sur)).map(r => `<option value="${r.pid}">${shortName(r.club)} · #${r.dorsal || '–'} ${nameOf(r.name).first} ${nameOf(r.name).sur}</option>`).join('');
   sel.value = keep; state.cmp = keep || null;
+  $('#cmp-open').textContent = t('Open compare');
+  if (onPage) { cmpWho('l', me, state.team, d); cmpMeOptions(); }
   renderCompare();
 }
+// the club colours on the compare page: base, accent and the ink that reads on the base (the same contrast rule applyPalette uses for --club-ink)
+const cmpInk = base => (lum(base) + .05) / (lum('#0b0d10') + .05) >= 1.05 / (lum(base) + .05) ? '#0b0d10' : '#ffffff';
+function cmpWho(side, p, club, c){
+  const k = CLUBS[club] || {}, n = nameOf(p.name), gp = c && c.tot ? c.tot.gp : 0, posT = c && c.pos_group ? t(c.pos_group) : (p.pos ? t(p.pos) : '');
+  $(`#cmp-who-${side}`).innerHTML = `<div class="cmp-club"><span class="medal"><img src="${k.logo || ''}" alt="" width="28" height="28"></span>${k.name || club}</div><p class="cmp-nm">${n.first}<b>${n.sur}</b></p><div class="cmp-line">${[shortName(club), p.dorsal ? '#' + p.dorsal : null, posT, c && c.tot ? t('<b>{n}</b> games', {n: gp}).replace(/<\/?b>/g, '') : null].filter(Boolean).join(' · ')}</div>`;
+  const root = $('#cmp-panel'), i = side === 'l' ? 1 : 2;
+  root.style.setProperty(`--cb${i}`, k.base || '#1f2b47'); root.style.setProperty(`--ca${i}`, k.accent || '#f26f21'); root.style.setProperty(`--ci${i}`, cmpInk(k.base || '#1f2b47'));
+}
+function cmpMeOptions(){
+  // the left side can swap to any teammate at the same position without leaving the page
+  const d = ds(), sel = $('#cmp-me'), ps = team().players;
+  const opts = ps.map((p, i) => [p, i]).filter(([p, i]) => i === state.player || (cache[state.team] && p.pos_group === d.pos_group) || !p.pos_group);
+  sel.innerHTML = ps.map((p, i) => `<option value="${i}">#${p.dorsal || '–'} ${nameOf(p.name).first} ${nameOf(p.name).sur}</option>`).join('');
+  sel.value = state.player;
+  if (DD.cmpMe) DD.cmpMe.refresh();
+}
 async function renderCompare(){
-  const tb = $('#cmp-table'), d = ds(), me = player();
-  if (!state.cmp) { tb.hidden = true; return; }
-  const r = ROSTER.byPid[state.cmp]; if (!r) { tb.hidden = true; return; }
-  if (!cache[r.club]) { try { cache[r.club] = await (await fetch(`${META.path}${r.club}.json?v=${encodeURIComponent(META.built || '')}`)).json(); } catch (e) { tb.hidden = true; return; } }
+  const tb = $('#cmp-table'), page = $('#cmp-page'), d = ds(), me = player(), onPage = document.body.classList.contains('cmp-on');
+  const none = () => { tb.hidden = true; page.hidden = true; if (onPage) { $('#cmp-who-r').innerHTML = `<div class="cmp-club">${t('Opponent')}</div><p class="cmp-nm"><b>?</b></p><div class="cmp-line">${t('Choose a {pos} to compare', {pos: t(d.pos_group || 'player').toLowerCase()})}</div>`; $('#cmp-panel').style.setProperty('--cb2', '#1f2b47'); $('#cmp-panel').style.setProperty('--ca2', '#f26f21'); $('#cmp-panel').style.setProperty('--ci2', '#ffffff'); } };
+  if (!state.cmp) { none(); return; }
+  const r = ROSTER.byPid[state.cmp]; if (!r) { none(); return; }
+  if (!cache[r.club]) { try { cache[r.club] = await (await fetch(`${META.path}${r.club}.json?v=${encodeURIComponent(META.built || '')}`)).json(); } catch (e) { none(); return; } }
   const other = cache[r.club].players.find(p => p.pid === r.pid); if (!other || state.cmp !== r.pid) return;
   const pool = (META.medians || {})[d.pos_group] || {};
-  const line = (label, f, fmt, higher = true) => { const a = f(d), b = f(other.cur), m = pool[label]; const win = a != null && b != null ? (higher ? a > b : a < b) : null; return `<tr><td>${t(label)}</td><td class="${win === true ? 'win me' : 'me'}">${fmt(a)}</td><td class="${win === false ? 'win' : ''}">${fmt(b)}</td><td class="lg">${fmt(m)}</td></tr>`; };
   const per40 = (c, k) => c.tot.min ? c.tot[k] * 40 / c.tot.min : null, rate = (c, m, a) => c.tot[a] ? c.tot[m] / c.tot[a] : null, role = (c, k) => c.role ? c.role[k] : null, z = c => zoneStats(c.shots);
   const f1s = v => v == null ? '–' : v.toFixed(1), pc = v => v == null ? '–' : (100 * v).toFixed(1) + '%', pcs = v => v == null ? '–' : v.toFixed(1) + '%', sgn = v => v == null ? '–' : (v >= 0 ? '+' : '') + v.toFixed(1);
+  const rows = [
+    ['Minutes a game', c => c.tot.gp ? c.tot.min / c.tot.gp : null, f1s], ['Points per 40', c => per40(c, 'pts'), f1s], ['Usage', c => role(c, 'usg'), pcs],
+    ['True shooting', c => tsOf(c.tot.pts, c.tot.fga2 + c.tot.fga3, c.tot.fta), pc], ['3P%', c => rate(c, 'fgm3', 'fga3'), pc], ['Assists per 40', c => per40(c, 'ast'), f1s], ['Assist rate', c => role(c, 'ast_pct'), pcs], ['Turnover rate', c => role(c, 'tov_pct'), pcs, false], ['Rebounds per 40', c => per40(c, 'reb'), f1s], ['Rebound rate', c => role(c, 'reb_pct'), pcs],
+    ['Rim FG%', c => { const v = z(c).rim; return v.a >= MIN_ATT ? v.m / v.a : null; }, pc], ['Share of shots from three', c => { const q = z(c); const a = q.c3.a + q.a3.a, tt = Object.values(q).reduce((s, v) => s + v.a, 0); return tt ? a / tt : null; }, pc],
+    ['Shot quality', c => c.profile ? c.profile.quality_shrunk : null, v => v == null ? '–' : v.toFixed(2)], ['Shooting skill per 100', c => c.profile ? 100 * c.profile.skill_shrunk : null, sgn], ['On / off per 40', c => role(c, 'onoff_shrunk'), sgn], ['PIR per 40', c => per40(c, 'pir'), f1s]
+  ].map(([label, f, fmt, higher = true]) => { const a = f(d), b = f(other.cur), m = pool[label]; const win = a != null && b != null && a !== b ? (higher ? a > b : a < b) : null; return {label, a, b, m, fmt, higher, win}; });
+  // the table (Broadcast look, and the teaser on the player page)
   $('#cmp-a').textContent = `${nameOf(me.name).sur}`; $('#cmp-b').innerHTML = `<a href="#${r.club}/${r.pid}" title="${t('Open his page')}">${nameOf(other.name).sur} · ${shortName(r.club)}</a>`;
-  tb.querySelector('tbody').innerHTML = [
-    line('Minutes a game', c => c.tot.gp ? c.tot.min / c.tot.gp : null, f1s), line('Points per 40', c => per40(c, 'pts'), f1s), line('Usage', c => role(c, 'usg'), pcs),
-    line('True shooting', c => tsOf(c.tot.pts, c.tot.fga2 + c.tot.fga3, c.tot.fta), pc), line('3P%', c => rate(c, 'fgm3', 'fga3'), pc), line('Assists per 40', c => per40(c, 'ast'), f1s), line('Assist rate', c => role(c, 'ast_pct'), pcs), line('Turnover rate', c => role(c, 'tov_pct'), pcs, false), line('Rebounds per 40', c => per40(c, 'reb'), f1s), line('Rebound rate', c => role(c, 'reb_pct'), pcs),
-    line('Rim FG%', c => { const v = z(c).rim; return v.a >= MIN_ATT ? v.m / v.a : null; }, pc), line('Share of shots from three', c => { const q = z(c); const a = q.c3.a + q.a3.a, t = Object.values(q).reduce((s, v) => s + v.a, 0); return t ? a / t : null; }, pc),
-    line('Shot quality', c => c.profile ? c.profile.quality_shrunk : null, v => v == null ? '–' : v.toFixed(2)), line('Shooting skill per 100', c => c.profile ? 100 * c.profile.skill_shrunk : null, sgn), line('On / off per 40', c => role(c, 'onoff_shrunk'), sgn), line('PIR per 40', c => per40(c, 'pir'), f1s)].join('');
+  tb.querySelector('tbody').innerHTML = rows.map(x => `<tr><td>${t(x.label)}</td><td class="${x.win === true ? 'win me' : 'me'}">${x.fmt(x.a)}</td><td class="${x.win === false ? 'win' : ''}">${x.fmt(x.b)}</td><td class="lg">${x.fmt(x.m)}</td></tr>`).join('');
   tb.hidden = false;
+  if (!onPage) { page.hidden = true; return; }
+  // the page: hero, paired bars from the centre, the position median as a tick, the two shot diets, actions
+  cmpWho('r', other, r.club, other.cur);
+  const ro = Object.fromEntries(rows.map(x => [x.label, x]));
+  // bars measure size from zero: a negative value draws a faded bar of its magnitude, so -0.3 never looks bigger than -0.1
+  const barRow = x => { const vals = [x.a, x.b, x.m].filter(v => v != null); if (!vals.length) return ''; const span = Math.max(...vals.map(Math.abs)) * 1.08 || 1, w = v => v == null ? 0 : Math.abs(v) / span * 100 / 2, neg = v => v != null && v < 0 ? ' neg' : '';   // each half is 50% of the row, so a value spans up to half
+    return `<div class="cmp-m"><div class="v l">${x.win === true ? '<i aria-label="' + t('better') + '"></i>' : ''}${x.fmt(x.a)}</div><div class="bars"><span class="lab">${t(x.label)}${x.m != null ? `<small>(${t('median')} ${x.fmt(x.m)})</small>` : ''}</span><span class="mid"></span><span class="bl${neg(x.a)}" style="width:${w(x.a).toFixed(2)}%"></span><span class="br${neg(x.b)}" style="width:${w(x.b).toFixed(2)}%"></span>${x.m != null ? `<span class="ml" style="right:${(50 + w(x.m)).toFixed(2)}%"></span><span class="mr" style="left:${(50 + w(x.m)).toFixed(2)}%"></span>` : ''}</div><div class="v r">${x.fmt(x.b)}${x.win === false ? '<i aria-label="' + t('better') + '"></i>' : ''}</div></div>`; };
+  $('#cmp-h2h-t').textContent = t('Head to head'); $('#cmp-h2h-sub').textContent = t('{a} grows left from the centre, {b} grows right; the blue tick is the position median.', {a: nameOf(me.name).sur, b: nameOf(other.name).sur});
+  $('#cmp-h2h').innerHTML = rows.map(barRow).join('');
+  $('#cmp-cap').innerHTML = `${t('Better value marked with a triangle; turnover rate inverted.')} <i></i>${t('position median')}`;
+  // shot diet: share of attempts by zone, drawn on a half court per player
+  const diet = (c, side) => { const q = z(c), tot = Object.values(q).reduce((s, v) => s + v.a, 0); if (tot < MIN_ATT) return null; const sh = {paint: (q.rim.a + q.paint.a) / tot, mid: q.mid.a / tot, c3: q.c3.a / tot, a3: q.a3.a / tot}; return {sh, tot}; };
+  const court = (nm, k, dt, base) => { const P = v => (100 * v).toFixed(0) + '%';
+    const z = (x, y, w, h, v) => `<rect class="zn" x="${x}" y="${y}" width="${w}" height="${h}" rx="4" fill="${base}" opacity="${(0.08 + 0.55 * v).toFixed(2)}"/>`;
+    return `<div class="cmp-court"><h4><i style="background:${base}"></i>${nm}</h4><svg viewBox="0 0 300 282" role="img" aria-label="${t('Shot diet')} · ${nm}">
+      ${z(101, 166, 98, 116, dt.sh.paint)}${z(60, 96, 180, 64, dt.sh.mid)}${z(2, 196, 40, 86, dt.sh.c3)}${z(258, 196, 40, 86, dt.sh.c3)}${z(60, 10, 180, 80, dt.sh.a3)}
+      <rect class="ln" x="1" y="1" width="298" height="280"/><rect class="ln" x="101" y="166" width="98" height="116"/><path class="ln" d="M18 282V222A135 135 0 0 1 282 222V282"/><path class="ln" d="M125 250.5a25 25 0 0 1 50 0"/><circle class="ln" cx="150" cy="166" r="30"/><circle cx="150" cy="250.5" r="4" fill="none" stroke="${base}" stroke-width="2"/>
+      <text class="n" x="150" y="218" text-anchor="middle">${P(dt.sh.paint)}</text><text x="150" y="234" text-anchor="middle">${t('Paint')}</text>
+      <text class="n" x="150" y="128" text-anchor="middle">${P(dt.sh.mid)}</text><text x="150" y="144" text-anchor="middle">${t('Mid-range')}</text>
+      <text class="n" x="150" y="50" text-anchor="middle">${P(dt.sh.a3)}</text><text x="150" y="66" text-anchor="middle">${t('Above-break 3')}</text>
+      <text class="n" x="22" y="236" text-anchor="middle">${P(dt.sh.c3)}</text><text x="22" y="252" text-anchor="middle">${t('Corner 3')}</text>
+    </svg><div class="cmp-dz"><div><b>${P(dt.sh.paint)}</b><span>${t('Paint')}</span></div><div><b>${P(dt.sh.mid)}</b><span>${t('Mid-range')}</span></div><div><b>${P(dt.sh.c3)}</b><span>${t('Corner 3')}</span></div><div><b>${P(dt.sh.a3)}</b><span>${t('Above-break 3')}</span></div></div></div>`; };
+  const d1 = diet(d), d2 = diet(other.cur), k1 = CLUBS[state.team] || {}, k2 = CLUBS[r.club] || {};
+  $('#cmp-diet-t').textContent = t('Shot diet'); $('#cmp-diet-sub').textContent = t('Share of attempts by zone this season; darker means more of his shots come from there.');
+  $('#cmp-diet').innerHTML = (d1 ? court(`${nameOf(me.name).first} ${nameOf(me.name).sur}`, 1, d1, k1.base || '#1f2b47') : `<div class="cmp-court"><h4>${nameOf(me.name).sur}</h4><p class="sub">${t('Fewer than {n} attempts', {n: MIN_ATT})}</p></div>`) + (d2 ? court(`${nameOf(other.name).first} ${nameOf(other.name).sur}`, 2, d2, k2.base || '#1f2b47') : `<div class="cmp-court"><h4>${nameOf(other.name).sur}</h4><p class="sub">${t('Fewer than {n} attempts', {n: MIN_ATT})}</p></div>`);
+  $('#cmp-acts').innerHTML = `<a class="a1" href="#${state.team}/${me.pid}">${t("Open {name}'s page", {name: nameOf(me.name).sur})}</a><a class="a2" href="#${r.club}/${r.pid}">${t("Open {name}'s page", {name: nameOf(other.name).sur})}</a><button type="button" id="cmp-copy">${t('Copy link')}</button>`;
+  $('#cmp-copy').addEventListener('click', async () => { try { await navigator.clipboard.writeText(location.href); toast(t('Link copied')); } catch (e) {} });
+  page.hidden = false;
 }
 function renderProfile(p, d){
   const pr = d.profile, panel = $('#prof-panel');
@@ -1550,6 +2048,7 @@ $('#embed').addEventListener('click', async () => {
 });
 $('#retry').addEventListener('click', () => route());
 $('#cmp').addEventListener('change', e => { state.cmp = e.target.value || null; renderCompare(); });
+$('#cmp-me').addEventListener('change', e => { state.player = +e.target.value; $('#player').value = state.player; state.game = 'all'; renderGames(); renderPlayer(); DD.player.refresh(); });   // the compare page's left side: a teammate, without leaving #compare
 $('#replay').addEventListener('click', () => renderChart(true));
 $('#f-rate').querySelectorAll('button').forEach(b => b.addEventListener('click', () => { $('#f-rate').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b)); state.rate = b.dataset.v; renderTiles(); }));
 [['#f-result', 'result'], ['#f-view', 'view'], ['#f-ast', 'ast']].forEach(([sel, key]) => {
@@ -1560,6 +2059,7 @@ $('#f-rate').querySelectorAll('button').forEach(b => b.addEventListener('click',
 const DD = {
   team: Dropdown($('#team'), (op, head) => { const c = CLUBS[op.value]; return `${c && c.logo && !head ? `<img src="${c.logo}" alt="">` : ''}<span>${c.name}</span>`; }),
   player: Dropdown($('#player'), (op, head) => { const p = team() && team().players[+op.value]; if (!p) return op.text; const n = nameOf(p.name); return head ? `#${p.dorsal || '–'} ${n.first} ${n.sur}` : `<span class="no">${p.dorsal || '–'}</span><span>${n.first} ${n.sur}</span><small>${t(p.position || '').slice(0, 7)}</small>`; }),
+  cmpMe: Dropdown($('#cmp-me'), op => op.text),
   cmp: Dropdown($('#cmp'), (op, head) => { if (!op.value) return op.text; const r = ROSTER.byPid[op.value]; if (!r) return op.text; const c = CLUBS[r.club], n = nameOf(r.name); return head ? `${n.first} ${n.sur} · ${shortName(r.club)}` : `${c && c.logo ? `<img src="${c.logo}" alt="">` : ''}<span class="no">${r.dorsal || '–'}</span><span>${n.first} ${n.sur}</span><small>${shortName(r.club)}</small>`; }),
   statGame: Dropdown($('#stat-game'), (op, head) => { if (op.value === 'all' || !team()) return op.text; const g = ds().games[+op.value]; if (!g) return op.text; const l = gameLabel(g); return head ? `${l.txt} · ${l.res} ${l.score}` : `<span>${l.txt}</span><small class="${l.res === 'W' ? 'w' : 'l'}">${l.res} ${l.score}</small>`; })
 };
@@ -1712,11 +2212,14 @@ const COVER = (() => {
   const el = $('#cover'), first = META.clubs[0];
   $('#cv-season').textContent = META.label;
   const st = META.status || {};
-  $('#cv-clubs').innerHTML = META.clubs.map(c => `<a href="#${c.code}" title="${c.name}"><img src="${c.logo || ''}" alt="" width="34" height="34" loading="lazy" decoding="async"><span>${c.short || c.code}</span></a>`).join('');
+  // each club card carries its own colourway (--cb base, --ca accent) for the strip at its edge; the country is shown by the Club Edition look only
+  $('#cv-clubs').innerHTML = META.clubs.map(c => `<a href="#${c.code}" title="${c.name}" style="--cb:${c.base || '#1f2b47'};--ca:${c.accent || '#f26f21'}"><span class="medal"><img src="${c.logo || ''}" alt="" width="34" height="34" loading="lazy" decoding="async"></span><span class="txt"><span class="nm">${c.short || c.code}</span><span class="co">${t(c.country || '')}</span></span></a>`).join('');
+  const rounds = META.leaders && META.leaders.rounds;
   const last = (() => { try { return JSON.parse(localStorage.getItem('pl-last')); } catch (e) { return null; } })();
   const go = $('#cv-go');
   function render(){
     const n = v => (v || 0).toLocaleString(LOCALE());
+    $('#cv-round').textContent = rounds ? ` · ${t('Regular season')} · ${t('through round {r}', {r: rounds})}` : '';   // in the eyebrow, re-rendered with the language
     $('#cv-nums').innerHTML = [[META.clubs.length, 'Clubs'], [META.n_players, 'Players'], [st.games, 'Games']].map(([v, k]) => `<li><b>${n(v)}</b><span>${t(k)}</span></li>`).join('');
     if (last && last.hash && CLUBS[last.hash.split('/')[0]]) go.innerHTML = `${t('Continue')}<small>${esc(last.name)}</small>`; else go.textContent = t('Open the app');
   }
@@ -1732,13 +2235,29 @@ const COVER = (() => {
 // ---- standings: record and table from META.standings, the viewed club highlighted, a club row opens its page
 const STAND = (() => {
   const el = $('#standings');
+  // the three summary tiles: the leader, the best point difference and the next round, all from the standings META and the leader's fixture list (fetched once, like a club page)
+  let nextRound = null, nextWanted = null;
+  function tiles(S, rounds){
+    const box = $('#st-tiles'); if (!S.length || !S[0].gp) { box.hidden = true; box.innerHTML = ''; return; }
+    const lead = S[0], c = CLUBS[lead.code] || {}, best = S.reduce((a, r) => r.diff > a.diff ? r : a, S[0]), bc = CLUBS[best.code] || {};
+    const nr = rounds ? rounds + 1 : null;
+    if (nr && nextWanted !== nr) { nextWanted = nr; nextRound = null; const code = lead.code;
+      const take = d => { const g = (d.upcoming || []).filter(x => x.round === nr).sort((a, b) => a.date < b.date ? -1 : 1)[0]; nextRound = g ? {round: nr, date: g.date} : null; if (nextWanted === nr) render(); };
+      if (cache[code]) take(cache[code]); else fetch(`${META.path}${code}.json?v=${encodeURIComponent(META.built || '')}`).then(r => r.ok ? r.json() : null).then(d => { if (d) { cache[code] = d; take(d); } }).catch(() => {}); }
+    box.innerHTML = `<div class="st-tile"><span class="lab">${t('Leader')}</span><span class="val"><a href="#${lead.code}"><span class="medal" style="border-color:${c.accent || '#f26f21'}"><img src="${c.logo || ''}" alt="" width="26" height="26"></span><span>${c.short || lead.code}</span></a><em>${lead.w}-${lead.l}</em></span><span class="note">${lead.l === 0 ? t('Unbeaten') : t('{n} wins', {n: lead.w})} · ${c.city ? c.city[0] + c.city.slice(1).toLowerCase() : ''}</span></div>`
+      + `<div class="st-tile"><span class="lab">${t('Best net')}</span><span class="val"><em>${best.diff > 0 ? '+' : ''}${best.diff}</em><span>${bc.short || best.code}</span></span><span class="note">${t('{v} a game', {v: (best.diff > 0 ? '+' : '') + (best.diff / best.gp).toFixed(1)})}</span></div>`
+      + (nr && nextRound ? `<div class="st-tile"><span class="lab">${t('Next round')}</span><span class="val"><span>R${nextRound.round}</span></span><span class="note">${fmtDate(nextRound.date)}</span></div>` : nr ? `<div class="st-tile"><span class="lab">${t('Next round')}</span><span class="val"><span>R${nr}</span></span><span class="note">&nbsp;</span></div>` : '');
+    box.hidden = false;
+  }
   function render(){
     const S = META.standings || [], played = S.reduce((a, r) => a + r.gp, 0) / 2, rounds = META.leaders && META.leaders.rounds;
     $('#st-sub').textContent = `${t('Euroleague {label} regular season', {label: META.label})} · ${plural(played, '{n} game played', '{n} games played')}${rounds ? ` · ${t('through R{n}', {n: rounds})}` : ''}`;
+    tiles(S, rounds);
+    const cutrow = pos => pos === 6 ? `<tr class="cutrow"><td colspan="11">${t('Playoffs: top 6')}</td></tr>` : pos === 10 ? `<tr class="cutrow"><td colspan="11">${t('Play-in: 7 to 10')}</td></tr>` : '';
     $('#st-body').innerHTML = S.map(r => { const c = CLUBS[r.code] || {}, me = state.team === r.code;
-      const form = r.form.map(w => `<i class="${w ? 'w' : 'l'}" title="${w ? t('W') : t('L')}"></i>`).join('');
+      const form = r.form.map(w => `<i class="${w ? 'w' : 'l'}" title="${w ? t('W') : t('L')}">${w ? t('W') : t('L')}</i>`).join('');
       const streak = r.streak ? `${r.streak > 0 ? t('W') : t('L')}${Math.abs(r.streak)}` : '–';
-      return `<tr class="${me ? 'me' : ''}${r.pos === 6 || r.pos === 10 ? ' cut' : ''}"><td>${r.pos}</td><td class="club"><a href="#${r.code}"><img src="${c.logo || ''}" alt="" width="24" height="24" loading="lazy"><span class="full">${c.name || r.code}</span><span class="short">${c.short || r.code}</span></a></td><td class="k w">${r.w}</td><td class="l">${r.l}</td><td class="${r.diff > 0 ? 'up' : r.diff < 0 ? 'down' : ''}">${r.diff > 0 ? '+' : ''}${r.diff}</td><td><span class="form">${form || '–'}</span></td><td>${r.pf}</td><td>${r.pa}</td><td>${r.hw}-${r.hl}</td><td>${r.aw}-${r.al}</td><td class="${r.streak > 0 ? 'up' : r.streak < 0 ? 'down' : ''}">${streak}</td></tr>`; }).join('');
+      return `<tr class="${me ? 'me' : ''}${r.pos === 6 || r.pos === 10 ? ' cut' : ''}" style="--cb:${c.base || '#8a919f'};--ca:${c.accent || '#f26f21'}"><td>${r.pos}</td><td class="club"><a href="#${r.code}"><span class="medal"><img src="${c.logo || ''}" alt="" width="24" height="24" loading="lazy"></span><span class="full">${c.name || r.code}</span><span class="short">${c.short || r.code}</span></a></td><td class="k w">${r.w}</td><td class="l">${r.l}</td><td class="${r.diff > 0 ? 'up' : r.diff < 0 ? 'down' : ''}">${r.diff > 0 ? '+' : ''}${r.diff}</td><td><span class="form">${form || '–'}</span></td><td>${r.pf}</td><td>${r.pa}</td><td>${r.hw}-${r.hl}</td><td>${r.aw}-${r.al}</td><td class="${r.streak > 0 ? 'up' : r.streak < 0 ? 'down' : ''}">${streak}</td></tr>${cutrow(r.pos)}`; }).join('');
     $('#st-foot').innerHTML = `${t('Ordered by wins, then point difference, then points scored; the official table applies head-to-head records when clubs are level.')} <b>${t('Lines mark the top six (straight to the playoffs) and places seven to ten (play-in).')}</b>`;
   }
   return {
@@ -1774,9 +2293,10 @@ const LINE = (() => {
     const min = st.min.five * 60, L = D.lineups.filter(l => l.s >= min && (st.club === 'all' || l.c === st.club));
     if (!L.length) return `<p class="ln-empty">${t('No lineup has played that many minutes yet. Lower the floor.')}</p>`;
     const head = `<tr><th>#</th><th class="l"></th><th class="l">${t('Lineup')}</th><th class="ph">${t('G')}</th><th>${t('Min')}</th><th class="ph dim">${t('Poss')}</th><th class="ph">${t('ORtg')}</th><th class="ph">${t('DRtg')}</th><th>${t('Net')}</th><th class="ph dim">+/-</th></tr>`;
+    const maxN = Math.max(1, ...L.map(l => Math.abs(l.n || 0))), most = L.reduce((a, l) => l.s > a.s ? l : a, L[0]);   // the net bar is scaled to the largest |net| in view; the most-used five gets a chip
     const body = L.map((l, i) => { const c = CLUBS[l.c] || {}, me = state.team === l.c && st.club === 'all';
       const names = l.p.map(pid => link(pid, l.c, `<span class="full">${nm(pid)}</span><span class="short">${sur(pid)}</span>`)).join(' <i>·</i> ');
-      return `<tr class="${me ? 'me' : ''}"><td>${i + 1}</td><td class="crest"><a href="#${l.c}" title="${c.name || l.c}"><img src="${c.logo || ''}" alt="" width="24" height="24" loading="lazy"></a></td><td class="five l">${names}</td><td class="ph">${l.g}</td><td>${num(l.s / 60)}</td><td class="ph dim">${l.poss}</td><td class="ph">${num(l.o)}</td><td class="ph">${num(l.d)}</td><td class="k${sign(l.n)}">${num(l.n, true)}</td><td class="ph dim">${int(l.pts - l.opp, true)}</td></tr>`; }).join('');
+      return `<tr class="${me ? 'me' : ''}" style="--ca:${c.accent || '#f26f21'}"><td>${i + 1}</td><td class="crest"><a href="#${l.c}" title="${c.name || l.c}"><span class="medal"><img src="${c.logo || ''}" alt="" width="24" height="24" loading="lazy"></span></a></td><td class="five l">${names}${l === most && L.length > 1 ? `<span class="chip">${t('Most used')}</span>` : ''}</td><td class="ph">${l.g}</td><td>${num(l.s / 60)}</td><td class="ph dim">${l.poss}</td><td class="ph">${num(l.o)}</td><td class="ph">${num(l.d)}</td><td class="k bar-cell${sign(l.n)}">${num(l.n, true)}<span class="nbar"><i style="width:${Math.round(100 * Math.abs(l.n || 0) / maxN)}%"></i></span></td><td class="ph dim">${int(l.pts - l.opp, true)}</td></tr>`; }).join('');
     return `<table class="ln-tab"><thead>${head}</thead><tbody>${body}</tbody></table>`;
   }
   function onoff(){
@@ -1787,7 +2307,8 @@ const LINE = (() => {
     if (!P.length) return `<p class="ln-empty">${t('Nobody has played that many minutes yet. Lower the floor.')}</p>`;
     const head = `<tr><th>#</th><th class="l"></th><th class="l">${t('Player')}</th><th class="ph">${t('G')}</th><th>${t('Min on')}</th><th class="ph dim">${t('Min off')}</th><th>${t('Net on')}</th><th>${t('Net off')}</th><th>${t('On − off')}</th><th class="ph">${t('ORtg on / off')}</th><th class="ph">${t('DRtg on / off')}</th><th class="ph dim">${t('+/- on / off')}</th></tr>`;
     const body = P.map((p, i) => { const c = CLUBS[p.club] || {}, me = state.team === p.club && st.club === 'all';
-      return `<tr class="${me ? 'me' : ''}"><td>${i + 1}</td><td class="crest"><a href="#${p.club}" title="${c.name || p.club}"><img src="${c.logo || ''}" alt="" width="24" height="24" loading="lazy"></a></td><td class="name l">${link(p.pid, p.club, nm(p.pid))}<small>${c.short || p.club}</small></td><td class="ph">${p.g}/${p.tg}</td><td>${num(p.s / 60)}</td><td class="ph dim">${num(p.off_s / 60)}</td><td class="${sign(p.on.n)}">${num(p.on.n, true)}</td><td class="${sign(p.off.n)}">${num(p.off.n, true)}</td><td class="k${sign(p.diff)}">${num(p.diff, true)}</td><td class="ph pair"><b>${num(p.on.o)}</b><i>/</i>${num(p.off.o)}</td><td class="ph pair"><b>${num(p.on.d)}</b><i>/</i>${num(p.off.d)}</td><td class="ph pair dim"><b>${int(p.pm, true)}</b><i>/</i>${int(p.off_pm, true)}</td></tr>`; }).join('');
+      const on = Math.abs(p.on.n || 0), off = Math.abs(p.off.n || 0), tot = on + off || 1;   // the two-colour bar: how much of the swing is the floor time against the bench time
+      return `<tr class="${me ? 'me' : ''}" style="--ca:${c.accent || '#f26f21'}"><td>${i + 1}</td><td class="crest"><a href="#${p.club}" title="${c.name || p.club}"><span class="medal"><img src="${c.logo || ''}" alt="" width="24" height="24" loading="lazy"></span></a></td><td class="name l">${link(p.pid, p.club, nm(p.pid))}<small>${c.short || p.club}</small></td><td class="ph">${p.g}/${p.tg}</td><td>${num(p.s / 60)}</td><td class="ph dim">${num(p.off_s / 60)}</td><td class="${sign(p.on.n)}">${num(p.on.n, true)}</td><td class="${sign(p.off.n)}">${num(p.off.n, true)}</td><td class="k oo${sign(p.diff)}">${num(p.diff, true)}<span class="oobar" aria-hidden="true"><i class="${(p.on.n || 0) >= 0 ? 'on' : 'off'}" style="width:${Math.round(100 * on / tot)}%"></i><i class="${(p.off.n || 0) >= 0 ? 'on' : 'off'}" style="width:${Math.round(100 * off / tot)}%"></i></span></td><td class="ph pair"><b>${num(p.on.o)}</b><i>/</i>${num(p.off.o)}</td><td class="ph pair"><b>${num(p.on.d)}</b><i>/</i>${num(p.off.d)}</td><td class="ph pair dim"><b>${int(p.pm, true)}</b><i>/</i>${int(p.off_pm, true)}</td></tr>`; }).join('');
     return `<table class="ln-tab"><thead>${head}</thead><tbody>${body}</tbody></table>`;
   }
   function render(){
@@ -1798,6 +2319,7 @@ const LINE = (() => {
     $('#ln-sub').textContent = st.tab === 'five'
       ? t('Every five that has shared the floor this season and how the score moved per 100 possessions while it was out there.')
       : t('Each club\'s rating per 100 possessions with a player on the floor against with him on the bench, across {span}.', {span});
+    $('#ln-defs').innerHTML = `<div><b>${t('ORtg')}</b><i>${t('Offensive rating')}</i><span>${t('points scored per 100 possessions')}</span></div><div><b>${t('DRtg')}</b><i>${t('Defensive rating')}</i><span>${t('points allowed per 100 possessions')}</span></div><div><b>${t('Net')}</b><i>${t('Net rating')}</i><span>${t('ORtg minus DRtg · possessions estimated as FGA − OREB + TOV + 0.44 FTA')}</span></div>`;
     if (!D) { wrap.innerHTML = `<p class="ln-empty">${t('Loading…')}</p>`; return; }
     wrap.innerHTML = st.tab === 'five' ? five() : onoff();
     if (typeof scrollEnds === 'function') scrollEnds();   // the scroll-hint fade only while the table really overflows
@@ -1824,6 +2346,26 @@ const LINE = (() => {
 // runs through a wipe in the destination's colours; the new page is swapped in and scrolled to the top while it is
 // covered, so no scroll position ever carries over. Player changes inside a club stay instant.
 history.scrollRestoration = 'manual';
+// ---- the compare page (#compare): the current player on the left, any peer at his position on the right (Club Edition, agent 5)
+const CMP = (() => {
+  const el = $('#cmp-panel');
+  async function ensureTeam(){
+    if (state.data) return true;
+    // straight from the cover there is no club yet: the last player this browser looked at, else the first club
+    let code = null; try { const l = JSON.parse(localStorage.getItem('pl-last') || 'null'); if (l && l.hash) code = l.hash.split('/')[0]; } catch (e) {}
+    if (!CLUBS[code]) code = META.clubs[0].code;
+    $('#team').value = code; if (!await loadTeam(code)) return false;
+    let pid = null; try { pid = JSON.parse(localStorage.getItem('pl-last') || 'null').hash.split('/')[1]; } catch (e) {}
+    const i = Math.max(0, team().players.findIndex(p => p.pid === pid));
+    state.player = i; $('#player').value = i; state.game = 'all'; renderGames(); renderPlayer(); DD.team.refresh(); DD.player.refresh(); DD.statGame.refresh();
+    return true;
+  }
+  return {
+    async show(){ if (!await ensureTeam()) return; applyPalette(CLUBS[state.team]); document.body.classList.add('cmp-on'); document.body.classList.remove('no-team'); el.hidden = false; renderCompareOptions(); document.title = `${t('Compare')} · Player Lab`; },
+    hide(){ document.body.classList.remove('cmp-on'); if (state.data && ROSTER.loaded) renderCompareOptions(); },   // back on a player page the panel is the teaser again
+    render(){ if (state.data) renderCompareOptions(); }
+  };
+})();
 const HOUSE = {base: '#1f2b47', accent: '#f26f21'};
 const pause = ms => new Promise(r => setTimeout(r, ms));
 const WIPE = (() => {
@@ -1849,9 +2391,10 @@ const WIPE = (() => {
 const settled = () => Promise.race([pause(1500), Promise.all([...document.querySelectorAll('#photo, #crest-img, #club-logo')].map(img => (img.complete || !img.getAttribute('src')) ? null : new Promise(r => { img.addEventListener('load', r, {once: true}); img.addEventListener('error', r, {once: true}); })))]);
 async function go(){
   const h = location.hash.replace('#', '').split('/');
-  if (h[0] === 'standings') { COVER.hide(); LINE.hide(); STAND.show(); return true; }
-  if (h[0] === 'lineups') { COVER.hide(); STAND.hide(); await LINE.show(); return true; }
-  STAND.hide(); LINE.hide();
+  if (h[0] === 'standings') { COVER.hide(); LINE.hide(); CMP.hide(); STAND.show(); return true; }
+  if (h[0] === 'lineups') { COVER.hide(); STAND.hide(); CMP.hide(); await LINE.show(); return true; }
+  if (h[0] === 'compare') { COVER.hide(); STAND.hide(); LINE.hide(); await CMP.show(); return true; }
+  STAND.hide(); LINE.hide(); CMP.hide();
   if (!CLUBS[h[0]]) { COVER.show(); return true; }    // no club in the URL: the opening page, not a silent fallback
   COVER.hide();
   const code = h[0];
@@ -1879,11 +2422,12 @@ async function route(){
       // showed); once the reader has entered the app in this tab, reloads and back/forward keep their place
       let entered = false; try { entered = !!sessionStorage.getItem('pl-in'); } catch (e) {}
       if (!booted && CLUBS[h[0]] && !entered) { history.replaceState(null, '', location.pathname + location.search); h = ['']; }
-      const toStand = h[0] === 'standings' || h[0] === 'lineups', onStand = document.body.classList.contains('st-on') || document.body.classList.contains('ln-on');
-      const switchPage = toStand && ((h[0] === 'standings') !== document.body.classList.contains('st-on'));
+      const PAGES = {standings: 'st-on', lineups: 'ln-on', compare: 'cmp-on'}, cur = Object.keys(PAGES).find(k => document.body.classList.contains(PAGES[k])) || null;
+      const toStand = !!PAGES[h[0]], onStand = !!cur;
+      const switchPage = toStand && cur !== null && cur !== h[0];
       const toCover = !toStand && !CLUBS[h[0]], onCover = document.body.classList.contains('cv-on');
       const newPage = booted && (toStand !== onStand || switchPage || toCover !== onCover || (!toCover && !toStand && state.team && state.team !== h[0]));
-      if (newPage && !WIPE.up) await WIPE.cover(toCover || toStand ? HOUSE : CLUBS[h[0]]);
+      if (newPage && !WIPE.up) await WIPE.cover(h[0] === 'compare' && state.team ? CLUBS[state.team] : toCover || toStand ? HOUSE : CLUBS[h[0]]);
       try { await go(); }
       catch (e) { console.error(e); $('#fail').hidden = false; $('#fail-sub').textContent = t('This page could not be drawn ({err}). Try again or pick another club.', {err: e.message || e}); }   // a fault never leaves the screen covered
       if (newPage) { scrollTo(0, 0); await settled(); }
