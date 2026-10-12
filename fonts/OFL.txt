@@ -91,3 +91,10 @@ INCLUDING ANY GENERAL, SPECIAL, INDIRECT, INCIDENTAL, OR CONSEQUENTIAL
 DAMAGES, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF THE USE OR INABILITY TO USE THE FONT SOFTWARE OR FROM
 OTHER DEALINGS IN THE FONT SOFTWARE.
+
+
+-----------------------------------------------------------
+Also in this folder, under the same SIL Open Font License, Version 1.1 (text above):
+
+bebas-400.woff2  Bebas Neue, Copyright 2010 by Dharma Type (https://github.com/dharmatype/Bebas-Neue), latin subset served from this origin.
+atk-var.woff2    Atkinson Hyperlegible Next (variable, weights 400 to 700), Copyright 2020 Braille Institute of America, Inc. (https://github.com/googlefonts/atkinson-hyperlegible-next), latin subset served from this origin.

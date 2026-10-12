@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-look="club">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Euroleague Player Lab</title>
@@ -27,11 +27,88 @@
 @font-face{font-family:'Barlow Condensed';font-style:normal;font-weight:800;font-display:swap;src:url(fonts/cond-800.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
 @font-face{font-family:'Barlow Condensed';font-style:italic;font-weight:700;font-display:swap;src:url(fonts/cond-700i.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
 @font-face{font-family:'Barlow Condensed';font-style:italic;font-weight:900;font-display:swap;src:url(fonts/cond-900i.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+/* Club Edition fonts: Bebas Neue and Atkinson Hyperlegible Next (OFL, fonts/OFL.txt), latin subset, served from this origin */
+@font-face{font-family:'Bebas Neue';font-style:normal;font-weight:400;font-display:swap;src:url(fonts/bebas-400.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Atkinson Hyperlegible Next';font-style:normal;font-weight:400 700;font-display:swap;src:url(fonts/atk-var.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
 :root{
   --bg:#060708;--bg2:#0e1013;--panel:#131519;--panel2:#191c22;--line:#24272e;--line2:#343841;--ink:#ffffff;--ink2:#c6cbd4;--muted:#8a919f;
   --club:#1f2b47;--club2:#f26f21;--on:#0b0d10;--floor:#0c1016;--paint:#12161e;--cold:#4f8ef7;--white:#f4f6f8;--miss:#8a91a0;--good:#3fc48a;--bad:#ff6b6b;
   --cond:"Barlow Condensed","Arial Narrow",Impact,sans-serif;--sans:"Barlow",system-ui,-apple-system,"Segoe UI",sans-serif;
 }
+/* ---- Club Edition (html[data-look="club"]): the selected club wears the page. Remove the attribute on <html> to restore the Broadcast look. ---- */
+html[data-look="club"]{
+  color-scheme:light;
+  --bg:#f4f6f8;--bg2:#eceef0;--panel:#ffffff;--panel2:#eef1f5;--line:#d9dee6;--line2:#c5c9d2;--ink:#0b0d10;--ink2:#2b3038;--muted:#5d6573;
+  --good:#1a9a5f;--bad:#d6313e;--cold:#2f6fd6;--white:#ffffff;--miss:#9aa2b1;--club-ink:#ffffff;
+  --cond:"Bebas Neue","Arial Narrow",Impact,sans-serif;--cond-w:400;--sans:"Atkinson Hyperlegible Next",system-ui,-apple-system,"Segoe UI",sans-serif;--sans-b:700;
+}
+html[data-look="club"] body{background:var(--bg);color:var(--ink2);font-size:17px;line-height:1.55}
+html[data-look="club"] h1,html[data-look="club"] h2,html[data-look="club"] h3,html[data-look="club"] h4{font-family:var(--cond);font-weight:var(--cond-w);letter-spacing:.03em;text-transform:uppercase;color:var(--ink)}
+html[data-look="club"] b,html[data-look="club"] strong{font-weight:var(--sans-b)}
+html[data-look="club"] ::selection{background:var(--club2);color:var(--on)}
+html[data-look="club"] :focus-visible{outline:2px solid var(--cold);outline-offset:2px}
+html[data-look="club"] a{color:var(--cold)}
+html[data-look="club"] .lnk{color:var(--cold);text-decoration:underline;text-underline-offset:3px}
+html[data-look="club"] .panel{background:var(--panel);border:1px solid var(--line);border-radius:8px;box-shadow:none}
+html[data-look="club"] .bar{background:var(--club)}
+/* shared utilities for the page agents */
+html[data-look="club"] .band{background:var(--club);color:var(--club-ink)}
+html[data-look="club"] .cut-br{clip-path:polygon(0 0,100% 0,100% calc(100% - 56px),calc(100% - 56px) 100%,0 100%)}
+html[data-look="club"] .medal{display:inline-grid;place-items:center;width:40px;height:40px;border-radius:50%;background:#fff;border:2px solid var(--club2);flex:none;overflow:hidden}
+html[data-look="club"] .medal img{width:28px;height:28px;object-fit:contain;display:block}
+/* controls: round pills, 44px, the active state in the club base */
+html[data-look="club"] .seg{border:1px solid var(--line);border-radius:999px;background:var(--panel);padding:3px;gap:2px}
+html[data-look="club"] .seg button{background:transparent;border:0;border-radius:999px;color:var(--ink2);font-family:var(--sans);font-weight:600;font-size:14px;letter-spacing:.02em;text-transform:none;min-height:38px;padding:8px 16px;margin:0}
+html[data-look="club"] .seg button[aria-pressed="true"]{background:var(--club);border-color:var(--club);color:var(--club-ink)}
+html[data-look="club"] .seg button[aria-pressed="true"]:focus-visible{outline-color:var(--cold)}
+html[data-look="club"] .dd-btn{font-family:var(--sans);font-weight:600;font-size:16px;letter-spacing:0;text-transform:none;color:var(--ink);min-height:44px}
+html[data-look="club"] .dd[aria-expanded="true"] .dd-btn{color:var(--ink)}
+html[data-look="club"] .dd-list{background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--club2);border-radius:0 0 8px 8px;box-shadow:0 8px 24px rgba(11,13,16,.12)}
+html[data-look="club"] .dd-list li{font-family:var(--sans);font-weight:600;font-size:15px;letter-spacing:0;text-transform:none;color:var(--ink2)}
+html[data-look="club"] .dd-list li:hover,html[data-look="club"] .dd-list li.hi{background:var(--panel2);color:var(--ink)}
+html[data-look="club"] .dd-list li[aria-selected="true"]{color:var(--club);border-left-color:var(--club2)}
+html[data-look="club"] .search input{font-family:var(--sans);font-weight:500;font-size:16px;letter-spacing:0;text-transform:none;min-height:44px;padding:8px 36px 8px 12px;border:1px solid var(--line);border-radius:999px;background:var(--panel);color:var(--ink)}
+html[data-look="club"] .search input:focus{border-color:var(--cold);outline:none;box-shadow:0 0 0 2px var(--cold)}
+html[data-look="club"] .search input:focus-visible{outline:none}
+html[data-look="club"] .search input::placeholder{color:var(--muted);font-weight:400}
+html[data-look="club"] .search kbd{right:12px;border-radius:4px;border-color:var(--line2);color:var(--muted);font-family:var(--sans);font-size:11px}
+html[data-look="club"] .search .dd-list li.none{font-family:var(--sans)}
+/* header: a band in the club base with the brand plate */
+html[data-look="club"] .top{background:var(--club);color:var(--club-ink);border-bottom:0;height:60px;box-shadow:0 1px 2px rgba(11,13,16,.08)}
+html[data-look="club"] .top .id{background:#fff;color:#0b0d10;font-family:var(--cond);font-weight:var(--cond-w);font-style:normal;font-size:26px;letter-spacing:.04em;padding:0 30px 0 20px;margin:10px 0 10px 12px;height:40px;clip-path:polygon(0 0,100% 0,calc(100% - 12px) 100%,0 100%);border-radius:4px 0 0 4px}
+html[data-look="club"] .top .id span{font-family:var(--sans);font-weight:600;font-style:normal;font-size:11px;letter-spacing:.08em;color:#45464d;margin-left:10px;text-transform:uppercase}
+html[data-look="club"] .top .id span b{color:#0b0d10;font-weight:700}
+html[data-look="club"] .sel{border-right:1px solid color-mix(in srgb,var(--club-ink) 18%,transparent);color:var(--club-ink)}
+html[data-look="club"] .sel.team img{width:28px;height:28px;background:#fff;border:2px solid var(--club2);border-radius:50%;padding:3px;box-sizing:content-box}
+html[data-look="club"] .sel .dd-btn{color:var(--club-ink)}
+html[data-look="club"] .sel .dd-btn::after{border-color:var(--club-ink)}
+html[data-look="club"] .sel .dd[aria-expanded="true"] .dd-btn{color:var(--club-ink)}
+html[data-look="club"] .sel .dd-list{color:var(--ink)}
+html[data-look="club"] .search{padding:8px 12px;border-right:1px solid color-mix(in srgb,var(--club-ink) 18%,transparent)}
+html[data-look="club"] .q-btn{color:var(--club-ink);border-left:1px solid color-mix(in srgb,var(--club-ink) 18%,transparent)}
+html[data-look="club"] .st-lnk{border-left:1px solid color-mix(in srgb,var(--club-ink) 18%,transparent);font-family:var(--sans);font-weight:600;font-size:15px;letter-spacing:.02em;text-transform:none;color:var(--club-ink);opacity:.86}
+html[data-look="club"] .st-lnk:hover{color:var(--club-ink);opacity:1}
+html[data-look="club"] body.st-on #st-lnk,html[data-look="club"] body.ln-on #ln-lnk,html[data-look="club"] body.cmp-on #cmp-lnk{color:var(--club-ink);opacity:1}
+html[data-look="club"] body.st-on .st-lnk::after{content:none}
+html[data-look="club"] body.st-on #st-lnk::after,html[data-look="club"] body.ln-on #ln-lnk::after,html[data-look="club"] body.cmp-on #cmp-lnk::after{content:"";position:absolute;left:14px;right:14px;bottom:0;height:3px;background:var(--club2);transform:none}
+html[data-look="club"] .lang{border-left:1px solid color-mix(in srgb,var(--club-ink) 18%,transparent)}
+html[data-look="club"] .lang button{color:var(--club-ink);opacity:.7;font-family:var(--sans);font-weight:700;font-size:11px}
+html[data-look="club"] .lang button:hover{color:var(--club-ink);opacity:1}
+html[data-look="club"] .lang button[aria-pressed="true"]{color:var(--club-ink);opacity:1}
+html[data-look="club"] .lang button[aria-pressed="true"]::after{background:var(--club2);transform:none}
+html[data-look="club"] .lang svg{opacity:.5}
+html[data-look="club"] .lang button[aria-pressed="true"] svg{opacity:1}
+html[data-look="club"] .progress{background:var(--club2)}
+@media (max-width:760px){
+  html[data-look="club"] .top{height:auto;min-height:52px}
+  html[data-look="club"] .top .id{font-size:19px;letter-spacing:.03em;padding:0 16px 0 10px;margin:8px 0 8px 8px;height:36px;clip-path:polygon(0 0,100% 0,calc(100% - 9px) 100%,0 100%)}
+  html[data-look="club"] .sel.team img{width:24px;height:24px;padding:2px}
+  html[data-look="club"] .sel.player .dd-btn{font-size:15px}
+  html[data-look="club"] .search{padding:0;border-right:0;background:var(--club)}
+  html[data-look="club"] .search input{min-height:40px;margin:6px 0}
+  html[data-look="club"] .st-lnk,html[data-look="club"] .q-btn,html[data-look="club"] .lang{height:52px}
+}
+/* ---- end Club Edition foundation ---- */
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 html{color-scheme:dark}
@@ -665,6 +742,7 @@ body.st-on #ln-lnk::after{display:none}
   <div class="sel player"><select id="player" aria-label="Player"></select></div>
   <div class="search"><input type="search" id="q" placeholder="Find a player" aria-label="Find a player across all clubs" autocomplete="off" spellcheck="false" role="combobox" aria-expanded="false" aria-controls="q-list" aria-autocomplete="list"><kbd>/</kbd><ul class="dd-list" id="q-list" role="listbox" aria-label="Players" hidden></ul><button type="button" class="q-x" id="q-x" aria-label="Close search" hidden>&times;</button></div>
   <button type="button" class="q-btn" id="q-btn" aria-label="Find a player"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M15.5 15.5L21 21" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button>
+  <a class="st-lnk" id="cmp-lnk" href="#compare" title="Compare"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M4 8h13M14 4l4 4-4 4M20 16H7M10 12l-4 4 4 4" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Compare</span></a>
   <a class="st-lnk" id="ln-lnk" href="#lineups" title="Lineups"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="12" cy="6" r="2.4" fill="currentColor"/><circle cx="5" cy="11" r="2.4" fill="currentColor"/><circle cx="19" cy="11" r="2.4" fill="currentColor"/><circle cx="8" cy="18" r="2.4" fill="currentColor"/><circle cx="16" cy="18" r="2.4" fill="currentColor"/></svg><span>Lineups</span></a>
   <a class="st-lnk" id="st-lnk" href="#standings" title="Standings"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><span>Standings</span></a>
   <div class="lang" role="group" aria-label="Language">
@@ -875,8 +953,9 @@ const hue = h => { const [r, g, b] = hexRgb(h).map(v => v / 255), mx = Math.max(
 function applyPalette(c){
   const base = c.base || '#1f2b47', accent = c.accent || '#f26f21', r = document.documentElement.style;
   r.setProperty('--club', base); r.setProperty('--club2', accent); const la = lum(accent); r.setProperty('--on', (la + .05) / (lum('#0b0d10') + .05) >= 1.05 / (la + .05) ? '#0b0d10' : '#ffffff');
+  const lb = lum(base); r.setProperty('--club-ink', (lb + .05) / (lum('#0b0d10') + .05) >= 1.05 / (lb + .05) ? '#0b0d10' : '#ffffff');   // text on the club base colour (Club Edition header, hero, active tabs)
   r.setProperty('--wedge', lum(base) < 0.026 ? mix(base, '#ffffff', .86) : base);   // near-black bases (Besiktas, Asvel, Paris, Partizan, Virtus, Baskonia) get a lifted wedge so the hero keeps its shape
-  const [hh, sat] = hue(accent); r.setProperty('--bad', sat > .35 && (hh < 22 || hh > 338) ? '#ffa040' : '#ff6b6b');   // red-accent clubs: losses in amber so they never read as the club colour
+  const [hh, sat] = hue(accent); const club = document.documentElement.dataset.look === 'club'; r.setProperty('--bad', sat > .35 && (hh < 22 || hh > 338) ? (club ? '#b45309' : '#ffa040') : (club ? '#d6313e' : '#ff6b6b'));   // red-accent clubs: losses in amber so they never read as the club colour
   r.setProperty('--floor', mix(base, '#0c1016', .16)); r.setProperty('--paint', mix(base, '#0c1016', .28));
   // the court keeps its own hit colour: the club accent unless it is grey or near-white (Asvel, Besiktas), when made shots would vanish against the misses
   const hit = sat < .2 || la > .8 ? '#f26f21' : accent; r.setProperty('--hit', hit);
