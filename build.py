@@ -698,6 +698,33 @@ def lineups_json():
     return {"n": len(lineups), "n_all": out["n_all"], "players": sum(len(v) for v in onoff.values())}
 
 
+def leaders_json():
+    """One line per player with minutes this season, for the Leaders page (teams/<season>/leaders.json, fetched on demand).
+    The numbers are the season totals and role rates the club files already carry, so the page agrees with every player
+    page to the decimal; `q` is the leaderboards() gate (his share of the club's games at LB_MPG minutes a game)."""
+    L = LEADERS or {}
+    cg = {}
+    for (game, club) in TG:
+        cg[club] = cg.get(club, 0) + 1
+    rounds = L.get("rounds") or 0
+    out_rows = []
+    for code, ps in collected.items():
+        need = max(1, math.ceil(LB_GAME_SHARE * cg.get(code, rounds)))
+        for p in ps:
+            t = p["cur"]["tot"]
+            if not t["gp"]:
+                continue
+            role = p["cur"]["role"] or {}
+            out_rows.append({"pid": p["pid"], "c": code, "name": p["name"], "d": p["dorsal"], "pos": p["cur"]["pos_group"], "gp": t["gp"], "gs": t["starts"], "min": t["min"],
+                             **{k: t[k] for k in ("pts", "reb", "oreb", "dreb", "ast", "stl", "blk", "tov", "pir", "fgm2", "fga2", "fgm3", "fga3", "ftm", "fta", "pf")}, "pm": t["plusminus"],
+                             "usg": role.get("usg"), "ast_pct": role.get("ast_pct"), "tov_pct": role.get("tov_pct"), "reb_pct": role.get("reb_pct"),
+                             "q": int(t["gp"] >= need and t["min"] / t["gp"] >= LB_MPG)})
+    out = {"season": SEASON, "built": datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC"), "rounds": rounds, "min_gp": L.get("min_gp"), "min_mpg": L.get("min_mpg", LB_MPG),
+           "min_3pa": L.get("min_3pa"), "provisional": bool(L.get("provisional")), "games": cg, "rows": out_rows}
+    json.dump(out, open(os.path.join(OUT, "leaders.json"), "w"), separators=(",", ":"), ensure_ascii=False)
+    return {"n": len(out_rows)}
+
+
 def standings():
     """Record and standings from the played games: wins first, then point difference, then points for; every club listed."""
     rec = {c["club"]: {"code": c["club"], "gp": 0, "w": 0, "l": 0, "pf": 0, "pa": 0, "hw": 0, "hl": 0, "aw": 0, "al": 0, "form": [], "streak": 0} for c in clubs}
@@ -718,6 +745,7 @@ def standings():
 
 
 LEADERS, LB_RANK = leaderboards()
+LEADERS_FILE = leaders_json()   # the Leaders page's data file
 if LEADERS is None:
     LEADERS, LB_RANK = None, {k: {} for k in ("pts", "reb", "ast", "fg3")}
 

@@ -603,26 +603,6 @@ html[data-look="club"] .prof-chart .ln{stroke:var(--club)}
 html[data-look="club"] .prof-chart .end{fill:var(--club2);stroke:var(--club);stroke-width:2}
 html[data-look="club"] .prof-chart text{font-size:12px;fill:var(--ink2)}
 html[data-look="club"] .prof-chart .zero{stroke:var(--ink2)}
-/* league leaders */
-html[data-look="club"] .lb-title b{font-weight:var(--cond-w);font-style:normal;font-size:30px}
-html[data-look="club"] .lb-title span{font-size:13px}
-html[data-look="club"] .lb-arrow{border-radius:999px;clip-path:none;font-weight:var(--cond-w)}
-html[data-look="club"] #lb-prev,html[data-look="club"] #lb-next{clip-path:none}
-html[data-look="club"] .lb-dots button::before{transform:none;border-radius:3px}
-html[data-look="club"] .lb-row a{border-radius:6px}
-html[data-look="club"] .lb-row a:hover{background:rgba(11,13,16,.04)}
-html[data-look="club"] .lb-row a::after{background:var(--line2)}
-html[data-look="club"] .lb-rank{font-weight:var(--cond-w);font-style:normal}
-html[data-look="club"] .lb-ph{border-radius:4px;clip-path:none}
-html[data-look="club"] .lb-name b{font-family:var(--sans);font-size:15px;letter-spacing:0;text-transform:none}
-html[data-look="club"] .lb-name b.fn{font-weight:500}html[data-look="club"] .lb-name b.sn{font-weight:700}
-html[data-look="club"] .lb-val{font-weight:var(--cond-w);font-style:normal;font-size:30px}
-html[data-look="club"] .lb-val u{font-size:11.5px}
-html[data-look="club"] .lb-row.me a{background:var(--club2);border-left-color:var(--club2)}
-html[data-look="club"] .lb-row.me a::after,html[data-look="club"] .lb-row.me a::before{background:rgba(0,0,0,.15)}
-html[data-look="club"] .lb-row.me .lb-val,html[data-look="club"] .lb-row.me .lb-val i,html[data-look="club"] .lb-row.me .lb-val u,html[data-look="club"] .lb-row.me .lb-name b,html[data-look="club"] .lb-row.me .lb-name small{color:var(--on)}
-html[data-look="club"] .lb-row.me .lb-rank{transform:none;border-radius:4px;background:rgba(0,0,0,.18);color:var(--on)}
-html[data-look="club"] .lb-foot{font-size:13px}
 html[data-look="club"] .lnk{color:var(--cold)}
 html[data-look="club"] .foot{font-family:var(--sans);letter-spacing:.04em;text-transform:none;font-size:13px}
 html[data-look="club"] .foot a{color:var(--cold)}
@@ -701,73 +681,12 @@ td .st{display:inline-block;color:var(--club2);font-style:normal;font-family:var
 .log tbody tr.on td:nth-child(3)::after{content:"in view";display:inline-block;margin-left:8px;padding:1px 6px;font-family:var(--cond);font-size:11px;letter-spacing:.12em;text-transform:uppercase;background:var(--club2);color:var(--on);vertical-align:1px}
 .log tbody tr:focus-visible{outline:2px solid var(--club2);outline-offset:-2px}
 @media (min-width:761px) and (max-width:1100px){.top .id span{display:none}.top .id{font-size:20px;padding:0 20px 0 16px}.dd-btn{font-size:16px;padding:14px 30px 14px 0}.lang button{width:48px}.search{flex:0 1 190px;min-width:130px}}
-/* leaderboards: league scope, so the panel stays on house grey and the club accent marks only the viewed player */
-#cmp-panel,#lb-panel{margin-top:18px}
-.lb-head{display:flex;align-items:center;gap:12px;margin:0 0 14px}
-.lb-title{flex:1;min-width:0}
-.lb-title b{display:block;font-family:var(--cond);font-weight:900;font-style:italic;font-size:30px;line-height:1;text-transform:uppercase;letter-spacing:.02em;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.lb-title span{display:block;font-size:12px;color:var(--muted);margin-top:3px}
-.lb-arrow{flex:none;width:44px;height:40px;display:grid;place-items:center;padding:0 0 4px;background:var(--panel);border:1px solid var(--line);color:var(--ink);font-family:var(--cond);font-weight:800;font-size:26px;line-height:1;cursor:pointer;transition:background .15s,border-color .15s,color .15s}
-.lb-arrow:hover{background:var(--club2);border-color:var(--club2);color:var(--on)}
-.lb-arrow:disabled{opacity:.35;cursor:not-allowed}
-.lb-arrow:disabled:hover{background:var(--panel);border-color:var(--line);color:var(--ink)}
-#lb-prev{clip-path:polygon(0 0,100% 0,100% 100%,8px 100%)}
-#lb-next{clip-path:polygon(8px 0,100% 0,100% 100%,0 100%)}
-.lb-dots{display:flex;gap:2px;flex:none}
-.lb-dots button{width:34px;height:24px;padding:0;border:0;background:none;position:relative;cursor:pointer}
-.lb-dots button::before{content:"";position:absolute;left:4px;right:4px;top:9px;height:6px;background:var(--line2);transform:skewX(-14deg);transition:background .2s}
-.lb-dots button:hover::before{background:var(--ink2)}
-.lb-dots button[aria-pressed="true"]::before,.lb-dots button[aria-pressed="true"]:hover::before{background:var(--club2)}
-.lb-clip{position:relative;overflow:hidden;touch-action:pan-y}
-.lb-list{list-style:none;margin:0;padding:0;display:grid;grid-auto-flow:column;grid-template-rows:repeat(5,auto) auto;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:16px}
-.lb-row{position:relative;min-width:0}
-.lb-row a{display:grid;grid-template-columns:34px 34px 24px minmax(0,1fr) 88px;column-gap:12px;align-items:center;height:46px;padding:0 12px 0 10px;border-left:4px solid transparent;position:relative;overflow:hidden;text-decoration:none;color:inherit;transition:background .12s}
-.lb-row a:hover{background:rgba(255,255,255,.04)}
-.lb-row a::before{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--panel2)}
-.lb-row a::after{content:"";position:absolute;left:0;bottom:0;height:3px;width:var(--p,0%);background:var(--line2);transition:width .5s ease var(--d,0ms)}
-.lb-rank{font-family:var(--cond);font-weight:900;font-style:italic;font-size:24px;line-height:1;text-align:right;color:var(--muted);font-variant-numeric:tabular-nums;letter-spacing:-.01em;white-space:nowrap}
-.lb-row:nth-child(-n+3) .lb-rank{font-size:30px}
-.lb-row:nth-child(1) .lb-rank{color:var(--ink)}
-.lb-row:nth-child(2) .lb-rank,.lb-row:nth-child(3) .lb-rank{color:var(--ink2)}
-.lb-ph{width:34px;height:40px;flex:none;background:var(--panel2);overflow:hidden;clip-path:polygon(0 0,100% 0,calc(100% - 6px) 100%,0 100%)}
-.lb-ph img{width:100%;height:100%;display:block;object-fit:cover;object-position:50% 6%;pointer-events:none}
-.lb-crest{width:24px;height:24px;object-fit:contain;pointer-events:none}
-.lb-name{min-width:0;display:flex;align-items:baseline;gap:6px;white-space:nowrap;overflow:hidden}
-.lb-name b{font-family:var(--cond);font-size:19px;line-height:1.1;letter-spacing:.04em;text-transform:uppercase}
-.lb-name b.fn{font-weight:600;color:var(--ink2);flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis}
-.lb-name b.sn{font-weight:800;color:var(--ink);flex:0 0 auto}
-.lb-name b.ini{display:none;font-weight:600;color:var(--ink2);flex:none}
-.lb-name small{display:none;font-family:var(--cond);font-weight:700;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);flex:none;margin-left:auto;padding-left:10px}
-.lb-val{text-align:right;font-family:var(--cond);font-weight:900;font-style:italic;font-size:30px;line-height:.9;color:var(--ink);font-variant-numeric:tabular-nums}
-.lb-val i{font-style:normal;font-weight:700;font-size:15px;color:var(--muted);margin-left:2px}
-.lb-val u{display:block;text-decoration:none;font-family:var(--sans);font-style:normal;font-weight:500;font-size:11px;line-height:1;color:var(--muted);margin-top:1px}
-.lb-row:nth-child(n+6):not(.pin) a{border-left-width:4px;box-shadow:inset 1px 0 0 var(--line)}
-.lb-row.pin{grid-column:1/-1;grid-row:6;margin-top:10px;border-top:1px solid var(--line2)}
-.lb-row.pin a{height:52px;box-shadow:none;grid-template-columns:48px 34px 24px minmax(0,1fr) 88px}
-.lb-row.me a{background:rgba(255,255,255,.06);border-left-color:var(--club2)}
-.lb-row.me a::after{background:var(--club2)}
-.lb-row.me .lb-val{color:var(--club2)}
-.lb-row.me .lb-name b.sn{color:#fff}
-.lb-row.me .lb-rank{display:inline-grid;place-items:center;min-width:26px;padding:2px 6px;font-size:22px;background:var(--club2);color:var(--on);transform:skewX(-10deg)}
-.lb-row.small .lb-val,.lb-row.small .lb-name b,.lb-row.small .lb-rank{color:var(--muted)}
-.lb-row.small.me .lb-rank{color:var(--on)}
-.lb-val u{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.lb-foot{font-size:12px;color:var(--muted);margin:12px 0 0}
-.lb-none{grid-column:1/-1;padding:52px 20px;text-align:center;background:var(--panel);border:1px solid var(--line)}
+#cmp-panel{margin-top:18px}
 .stats-none{padding:34px 20px;margin:4px 0 8px}
-.lb-none b{display:block;font-family:var(--cond);font-weight:900;font-style:italic;font-size:26px;letter-spacing:.02em;text-transform:uppercase;color:var(--ink)}
-.lb-none span{display:block;max-width:56ch;margin:8px auto 0;color:var(--muted);font-size:13px;line-height:1.55}
 .lnk{background:none;border:0;padding:0;color:var(--club2);font:inherit;cursor:pointer;text-decoration:underline}
 @keyframes lb-in-l{from{opacity:0;transform:translateX(-22px)}to{opacity:1;transform:translateX(0)}}
 @keyframes lb-in-r{from{opacity:0;transform:translateX(22px)}to{opacity:1;transform:translateX(0)}}
-.lb-list.go-l{animation:lb-in-l .22s cubic-bezier(.2,.7,.2,1) both}
-.lb-list.go-r{animation:lb-in-r .22s cubic-bezier(.2,.7,.2,1) both}
-.lb-title b.swap{animation:lb-in-r .16s cubic-bezier(.2,.7,.2,1) both}
 @media (min-width:1100px){.lb-name small{display:inline}}
-@media (max-width:1000px){.lb-list{grid-auto-flow:row;grid-template-columns:minmax(0,1fr);grid-template-rows:none;column-gap:0}.lb-row:nth-child(n+6):not(.pin) a{box-shadow:none}.lb-row.pin{grid-row:auto}}
-@media (max-width:760px){.lb-head{gap:8px;flex-wrap:wrap}.lb-title{order:-1;flex:1 1 100%}.lb-title b{font-size:24px}.lb-title span{font-size:11.5px}.lb-dots{margin-left:auto}.lb-arrow{width:48px;height:44px;font-size:24px}
-  .lb-row a{grid-template-columns:28px 30px 20px minmax(0,1fr) 70px;column-gap:9px;height:52px;padding:0 4px 0 8px}.lb-rank{font-size:21px}.lb-row:nth-child(-n+3) .lb-rank{font-size:25px}.lb-row.me .lb-rank{font-size:18px;min-width:22px;padding:2px 4px}.lb-row.pin a{grid-template-columns:42px 30px 20px minmax(0,1fr) 70px}
-  .lb-ph{width:30px;height:38px;clip-path:polygon(0 0,100% 0,calc(100% - 5px) 100%,0 100%)}.lb-crest{width:20px;height:20px}.lb-name b{font-size:17px}.lb-name b.fn{display:none}.lb-name b.ini{display:inline}.lb-val{font-size:25px}.lb-val u{font-size:10px}}
 /* opening page: shown only when the URL carries no club, so every deep link goes straight to the app */
 body.cv-on .top,body.cv-on .wrap{display:none}
 /* standings page: the header stays, the club content gives way to the table */
@@ -851,8 +770,8 @@ body.st-on #ln-lnk::after{display:none}
 .st-tiles,.ln-defs,.st-tab tr.cutrow,.ln-tab .nbar,.ln-tab .oobar,.ln-tab .chip{display:none}
 .st-tab .form i{font-size:0}
 html[data-look="club"] #standings,html[data-look="club"] #lineups{margin-top:22px}
-html[data-look="club"] #standings h2,html[data-look="club"] #lineups h2{font-weight:var(--cond-w);font-style:normal;font-size:36px;letter-spacing:.03em;padding:18px 20px 6px;gap:14px}
-html[data-look="club"] #standings h2::before,html[data-look="club"] #lineups h2::before{width:8px;height:28px;background:var(--club2);transform:none;border-radius:2px}
+html[data-look="club"] #standings h2,html[data-look="club"] #leaders h2,html[data-look="club"] #lineups h2{font-weight:var(--cond-w);font-style:normal;font-size:36px;letter-spacing:.03em;padding:18px 20px 6px;gap:14px}
+html[data-look="club"] #standings h2,html[data-look="club"] #leaders h2::before,html[data-look="club"] #lineups h2::before{width:8px;height:28px;background:var(--club2);transform:none;border-radius:2px}
 html[data-look="club"] #standings .in,html[data-look="club"] #lineups .in{padding:0 20px 20px}
 html[data-look="club"] #standings .sub,html[data-look="club"] #lineups .sub{font-family:var(--sans);font-size:16px;color:var(--ink2);margin:0 0 16px;max-width:80ch}
 html[data-look="club"] .st-foot,html[data-look="club"] .ln-foot{font-size:14px;color:var(--muted);margin-top:14px;max-width:110ch}
@@ -933,7 +852,7 @@ html[data-look="club"] .ln-tab .chip{padding:3px 10px;border-radius:999px;backgr
 html[data-look="club"] .ln-empty{font-size:15px}
 @media (max-width:760px){
   html[data-look="club"] #standings .in,html[data-look="club"] #lineups .in{padding:0 12px 16px}
-  html[data-look="club"] #standings h2,html[data-look="club"] #lineups h2{font-size:30px;padding:14px 12px 4px}
+  html[data-look="club"] #standings h2,html[data-look="club"] #leaders h2,html[data-look="club"] #lineups h2{font-size:30px;padding:14px 12px 4px}
   html[data-look="club"] .st-tiles{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
   html[data-look="club"] .st-tile:first-child{grid-column:1/-1}
   html[data-look="club"] .st-tile{padding:10px 12px 8px;border-radius:6px}
@@ -1169,8 +1088,8 @@ html[data-look="club"] .cv-foot a{color:var(--cold)}
   html[data-look="club"] .tabbar>*{flex:1 1 0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:56px;border:0;background:none;color:var(--muted);font:600 10.5px/1 var(--sans);letter-spacing:.04em;text-transform:uppercase;text-decoration:none;position:relative;cursor:pointer;padding:0}
   html[data-look="club"] .tabbar svg{width:22px;height:22px;display:block}
   html[data-look="club"] .tabbar>*:focus-visible{outline:2px solid var(--cold);outline-offset:-2px}
-  html[data-look="club"] body.st-on #tb-standings,html[data-look="club"] body.ln-on #tb-lineups,html[data-look="club"] body.cmp-on #tb-compare,html[data-look="club"] body:not(.st-on):not(.ln-on):not(.cmp-on) #tb-player{color:var(--club)}
-  html[data-look="club"] body.st-on #tb-standings::before,html[data-look="club"] body.ln-on #tb-lineups::before,html[data-look="club"] body.cmp-on #tb-compare::before,html[data-look="club"] body:not(.st-on):not(.ln-on):not(.cmp-on) #tb-player::before{content:"";position:absolute;left:12px;right:12px;top:0;height:3px;background:var(--club2)}
+  html[data-look="club"] body.st-on #tb-standings,html[data-look="club"] body.ln-on #tb-lineups,html[data-look="club"] body.cmp-on #tb-compare,html[data-look="club"] body.ld-on #tb-leaders,html[data-look="club"] body:not(.st-on):not(.ln-on):not(.cmp-on):not(.ld-on) #tb-player{color:var(--club)}
+  html[data-look="club"] body.st-on #tb-standings::before,html[data-look="club"] body.ln-on #tb-lineups::before,html[data-look="club"] body.cmp-on #tb-compare::before,html[data-look="club"] body.ld-on #tb-leaders::before,html[data-look="club"] body:not(.st-on):not(.ln-on):not(.cmp-on):not(.ld-on) #tb-player::before{content:"";position:absolute;left:12px;right:12px;top:0;height:3px;background:var(--club2)}
   html[data-look="club"] body.cv-on .tabbar{display:none}
   html[data-look="club"] body:not(.cv-on){padding-bottom:calc(60px + env(safe-area-inset-bottom))}
   html[data-look="club"] body:not(.cv-on) .wrap{padding-bottom:24px}
@@ -1180,6 +1099,111 @@ html[data-look="club"] .cv-foot a{color:var(--cold)}
 @media (max-width:760px){html[data-look="club"] body.cmp-on .cmp-side.l{padding-bottom:44px}html[data-look="club"] body.cmp-on .cmp-side.r{padding-top:30px}}
 @media (max-width:760px){html[data-look="club"] .cmp-m .lab{white-space:normal;overflow:visible;text-overflow:clip;line-height:1.15;font-size:11.5px}}
 /* ---- end Club Edition phone chrome ---- */
+/* ---- Club page (club hub, #CODE) ---- */
+#club{padding:0;overflow:hidden}
+#club .cb-in{padding:18px 24px 28px}
+.cb-hero{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:20px 24px;align-items:center;padding:34px 28px 52px;background:var(--club);color:var(--club-ink,#fff)}
+html[data-look="club"] .cb-crest .medal{width:96px;height:96px;border-width:3px}html[data-look="club"] .cb-crest .medal img{width:72px;height:72px}
+.cb-eyebrow{margin:0 0 6px;font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;opacity:.85}
+.cb-name{margin:0;font-family:var(--cond);font-weight:var(--cond-w,400);font-size:64px;line-height:1;letter-spacing:.02em;text-transform:uppercase}
+html[data-look="club"] .cb-line{margin:10px 0 0;font-size:18px}html[data-look="club"] .cb-line a{color:inherit;text-decoration:none;border-bottom:2px solid var(--club2)}
+.cb-side{display:grid;gap:10px;min-width:260px}
+.cb-next{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.12);border-radius:8px;padding:10px 12px;font-size:15px}
+html[data-look="club"] .cb-hero[style*="--club-ink:#0b0d10"] .cb-next,.cb-hero.dark-ink .cb-next{background:rgba(11,13,16,.08)}
+.cb-next .lab{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;opacity:.85;min-width:84px}
+html[data-look="club"] .cb-next .medal{width:32px;height:32px;border-width:2px;background:#fff}html[data-look="club"] .cb-next .medal img{width:22px;height:22px}
+.cb-next b.w{color:#8ff0b8}.cb-next b.l{color:#ffb4b4}
+#club h2{margin:22px 0 4px;font-family:var(--cond);font-weight:var(--cond-w,400);font-size:30px;letter-spacing:.03em;text-transform:uppercase;color:var(--ink);padding-left:14px;border-left:5px solid var(--club2)}
+.cb-sub{margin:0 0 14px;color:var(--muted);font-size:15px}
+html[data-look="club"] .cb-tiles{margin-bottom:6px;grid-template-columns:repeat(4,minmax(0,1fr))}html[data-look="club"] .cb-tiles .st-tile em{color:var(--ink)}
+.cb-wrap{overflow-x:auto}
+.cb-tab{width:100%;border-collapse:collapse;font-size:15px;background:var(--panel)}
+.cb-tab th,.cb-tab td{padding:0 10px;height:48px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
+.cb-tab th{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:var(--bg2);position:sticky;top:0}
+.cb-tab th.k,.cb-tab td.k{text-align:right;font-variant-numeric:tabular-nums}
+.cb-tab th button{all:unset;cursor:pointer;color:inherit;font:inherit;letter-spacing:inherit;text-transform:inherit;padding:4px 0}.cb-tab th button:focus-visible{outline:2px solid var(--cold);outline-offset:2px;border-radius:4px}
+.cb-tab th.on button{color:var(--ink);border-bottom:3px solid var(--club2)}
+.cb-tab tbody tr:nth-child(even){background:#f8f9fb}
+.cb-tab td.nm{font-weight:600}.cb-tab td.nm a{color:var(--ink);text-decoration:none}.cb-tab td.nm a:hover{text-decoration:underline}
+.cb-tab td.nm i{font-style:normal;color:var(--muted);padding:0 2px}
+.cb-two .cb-tab{font-size:14px}.cb-two .cb-tab th,.cb-two .cb-tab td{padding:0 8px}.cb-two .cb-tab td.nm{white-space:normal;line-height:1.3}
+.cb-tab td.no{color:var(--muted);width:40px}
+.cb-tab tr.na td{color:var(--muted)}
+.cb-tab td.net{font-weight:700}.cb-tab td.net.w,.cb-next b.w{--c:var(--good)}.cb-tab td.net.w{color:var(--good)}.cb-tab td.net.l{color:var(--bad)}
+.cb-tab td.lg{color:var(--muted)}
+.cb-two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;align-items:start}
+.cb-court{width:100%;height:auto;max-width:520px;display:block}
+.cb-foot{margin:8px 0 0;color:var(--muted);font-size:14px}
+.cb-more{margin:12px 0 0}
+.cb-chips{display:flex;flex-wrap:wrap;gap:10px}
+.cb-chip{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:4px 14px 4px 6px;border:1px solid var(--line);border-radius:999px;background:var(--panel);font-size:15px}
+html[data-look="club"] .cb-chip .medal{width:34px;height:34px;border-width:2px}html[data-look="club"] .cb-chip .medal img{width:22px;height:22px}
+.cb-chip i{font-style:normal;color:var(--muted)}
+@media (max-width:1000px){.cb-two{grid-template-columns:1fr}.cb-hero{grid-template-columns:auto minmax(0,1fr)}.cb-side{grid-column:1/-1;min-width:0}.cb-name{font-size:52px}}
+@media (max-width:760px){#club .cb-in{padding:12px 12px 20px}.cb-hero{padding:22px 16px 56px;gap:14px}.cb-crest .medal{width:72px;height:72px}.cb-crest .medal img{width:52px;height:52px}.cb-hero{grid-template-columns:1fr}.cb-crest{justify-self:start}.cb-name{font-size:36px;overflow-wrap:anywhere}.cb-line{font-size:16px}.cb-next{flex-wrap:wrap}.cb-next .lab{min-width:0}.cb-two .cb-tab td.nm{white-space:nowrap}html[data-look="club"] .cb-tiles{grid-template-columns:repeat(2,minmax(0,1fr))}.cb-tab th:first-child,.cb-tab td:first-child{position:sticky;left:0;background:var(--panel);z-index:1}.cb-tab tbody tr:nth-child(even) td:first-child{background:#f8f9fb}.cb-tab td.nm{position:sticky;left:40px;background:inherit}}
+/* ---- end club page ---- */
+/* ---- Club Edition · Leaders page (#leaders) ---- */
+.ld-boards{display:none}
+html[data-look="club"] .ld-boards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:16px 0 18px}
+html[data-look="club"] .ld-board{text-align:left;background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:12px 14px;cursor:pointer;font:inherit;color:var(--ink2)}
+html[data-look="club"] .ld-board:hover{border-color:var(--line2)}
+html[data-look="club"] .ld-board.on{border-color:var(--club2);box-shadow:inset 0 3px 0 var(--club2)}
+html[data-look="club"] .ld-board:focus-visible{outline:2px solid var(--cold);outline-offset:2px}
+html[data-look="club"] .ld-board b{display:block;font-family:var(--cond);font-weight:var(--cond-w);font-size:20px;letter-spacing:.03em;text-transform:uppercase;color:var(--ink);margin-bottom:8px}
+html[data-look="club"] .ld-board ol{list-style:none;margin:0;padding:0;counter-reset:ld}
+html[data-look="club"] .ld-board li{display:flex;align-items:center;gap:8px;min-height:30px;font-size:14px;counter-increment:ld}
+html[data-look="club"] .ld-board li::before{content:counter(ld);width:16px;font-family:var(--cond);font-size:16px;color:var(--muted)}
+html[data-look="club"] .ld-board li img{width:20px;height:20px;object-fit:contain;flex:none}
+html[data-look="club"] .ld-board li span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink2)}
+html[data-look="club"] .ld-board li i{font-style:normal;font-family:var(--cond);font-size:18px;color:var(--ink);font-variant-numeric:tabular-nums}
+html[data-look="club"] .ld-board li.me span{color:var(--club);font-weight:700}
+html[data-look="club"] .ld-bar{flex-wrap:wrap;gap:10px}
+html[data-look="club"] .ld-qual{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 14px;border:1px solid var(--line);border-radius:999px;background:var(--panel);font-size:14px;color:var(--ink2);cursor:pointer}
+html[data-look="club"] .ld-qual input{width:16px;height:16px;accent-color:var(--club);margin:0}
+html[data-look="club"] .ld-find{flex:1 1 200px;min-width:160px}
+html[data-look="club"] .ld-find input{width:100%;height:44px;padding:0 16px;border:1px solid var(--line);border-radius:999px;background:var(--panel);font:inherit;font-size:15px;color:var(--ink)}
+html[data-look="club"] .ld-find input:focus-visible{outline:2px solid var(--cold);outline-offset:1px}
+html[data-look="club"] .ld-tab{width:100%;border-collapse:separate;border-spacing:0;font-family:var(--sans);font-size:15px;color:var(--ink2)}
+html[data-look="club"] .ld-tab th{position:sticky;top:0;z-index:3;background:var(--panel2);font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+html[data-look="club"] .ld-tab th.n{text-align:right}
+html[data-look="club"] .ld-tab th button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;letter-spacing:inherit;text-transform:inherit}
+html[data-look="club"] .ld-tab th button:focus-visible{outline:2px solid var(--cold);outline-offset:2px}
+html[data-look="club"] .ld-tab th.on{color:var(--ink)}
+html[data-look="club"] .ld-tab th.on button i{font-style:normal;font-size:9px;margin-left:4px;color:var(--club2)}
+html[data-look="club"] .ld-tab td{height:48px;padding:4px 8px;border-bottom:1px solid var(--line);vertical-align:middle;white-space:nowrap}
+html[data-look="club"] .ld-tab tbody tr:nth-child(even) td{background:#f8f9fb}
+html[data-look="club"] .ld-tab td.n{text-align:right;font-variant-numeric:tabular-nums}
+html[data-look="club"] .ld-tab td.on{color:var(--ink);font-weight:700;background:rgba(31,43,71,.05)}
+html[data-look="club"] .ld-tab td.rk{font-family:var(--cond);font-size:18px;color:var(--muted);width:34px;text-align:right}
+html[data-look="club"] .ld-tab tbody tr:nth-child(-n+3) td.rk{font-size:24px;color:var(--ink)}
+html[data-look="club"] .ld-tab td.pl a{display:flex;align-items:center;gap:10px;color:inherit;text-decoration:none;min-width:0}
+html[data-look="club"] .ld-tab td.pl .medal{width:34px;height:34px;flex:none}
+html[data-look="club"] .ld-tab td.pl .medal img{width:24px;height:24px}
+html[data-look="club"] .ld-tab td.pl .nm{display:flex;flex-direction:column;line-height:1.2;min-width:0}
+html[data-look="club"] .ld-tab td.pl .nm b{font-weight:600;color:var(--ink)}
+html[data-look="club"] .ld-tab td.pl .nm small{font-size:12px;color:var(--muted)}
+html[data-look="club"] .ld-tab td.pl a:hover b{text-decoration:underline}
+html[data-look="club"] .ld-tab tr.unq td,html[data-look="club"] .ld-tab td.unq{color:var(--muted)}
+html[data-look="club"] .ld-tab tr.unq td.pl .nm b{color:var(--muted)}
+html[data-look="club"] .ld-tab tr.me td{background:rgba(242,111,33,.12)}
+html[data-look="club"] .ld-tab tr.me td.pl .nm b{color:var(--club)}
+html[data-look="club"] #ld-wrap{overflow:visible;mask-image:none}
+@media (max-width:1000px){
+  html[data-look="club"] .ld-boards{grid-template-columns:repeat(2,minmax(0,1fr))}
+  html[data-look="club"] #ld-wrap{overflow-x:auto;mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent)}
+  html[data-look="club"] #ld-wrap.end{mask-image:none}
+  html[data-look="club"] .ld-tab th:first-child,html[data-look="club"] .ld-tab td.rk{position:sticky;left:0;z-index:2;background:var(--panel);width:34px;min-width:34px}
+  html[data-look="club"] .ld-tab th:nth-child(2),html[data-look="club"] .ld-tab td.pl{position:sticky;left:34px;z-index:2;background:var(--panel);min-width:150px;max-width:170px;padding-right:10px;box-shadow:4px 0 8px -4px rgba(11,13,16,.18)}
+  html[data-look="club"] .ld-tab tbody tr:nth-child(even) td.rk,html[data-look="club"] .ld-tab tbody tr:nth-child(even) td.pl{background:#f8f9fb}
+  html[data-look="club"] .ld-tab th.ph,html[data-look="club"] .ld-tab td.ph{display:none}
+  html[data-look="club"] .ld-tab td.pl .nm b{white-space:normal;font-size:14px}
+}
+@media (max-width:760px){
+  html[data-look="club"] .ld-boards{grid-template-columns:1fr}
+  html[data-look="club"] .ld-bar .seg{width:100%;overflow-x:auto}
+  html[data-look="club"] .ld-find{flex-basis:100%}
+}
+/* ---- end Club Edition · Leaders page ---- */
 </style>
 <div class="bar"></div>
 <main class="cv" id="cover" hidden>
@@ -1241,7 +1265,7 @@ html[data-look="club"] .cv-foot a{color:var(--cold)}
   <a id="tb-compare" href="#compare"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h13M14 4l4 4-4 4M20 16H7M10 12l-4 4 4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Compare</span></a>
   <a id="tb-lineups" href="#lineups"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="6" r="2.4" fill="currentColor"/><circle cx="5" cy="11" r="2.4" fill="currentColor"/><circle cx="19" cy="11" r="2.4" fill="currentColor"/><circle cx="8" cy="18" r="2.4" fill="currentColor"/><circle cx="16" cy="18" r="2.4" fill="currentColor"/></svg><span>Lineups</span></a>
   <a id="tb-standings" href="#standings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>Standings</span></a>
-  <button type="button" id="tb-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15.5 15.5L21 21" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><span>Search</span></button>
+  <a id="tb-leaders" href="#leaders"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V10M12 20V4M19 20v-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>Leaders</span></a>
 </nav>
 <div class="wrap">
   <section class="hero" id="hero">
@@ -1349,19 +1373,6 @@ html[data-look="club"] .cv-foot a{color:var(--cold)}
     </div>
   </section>
 
-  <details class="panel lb" id="lb-panel" hidden>
-    <summary>League leaders</summary>
-    <div class="in">
-      <div class="lb-head">
-        <button class="lb-arrow" id="lb-prev" type="button" aria-label="Previous leaderboard">&lsaquo;</button>
-        <div class="lb-title"><b id="lb-name" aria-live="polite"></b><span id="lb-sub"></span></div>
-        <div class="lb-dots" id="lb-dots" aria-label="Leaderboards"></div>
-        <button class="lb-arrow" id="lb-next" type="button" aria-label="Next leaderboard">&rsaquo;</button>
-      </div>
-      <div class="lb-clip" id="lb-clip"><ol class="lb-list" id="lb-list"></ol></div>
-      <p class="lb-foot" id="lb-foot"></p>
-    </div>
-  </details>
 
 
   <section class="panel" id="standings" hidden>
@@ -1374,7 +1385,25 @@ html[data-look="club"] .cv-foot a{color:var(--cold)}
       <p class="st-foot" id="st-foot"></p>
     </div>
   </section>
-  <section class="panel" id="leaders" hidden></section>
+  <section class="panel" id="leaders" hidden>
+    <h2>Leaders</h2>
+    <div class="in">
+      <p class="sub" id="ld-sub"></p>
+      <div class="ld-boards" id="ld-boards"></div>
+      <div class="ln-bar ld-bar">
+        <div class="seg" id="ld-group" role="tablist"><button type="button" data-v="scoring" aria-pressed="true">Scoring</button><button type="button" data-v="rebounds" aria-pressed="false">Rebounds</button><button type="button" data-v="playmaking" aria-pressed="false">Playmaking</button><button type="button" data-v="shooting" aria-pressed="false">Shooting</button><button type="button" data-v="efficiency" aria-pressed="false">Efficiency</button></div>
+        <div class="seg" id="ld-mode" role="tablist"><button type="button" data-v="pg" aria-pressed="true">Per game</button><button type="button" data-v="p40" aria-pressed="false">Per 40 min</button><button type="button" data-v="tot" aria-pressed="false">Totals</button></div>
+        <div class="ln-sel"><label for="ld-pos">Position</label><select id="ld-pos" aria-label="Position"></select></div>
+        <div class="ln-sel"><label for="ld-min">Min</label><select id="ld-min" aria-label="Minutes a game"></select></div>
+        <div class="ln-sel"><label for="ld-club">Club</label><select id="ld-club" aria-label="Club"></select></div>
+        <label class="ld-qual"><input type="checkbox" id="ld-qual"><span>Qualified only</span></label>
+        <div class="ld-find"><input type="search" id="ld-find" placeholder="Filter by player" aria-label="Filter by player" autocomplete="off" spellcheck="false"></div>
+      </div>
+      <p class="scroll-hint">Scroll for more columns</p>
+      <div class="scroll" id="ld-wrap"></div>
+      <p class="ln-foot" id="ld-foot"></p>
+    </div>
+  </section>
   <section class="panel" id="club" hidden></section>
   <section class="panel" id="lineups" hidden>
     <h2>Lineups</h2>
@@ -1429,6 +1458,8 @@ function setLang(l){
   if (typeof STAND !== 'undefined' && document.body.classList.contains('st-on')) STAND.render();
   if (typeof LINE !== 'undefined' && document.body.classList.contains('ln-on')) LINE.render();
   if (typeof CMP !== 'undefined' && document.body.classList.contains('cmp-on')) CMP.render();
+  if (typeof LEAD !== 'undefined' && document.body.classList.contains('ld-on')) LEAD.render();
+  if (typeof CLUB !== 'undefined' && document.body.classList.contains('cb-on')) CLUB.render();
   if (state.data) { renderOpener(); renderGames(); renderPlayer(); DD.team.refresh(); DD.player.refresh(); DD.statGame.refresh(); DD.cmp.refresh(); const n = nameOf(player().name); document.title = `${n.first} ${n.sur} · ${shortName(state.team)} · Player Lab`; }
 }
 const CLUBS = Object.fromEntries(META.clubs.map(c => [c.code, c]));
@@ -1593,7 +1624,7 @@ function renderPlayer(){
   const nx = tm.upcoming && tm.upcoming[0], nxTxt = nx ? `${t('Round {n}', {n: nx.round})} ${nx.home === realCode() ? t('vs') + ' ' + shortName(nx.away) : '@ ' + shortName(nx.home)} · ${fmtDate(nx.date)}` : null;
   $('#stats-none').hidden = played; $('#stats-none-sub').textContent = played ? '' : `${tm.games_played ? plural(tm.games_played, "No minutes in the club's {n} game so far", "No minutes in the club's {n} games so far") : t('The club has not played yet')}${nxTxt ? ` · ${t('next')}: ${nxTxt}` : ''} · ${t('his bio and career are above.')}`;
   ['#splits', '#xfg', '#zone-cap'].forEach(id => { $(id).hidden = !played; }); $('#zones').closest('.scroll').hidden = !played; $('.toolbar').hidden = !played;
-  renderTiles(); renderRole(); renderForm(); LB.mark(); requestAnimationFrame(scrollEnds); $('#f-ast').hidden = !d.shots.some(s => s[11] != null); if ($('#f-ast').hidden) { state.ast = 'all'; $('#f-ast').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x.dataset.v === 'all')); }
+  renderTiles(); renderRole(); renderForm(); requestAnimationFrame(scrollEnds); $('#f-ast').hidden = !d.shots.some(s => s[11] != null); if ($('#f-ast').hidden) { state.ast = 'all'; $('#f-ast').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x.dataset.v === 'all')); }
   const xf = d.xfg;
   $('#xfg').innerHTML = xf ? `<div class="xfg-row"><div><b>${(100 * xf.xfg).toFixed(1)}%</b><span>${t('Expected FG% for a league-average shooter on his shots')}</span></div><div><b>${((xf.pts / xf.att) || 0).toFixed(2)} <i>${t('vs')}</i> ${(xf.xpts / xf.att).toFixed(2)}</b><span>${t('Points per attempt, his vs a league-average shooter')}</span></div><div class="${xf.pts - xf.xpts >= 0 ? 'up' : 'down'}"><b>${xf.pts - xf.xpts >= 0 ? '+' : ''}${(xf.pts - xf.xpts).toFixed(1)}</b><span>${t('Points above expectation, {n} attempts', {n: xf.att})}</span></div></div>` : '';
   const fga = tot.fga2 + tot.fga3, ts = (fga + 0.44 * tot.fta) ? tot.pts / (2 * (fga + 0.44 * tot.fta)) : 0;
@@ -1630,7 +1661,6 @@ function renderTiles(){
   const gl = row ? gameLabel(d.games[row[0]]) : null;
   $('#band-legend').innerHTML = row ? `${gl.txt} · <b class="${gl.res === t('W') ? 'w' : 'l'}">${gl.res} ${gl.score}</b> · ${fmtDate(d.games[row[0]].date)} · ${row[1]} ${t('min')}${p40 ? ' · ' + t('scaled to 40 minutes') : ''}` : d.pct ? `${p40 ? t('Per 40 minutes') : t('Per game')} · ${t('underline: rank among {n} rotation players ({rule}), longer is better, turnovers inverted', {n: META.league_n, rule: t(META.pool_rule)})}` : '';
   if (row) { $('#band-legend').insertAdjacentHTML('beforeend', `<span class="sep"> · </span><button type="button" class="lnk" id="to-season">${t('Back to the season')}</button>`); $('#to-season').addEventListener('click', () => setGame('all')); }
-  if (LB.ok) { $('#band-legend').insertAdjacentHTML('beforeend', `${d.pct || row ? '<span class="sep"> · </span>' : ''}<button type="button" class="lnk">${t('See the league leaders')}</button>`); $('#band-legend button:last-child').addEventListener('click', toLb); }
 }
 function renderRole(){
   const d = ds(), row = gameRow(), gi = row ? d.log.indexOf(row) : -1, r = row ? (d.role_g || [])[gi] || {} : d.role, pp = row ? {} : d.pct_pos || {}, el = $('#role');
@@ -2075,7 +2105,6 @@ function Dropdown(sel, item){
 
 // ---- wiring
 $('#tag-season').textContent = META.label;
-const toLb = () => { const p = $('#lb-panel'); p.open = true; p.scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start'}); };
 const fmtBuilt = s => { const m = (s || '').match(/(\d{4})-(\d{2})-(\d{2}) (\d{2}:\d{2})/); return m ? `${new Date(Date.UTC(+m[1], +m[2] - 1, +m[3])).toLocaleDateString(LOCALE(), {day: 'numeric', month: 'short', timeZone: 'UTC'})} ${m[4]} UTC` : s; };
 // the build stamp: when the page was last rebuilt, how many games it holds and whether the checks passed
 const ST = META.status || {};
@@ -2105,7 +2134,7 @@ document.addEventListener('click', e => {
 });
 skeleton();
 $('#team').innerHTML = META.clubs.map(c => `<option value="${c.code}">${c.name}</option>`).join('');
-$('#team').addEventListener('change', e => { loadTeam(e.target.value); location.hash = e.target.value; });
+$('#team').addEventListener('change', e => { location.hash = e.target.value; });   // the club page; the route loads the club
 $('#player').addEventListener('change', e => { state.player = +e.target.value; state.game = 'all'; renderGames(); renderPlayer(); location.hash = `${state.team}/${player().pid}`; });
 $('#stat-game').addEventListener('change', e => setGame(e.target.value));
 function markLog(){ $('#log tbody').querySelectorAll('tr[data-g]').forEach(tr => tr.classList.toggle('on', tr.dataset.g === String(state.game))); }
@@ -2177,118 +2206,6 @@ bindSearch($('#q'), $('#q-list')); bindSearch($('#cq'), $('#cq-list'));
 document.addEventListener('keydown', e => { if (e.key === '/' && !e.ctrlKey && !e.metaKey && !e.altKey && !['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) { e.preventDefault(); const q = document.body.classList.contains('cv-on') ? $('#cq') : $('#q'); if (q === $('#q') && PHONE.matches) $('#q-btn').click(); q.focus(); q.select(); } });   // "/" jumps to the search box on either page
 
 // ---- league leaderboards: four boards precomputed by build.py, one visible at a time
-const LB = (() => {
-  const L = META.leaders, panel = $('#lb-panel');
-  if (!L) return {ok: false, mark(){}};
-  const BOARDS = [{k: 'pts', t: 'Points per game'}, {k: 'reb', t: 'Rebounds per game'}, {k: 'ast', t: 'Assists per game'}, {k: 'fg3', t: '3-point percentage'}];   // titles pass through t() when painted
-  const RANK_I = {pts: 0, reb: 1, ast: 2, fg3: 3};
-  const list = $('#lb-list'), dots = $('#lb-dots'), reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let at = 0, swiped = false, down = null;
-  panel.hidden = false;
-  const photoOf = r => r && r.ph ? `photos/${r.pid.slice(1)}.webp` : PLACEHOLDER;
-  const valOf = (k, row) => k === 'fg3' ? 100 * row[1] / row[2] : row[1] / row[2];
-  // headline, the one secondary number, and the hover line, per board
-  const cell = (k, row) => k === 'fg3'
-    ? `${(100 * row[1] / row[2]).toFixed(1)}<i>%</i><u>${row[1]}/${row[2]}</u>`
-    : `${f1(row[1] / row[2])}<u>${plural(row[2], '{n} game', '{n} games')}</u>`;
-  const titleOf = (k, n, row) => k === 'fg3'
-    ? `${n} · ${t('{m} of {a}', {m: row[1], a: row[2]})} · ${ival(row[1], row[2])}`
-    : `${n} · ${row[1]} ${plural(row[2], 'in {n} game', 'in {n} games')}${row[2] < 3 ? ' · ' + t('small sample') : ''}`;
-  function rowHtml(k, row, rank, i, lead, pin, mixed){
-    const r = ROSTER.byPid[row[0]]; if (!r) return '';
-    const nm = nameOf(r.name), c = CLUBS[r.club] || {}, v = valOf(k, row);
-    const p = lead ? Math.max(0, Math.min(100, 100 * v / lead)) : 0;
-    const me = state.data && player() && r.pid === player().pid;
-    const small = mixed && (k === 'fg3' ? row[2] < MIN_ATT : row[2] < 3);   // the grey only says something when some rows on the board carry more than this one
-    return `<li class="lb-row${pin ? ' pin' : ''}${me ? ' me' : ''}${small ? ' small' : ''}" data-pid="${r.pid}" style="--p:${p.toFixed(1)}%;--d:${i * 24}ms">
-      <a href="#${r.club}/${r.pid}" title="${titleOf(k, `${nm.first} ${nm.sur}, ${c.name || r.club}`, row)}">
-        <span class="lb-rank">${rank}</span>
-        <span class="lb-ph"><img src="${photoOf(r)}" alt="" loading="lazy" decoding="async" draggable="false"></span>
-        <img class="lb-crest" src="${c.logo || ''}" alt="" width="24" height="24" loading="lazy" draggable="false">
-        <span class="lb-name"><b class="fn">${nm.first}</b><b class="ini">${nm.first.slice(0, 1)}.</b><b class="sn">${nm.sur}</b><small>${c.short || r.club}</small></span>
-        <span class="lb-val">${cell(k, row)}</span>
-      </a></li>`;
-  }
-  // the viewed player pinned under the ten: his rank comes from the roster index, his numbers from the club file already loaded
-  function pinHtml(k, lead, mixed){
-    if (!state.data || !player()) return '';
-    const me = player(), r = ROSTER.byPid[me.pid]; if (!r || !ds().tot.gp) return '';
-    const rank = (r.lr || [])[RANK_I[k]] || 0;
-    if (rank && rank <= 10) return '';
-    const tt = ds().tot, row = k === 'fg3' ? [me.pid, tt.fgm3, tt.fga3] : [me.pid, tt[k], tt.gp];
-    if (rank) return rowHtml(k, row, rank, 10, lead, true, mixed);
-    const nm = nameOf(me.name), c = CLUBS[state.team] || {};
-    const why = k === 'fg3' ? t('{m} of {a} attempts', {m: tt.fga3, a: L.min_3pa}) : t(L.min_gp === 1 ? '{m} of {a} game' : '{m} of {a} games', {m: tt.gp, a: L.min_gp});
-    const longWhy = k === 'fg3' ? t('{m} of the {a} three-point attempts this board needs', {m: tt.fga3, a: L.min_3pa}) : t('{m} of {a} games at {mpg} minutes a game', {m: tt.gp, a: L.min_gp, mpg: L.min_mpg});
-    return `<li class="lb-row pin me" data-pid="${me.pid}" style="--p:0%"><a href="#${state.team}/${me.pid}" title="${t('Not yet qualified')}: ${longWhy}">
-      <span class="lb-rank">–</span>
-      <span class="lb-ph"><img src="${photoOf(r)}" alt="" loading="lazy" decoding="async" draggable="false"></span>
-      <img class="lb-crest" src="${c.logo || ''}" alt="" loading="lazy" draggable="false">
-      <span class="lb-name"><b class="fn">${nm.first}</b><b class="ini">${nm.first.slice(0, 1)}.</b><b class="sn">${nm.sur}</b><small>${c.short || state.team}</small></span>
-      <span class="lb-val"><u>${why}</u></span></a></li>`;
-  }
-  function foot(k){
-    const w = wilson(Math.round(0.36 * L.min_3pa), L.min_3pa);
-    const width = w ? Math.round(100 * (w[1] - w[0])) : null;
-    if (k === 'fg3') {
-      const tail = width ? ' ' + t('At {n} attempts the 95% interval is {w} points wide, so makes over attempts beside each percentage is the number to read.', {n: L.min_3pa, w: width}) : '';
-      return L.provisional
-        ? t('The gate is {n} attempts while the season is young, and rises to {m}, the minimum the rest of this app requires before it prints a 3-point percentage. The league leader has {top} attempts.', {n: L.min_3pa, m: L.att_settled, top: L.top_3pa}) + tail
-        : t('Through round {r}. Qualifying takes {n} three-point attempts.', {r: L.rounds, n: L.min_3pa}) + tail;
-    }
-    if (L.rounds <= 1) return t('Round 1 played, so every average above is one game.');
-    return t('Through round {r}. Qualifying takes {g} of {r} games at {mpg} minutes a game.', {r: L.rounds, g: L.min_gp, mpg: L.min_mpg});
-  }
-  function paint(dir){
-    const b = BOARDS[at], rows = L[b.k] || [], n = L.n[b.k === 'fg3' ? 'fg3' : 'pg'];
-    const lead = rows.length ? valOf(b.k, rows[0]) : 0, mixed = rows.some(r => r[2] >= (b.k === 'fg3' ? MIN_ATT : 3));
-    list.innerHTML = !ROSTER.loaded ? `<li class="lb-none"><b>${t('Loading')}</b></li>` : rows.length
-      ? rows.map((row, i) => rowHtml(b.k, row, i + 1, i, lead, false, mixed)).join('') + pinHtml(b.k, lead, mixed)
-      : `<li class="lb-none">${b.k === 'fg3'
-          ? `<b>${t('No player has {n} three-point attempts yet', {n: L.min_3pa})}</b><span>${t('The league leader has {top}. This board opens at {n}, the same number of attempts the rest of the app requires before it prints a 3-point percentage.', {top: L.top_3pa, n: L.min_3pa})}</span>`
-          : `<b>${t('No games played yet')}</b>`}</li>`;
-    $('#lb-name').textContent = t(b.t);
-    $('#lb-sub').textContent = rows.length
-      ? (n > rows.length ? t('Top {k} of {n} qualified', {k: rows.length, n}) : plural(n, '{n} player qualifies', '{n} players qualify')) +
-        (b.k === 'fg3' ? ` · ${t('{n}+ three-point attempts', {n: L.min_3pa})}${L.provisional ? ', ' + t('provisional') : ''}` : ` · ${t('{g}+ games, {mpg}+ minutes a game', {g: L.min_gp, mpg: L.min_mpg})}`)
-      : (b.k === 'fg3' ? t('Opens at {n} attempts', {n: L.min_3pa}) : '');
-    $('#lb-foot').textContent = (state.data && player() && !ds().tot.gp ? t('{name} is not on any board yet: no games played.', {name: nameOf(player().name).sur}) + ' ' : '') + foot(b.k);
-    [...dots.children].forEach((d, i) => d.setAttribute('aria-pressed', i === at));
-    if (dir && !reduced()) {
-      const cls = dir < 0 ? 'go-l' : 'go-r'; list.classList.remove('go-l', 'go-r'); void list.offsetWidth; list.classList.add(cls);
-      const t = $('#lb-name'); t.classList.remove('swap'); void t.offsetWidth; t.classList.add('swap');
-    }
-    if (reduced()) return;
-    const els = [...list.querySelectorAll('.lb-row')];
-    els.forEach(el => { el.dataset.p = el.style.getPropertyValue('--p'); el.style.setProperty('--p', '0%'); });
-    requestAnimationFrame(() => requestAnimationFrame(() => els.forEach(el => el.style.setProperty('--p', el.dataset.p))));
-  }
-  const go = d => { at = (at + d + BOARDS.length) % BOARDS.length; paint(d); };
-  dots.innerHTML = BOARDS.map((b, i) => `<button type="button" aria-pressed="${i === 0}" aria-label="${t(b.t)}" title="${t(b.t)}"></button>`).join('');
-  dots.addEventListener('click', e => { const i = [...dots.children].indexOf(e.target.closest('button')); if (i >= 0 && i !== at) { const d = i > at ? 1 : -1; at = i; paint(d); } });
-  $('#lb-prev').addEventListener('click', () => go(-1));
-  $('#lb-next').addEventListener('click', () => go(1));
-  panel.addEventListener('keydown', e => {
-    if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
-    if (e.key === 'ArrowLeft') { e.preventDefault(); go(-1); }
-    else if (e.key === 'ArrowRight') { e.preventDefault(); go(1); }
-    else if (e.key === 'Home') { e.preventDefault(); if (at) { at = 0; paint(-1); } }
-    else if (e.key === 'End') { e.preventDefault(); if (at !== BOARDS.length - 1) { at = BOARDS.length - 1; paint(1); } }
-  });
-  const clip = $('#lb-clip');
-  clip.addEventListener('pointerdown', e => { down = {x: e.clientX, y: e.clientY}; swiped = false; });
-  clip.addEventListener('pointerup', e => {
-    if (!down) return;
-    const dx = e.clientX - down.x, dy = e.clientY - down.y; down = null;
-    if (Math.abs(dx) > 40 && Math.abs(dx) > 2 * Math.abs(dy)) { swiped = true; go(dx < 0 ? 1 : -1); }   // a swipe moves the board and swallows the row click that follows
-  });
-  list.addEventListener('click', e => {
-    const a = e.target.closest('a'); if (!a) return;
-    if (swiped) { e.preventDefault(); swiped = false; return; }
-    requestAnimationFrame(() => $('#hero').scrollIntoView({behavior: reduced() ? 'auto' : 'smooth', block: 'start'}));
-  });
-  return {ok: true, mark(){ paint(0); }};
-})();
 
 // ---- opening page: rendered once, shown whenever the URL carries no club
 const COVER = (() => {
@@ -2454,8 +2371,187 @@ const CMP = (() => {
   };
 })();
 // ---- Leaders page (#leaders) and club page (#CODE): skeleton, filled by the page modules below
-const LEAD = {async show(){ document.body.classList.add('ld-on'); $('#leaders').hidden = false; }, hide(){ document.body.classList.remove('ld-on'); $('#leaders').hidden = true; }};
-const CLUB = {async show(code){ document.body.classList.add('cb-on'); $('#club').hidden = false; }, hide(){ document.body.classList.remove('cb-on'); $('#club').hidden = true; }};
+const LEAD = (() => {
+  // the Leaders page: every player with minutes, sortable, filtered by stat group, position, minutes floor and club
+  const st = {group: 'scoring', mode: 'pg', pos: 'all', min: 0, club: 'all', q: '', qual: false, sort: 'pts', dir: -1};
+  let D = null, loading = null;
+  const GROUPS = {scoring: ['pts', 'fg2', 'fg2p', 'fg3', 'fg3p', 'ft', 'ftp', 'ts'], rebounds: ['reb', 'oreb', 'dreb', 'reb_pct'], playmaking: ['ast', 'tov', 'ast_tov', 'ast_pct', 'tov_pct'],
+                  shooting: ['fga3', 'fg3p', 'fg2p', 'ftp', 'ts'], efficiency: ['pir', 'pm', 'stl', 'blk', 'usg']};
+  const COLS = {gp: {l: 'GP', k: 'gp'}, min: {l: 'MIN', k: 'min'},
+    pts: {l: 'PTS', k: 'count'}, reb: {l: 'REB', k: 'count'}, oreb: {l: 'OREB', k: 'count'}, dreb: {l: 'DREB', k: 'count'}, ast: {l: 'AST', k: 'count'}, tov: {l: 'TOV', k: 'count', inv: true},
+    stl: {l: 'STL', k: 'count'}, blk: {l: 'BLK', k: 'count'}, pir: {l: 'PIR', k: 'count'}, pm: {l: '+/-', k: 'count', plus: true}, fga3: {l: '3PA', k: 'count'},
+    fg2: {l: '2PM-A', k: 'ma', m: 'fgm2', a: 'fga2'}, fg3: {l: '3PM-A', k: 'ma', m: 'fgm3', a: 'fga3'}, ft: {l: 'FTM-A', k: 'ma', m: 'ftm', a: 'fta'},
+    fg2p: {l: '2P%', k: 'pct', m: 'fgm2', a: 'fga2', min: () => 15}, fg3p: {l: '3P%', k: 'pct', m: 'fgm3', a: 'fga3', min: () => D.min_3pa || 15}, ftp: {l: 'FT%', k: 'pct', m: 'ftm', a: 'fta', min: () => 10}, ts: {l: 'TS%', k: 'ts'},
+    usg: {l: 'USG%', k: 'rate'}, ast_pct: {l: 'AST%', k: 'rate'}, tov_pct: {l: 'TOV%', k: 'rate', inv: true}, reb_pct: {l: 'REB%', k: 'rate'}, ast_tov: {l: 'AST/TOV', k: 'ratio'}};
+  const BOARDS = [{k: 'pts', t: 'Points per game', g: 'scoring'}, {k: 'reb', t: 'Rebounds per game', g: 'rebounds'}, {k: 'ast', t: 'Assists per game', g: 'playmaking'}, {k: 'fg3p', t: '3-point percentage', g: 'shooting'}];
+  const num = (v, d = 1, plus) => v == null ? '–' : `${plus && v > 0 ? '+' : ''}${(+v).toLocaleString(LOCALE(), {maximumFractionDigits: d, minimumFractionDigits: d})}`;
+  const scale = r => st.mode === 'tot' ? 1 : st.mode === 'p40' ? (r.min ? 40 / r.min : 0) : 1 / r.gp;
+  const dec = () => st.mode === 'tot' ? 0 : 1;
+  // one cell: the sort value, the printed text and whether the row qualifies for this column
+  function cell(r, k){
+    const c = COLS[k], q = st.mode === 'tot' ? true : !!r.q;
+    if (c.k === 'gp') return {v: r.gp, txt: String(r.gp), q: true};
+    if (c.k === 'min') return {v: r.min / r.gp, txt: num(r.min / r.gp), q: true};
+    if (c.k === 'count') { const v = r[k] * scale(r); return {v, txt: num(v, dec(), c.plus), q}; }
+    if (c.k === 'ma') { const m = r[c.m] * scale(r), a = r[c.a] * scale(r); return {v: m, txt: `${num(m, dec())}-${num(a, dec())}`, q}; }
+    if (c.k === 'pct') { const ok = r[c.a] >= c.min(); return {v: ok ? r[c.m] / r[c.a] : null, txt: ok ? num(100 * r[c.m] / r[c.a]) : '–', q: ok}; }
+    if (c.k === 'ts') { const fga = r.fga2 + r.fga3, d = 2 * (fga + 0.44 * r.fta); return {v: d ? r.pts / d : null, txt: d ? num(100 * r.pts / d) : '–', q}; }
+    if (c.k === 'rate') return {v: r[k], txt: num(r[k]), q: q && r[k] != null};
+    if (c.k === 'ratio') return {v: r.tov ? r.ast / r.tov : null, txt: r.tov ? num(r.ast / r.tov, 2) : '–', q};
+    return {v: null, txt: '–', q: false};
+  }
+  const posLabel = p => t(p === 'Guard' ? 'Guards' : p === 'Center' ? 'Centers' : 'Forwards');
+  function load(){
+    if (D) return Promise.resolve(D);
+    if (!loading) loading = fetch(`${META.path}leaders.json?v=${encodeURIComponent(META.built)}`).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); }).then(j => (D = j));
+    return loading;
+  }
+  function rows(){
+    const q = fold(st.q), col = COLS[st.sort];
+    return D.rows.filter(r => (st.pos === 'all' || r.pos === st.pos) && (st.club === 'all' || r.c === st.club) && r.min / r.gp >= st.min && (!q || fold(nameOf(r.name).first + ' ' + nameOf(r.name).sur + ' ' + r.name).includes(q)))
+      .map(r => ({r, s: cell(r, st.sort)})).filter(x => !st.qual || x.s.q)
+      .sort((a, b) => (b.s.q - a.s.q) || ((b.s.v == null) - (a.s.v == null)) || (a.s.v != null && b.s.v != null && a.s.v !== b.s.v ? (a.s.v - b.s.v) * st.dir : 0) || (b.r.gp - a.r.gp) || (a.r.min - b.r.min) || a.r.pid.localeCompare(b.r.pid));
+  }
+  function boards(){
+    const me = state.data && player() ? player().pid : null;
+    return BOARDS.map(b => {
+      const pool = D.rows.filter(r => b.k === 'fg3p' ? r.fga3 >= (D.min_3pa || 15) : r.q);
+      const top = pool.map(r => ({r, v: b.k === 'fg3p' ? r.fgm3 / r.fga3 : r[b.k] / r.gp})).sort((a, c) => (c.v - a.v) || (c.r.gp - a.r.gp)).slice(0, 5);
+      return `<button type="button" class="ld-board${st.sort === b.k && st.group === b.g ? ' on' : ''}" data-k="${b.k}" data-g="${b.g}"><b>${t(b.t)}</b><ol>${top.map(({r, v}) => { const n = nameOf(r.name), c = CLUBS[r.c] || {};
+        return `<li${r.pid === me ? ' class="me"' : ''}><img src="${c.logo || ''}" alt="" width="20" height="20" loading="lazy"><span>${n.first.slice(0, 1)}. ${n.sur}</span><i>${b.k === 'fg3p' ? num(100 * v) : num(v)}</i></li>`; }).join('')}</ol></button>`;
+    }).join('');
+  }
+  function render(){
+    const el = $('#ld-wrap'); if (!D) { el.innerHTML = `<p class="ln-empty">${t('Loading…')}</p>`; return; }
+    $('#ld-sub').textContent = t('Every player with minutes this season; pick a stat, a position and a minutes floor. Rates need {g} games and {m} minutes a game.', {g: D.min_gp || 1, m: D.min_mpg});
+    // controls (rebuilt each render so the language follows)
+    const pos = $('#ld-pos'); pos.innerHTML = [['all', t('All positions')], ['Guard', posLabel('Guard')], ['Forward', posLabel('Forward')], ['Center', posLabel('Center')]].map(([v, l]) => `<option value="${v}"${st.pos === v ? ' selected' : ''}>${l}</option>`).join('');
+    const mn = $('#ld-min'); mn.innerHTML = [0, 10, 15, 20].map(v => `<option value="${v}"${st.min === v ? ' selected' : ''}>${v ? t('{n}+ min a game', {n: v}) : t('All minutes')}</option>`).join('');
+    const cl = $('#ld-club'); cl.innerHTML = `<option value="all"${st.club === 'all' ? ' selected' : ''}>${t('All clubs')}</option>` + META.clubs.slice().sort((a, b) => shortName(a.code).localeCompare(shortName(b.code))).map(c => `<option value="${c.code}"${st.club === c.code ? ' selected' : ''}>${shortName(c.code)}</option>`).join('');
+    $('#ld-qual').checked = st.qual; $('#ld-find').value = st.q;
+    for (const b of $('#ld-group').children) b.setAttribute('aria-pressed', b.dataset.v === st.group);
+    for (const b of $('#ld-mode').children) b.setAttribute('aria-pressed', b.dataset.v === st.mode);
+    $('#ld-boards').innerHTML = boards();
+    const cols = ['gp', 'min', ...GROUPS[st.group]], list = rows(), me = state.data && player() ? player().pid : null;
+    const th = k => { const c = COLS[k], on = st.sort === k; return `<th scope="col" class="n${on ? ' on' : ''}" data-k="${k}" aria-sort="${on ? (st.dir < 0 ? 'descending' : 'ascending') : 'none'}"><button type="button">${t(c.l)}${on ? `<i>${st.dir < 0 ? '▼' : '▲'}</i>` : ''}</button></th>`; };
+    el.innerHTML = list.length ? `<table class="ld-tab"><thead><tr><th scope="col">#</th><th scope="col">${t('Player')}</th><th scope="col" class="ph">${t('Club')}</th>${cols.map(th).join('')}</tr></thead><tbody>${list.map(({r, s}, i) => {
+      const n = nameOf(r.name), c = CLUBS[r.c] || {};
+      return `<tr class="${r.pid === me ? 'me' : ''}${s.q ? '' : ' unq'}"${s.q ? '' : ` title="${t('not qualified')}"`}><td class="rk">${i + 1}</td><td class="pl"><a href="#${r.c}/${r.pid}"><span class="medal" style="--club2:${c.accent || 'var(--line2)'}"><img src="${c.logo || ''}" alt="" loading="lazy"></span><span class="nm"><b>${n.first} ${n.sur}</b><small>${r.d ? '#' + r.d + ' · ' : ''}${posLabel(r.pos)}</small></span></a></td><td class="ph">${shortName(r.c)}</td>${cols.map(k => { const x = k === st.sort ? s : cell(r, k); return `<td class="n${k === st.sort ? ' on' : ''}${x.q ? '' : ' unq'}">${x.txt}</td>`; }).join('')}</tr>`; }).join('')}</tbody></table>`
+      : `<p class="ln-empty">${t('No player matches')}</p>`;
+    $('#ld-foot').textContent = `${t('{n} of {m} players', {n: list.length, m: D.rows.length})} · ${D.rounds <= 1 ? t('Round 1 played, so every average above is one game.') : t('Through round {r}. Qualifying takes {g} of {r} games at {mpg} minutes a game.', {r: D.rounds, g: D.min_gp, mpg: D.min_mpg})}${D.provisional ? ' · ' + t('{n}+ three-point attempts', {n: D.min_3pa}) + ', ' + t('provisional') : ''}`;
+    if (typeof scrollEnds === 'function') scrollEnds();
+  }
+  function wire(){
+    $('#ld-group').addEventListener('click', e => { const b = e.target.closest('button[data-v]'); if (!b || b.dataset.v === st.group) return; st.group = b.dataset.v; if (!GROUPS[st.group].includes(st.sort)) { st.sort = GROUPS[st.group][0]; st.dir = COLS[st.sort].inv ? 1 : -1; } render(); });
+    $('#ld-mode').addEventListener('click', e => { const b = e.target.closest('button[data-v]'); if (!b || b.dataset.v === st.mode) return; st.mode = b.dataset.v; render(); });
+    $('#ld-pos').addEventListener('change', e => { st.pos = e.target.value; render(); });
+    $('#ld-min').addEventListener('change', e => { st.min = +e.target.value; render(); });
+    $('#ld-club').addEventListener('change', e => { st.club = e.target.value; render(); });
+    $('#ld-qual').addEventListener('change', e => { st.qual = e.target.checked; render(); });
+    let tm; $('#ld-find').addEventListener('input', e => { clearTimeout(tm); tm = setTimeout(() => { st.q = e.target.value.trim(); render(); $('#ld-find').focus(); }, 160); });
+    $('#ld-wrap').addEventListener('click', e => { const th = e.target.closest('th[data-k]'); if (!th) return; const k = th.dataset.k; if (st.sort === k) st.dir = -st.dir; else { st.sort = k; st.dir = COLS[k].inv ? 1 : -1; } render(); });
+    $('#ld-boards').addEventListener('click', e => { const b = e.target.closest('.ld-board'); if (!b) return; st.group = b.dataset.g; st.sort = b.dataset.k; st.dir = -1; if (st.mode === 'tot' && b.dataset.k !== 'fg3p') st.mode = 'pg'; render(); $('#ld-wrap').scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start'}); });
+    wire.done = true;
+  }
+  return {
+    async show(){
+      document.body.classList.add('ld-on'); $('#leaders').hidden = false; applyPalette(HOUSE);
+      document.title = `${t('Leaders')} · Player Lab`;
+      if (!wire.done) wire();
+      render();
+      try { await load(); } catch (e) { $('#ld-wrap').innerHTML = `<p class="ln-empty">${t('{club} did not load ({err}). Check the connection and try again.', {club: t('Leaders'), err: e.message || e})}</p>`; return; }
+      render();
+    },
+    hide(){ document.body.classList.remove('ld-on'); $('#leaders').hidden = true; },
+    render
+  };
+})();
+// ---- club page (#CODE): the club hub in its own colourway; data from the club JSON already loaded by loadTeam, META and lineups.json
+const CLUB = (() => {
+  const el = $('#club'); let lu = null, luLoading = null, sortKey = 'min', bound = false;
+  const ord = n => LANG === 'tr' ? `${n}.` : n + (n % 100 >= 11 && n % 100 <= 13 ? 'th' : ['th', 'st', 'nd', 'rd'][n % 10] || 'th');
+  const loadLineups = () => luLoading || (luLoading = fetch(`${META.path}lineups.json?v=${encodeURIComponent(META.built || '')}`).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); }).then(d => { lu = d; return d; }).catch(() => null));
+  const medal = (code, size = 26) => { const c = CLUBS[code]; return c && c.logo ? `<span class="medal" style="border-color:${c.accent || '#f26f21'}"><img src="${c.logo}" alt="" width="${size}" height="${size}" loading="lazy"></span>` : ''; };
+  const pg = (v, gp) => gp ? (v / gp).toFixed(1) : '–';
+  const clubGames = () => { const seen = {}; for (const p of team().players) for (const g of ((p.cur && p.cur.games) || [])) seen[g.code] = g; return Object.values(seen).sort((a, b) => a.round - b.round); };
+  function hero(code){
+    const c = CLUBS[code] || {}, S = META.standings || [], row = S.find(r => r.code === code), up = (team().upcoming || [])[0], games = clubGames(), last = games[games.length - 1];
+    const line = row && row.gp ? `${ord(row.pos)} · ${row.w}-${row.l} · ${row.diff > 0 ? '+' : ''}${row.diff}` : t('No games yet');
+    const nextTxt = up ? `${t('R')}${up.round} ${up.home === realCode() ? t('vs') + ' ' + shortName(up.away) : '@ ' + shortName(up.home)} · ${fmtDate(up.date)}` : '';
+    const lastTxt = last ? (() => { const l = gameLabel(last); return `${t('R')}${last.round} ${l.home ? t('vs') : '@'} ${l.opp} <b class="${l.res === t('W') ? 'w' : 'l'}">${l.res} ${l.score}</b>`; })() : '';
+    return `<div class="cb-hero band cut-br">
+      <div class="cb-crest"><span class="medal"><img src="${c.logo || ''}" alt="" width="72" height="72"></span></div>
+      <div class="cb-id"><p class="cb-eyebrow">${t('Club')} · ${cap(c.city || '')}${c.country ? ' · ' + t(c.country) : ''}</p><h1 class="cb-name">${c.name || code}</h1><p class="cb-line"><a href="#standings">${line}</a></p></div>
+      <div class="cb-side">${up ? `<div class="cb-next"><span class="lab">${t('Next')}</span>${medal(up.home === realCode() ? up.away : up.home, 24)}<span>${nextTxt}</span></div>` : ''}${last ? `<div class="cb-next"><span class="lab">${t('Last result')}</span>${medal(gameLabel(last).home ? last.away : last.home, 24)}<span>${lastTxt}</span></div>` : ''}</div>
+    </div>`;
+  }
+  function ratings(code){
+    const R = META.ratings || {}, me = R[code]; if (!me || !me.g) return '';
+    const codes = Object.keys(R).filter(k => R[k].g), m = codes.length;
+    const rank = (key, asc) => 1 + codes.filter(k => asc ? R[k][key] < me[key] : R[k][key] > me[key]).length;
+    const net = k => R[k].ortg - R[k].drtg, netRank = 1 + codes.filter(k => net(k) > net(code)).length;
+    const tile = (lab, val, r, note) => `<div class="st-tile"><span class="lab">${lab}</span><span class="val"><em>${val}</em></span><span class="note">${t('{r} of {m}', {r: ord(r), m})}${note ? ' · ' + note : ''}</span></div>`;
+    return `<h2>${t('Ratings')}</h2><p class="cb-sub">${t('Points scored and allowed per 100 possessions, and possessions a game, with the club\'s rank in the league.')}</p><div class="st-tiles cb-tiles">`
+      + tile(t('Offensive rating'), me.ortg.toFixed(1), rank('ortg', false)) + tile(t('Defensive rating'), me.drtg.toFixed(1), rank('drtg', true), t('lower is better'))
+      + tile(t('Net rating'), (net(code) > 0 ? '+' : '') + net(code).toFixed(1), netRank) + tile(t('Pace'), me.pace.toFixed(1), rank('pace', false), t('possessions a game')) + `</div>`;
+  }
+  function roster(code){
+    const ps = team().players.map((p, i) => ({p, i, tot: (p.cur && p.cur.tot) || {}})), key = sortKey;
+    const val = r => key === 'min' ? (r.tot.min || 0) / (r.tot.gp || 1) : (r.tot[key] || 0) / (r.tot.gp || 1);
+    const on = ps.filter(r => r.tot.gp).sort((a, b) => val(b) - val(a)), off = ps.filter(r => !r.tot.gp);
+    const th = (k, l, sortable = true) => sortable ? `<th scope="col" class="k${key === k ? ' on' : ''}" aria-sort="${key === k ? 'descending' : 'none'}"><button type="button" data-sort="${k}">${l}</button></th>` : `<th scope="col">${l}</th>`;
+    const row = r => { const n = nameOf(r.p.name), a = age(r.p.birth); return `<tr class="${r.tot.gp ? '' : 'na'}"><td class="no">${r.p.dorsal != null ? '#' + r.p.dorsal : ''}</td><td class="nm"><a href="#${code}/${r.p.pid}">${n.first} ${n.sur}</a></td><td>${t(r.p.position || '')}</td><td class="k">${a != null ? a : '–'}</td><td class="k">${r.p.height ? r.p.height + ' cm' : '–'}</td><td class="k">${r.tot.gp || 0}</td><td class="k">${r.tot.gp ? (r.tot.min / r.tot.gp).toFixed(1) : '–'}</td><td class="k">${pg(r.tot.pts, r.tot.gp)}</td><td class="k">${pg(r.tot.reb, r.tot.gp)}</td><td class="k">${pg(r.tot.ast, r.tot.gp)}</td><td class="k">${pg(r.tot.pir, r.tot.gp)}</td></tr>`; };
+    return `<h2>${t('Roster')}</h2><p class="cb-sub">${t('Per game this season; sort by a column, open a name for his page.')}</p><div class="cb-wrap scroll"><table class="cb-tab"><thead><tr>${th('no', '#', false)}${th('nm', t('Player'), false)}${th('pos', t('Position'), false)}${th('age', t('Age'), false)}${th('ht', t('Height'), false)}${th('gp', 'GP', false)}${th('min', t('Min'))}${th('pts', t('Pts'))}${th('reb', t('Reb'))}${th('ast', t('Ast'))}${th('pir', 'PIR')}</tr></thead><tbody>${on.concat(off).map(row).join('')}</tbody></table></div>`;
+  }
+  function lineups(code){
+    if (!lu) return `<h2>${t('Best lineups')}</h2><p class="cb-sub">${t('Loading…')}</p>`;
+    const nm = pid => lu.names && lu.names[pid] ? nameOf(lu.names[pid]).sur : pid;
+    const fives = lu.lineups.filter(l => l.c === code && l.s >= 300).sort((a, b) => b.n - a.n).slice(0, 5);
+    const oo = ((lu.onoff || {})[code] || []).filter(p => p.s >= 600 && p.off_s >= 300).sort((a, b) => b.diff - a.diff).slice(0, 5);
+    const sg = v => (v > 0 ? '+' : '') + v.toFixed(1);
+    const fiveRows = fives.map((l, i) => `<tr><td class="no">${i + 1}</td><td class="nm">${l.p.map(nm).join(' <i>·</i> ')}</td><td class="k">${(l.s / 60).toFixed(1)}</td><td class="k">${l.o.toFixed(1)}</td><td class="k">${l.d.toFixed(1)}</td><td class="k net ${l.n >= 0 ? 'w' : 'l'}">${sg(l.n)}</td></tr>`).join('');
+    const ooRows = oo.map((p, i) => `<tr><td class="no">${i + 1}</td><td class="nm"><a href="#${code}/${p.pid}">${nm(p.pid)}</a></td><td class="k">${Math.round(p.s / 60)}</td><td class="k">${sg(p.on.n)}</td><td class="k">${sg(p.off.n)}</td><td class="k net ${p.diff >= 0 ? 'w' : 'l'}">${sg(p.diff)}</td></tr>`).join('');
+    return `<h2>${t('Best lineups')}</h2><p class="cb-sub">${t('Five-man units with at least 5 minutes together, ranked by net rating per 100 possessions, and the players the club does best with.')}</p>
+      <div class="cb-two"><div class="cb-wrap scroll"><table class="cb-tab"><thead><tr><th>#</th><th>${t('Lineup')}</th><th class="k">${t('Min')}</th><th class="k">ORtg</th><th class="k">DRtg</th><th class="k">${t('Net')}</th></tr></thead><tbody>${fiveRows || `<tr><td colspan="6">${t('No five has 5 minutes together yet')}</td></tr>`}</tbody></table></div>
+      <div class="cb-wrap scroll"><table class="cb-tab"><thead><tr><th>#</th><th>${t('Player')}</th><th class="k">${t('Min')}</th><th class="k">${t('On')}</th><th class="k">${t('Off')}</th><th class="k">${t('On − off')}</th></tr></thead><tbody>${ooRows || `<tr><td colspan="6">${t('No games yet')}</td></tr>`}</tbody></table></div></div>
+      <p class="cb-more"><a class="lnk" href="#lineups">${t('All lineups')}</a></p>`;
+  }
+  function chart(code){
+    const shots = []; for (const p of team().players) for (const sh of ((p.cur && p.cur.shots) || [])) shots.push(sh);
+    if (!shots.length) return '';
+    const z = {}; for (const k of ['rim', 'paint', 'mid', 'c3', 'a3']) z[k] = {a: 0, m: 0};
+    let made = 0; for (const sh of shots) { const k = zoneOf(sh[1], sh[2], sh[4]); z[k].a++; z[k].m += sh[3]; made += sh[3]; }
+    const dots = shots.map(sh => sh[3] ? `<circle class="made" cx="${X(sh[1])}" cy="${Y(sh[2])}" r="11"/>` : `<circle class="miss" cx="${X(sh[1])}" cy="${Y(sh[2])}" r="10"/>`).join('');
+    const lg = k => LG && LG.zones[k] ? (100 * LG.zones[k].fg).toFixed(1) + '%' : '–';
+    const rows = ['rim', 'paint', 'mid', 'c3', 'a3'].map(k => `<tr><td>${ZONES[k]}</td><td class="k">${z[k].m} / ${z[k].a}</td><td class="k">${pct(z[k].m, z[k].a)}</td><td class="k lg">${lg(k)}</td><td class="k">${(100 * z[k].a / shots.length).toFixed(0)}%</td></tr>`).join('');
+    return `<h2>${t('Shot chart')}</h2><p class="cb-sub">${t('Every attempt by the club this season; green made, grey missed, with the league figure beside each zone.')}</p>
+      <div class="cb-two cb-chart"><div><svg class="court cb-court" viewBox="-30 0 1580 1440" role="img" aria-label="${t('Shot chart')}">${courtBase()}<g>${dots}</g></svg><p class="cb-foot">${made} / ${shots.length} ${t('made')} · ${pct(made, shots.length)}</p></div>
+      <div class="cb-wrap scroll"><table class="cb-tab"><thead><tr><th>${t('Zone')}</th><th class="k">FGM / FGA</th><th class="k">FG%</th><th class="k">${t('league')}</th><th class="k">${t('Share')}</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
+  }
+  function fixtures(code){
+    const up = (team().upcoming || []).slice(0, 10); if (!up.length) return '';
+    const chips = up.map(g => { const home = g.home === realCode(), opp = home ? g.away : g.home; return `<span class="cb-chip">${medal(opp, 24)}<b>${t('R')}${g.round}</b> ${home ? t('vs') : '@'} ${shortName(opp)} <i>${fmtDate(g.date)}</i></span>`; }).join('');
+    return `<h2>${t('Fixtures')}</h2><p class="cb-sub">${t('The next games, home and away.')}</p><div class="cb-chips">${chips}</div><p class="cb-more"><a class="lnk" href="cal/${code}.ics">${t('Add fixtures to calendar')}</a></p>`;
+  }
+  function render(){
+    const code = state.team; if (!code || !team()) return;
+    el.innerHTML = hero(code) + `<div class="in cb-in">${ratings(code)}${roster(code)}${lineups(code)}${chart(code)}${fixtures(code)}</div>`;
+    document.title = `${(CLUBS[code] || {}).name || code} · Player Lab`;
+    if (typeof scrollEnds === 'function') scrollEnds();
+    if (!bound) { bound = true; el.addEventListener('click', e => { const b = e.target.closest('button[data-sort]'); if (!b) return; sortKey = b.dataset.sort; render(); }); }
+  }
+  return {
+    async show(code){
+      document.body.classList.add('cb-on'); el.hidden = false;
+      const c = CLUBS[code] || {}; document.title = `${c.name || code} · Player Lab`;
+      render(); scrollTo(0, 0);
+      DD.team.refresh(); DD.player.refresh();
+      if (!lu) { await loadLineups(); if (document.body.classList.contains('cb-on') && state.team === code) render(); }
+    },
+    hide(){ document.body.classList.remove('cb-on'); el.hidden = true; },
+    render
+  };
+})();
 const HOUSE = {base: '#1f2b47', accent: '#f26f21'};
 const pause = ms => new Promise(r => setTimeout(r, ms));
 const WIPE = (() => {
@@ -2540,7 +2636,7 @@ if ('serviceWorker' in navigator && location.protocol === 'https:') addEventList
   // the roster after the first page is up: search, compare and the leaderboard names switch on when it lands
   try { ROSTER.list = await (await fetch(`${META.path}roster.json?v=${encodeURIComponent(META.built || '')}`)).json(); } catch (e) { ROSTER.list = []; }
   ROSTER.byPid = Object.fromEntries(ROSTER.list.map(r => [r.pid, r])); ROSTER.loaded = true; indexRoster();
-  if (state.data) { renderCompareOptions(); LB.mark(); }
+  if (state.data) { renderCompareOptions(); }
   checkFresh(); setInterval(checkFresh, 15 * 60e3);
   const dbg = +new URLSearchParams(location.search).get('debug3d');
   if (dbg) { await new Promise(r => setTimeout(r, 5000)); for (let k = 0; k < dbg; k++) Shot3D.tick(0.05); }
@@ -2558,7 +2654,6 @@ if ('serviceWorker' in navigator && location.protocol === 'https:') addEventList
     if (!h) { try { h = (JSON.parse(localStorage.getItem('pl-last') || 'null') || {}).hash; } catch (e) {} }
     location.hash = h && CLUBS[String(h).split('/')[0]] ? h : META.clubs[0].code;
   });
-  $('#tb-search').addEventListener('click', () => { setMenu(false); $('#q-btn').click(); });
 })();
 </script>
 </html>
