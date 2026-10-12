@@ -1756,7 +1756,7 @@ async function renderCompare(){
     ['Shot quality', c => c.profile ? c.profile.quality_shrunk : null, v => v == null ? '–' : v.toFixed(2)], ['Shooting skill per 100', c => c.profile ? 100 * c.profile.skill_shrunk : null, sgn], ['On / off per 40', c => role(c, 'onoff_shrunk'), sgn], ['PIR per 40', c => per40(c, 'pir'), f1s]
   ].map(([label, f, fmt, higher = true]) => { const a = f(d), b = f(other.cur), m = pool[label]; const win = a != null && b != null && a !== b ? (higher ? a > b : a < b) : null; return {label, a, b, m, fmt, higher, win}; });
   // the table (Broadcast look, and the teaser on the player page)
-  $('#cmp-a').textContent = `${nameOf(me.name).sur}`; $('#cmp-b').innerHTML = `<a href="#${r.club}/${r.pid}" title="${t('Open his page')}">${nameOf(other.name).sur} · ${shortName(r.club)}</a>`;
+  $('#cmp-a').textContent = `${nameOf(me.name).sur}`; $('#cmp-b').innerHTML = `<a href="#${r.club}/${r.pid}" title="${t('Open his page')}">${nameOf(other.name).sur}</a>`;
   tb.querySelector('tbody').innerHTML = rows.map(x => `<tr><td>${t(x.label)}</td><td class="${x.win === true ? 'win me' : 'me'}">${x.fmt(x.a)}</td><td class="${x.win === false ? 'win' : ''}">${x.fmt(x.b)}</td><td class="lg">${x.fmt(x.m)}</td></tr>`).join('');
   tb.hidden = false;
   if (!onPage) { page.hidden = true; return; }
