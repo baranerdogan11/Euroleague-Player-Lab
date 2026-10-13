@@ -2589,6 +2589,7 @@ async function go(){
   if (state.team !== code) { $('#team').value = code; if (!await loadTeam(code)) return false; }
   if (!h[1]) { await CLUB.show(code); return true; }   // #CODE alone is the club page; #CODE/PID a player
   CLUB.hide();
+  applyPalette(CLUBS[code]);   // the house-palette pages (leaders, standings, lineups) leave their colours behind even when the club is already loaded
   let i = h[1] ? team().players.findIndex(p => p.pid === h[1]) : 0;
   if (h[1] && i < 0) { i = 0; toast(t('Not on this roster this season')); }   // a stale link (a transfer, a typo) lands on the club's first player
   if (i !== state.player) { $('#player').value = i; state.player = i; state.game = 'all'; renderGames(); renderPlayer(); }
