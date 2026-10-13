@@ -1492,7 +1492,7 @@ const ROSTER = {list: [], byPid: {}, loaded: false};
 const PHONE = matchMedia('(max-width:760px)');
 // a dropdown list is positioned under its button; on a phone the nowrap club and player names run past the right edge of the
 // screen and the page starts to scroll sideways, so the list is stretched across the screen with a 12px gutter instead
-const fitList = list => { const a = list.offsetParent; if (!a) return; if (PHONE.matches) { const r = a.getBoundingClientRect(); list.style.left = `${12 - r.left}px`; list.style.right = 'auto'; list.style.width = `${innerWidth - 24}px`; list.style.minWidth = '0'; } else { list.style.left = list.style.right = list.style.width = list.style.minWidth = ''; } };   // the career list is open on wide screens and folded on phones; crossing the breakpoint follows suit
+const fitList = list => { const a = list.offsetParent; if (!a) return; /* called once the list is shown: a hidden list has no offsetParent */ if (PHONE.matches) { const r = a.getBoundingClientRect(), vw = document.documentElement.clientWidth; list.style.left = `${12 - r.left}px`; list.style.right = 'auto'; list.style.width = `${vw - 24}px`; list.style.minWidth = '0'; } else { list.style.left = list.style.right = list.style.width = list.style.minWidth = ''; } };   // the career list is open on wide screens and folded on phones; crossing the breakpoint follows suit
 PHONE.addEventListener('change', e => { const d = $('#bio details'); if (d) d.open = !e.matches; });
 const tip = $('#tip');
 const showTip = (e, h) => { tip.innerHTML = h; tip.style.opacity = 1; moveTip(e); };
