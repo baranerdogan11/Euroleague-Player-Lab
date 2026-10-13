@@ -2577,11 +2577,14 @@ const HOUSE = {base: '#1f2b47', accent: '#f26f21'};
 const pause = ms => new Promise(r => setTimeout(r, ms));
 const WIPE = (() => {
   const el = $('#wipe'), reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // in dark mode a near-black base (Paris, Partizan, Asvel, Baskonia, the house navy) would sweep across the page unseen and the swap
+  // under it would look like a hard cut: lift the panel toward white until it stands off the page background; on paper nothing changes
+  const lift = base => { const bg = (getComputedStyle(document.documentElement).getPropertyValue('--bg').trim().match(/^#[0-9a-f]{6}$/i) || ['#f4f6f8'])[0], lg = lum(bg); let c = base; for (let t = 0; t < .4 && Math.max(lum(c), lg) + .05 < 2.2 * (Math.min(lum(c), lg) + .05); t += .04) c = mix(base, '#ffffff', 1 - t); return c; };
   let up = false;
   return {
     get up(){ return up; },
     async cover(c){
-      el.style.setProperty('--wipe1', c.base || HOUSE.base); el.style.setProperty('--wipe2', c.accent || HOUSE.accent);
+      el.style.setProperty('--wipe1', lift(c.base || HOUSE.base)); el.style.setProperty('--wipe2', c.accent || HOUSE.accent);
       if (reduced()) { el.className = 'wipe on fade'; await pause(240); }
       else { el.className = 'wipe on in'; await pause(400); }
       up = true;
