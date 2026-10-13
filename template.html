@@ -2476,7 +2476,7 @@ const LEAD = (() => {
 })();
 // ---- club page (#CODE): the club hub in its own colourway; data from the club JSON already loaded by loadTeam, META and lineups.json
 const CLUB = (() => {
-  const el = $('#club'); let lu = null, luLoading = null, sortKey = 'min', bound = false;
+  const el = $('#club'); let lu = null, luLoading = null, sortKey = 'no', bound = false;
   const ord = n => LANG === 'tr' ? `${n}.` : n + (n % 100 >= 11 && n % 100 <= 13 ? 'th' : ['th', 'st', 'nd', 'rd'][n % 10] || 'th');
   const loadLineups = () => luLoading || (luLoading = fetch(`${META.path}lineups.json?v=${encodeURIComponent(META.built || '')}`).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); }).then(d => { lu = d; return d; }).catch(() => null));
   const medal = (code, size = 26) => { const c = CLUBS[code]; return c && c.logo ? `<span class="medal" style="border-color:${c.accent || '#f26f21'}"><img src="${c.logo}" alt="" width="${size}" height="${size}" loading="lazy"></span>` : ''; };
@@ -2506,10 +2506,11 @@ const CLUB = (() => {
   function roster(code){
     const ps = team().players.map((p, i) => ({p, i, tot: (p.cur && p.cur.tot) || {}})), key = sortKey;
     const val = r => key === 'min' ? (r.tot.min || 0) / (r.tot.gp || 1) : (r.tot[key] || 0) / (r.tot.gp || 1);
-    const on = ps.filter(r => r.tot.gp).sort((a, b) => val(b) - val(a)), off = ps.filter(r => !r.tot.gp);
-    const th = (k, l, sortable = true) => sortable ? `<th scope="col" class="k${key === k ? ' on' : ''}" aria-sort="${key === k ? 'descending' : 'none'}"><button type="button" data-sort="${k}">${l}</button></th>` : `<th scope="col">${l}</th>`;
+    const num = r => { const d = parseInt(r.p.dorsal, 10); return isNaN(d) ? Infinity : d; };   // jersey number ascending, players without one at the end
+    const rows = key === 'no' ? ps.slice().sort((a, b) => num(a) - num(b) || String(a.p.name).localeCompare(String(b.p.name))) : ps.filter(r => r.tot.gp).sort((a, b) => val(b) - val(a)).concat(ps.filter(r => !r.tot.gp));
+    const th = (k, l, sortable = true) => sortable ? `<th scope="col" class="${k === 'no' ? 'no' : 'k'}${key === k ? ' on' : ''}" aria-sort="${key === k ? (k === 'no' ? 'ascending' : 'descending') : 'none'}"><button type="button" data-sort="${k}">${l}</button></th>` : `<th scope="col">${l}</th>`;
     const row = r => { const n = nameOf(r.p.name), a = age(r.p.birth); return `<tr class="${r.tot.gp ? '' : 'na'}"><td class="no">${r.p.dorsal != null ? '#' + r.p.dorsal : ''}</td><td class="nm"><a href="#${code}/${r.p.pid}">${n.first} ${n.sur}</a></td><td>${t(r.p.position || '')}</td><td class="k">${a != null ? a : '–'}</td><td class="k">${r.p.height ? r.p.height + ' cm' : '–'}</td><td class="k">${r.tot.gp || 0}</td><td class="k">${r.tot.gp ? (r.tot.min / r.tot.gp).toFixed(1) : '–'}</td><td class="k">${pg(r.tot.pts, r.tot.gp)}</td><td class="k">${pg(r.tot.reb, r.tot.gp)}</td><td class="k">${pg(r.tot.ast, r.tot.gp)}</td><td class="k">${pg(r.tot.pir, r.tot.gp)}</td></tr>`; };
-    return `<h2>${t('Roster')}</h2><p class="cb-sub">${t('Per game this season; sort by a column, open a name for his page.')}</p><div class="cb-wrap scroll"><table class="cb-tab"><thead><tr>${th('no', '#', false)}${th('nm', t('Player'), false)}${th('pos', t('Position'), false)}${th('age', t('Age'), false)}${th('ht', t('Height'), false)}${th('gp', 'GP', false)}${th('min', t('Min'))}${th('pts', t('Pts'))}${th('reb', t('Reb'))}${th('ast', t('Ast'))}${th('pir', 'PIR')}</tr></thead><tbody>${on.concat(off).map(row).join('')}</tbody></table></div>`;
+    return `<h2>${t('Roster')}</h2><p class="cb-sub">${t('Per game this season; sort by a column, open a name for his page.')}</p><div class="cb-wrap scroll"><table class="cb-tab"><thead><tr>${th('no', '#')}${th('nm', t('Player'), false)}${th('pos', t('Position'), false)}${th('age', t('Age'), false)}${th('ht', t('Height'), false)}${th('gp', 'GP', false)}${th('min', t('Min'))}${th('pts', t('Pts'))}${th('reb', t('Reb'))}${th('ast', t('Ast'))}${th('pir', 'PIR')}</tr></thead><tbody>${rows.map(row).join('')}</tbody></table></div>`;
   }
   function lineups(code){
     if (!lu) return `<h2>${t('Best lineups')}</h2><p class="cb-sub">${t('Loading…')}</p>`;
