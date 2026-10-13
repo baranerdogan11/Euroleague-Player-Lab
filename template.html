@@ -54,7 +54,7 @@ html[data-look="club"] .bar{background:var(--club)}
 /* shared utilities for the page agents */
 html[data-look="club"] .band{background:var(--club);color:var(--club-ink)}
 html[data-look="club"] .cut-br{clip-path:polygon(0 0,100% 0,100% calc(100% - 56px),calc(100% - 56px) 100%,0 100%)}
-html[data-look="club"] .medal{display:inline-grid;place-items:center;width:40px;height:40px;border-radius:50%;background:#fff;border:2px solid var(--club2);flex:none;overflow:hidden}
+html[data-look="club"] .medal{display:inline-grid;place-items:center;width:40px;height:40px;border-radius:50%;background:#fff;border:2px solid var(--club2);flex:none;overflow:hidden;box-shadow:0 0 0 1px var(--line2)}   /* a hairline outside the ring keeps white-accent clubs (Besiktas, Partizan, Virtus) visible on white */
 html[data-look="club"] .medal img{width:28px;height:28px;object-fit:contain;display:block}
 /* controls: round pills, 44px, the active state in the club base */
 html[data-look="club"] .seg{border:1px solid var(--line);border-radius:999px;background:var(--panel);padding:3px;gap:2px}
@@ -79,7 +79,7 @@ html[data-look="club"] .top .id{background:#fff;color:#0b0d10;font-family:var(--
 html[data-look="club"] .top .id span{font-family:var(--sans);font-weight:600;font-style:normal;font-size:11px;letter-spacing:.08em;color:#45464d;margin-left:10px;text-transform:uppercase}
 html[data-look="club"] .top .id span b{color:#0b0d10;font-weight:700}
 html[data-look="club"] .sel{border-right:1px solid color-mix(in srgb,var(--club-ink) 18%,transparent);color:var(--club-ink)}
-html[data-look="club"] .sel.team img{width:28px;height:28px;background:#fff;border:2px solid var(--club2);border-radius:50%;padding:3px;box-sizing:content-box}
+html[data-look="club"] .sel.team img{width:28px;height:28px;background:#fff;border:2px solid var(--club2);border-radius:50%;padding:3px;box-sizing:content-box;box-shadow:0 0 0 1px rgba(11,13,16,.25)}
 html[data-look="club"] .sel .dd-btn{color:var(--club-ink)}
 html[data-look="club"] .sel .dd-btn::after{border-color:var(--club-ink)}
 html[data-look="club"] .sel .dd[aria-expanded="true"] .dd-btn{color:var(--club-ink)}
