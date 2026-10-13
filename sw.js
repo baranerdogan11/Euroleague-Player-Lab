@@ -8,7 +8,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
-const V = 'pl-2026-10-13_2011_UTC';
+const V = 'pl-2026-10-13_2032_UTC';
 =======
 const V = 'pl-2026-10-13_1313_UTC';
 >>>>>>> 1f2da95 (Club page to player page with the wipe and a fresh top)
