@@ -254,7 +254,10 @@ html[data-look="club"] body.cmp-on #cmp-panel>h2{padding:18px 0 4px;font-size:44
 html[data-look="club"] body.cmp-on #cmp-panel>h2::before{width:8px;height:34px;background:var(--club2);transform:none;border-radius:2px}
 html[data-look="club"] body.cmp-on #cmp-panel .in{padding:0}
 html[data-look="club"] body.cmp-on #cmp-sub{font-size:17px;color:var(--ink2);max-width:78ch;margin:0 0 18px}
-html[data-look="club"] .cmp-hero{display:grid;grid-template-columns:1fr 1fr;position:relative;border-radius:8px;overflow:hidden;margin:0 0 22px}
+html[data-look="club"] .cmp-hero{display:grid;grid-template-columns:1fr 1fr;position:relative;border-radius:8px;margin:0 0 22px}   /* no overflow clip: the player lists must hang below the hero */
+html[data-look="club"] .cmp-side.l{border-radius:8px 0 0 8px}html[data-look="club"] .cmp-side.r{border-radius:0 8px 8px 0}
+html[data-look="club"] body.cmp-on .cmp-side .dd-list{left:0;right:0;z-index:30}
+html[data-look="club"] body.cmp-on .cmp-side.r .dd-list{left:auto;right:0;min-width:min(360px,calc(100vw - 32px))}   /* the opponent list grows leftwards, never past the hero edge */
 html[data-look="club"] .cmp-side{padding:26px 30px 24px;display:grid;align-content:start;gap:14px;min-height:250px}
 html[data-look="club"] .cmp-side.l{background:var(--cb1);color:var(--ci1)}
 html[data-look="club"] .cmp-side.r{background:var(--cb2);color:var(--ci2)}
@@ -321,6 +324,7 @@ html[data-look="club"] .cmp-acts a.a2{background:var(--cb2);color:var(--ci2);bor
 html[data-look="club"] .cmp-empty{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:28px 24px;font-size:17px;color:var(--ink2);max-width:70ch}
 @media (max-width:760px){
   html[data-look="club"] .cmp-hero{grid-template-columns:1fr}
+  html[data-look="club"] .cmp-side.l{border-radius:8px 8px 0 0}html[data-look="club"] .cmp-side.r{border-radius:0 0 8px 8px}
   html[data-look="club"] .cmp-side{padding:20px 16px 18px;min-height:0}
   html[data-look="club"] .cmp-side.r .cmp-who,html[data-look="club"] .cmp-side.r .cmp-row{justify-self:start;text-align:left}
   html[data-look="club"] .cmp-side.r .cmp-club{flex-direction:row}
@@ -1205,6 +1209,8 @@ html[data-look="club"] #ld-wrap{overflow:visible;mask-image:none}
   html[data-look="club"] .ld-find{flex-basis:100%}
 }
 /* ---- end Club Edition · Leaders page ---- */
+@media (min-width:761px) and (max-width:900px){html[data-look="club"] .top .st-lnk{padding:0 10px}html[data-look="club"] .top .st-lnk span{font-size:14.5px}html[data-look="club"] .top .search{flex:0 1 150px;min-width:104px}html[data-look="club"] .top .lang button{width:40px}html[data-look="club"] .top .id{padding:0 14px 0 12px}}
+/* ---- end narrow-desktop header ---- */
 </style>
 <div class="bar"></div>
 <main class="cv" id="cover" hidden>
