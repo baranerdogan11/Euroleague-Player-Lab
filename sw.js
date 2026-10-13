@@ -9,7 +9,11 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
-const V = 'pl-2026-10-13_2057_UTC';
+<<<<<<< HEAD
+const V = 'pl-2026-10-13_2106_UTC';
+=======
+const V = 'pl-2026-10-13_2106_UTC';
+>>>>>>> 5ba587e (Standings without the ordering note)
 =======
 const V = 'pl-2026-10-13_2050_UTC';
 >>>>>>> 4d72449 (Dark mode for the Club Edition)

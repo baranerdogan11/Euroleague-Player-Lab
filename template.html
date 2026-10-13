@@ -2278,7 +2278,7 @@ const STAND = (() => {
       const form = r.form.map(w => `<i class="${w ? 'w' : 'l'}" title="${w ? t('W') : t('L')}">${w ? t('W') : t('L')}</i>`).join('');
       const streak = r.streak ? `${r.streak > 0 ? t('W') : t('L')}${Math.abs(r.streak)}` : '–';
       return `<tr class="${me ? 'me' : ''}${r.pos === 6 || r.pos === 10 ? ' cut' : ''}" style="--cb:${c.base || '#8a919f'};--ca:${c.accent || '#f26f21'}"><td>${r.pos}</td><td class="club"><a href="#${r.code}"><span class="medal"><img src="${c.logo || ''}" alt="" width="24" height="24" loading="lazy"></span><span class="full">${c.name || r.code}</span><span class="short">${c.short || r.code}</span></a></td><td class="k w">${r.w}</td><td class="l">${r.l}</td><td class="${r.diff > 0 ? 'up' : r.diff < 0 ? 'down' : ''}">${r.diff > 0 ? '+' : ''}${r.diff}</td><td><span class="form">${form || '–'}</span></td><td>${r.pf}</td><td>${r.pa}</td><td>${r.hw}-${r.hl}</td><td>${r.aw}-${r.al}</td><td class="${r.streak > 0 ? 'up' : r.streak < 0 ? 'down' : ''}">${streak}</td></tr>${cutrow(r.pos)}`; }).join('');
-    $('#st-foot').innerHTML = `${t('Ordered by wins, then point difference, then points scored; the official table applies head-to-head records when clubs are level.')} <b>${t('Lines mark the top six (straight to the playoffs) and places seven to ten (play-in).')}</b>`;
+    $('#st-foot').hidden = true;   // the ordering note under the table was removed at the owner's request
   }
   return {
     render,
