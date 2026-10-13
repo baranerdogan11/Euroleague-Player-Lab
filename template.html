@@ -922,7 +922,9 @@ html[data-look="club"] .ln-empty{font-size:15px}
 .cv-h1c{display:none}
 .cv-round{display:none}
 .cv-feats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
-.cv-feats div{background:var(--bg2);padding:16px 16px 18px}
+.cv-feats a{display:block;background:var(--bg2);padding:16px 16px 18px;color:inherit;text-decoration:none}   /* each card opens its section; the names stay plain, no underline */
+.cv-feats a:hover b,.cv-feats a:focus-visible b{color:var(--club2)}
+#shots-sec,#prof-panel{scroll-margin-top:72px}   /* the opening cards scroll here; the heading clears the sticky header */
 .cv-feats b{display:block;font-family:var(--cond);font-weight:800;font-size:17px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink)}
 .cv-feats p{margin:7px 0 0;font-size:13px;line-height:1.5;color:var(--muted)}
 .cv-foot{margin:40px 0 0;font-family:var(--cond);letter-spacing:.14em;text-transform:uppercase;font-size:12px;color:var(--muted);display:flex;gap:10px 22px;flex-wrap:wrap;align-items:center}
@@ -974,7 +976,8 @@ html[data-look="club"] .cv-clubs .nm{font-weight:var(--cond-w);font-size:24px;le
 html[data-look="club"] .cv-clubs .co{display:block;font-family:var(--sans);font-weight:600;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:3px}
 html[data-look="club"] .cv-clubs .txt{display:flex;flex-direction:column;align-items:flex-start;min-width:0}
 html[data-look="club"] .cv-feats{gap:12px;background:none;border:0}
-html[data-look="club"] .cv-feats div{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:20px 20px 22px}
+html[data-look="club"] .cv-feats a{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:20px 20px 22px;transition:border-color .15s}
+html[data-look="club"] .cv-feats a:hover,html[data-look="club"] .cv-feats a:focus-visible{border-color:var(--club2)}
 html[data-look="club"] .cv-feats b{font-weight:var(--cond-w);font-size:24px;letter-spacing:.03em;line-height:1.05}
 html[data-look="club"] .cv-feats p{margin:10px 0 0;font-size:15px;line-height:1.5;color:var(--ink2)}
 html[data-look="club"] .cv-foot{font-family:var(--sans);font-weight:600;font-size:13px;letter-spacing:.06em;color:var(--muted)}
@@ -1007,6 +1010,7 @@ html[data-look="club"] .cv-foot a{color:var(--cold)}
 .scroll.end{mask-image:none;-webkit-mask-image:none}
 @media (max-width:760px){
   .top{position:sticky;top:0;z-index:40;flex-wrap:nowrap;height:52px;background:var(--bg2)}
+  #shots-sec,#prof-panel{scroll-margin-top:64px}
   .top .id{order:0;flex:none;height:52px;font-size:18px;padding:0 12px 0 12px}
   :is(.lang,.theme){order:10;height:52px;border-left:1px solid var(--line)}:is(.lang,.theme) button{width:44px;height:52px;gap:3px;color:var(--ink2)}:is(.lang,.theme) button svg{opacity:1;filter:none}:is(.lang,.theme) button[aria-pressed="true"]{display:none}.top .id{padding:0 10px}
   .cv :is(.lang,.theme){top:12px;right:12px;height:44px}.cv :is(.lang,.theme) button{width:48px;display:flex}.cv :is(.lang,.theme) button[aria-pressed="true"]{display:flex}
@@ -1251,10 +1255,10 @@ html[data-look="club"] body.cv-on .top{display:none}   /* the phone band rules s
     <section class="cv-sec">
       <h2>What is inside</h2>
       <div class="cv-feats">
-        <div><b>Shot chart</b><p>Every attempt on the floor, grouped by zone against the league, or replayed in 3D with the ball in flight.</p></div>
-        <div><b>Shooting profile</b><p>What his shots are worth to an average shooter, and the points he adds on top of them.</p></div>
-        <div><b>League leaders</b><p>Points, rebounds, assists and three-point percentage across all twenty clubs.</p></div>
-        <div><b>Compare</b><p>Any player against any other at his position, per 40 minutes and per possession, with the position median beside them.</p></div>
+        <a class="cv-app" href="#" data-sec="shots"><b>Shot chart</b><p>Every attempt on the floor, grouped by zone against the league, or replayed in 3D with the ball in flight.</p></a>
+        <a class="cv-app" href="#" data-sec="profile"><b>Shooting profile</b><p>What his shots are worth to an average shooter, and the points he adds on top of them.</p></a>
+        <a href="#leaders"><b>League leaders</b><p>Points, rebounds, assists and three-point percentage across all twenty clubs.</p></a>
+        <a href="#compare"><b>Compare</b><p>Any player against any other at his position, per 40 minutes and per possession, with the position median beside them.</p></a>
       </div>
     </section>
     <p class="cv-foot"><a href="monitor.html">System status</a><a href="feed.xml" title="Updates feed (RSS)">Updates feed</a><span>Data: Euroleague official feeds</span></p>
@@ -1317,7 +1321,7 @@ html[data-look="club"] body.cv-on .top{display:none}   /* the phone band rules s
 
   <div class="grid">
     <div>
-    <section class="panel">
+    <section class="panel" id="shots-sec">
       <h2>Shot chart</h2>
       <div class="in">
         <div class="toolbar">
@@ -2249,6 +2253,15 @@ const COVER = (() => {
   }
   render();
   go.addEventListener('click', () => { location.hash = last && last.hash && CLUBS[last.hash.split('/')[0]] ? last.hash : first.code; });
+  // the Shot chart and Shooting profile cards open a player page (the last one viewed, otherwise the league's leading scorer),
+  // then scroll to their section once the page is up
+  const star = () => { const p = META.leaders && META.leaders.pts && META.leaders.pts[0], r = p && ROSTER.byPid[p[0]]; return r ? `${r.club}/${p[0]}` : first.code; };
+  el.querySelectorAll('.cv-app').forEach(a => a.addEventListener('click', e => {
+    e.preventDefault(); location.hash = last && last.hash && last.hash.includes('/') && CLUBS[last.hash.split('/')[0]] ? last.hash : star();
+    const sec = a.dataset.sec === 'profile' ? '#prof-panel' : '#shots-sec', t0 = Date.now();
+    const tick = () => { const n = $(sec); if (n && !n.hidden && n.offsetParent && !WIPE.up && !routing) n.scrollIntoView({block: 'start'}); else if (Date.now() - t0 < 4000) setTimeout(tick, 120); };
+    setTimeout(tick, 120);
+  }));
   return {
     render,
     show(){ applyPalette({base: '#1f2b47', accent: '#f26f21'}); document.body.classList.add('cv-on'); el.hidden = false; document.title = 'Euroleague Player Lab'; scrollTo(0, 0); },
