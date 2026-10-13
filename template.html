@@ -771,7 +771,7 @@ body.st-on #ln-lnk::after{display:none}
 .st-tab .form i{font-size:0}
 html[data-look="club"] #standings,html[data-look="club"] #lineups{margin-top:22px}
 html[data-look="club"] #standings h2,html[data-look="club"] #leaders h2,html[data-look="club"] #lineups h2{font-weight:var(--cond-w);font-style:normal;font-size:36px;letter-spacing:.03em;padding:18px 20px 6px;gap:14px}
-html[data-look="club"] #standings h2,html[data-look="club"] #leaders h2::before,html[data-look="club"] #lineups h2::before{width:8px;height:28px;background:var(--club2);transform:none;border-radius:2px}
+html[data-look="club"] #standings h2::before,html[data-look="club"] #leaders h2::before,html[data-look="club"] #lineups h2::before{width:8px;height:28px;background:var(--club2);transform:none;border-radius:2px}
 html[data-look="club"] #standings .in,html[data-look="club"] #lineups .in{padding:0 20px 20px}
 html[data-look="club"] #standings .sub,html[data-look="club"] #lineups .sub{font-family:var(--sans);font-size:16px;color:var(--ink2);margin:0 0 16px;max-width:80ch}
 html[data-look="club"] .st-foot,html[data-look="club"] .ln-foot{font-size:14px;color:var(--muted);margin-top:14px;max-width:110ch}
@@ -1085,7 +1085,7 @@ html[data-look="club"] .cv-foot a{color:var(--cold)}
   html[data-look="club"] .q-x{color:var(--club-ink)}
   /* the bottom bar */
   html[data-look="club"] .tabbar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:39;padding-bottom:env(safe-area-inset-bottom);background:var(--panel);border-top:1px solid var(--line);box-shadow:0 -1px 2px rgba(11,13,16,.06)}
-  html[data-look="club"] .tabbar>*{flex:1 1 0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:56px;border:0;background:none;color:var(--muted);font:600 10.5px/1 var(--sans);letter-spacing:.04em;text-transform:uppercase;text-decoration:none;position:relative;cursor:pointer;padding:0}
+  html[data-look="club"] .tabbar>*{flex:1 1 0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:56px;border:0;background:none;color:var(--muted);font:600 10px/1 var(--sans);letter-spacing:.02em;white-space:nowrap;text-transform:uppercase;text-decoration:none;position:relative;cursor:pointer;padding:0}
   html[data-look="club"] .tabbar svg{width:22px;height:22px;display:block}
   html[data-look="club"] .tabbar>*:focus-visible{outline:2px solid var(--cold);outline-offset:-2px}
   html[data-look="club"] body.st-on #tb-standings,html[data-look="club"] body.ln-on #tb-lineups,html[data-look="club"] body.cmp-on #tb-compare,html[data-look="club"] body.ld-on #tb-leaders,html[data-look="club"] body:not(.st-on):not(.ln-on):not(.cmp-on):not(.ld-on) #tb-player{color:var(--club)}
@@ -1179,7 +1179,7 @@ html[data-look="club"] .ld-tab tbody tr:nth-child(-n+3) td.rk{font-size:24px;col
 html[data-look="club"] .ld-tab td.pl a{display:flex;align-items:center;gap:10px;color:inherit;text-decoration:none;min-width:0}
 html[data-look="club"] .ld-tab td.pl .medal{width:34px;height:34px;flex:none}
 html[data-look="club"] .ld-tab td.pl .medal img{width:24px;height:24px}
-html[data-look="club"] .ld-tab td.pl .nm{display:flex;flex-direction:column;line-height:1.2;min-width:0}
+html[data-look="club"] .ld-tab td.pl .nm{display:flex;flex-direction:column;align-items:flex-start;text-align:left;line-height:1.2;min-width:0}
 html[data-look="club"] .ld-tab td.pl .nm b{font-weight:600;color:var(--ink)}
 html[data-look="club"] .ld-tab td.pl .nm small{font-size:12px;color:var(--muted)}
 html[data-look="club"] .ld-tab td.pl a:hover b{text-decoration:underline}
@@ -1736,11 +1736,12 @@ function renderCompareOptions(){
   const d = ds(), me = player(), sel = $('#cmp'), panel = $('#cmp-panel'), onPage = document.body.classList.contains('cmp-on');
   const peers = ROSTER.list.filter(r => r.pos === d.pos_group && r.pid !== me.pid);
   const pos1 = t(d.pos_group || 'player').toLowerCase(), posN = t(d.pos_group ? d.pos_group + 's' : 'players').toLowerCase();
+  const posNum = LANG === 'tr' ? pos1 : posN;   // Turkish keeps the singular after a numeral: "iki forvet", "80 forvet"
   if (!d.tot.gp || !peers.length) {
     if (!onPage) { panel.hidden = true; return; }
     // the compare page never goes blank: the empty state names the player and says why there is nothing to compare yet
     panel.hidden = false; $('#cmp-page').hidden = true; $('#cmp-table').hidden = true;
-    $('#cmp-sub').textContent = t('Two {pos} side by side, per 40 minutes and per possession where it matters.', {pos: posN});
+    $('#cmp-sub').textContent = t('Two {pos} side by side, per 40 minutes and per possession where it matters.', {pos: posNum});
     const em = $('#cmp-empty'); em.hidden = false; em.textContent = d.tot.gp ? t('No other {pos} has qualified yet. Pick another player from the bar above.', {pos: pos1}) : t('{name} has no Euroleague minutes yet, so there is nothing to compare. Pick another player from the bar above.', {name: `${nameOf(me.name).first} ${nameOf(me.name).sur}`.trim()});
     cmpWho('l', me, state.team, d); cmpMeOptions();
     sel.innerHTML = `<option value="">${t('Choose a {pos} to compare', {pos: pos1})}</option>`; if (typeof DD !== 'undefined' && DD.cmp) DD.cmp.refresh();   // the right-hand pill still names its purpose
@@ -1749,8 +1750,8 @@ function renderCompareOptions(){
   }
   panel.hidden = false; $('#cmp-empty').hidden = true;
   $('#cmp-sub').textContent = onPage
-    ? `${t('Two {pos} side by side, per 40 minutes and per possession where it matters.', {pos: posN})}${d.pos_n >= 10 ? ' ' + t('Position median from the {n} eligible {pos}.', {n: d.pos_n, pos: posN}) : ''}`
-    : `${t('{name} against another {pos}, per 40 minutes and per possession where it matters.', {name: nameOf(me.name).sur, pos: pos1})}${d.pos_n >= 10 ? ' ' + t('Position median from the {n} eligible {pos}.', {n: d.pos_n, pos: posN}) : ''}`;
+    ? `${t('Two {pos} side by side, per 40 minutes and per possession where it matters.', {pos: posNum})}${d.pos_n >= 10 ? ' ' + t('Position median from the {n} eligible {pos}.', {n: d.pos_n, pos: posNum}) : ''}`
+    : `${t('{name} against another {pos}, per 40 minutes and per possession where it matters.', {name: nameOf(me.name).sur, pos: pos1})}${d.pos_n >= 10 ? ' ' + t('Position median from the {n} eligible {pos}.', {n: d.pos_n, pos: posNum}) : ''}`;
   const keep = state.cmp && peers.some(r => r.pid === state.cmp) ? state.cmp : '';
   sel.innerHTML = `<option value="">${t('Choose a {pos} to compare', {pos: pos1})}</option>` + peers.sort((a, b) => a.club.localeCompare(b.club) || nameOf(a.name).sur.localeCompare(nameOf(b.name).sur)).map(r => `<option value="${r.pid}">${shortName(r.club)} · #${r.dorsal || '–'} ${nameOf(r.name).first} ${nameOf(r.name).sur}</option>`).join('');
   if (typeof DD !== 'undefined' && DD.cmp) DD.cmp.refresh();
@@ -2436,7 +2437,7 @@ const LEAD = (() => {
     const th = k => { const c = COLS[k], on = st.sort === k; return `<th scope="col" class="n${on ? ' on' : ''}" data-k="${k}" aria-sort="${on ? (st.dir < 0 ? 'descending' : 'ascending') : 'none'}"><button type="button">${t(c.l)}${on ? `<i>${st.dir < 0 ? '▼' : '▲'}</i>` : ''}</button></th>`; };
     el.innerHTML = list.length ? `<table class="ld-tab"><thead><tr><th scope="col">#</th><th scope="col">${t('Player')}</th><th scope="col" class="ph">${t('Club')}</th>${cols.map(th).join('')}</tr></thead><tbody>${list.map(({r, s}, i) => {
       const n = nameOf(r.name), c = CLUBS[r.c] || {};
-      return `<tr class="${r.pid === me ? 'me' : ''}${s.q ? '' : ' unq'}"${s.q ? '' : ` title="${t('not qualified')}"`}><td class="rk">${i + 1}</td><td class="pl"><a href="#${r.c}/${r.pid}"><span class="medal" style="--club2:${c.accent || 'var(--line2)'}"><img src="${c.logo || ''}" alt="" loading="lazy"></span><span class="nm"><b>${n.first} ${n.sur}</b><small>${r.d ? '#' + r.d + ' · ' : ''}${posLabel(r.pos)}</small></span></a></td><td class="ph">${shortName(r.c)}</td>${cols.map(k => { const x = k === st.sort ? s : cell(r, k); return `<td class="n${k === st.sort ? ' on' : ''}${x.q ? '' : ' unq'}">${x.txt}</td>`; }).join('')}</tr>`; }).join('')}</tbody></table>`
+      return `<tr class="${r.pid === me ? 'me' : ''}${s.q ? '' : ' unq'}"${s.q ? '' : ` title="${t('not qualified')}"`}><td class="rk">${i + 1}</td><td class="pl"><a href="#${r.c}/${r.pid}"><span class="medal" style="--club2:${c.accent || 'var(--line2)'}"><img src="${c.logo || ''}" alt="" loading="lazy"></span><span class="nm"><b>${n.first} ${n.sur}</b><small>${r.d ? '#' + r.d + ' · ' : ''}${t(r.pos)}</small></span></a></td><td class="ph">${shortName(r.c)}</td>${cols.map(k => { const x = k === st.sort ? s : cell(r, k); return `<td class="n${k === st.sort ? ' on' : ''}${x.q ? '' : ' unq'}">${x.txt}</td>`; }).join('')}</tr>`; }).join('')}</tbody></table>`
       : `<p class="ln-empty">${t('No player matches')}</p>`;
     $('#ld-foot').textContent = `${t('{n} of {m} players', {n: list.length, m: D.rows.length})} · ${D.rounds <= 1 ? t('Round 1 played, so every average above is one game.') : t('Through round {r}. Qualifying takes {g} of {r} games at {mpg} minutes a game.', {r: D.rounds, g: D.min_gp, mpg: D.min_mpg})}${D.provisional ? ' · ' + t('{n}+ three-point attempts', {n: D.min_3pa}) + ', ' + t('provisional') : ''}`;
     if (typeof scrollEnds === 'function') scrollEnds();
