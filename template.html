@@ -1220,6 +1220,7 @@ html[data-look="club"] #ld-wrap{overflow:visible;mask-image:none}
 html:not([data-look="club"]) .theme{display:none}
 html[data-look="club"] .cv .theme{right:140px}
 html[data-look="club"][data-theme="dark"] .st-tab tr.cutrow td{color:var(--ink)}
+html[data-look="club"] body.cv-on .top{display:none}   /* the phone band rules set display:flex at the same specificity as the cover's display:none; the opening page keeps its own controls */
 @media (max-width:760px){html[data-look="club"] .cv .theme{right:118px}.theme button[aria-pressed="true"]{display:flex}html[data-look="club"] body.menu-on .theme{order:13}}
 </style>
 <div class="bar"></div>
@@ -1488,7 +1489,10 @@ const state = {team: null, data: null, player: 0, result: 'all', view: 'dots', g
 const cache = {};
 // the roster arrives after first paint: the search index, compare peers and leaderboard names wait on it
 const ROSTER = {list: [], byPid: {}, loaded: false};
-const PHONE = matchMedia('(max-width:760px)');   // the career list is open on wide screens and folded on phones; crossing the breakpoint follows suit
+const PHONE = matchMedia('(max-width:760px)');
+// a dropdown list is positioned under its button; on a phone the nowrap club and player names run past the right edge of the
+// screen and the page starts to scroll sideways, so the list is stretched across the screen with a 12px gutter instead
+const fitList = list => { const a = list.offsetParent; if (!a) return; if (PHONE.matches) { const r = a.getBoundingClientRect(); list.style.left = `${12 - r.left}px`; list.style.right = 'auto'; list.style.width = `${innerWidth - 24}px`; list.style.minWidth = '0'; } else { list.style.left = list.style.right = list.style.width = list.style.minWidth = ''; } };   // the career list is open on wide screens and folded on phones; crossing the breakpoint follows suit
 PHONE.addEventListener('change', e => { const d = $('#bio details'); if (d) d.open = !e.matches; });
 const tip = $('#tip');
 const showTip = (e, h) => { tip.innerHTML = h; tip.style.opacity = 1; moveTip(e); };
@@ -2101,7 +2105,7 @@ function Dropdown(sel, item){
   const opts = () => [...sel.options];
   const refresh = () => { const o = opts(); val.innerHTML = o.length && sel.selectedIndex >= 0 ? item(o[sel.selectedIndex], true) : ''; list.innerHTML = o.map((op, i) => `<li role="option" id="${sel.id}-opt-${i}" data-i="${i}" aria-selected="${i === sel.selectedIndex}">${item(op, false)}</li>`).join(''); btn.disabled = sel.disabled; dd.classList.toggle('na', sel.disabled); };
   const close = () => { dd.setAttribute('aria-expanded', 'false'); btn.setAttribute('aria-expanded', 'false'); btn.removeAttribute('aria-activedescendant'); list.hidden = true; hi = -1; };
-  const open = () => { if (sel.disabled) return; document.querySelectorAll('.dd[aria-expanded="true"]').forEach(d => d !== dd && d.dispatchEvent(new Event('dd-close'))); refresh(); dd.setAttribute('aria-expanded', 'true'); btn.setAttribute('aria-expanded', 'true'); list.hidden = false; hi = sel.selectedIndex; mark(); const cur = list.children[hi]; if (cur) cur.scrollIntoView({block: 'nearest'}); };
+  const open = () => { if (sel.disabled) return; document.querySelectorAll('.dd[aria-expanded="true"]').forEach(d => d !== dd && d.dispatchEvent(new Event('dd-close'))); refresh(); dd.setAttribute('aria-expanded', 'true'); btn.setAttribute('aria-expanded', 'true'); list.hidden = false; fitList(list); hi = sel.selectedIndex; mark(); const cur = list.children[hi]; if (cur) cur.scrollIntoView({block: 'nearest'}); };
   const mark = () => { [...list.children].forEach((li, i) => li.classList.toggle('hi', i === hi)); if (hi >= 0 && !list.hidden) btn.setAttribute('aria-activedescendant', `${sel.id}-opt-${hi}`); };
   const choose = i => { if (i < 0 || i >= sel.options.length) return; if (sel.selectedIndex !== i) { sel.selectedIndex = i; sel.dispatchEvent(new Event('change', {bubbles: true})); } refresh(); close(); btn.focus(); };
   btn.addEventListener('click', () => list.hidden ? open() : close());
@@ -2205,7 +2209,7 @@ function bindSearch(q, list){
   const close = () => { list.hidden = true; q.setAttribute('aria-expanded', 'false'); q.removeAttribute('aria-activedescendant'); hi = -1; };
   const mark = () => { [...list.children].forEach((li, i) => { li.classList.toggle('hi', i === hi); li.setAttribute('aria-selected', i === hi); }); if (hi >= 0) q.setAttribute('aria-activedescendant', `q-opt-${hi}`); else q.removeAttribute('aria-activedescendant'); };
   const go = x => { location.hash = `${x.r.club}/${x.r.pid}`; q.value = ''; close(); q.blur(); $('.top').classList.remove('q-on'); };
-  const show = () => { if (!q.value.trim()) { close(); return; } hits = findPlayers(q.value); list.innerHTML = hits.length ? hits.map((x, i) => { const c = CLUBS[x.r.club] || {}; return `<li role="option" id="q-opt-${i}" data-i="${i}" aria-selected="false">${c.logo ? `<img src="${c.logo}" alt="">` : ''}<span class="no">${x.r.dorsal || '–'}</span><span>${x.n.first} ${x.n.sur}</span><small>${shortName(x.r.club)}</small></li>`; }).join('') : `<li class="none">${t('No player matches')}</li>`; list.hidden = false; q.setAttribute('aria-expanded', 'true'); hi = hits.length ? 0 : -1; mark(); };
+  const show = () => { if (!q.value.trim()) { close(); return; } hits = findPlayers(q.value); list.innerHTML = hits.length ? hits.map((x, i) => { const c = CLUBS[x.r.club] || {}; return `<li role="option" id="q-opt-${i}" data-i="${i}" aria-selected="false">${c.logo ? `<img src="${c.logo}" alt="">` : ''}<span class="no">${x.r.dorsal || '–'}</span><span>${x.n.first} ${x.n.sur}</span><small>${shortName(x.r.club)}</small></li>`; }).join('') : `<li class="none">${t('No player matches')}</li>`; list.hidden = false; fitList(list); q.setAttribute('aria-expanded', 'true'); hi = hits.length ? 0 : -1; mark(); };
   q.addEventListener('input', show); q.addEventListener('focus', show);
   if (q.id === 'q') {
     $('#q-btn').addEventListener('click', () => { $('.top').classList.add('q-on'); $('#q-x').hidden = false; q.focus(); });   // phones: the field opens over the bar from the icon
