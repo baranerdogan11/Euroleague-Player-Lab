@@ -472,5 +472,8 @@
  "AST%": "AST%",
  "TOV%": "TK%",
  "REB%": "RIB%",
- "AST/TOV": "AST/TK"
+ "AST/TOV": "AST/TK",
+ "Dark": "Koyu",
+ "Dark mode": "Koyu mod",
+ "Theme": "Tema"
 }

@@ -8,7 +8,11 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
-const V = 'pl-2026-10-13_2032_UTC';
+<<<<<<< HEAD
+const V = 'pl-2026-10-13_2052_UTC';
+=======
+const V = 'pl-2026-10-13_2050_UTC';
+>>>>>>> 4d72449 (Dark mode for the Club Edition)
 =======
 const V = 'pl-2026-10-13_1313_UTC';
 >>>>>>> 1f2da95 (Club page to player page with the wipe and a fresh top)
