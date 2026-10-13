@@ -2625,7 +2625,8 @@ async function route(){
       const toStand = !!PAGES[h[0]], onStand = !!cur;
       const switchPage = toStand && cur !== null && cur !== h[0];
       const toCover = !toStand && !CLUBS[h[0]], onCover = document.body.classList.contains('cv-on');
-      const newPage = booted && (toStand !== onStand || switchPage || toCover !== onCover || (!toCover && !toStand && state.team && state.team !== h[0]));
+      const toClub = !toCover && !toStand && !h[1], onClub = document.body.classList.contains('cb-on');   // a club page and one of its player pages are different pages: the same wipe and a fresh top
+      const newPage = booted && (toStand !== onStand || switchPage || toCover !== onCover || toClub !== onClub || (!toCover && !toStand && state.team && state.team !== h[0]));
       if (newPage && !WIPE.up) await WIPE.cover(h[0] === 'compare' && state.team ? CLUBS[state.team] : toCover || toStand ? HOUSE : CLUBS[h[0]]);
       try { await go(); }
       catch (e) { console.error(e); $('#fail').hidden = false; $('#fail-sub').textContent = t('This page could not be drawn ({err}). Try again or pick another club.', {err: e.message || e}); }   // a fault never leaves the screen covered

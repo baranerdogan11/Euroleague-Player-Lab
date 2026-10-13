@@ -7,7 +7,11 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
-const V = 'pl-2026-10-13_0940_UTC';
+<<<<<<< HEAD
+const V = 'pl-2026-10-13_1313_UTC';
+=======
+const V = 'pl-2026-10-13_1313_UTC';
+>>>>>>> 1f2da95 (Club page to player page with the wipe and a fresh top)
 =======
 const V = 'pl-2026-10-12_2111_UTC';
 >>>>>>> ad2f5af (Club Edition look on every page, phone chrome and bottom bar)
