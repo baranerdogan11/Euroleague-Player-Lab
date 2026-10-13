@@ -2273,7 +2273,7 @@ const STAND = (() => {
     const S = META.standings || [], played = S.reduce((a, r) => a + r.gp, 0) / 2, rounds = META.leaders && META.leaders.rounds;
     $('#st-sub').textContent = `${t('Euroleague {label} regular season', {label: META.label})} · ${plural(played, '{n} game played', '{n} games played')}${rounds ? ` · ${t('through R{n}', {n: rounds})}` : ''}`;
     tiles(S, rounds);
-    const cutrow = pos => pos === 6 ? `<tr class="cutrow"><td colspan="11">${t('Playoffs: top 6')}</td></tr>` : pos === 10 ? `<tr class="cutrow"><td colspan="11">${t('Play-in: 7 to 10')}</td></tr>` : '';
+    const cutrow = () => '';   // the labelled rows under places 6 and 10 were removed at the owner's request; the lines on the rows stay
     $('#st-body').innerHTML = S.map(r => { const c = CLUBS[r.code] || {}, me = state.team === r.code;
       const form = r.form.map(w => `<i class="${w ? 'w' : 'l'}" title="${w ? t('W') : t('L')}">${w ? t('W') : t('L')}</i>`).join('');
       const streak = r.streak ? `${r.streak > 0 ? t('W') : t('L')}${Math.abs(r.streak)}` : '–';
