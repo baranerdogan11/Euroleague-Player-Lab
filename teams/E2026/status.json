@@ -1,13 +1,13 @@
 {
  "season": "E2026",
- "checked_at": "2026-10-14T07:54:53Z",
+ "checked_at": "2026-10-14T18:23:52Z",
  "clubs": 20,
- "players": 327,
- "games": 47,
- "shots": 6135,
- "box_lines": 1127,
+ "players": 333,
+ "games": 48,
+ "shots": 6267,
+ "box_lines": 1151,
  "tests": 30,
  "failures": 0,
- "warnings": 2,
+ "warnings": 3,
  "ok": true
 }
