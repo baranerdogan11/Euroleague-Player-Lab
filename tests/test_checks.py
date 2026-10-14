@@ -47,6 +47,7 @@ cases = [
     ("future game fails", [club("AAA", [shot(10, 20), shot(-30, 40)], [box(2)], [dict(game, date="2099-01-01")])], 1, "future"),
     ("tiny roster fails", [dict(club("AAA", [], [], []), players=[])], 1, "roster size"),
     ("duplicate players fail", [dict(club("AAA", [shot(10, 20), shot(-30, 40)], [box(2)], [game]), players=club("AAA", [], [], [])["players"] * 2)], 1, "duplicate players"),
+    ("a re-signed player listed twice passes", [dict(club("AAA", [shot(10, 20), shot(-30, 40)], [box(2)], [game]), players=club("AAA", [], [], [])["players"] + [dict(club("AAA", [], [], [])["players"][0])])], 0, None),
     ("large roster passes", [dict(club("AAA", [shot(10, 20), shot(-30, 40)], [box(2)], [game]), players=[dict(p, pid=f"P{i}", code=str(i)) for i, p in enumerate(club("AAA", [], [], [])["players"] * 2, 1)])], 0, "large roster"),
 ]
 ok = True

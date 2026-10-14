@@ -52,9 +52,10 @@ for c in clubs:
         fail(f"{code}: implausible roster size {n}")
     elif n > 22:
         warn(f"{code}: large roster ({n} players, youth registrations?)")
+    # a player who leaves and re-signs is listed once per stint (Dangubic at Dubai, Sep 2026); a feed served twice repeats everyone
     pids = [p.get("pid") for p in d["players"]]
-    if len(pids) != len(set(pids)):
-        fail(f"{code}: duplicate players in the roster")
+    if len(pids) - len(set(pids)) >= max(1, n // 2):
+        fail(f"{code}: duplicate players in the roster, the feed looks doubled")
     for p in d["players"]:
         if p.get("photo") and not os.path.exists(os.path.join(ROOT, p["photo"])):
             fail(f"{code}: photo missing for {p['name']} ({p['photo']})")
