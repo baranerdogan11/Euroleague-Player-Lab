@@ -28,7 +28,7 @@ TESTS = [
     ("roster_stints: club exists", "select count(*) from roster_stints s left join clubs c using (club) where c.club is null"),
     ("roster_stints: start before end", "select count(*) from roster_stints where start_date is not null and end_date is not null and start_date > end_date"),
     ("roster_stints: at most one active stint per player", "select count(*) from (select player from roster_stints where active group by player having count(*) > 1)"),
-    ("roster_stints: every club has 10 to 22 active players", "select count(*) from (select club, count(*) n from roster_stints where active group by club having n < 10 or n > 22)"),
+    ("roster_stints: every club has 8 to 40 active players", "select count(*) from (select club, count(*) n from roster_stints where active group by club having n < 8 or n > 40)"),
     ("games: unique codes", "select count(*) - count(distinct game) from games"),
     ("games: both clubs known", "select count(*) from games g left join clubs h on h.club = g.home left join clubs a on a.club = g.away where h.club is null or a.club is null"),
     ("games: played games have a score", "select count(*) from games where played and coalesce(home_score, 0) + coalesce(away_score, 0) = 0"),
@@ -68,6 +68,7 @@ TESTS = [
 ]
 # warnings: reported and counted, never fail the run
 WARNINGS = [
+    ("roster_stints: no club has more than 22 active players (youth registrations are legitimate)", "select count(*) from (select club, count(*) n from roster_stints where active group by club having n > 22)"),
     # the play-by-play and the box score are two feeds; a substitution clocked a minute off in one of them is a feed error, not ours
     ("oncourt: reconstructed minutes agree with the box score within a minute", "select count(*) from oncourt where abs(sec / 60.0 - box_min) > 1.0"),
     ("shots: shot value consistent with distance (3s from 6.4 m out, 2s inside 7 m)", "select count(*) from shots where (pts = 3 and sqrt(x*x + y*y) < 640) or (pts = 2 and sqrt(x*x + y*y) > 700)"),

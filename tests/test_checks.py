@@ -15,8 +15,8 @@ DATA = os.path.join(ROOT, "data", SEASON)
 
 
 def club(code, shots, box, games):
-    return {"club": code, "season": SEASON, "players": [{"pid": "P1", "code": "1", "name": "A, B", "dorsal": "1", "position": "Guard",
-                                                         "height": 190, "birth": "2000-01-01", "country": "X", "photo": None}] * 12,
+    return {"club": code, "season": SEASON, "players": [{"pid": f"P{i}", "code": str(i), "name": "A, B", "dorsal": str(i), "position": "Guard",
+                                                         "height": 190, "birth": "2000-01-01", "country": "X", "photo": None} for i in range(1, 13)],
             "games": games, "upcoming": [], "shots": shots, "box": box}
 
 
@@ -46,6 +46,8 @@ cases = [
     ("out-of-bounds shot fails", [club("AAA", [shot(10, 20), shot(-30, 9999)], [box(2)], [game])], 1, "out of bounds"),
     ("future game fails", [club("AAA", [shot(10, 20), shot(-30, 40)], [box(2)], [dict(game, date="2099-01-01")])], 1, "future"),
     ("tiny roster fails", [dict(club("AAA", [], [], []), players=[])], 1, "roster size"),
+    ("duplicate players fail", [dict(club("AAA", [shot(10, 20), shot(-30, 40)], [box(2)], [game]), players=club("AAA", [], [], [])["players"] * 2)], 1, "duplicate players"),
+    ("large roster passes", [dict(club("AAA", [shot(10, 20), shot(-30, 40)], [box(2)], [game]), players=[dict(p, pid=f"P{i}", code=str(i)) for i, p in enumerate(club("AAA", [], [], [])["players"] * 2, 1)])], 0, "large roster"),
 ]
 ok = True
 for name, clubs, want_code, want_text in cases:

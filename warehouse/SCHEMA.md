@@ -26,7 +26,7 @@ basket, `x` lateral, `y` toward half court.
 ## Invariants (all enforced)
 
 - `clubs`: exactly 20, unique codes. `players`: unique codes, non-empty names.
-- `roster_stints`: player and club exist; `start_date <= end_date`; at most one active stint per player; every club has 10 to 22 active players. A player who moves mid-season has two stints and keeps one `player` code.
+- `roster_stints`: player and club exist; `start_date <= end_date`; at most one active stint per player; every club has 8 to 40 active players (more than 22 is a warning: clubs register youth players). A player who moves mid-season has two stints and keeps one `player` code.
 - `games`: unique codes; both clubs exist; `played` is true exactly when a score exists; no played game in the future; every club has 38 regular-season games.
 - `box`: game exists and was played; club is one of the game's two; one line per player per game; makes never exceed attempts; `pts = 2*fgm2 + 3*fgm3 + ftm`.
 - `shots`: game exists and was played; club is one of the game's two; coordinates inside the court; per player per game, attempts and makes reconcile exactly with the box score; every shooter has a box line.

@@ -46,8 +46,15 @@ for c in clubs:
         fail(f"{code}: crest file missing {c['logo']}")
     n = len(d["players"])
     total_players += n
-    if n < 10 or n > 22:
+    # a club registers 12 to 18 players but the feed also lists youth and two-way players (Real Madrid listed 23 on
+    # 14 Oct 2026); only a count no roster can reach, from a doubled or misread feed, stops the publish
+    if n < 8 or n > 40:
         fail(f"{code}: implausible roster size {n}")
+    elif n > 22:
+        warn(f"{code}: large roster ({n} players, youth registrations?)")
+    pids = [p.get("pid") for p in d["players"]]
+    if len(pids) != len(set(pids)):
+        fail(f"{code}: duplicate players in the roster")
     for p in d["players"]:
         if p.get("photo") and not os.path.exists(os.path.join(ROOT, p["photo"])):
             fail(f"{code}: photo missing for {p['name']} ({p['photo']})")
