@@ -57,8 +57,15 @@ of the day, and can be started by hand from the Actions tab. Each run:
    The build ends with a site smoke test (`tests/test_site.py`): the built page is served to headless Chrome, which
    must open the cover, a club, a player page with its shot chart and game log, the standings, leaders, compare and
    lineups pages at desktop and phone width without an uncaught error, a failed request or a sideways scroll, and the
-   service worker must compile. A page that does not draw is never published.
-10. writes the monitoring snapshot (`model/monitor.py`) and commits everything; GitHub Pages deploys within a minute
+   service worker must compile. A page that does not draw is never published. In CI a Chrome that will not start is a
+   failure, not a skip (`PL_SMOKE_REQUIRED=0` allows the skip; on a laptop without Chrome the test is skipped).
+10. writes the monitoring snapshot (`model/monitor.py`), commits everything and deploys that commit to GitHub Pages
+    (`.github/workflows/pages.yml`)
+
+Code changes go through `.github/workflows/test.yml`: on every pull request and every push to main it runs the
+self-tests, the warehouse assertions, the site smoke test on the committed page and a full rebuild from the
+warehouse (drift check and smoke test included). A push to main deploys to Pages only after all of that passes, so
+an untested commit never goes live. Pages must be set to deploy from GitHub Actions (Settings, Pages, Source).
 
 The assertions write `teams/E2026/status.json` (games, shots, box lines, tests, failures, warnings, time) and the page footer
 shows the check date, the game count and the verdict. A failed run leaves the previous good build live and uploads the status report as a
@@ -200,7 +207,7 @@ pip install -r requirements.txt
 python fetch_season.py E2026   # clubs, crests, rosters, photos, then shots and box scores for new games
 python checks.py E2026 && python warehouse.py E2026 && python warehouse_tests.py E2026
 python build.py E2026          # writes index.html and teams/E2026/*.json from the warehouse
-git add -A && git commit -m "Update after round" && git push   # GitHub Pages redeploys in about a minute
+git add -A && git commit -m "Update after round" && git push   # test.yml checks the commit, then deploys it to Pages
 ```
 
 `fetch_season.py` caches every game, roster and image under `cache/`, so a rerun only downloads what is new.

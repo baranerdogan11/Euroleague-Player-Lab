@@ -12,9 +12,11 @@ Checks, in order:
   4. phone (390 px): the same entry, and the page never scrolls sideways
   5. throughout: no uncaught exception, no console.error, no failed request for a page, script or JSON file
 
-Chrome is found through $CHROME, then the usual names on PATH, then the macOS bundle. Without one the test is skipped
-with a notice (set PL_SMOKE_REQUIRED=1 to make that a failure). No third-party package: the DevTools connection is a
-small WebSocket client over the standard library.
+Chrome is found through $CHROME, then the usual names on PATH, then the macOS bundle. A Chrome that does not start is
+retried once. On a laptop, no Chrome (or one that will not start) skips the test with a notice; in CI ($GITHUB_ACTIONS
+or $CI set) it is a failure, so a build is never published untested (PL_SMOKE_REQUIRED=1 forces the failure anywhere,
+PL_SMOKE_REQUIRED=0 allows the skip in CI). No third-party package: the DevTools connection is a small WebSocket
+client over the standard library.
 """
 import base64
 import glob
@@ -36,6 +38,14 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SEASON = sys.argv[1] if len(sys.argv) > 1 else os.environ.get("SEASON", "E2026")
 CHROME_NAMES = ["google-chrome", "google-chrome-stable", "chromium", "chromium-browser",
                 "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome", "/Applications/Chromium.app/Contents/MacOS/Chromium"]
+
+
+def required():
+    """A missing or dead Chrome fails the test in CI and when PL_SMOKE_REQUIRED=1, and skips it elsewhere."""
+    v = os.environ.get("PL_SMOKE_REQUIRED")
+    if v is not None and v != "":
+        return v != "0"
+    return bool(os.environ.get("GITHUB_ACTIONS") or os.environ.get("CI"))
 
 
 def find_chrome():
@@ -192,11 +202,10 @@ def main():
 
     chrome = find_chrome()
     if not chrome:
-        msg = "no Chrome found: site smoke test skipped (set CHROME=/path/to/chrome)"
-        if os.environ.get("PL_SMOKE_REQUIRED"):
-            print("FAIL", msg)
+        if required():
+            print("FAIL no Chrome found (set CHROME=/path/to/chrome; in CI this is a failure: PL_SMOKE_REQUIRED=0 allows the skip)")
             return 1
-        print("SKIP", msg)
+        print("SKIP no Chrome found: site smoke test skipped (set CHROME=/path/to/chrome)")
         return 0
 
     srv = serve()
@@ -234,8 +243,8 @@ def main():
     if not dev:
         for line in tail:
             print("   ", line)
-        if os.environ.get("PL_SMOKE_REQUIRED"):
-            print("FAIL Chrome did not start twice")
+        if required():
+            print("FAIL Chrome did not start twice (in CI this is a failure: PL_SMOKE_REQUIRED=0 allows the skip)")
             return 1
         print("SKIP Chrome did not start twice: site smoke test skipped (a runner problem, not a page problem)")
         return 0

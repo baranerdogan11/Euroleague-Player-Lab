@@ -1,0 +1,48 @@
+name: Deploy site
+
+# Publishes one commit of main to GitHub Pages. Called only after that commit has passed its checks: by test.yml for
+# code changes and by update.yml for data updates. Needs Settings, Pages, Source set to "GitHub Actions".
+
+on:
+  workflow_call:
+    inputs:
+      ref:
+        description: The tested commit to publish
+        type: string
+        required: true
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+
+      - name: Stage the site (the repository without dotfiles, as the branch deploy served it)
+        run: |
+          mkdir -p "$RUNNER_TEMP/site"
+          rsync -a --exclude='.*' ./ "$RUNNER_TEMP/site/"
+          du -sh "$RUNNER_TEMP/site"
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: ${{ runner.temp }}/site
+
+      - id: deployment
+        uses: actions/deploy-pages@v4
