@@ -21,6 +21,7 @@ concurrency:
 
 env:
   SEASON: E2026
+  PL_SMOKE_REQUIRED: "1"     # a Chrome that will not start fails the run (the next run retries), never skips the site test
 
 jobs:
   check:
@@ -50,6 +51,9 @@ jobs:
     if: needs.check.outputs.run == 'true' || github.event.inputs.force == 'true' || github.event.schedule == '30 2 * * *'
     runs-on: ubuntu-24.04
     timeout-minutes: 30
+    outputs:
+      pushed: ${{ steps.publish.outputs.pushed }}
+      sha: ${{ steps.publish.outputs.sha }}
     steps:
       - uses: actions/checkout@v4
 
@@ -59,6 +63,13 @@ jobs:
           cache: pip
 
       - run: pip install -r requirements.txt
+
+      - name: Chrome for the site test
+        run: |
+          CHROME=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser || true)
+          if [ -z "$CHROME" ]; then echo "::error::no Chrome on the runner"; exit 1; fi
+          "$CHROME" --version
+          echo "CHROME=$CHROME" >> "$GITHUB_ENV"
 
       - name: Gate and warehouse self-tests
         run: |
@@ -107,7 +118,8 @@ jobs:
       - name: Monitoring snapshot
         run: python model/monitor.py $SEASON
 
-      - name: Commit and publish
+      - name: Commit and push
+        id: publish
         run: |
           git config user.name "euroleague-player-lab-bot"
           git config user.email "actions@users.noreply.github.com"
@@ -117,6 +129,8 @@ jobs:
           else
             git commit -m "Update $(date -u +%Y-%m-%d\ %H:%M) UTC: $(python -c "import json;s=json.load(open('warehouse/$SEASON/status.json'));print(f\"{s['games']} games, {s['shots']} shots\")")"
             git push
+            echo "pushed=true" >> "$GITHUB_OUTPUT"
+            echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Upload status report
@@ -126,3 +140,16 @@ jobs:
           name: status-${{ github.run_id }}
           path: warehouse/${{ env.SEASON }}/status.json
           if-no-files-found: ignore
+
+  deploy:
+    # the commit just pushed passed every check above; a push made with GITHUB_TOKEN does not start test.yml, so the
+    # data update deploys here
+    needs: update
+    if: needs.update.outputs.pushed == 'true'
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    uses: ./.github/workflows/pages.yml
+    with:
+      ref: ${{ needs.update.outputs.sha }}

@@ -1,0 +1,73 @@
+name: Test and deploy
+
+# Every code change is tested before it can go live: on a pull request the checks run and nothing deploys; on a push
+# to main the checks run and the site deploys to GitHub Pages only when they pass. The data updates committed by
+# update.yml do not start this workflow (a push made with GITHUB_TOKEN never does); that workflow runs the same checks
+# on its build and deploys through pages.yml itself.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: test-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  SEASON: E2026
+  PL_SMOKE_REQUIRED: "1"     # a Chrome that will not start fails the run, never skips the site test
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - name: Chrome for the site test
+        run: |
+          CHROME=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser || true)
+          if [ -z "$CHROME" ]; then echo "::error::no Chrome on the runner"; exit 1; fi
+          "$CHROME" --version
+          echo "CHROME=$CHROME" >> "$GITHUB_ENV"
+
+      - name: Gate, warehouse, model, profile, service and monitor self-tests
+        run: |
+          python tests/test_checks.py
+          python tests/test_warehouse.py
+          python tests/test_model.py
+          python tests/test_profile.py
+          python tests/test_service.py
+          python tests/test_monitor.py
+
+      - name: Warehouse assertions on the committed warehouse
+        run: python warehouse_tests.py $SEASON
+
+      - name: Site smoke test on the committed site (what deploys)
+        run: python tests/test_site.py $SEASON
+
+      - name: Rebuild from the warehouse (drift check, then the site smoke test on the rebuilt page)
+        run: python build.py $SEASON
+
+  deploy:
+    needs: test
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    uses: ./.github/workflows/pages.yml
+    with:
+      ref: ${{ github.sha }}
