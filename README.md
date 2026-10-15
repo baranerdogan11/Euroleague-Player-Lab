@@ -51,6 +51,13 @@ of the day, and can be started by hand from the Actions tab. Each run:
 7. scores every shot with the xFG model (`model/score.py`), see below
 8. builds shooting profiles, shot quality versus shooting skill with shrinkage (`model/profile.py`)
 9. builds the site from the warehouse with SQL (`build.py`, the gold layer): season stats, league benchmarks, role metrics, on/off, position ranks, the defence-adjusted expectation, the compare index and the league leaderboards
+   and, before writing the leaders file, compares every player's season totals with the previous build (`drift.py`): a club's
+   games or a player's games played never go backwards and no total moves by more than the new games can explain; a
+   box-score correction is a warning, anything larger stops the run (`teams/E2026/drift.json` carries the verdict).
+   The build ends with a site smoke test (`tests/test_site.py`): the built page is served to headless Chrome, which
+   must open the cover, a club, a player page with its shot chart and game log, the standings, leaders, compare and
+   lineups pages at desktop and phone width without an uncaught error, a failed request or a sideways scroll, and the
+   service worker must compile. A page that does not draw is never published.
 10. writes the monitoring snapshot (`model/monitor.py`) and commits everything; GitHub Pages deploys within a minute
 
 The assertions write `teams/E2026/status.json` (games, shots, box lines, tests, failures, warnings, time) and the page footer
@@ -138,7 +145,15 @@ this season's shots against a constant baseline and the training season, plus pr
 and season-to-date calibration by decile; shooter-effect coverage; the serving API's reachability, latency and served model hash checked against the registry.
 Orange crossing grey on the calibration chart is the retrain signal.
 
-## xFG as a service
+## Usage analytics and error reporting
+
+The page reports usage and errors to [GoatCounter](https://www.goatcounter.com/) when `analytics.txt` in the
+repository root holds the site's endpoint (`https://<site>.goatcounter.com/count`); without the file nothing is
+loaded. Every hash route counts as a page view (`/MAD/P015244`, `/standings`, `/` for the opening page), and an
+uncaught exception or promise rejection in the page is sent as an event named `error/<message>`, so a phone that
+never reaches the test matrix still reports what broke. GoatCounter sets no cookies and stores no personal data;
+visits from localhost are not counted.
+
 
 `service/app.py` serves the deployed model with FastAPI:
 

@@ -60,5 +60,38 @@ for name, clubs, want_code, want_text in cases:
     if not passed:
         print(out)
 shutil.rmtree(DATA, ignore_errors=True)
+
+# ---- the build-to-build drift check (drift.py): what a replayed or corrupt feed looks like against the previous build
+sys.path.insert(0, ROOT)
+import drift   # noqa: E402
+
+def L(games, rows, built="t"):
+    return {"built": built, "games": games, "rows": rows}
+
+def R(pid="P1", c="AAA", gp=5, pts=60, reb=20, ast=10, mins=120.0, fga2=30, fga3=20, fta=15):
+    return {"pid": pid, "c": c, "name": f"PLAYER, {pid}", "gp": gp, "pts": pts, "reb": reb, "ast": ast, "min": mins, "fga2": fga2, "fga3": fga3, "fta": fta}
+
+ten = [R(pid=f"P{i}") for i in range(1, 11)]
+base = L({"AAA": 5}, ten)
+drift_cases = [
+    ("drift: unchanged build passes", base, L({"AAA": 5}, ten), 0, 0),
+    ("drift: first build has nothing to compare", None, L({"AAA": 5}, ten), 0, 0),
+    ("drift: one new game within a game's worth passes", base, L({"AAA": 6}, [R(pid=f"P{i}", gp=6, pts=95, reb=30, mins=150.0) for i in range(1, 11)]), 0, 0),
+    ("drift: points beyond a game's worth fail", base, L({"AAA": 6}, [R(pid="P1", gp=6, pts=130)] + ten[1:]), 1, 0),
+    ("drift: games played going backwards fail", base, L({"AAA": 5}, [R(pid="P1", gp=4, pts=50)] + ten[1:]), 1, 0),
+    ("drift: a club's games going backwards fail", base, L({"AAA": 4}, ten), 1, 0),
+    ("drift: a box-score correction warns", base, L({"AAA": 5}, [R(pid="P1", pts=62)] + ten[1:]), 0, 1),
+    ("drift: a total going down with a new game warns", base, L({"AAA": 6}, [R(pid="P1", gp=6, reb=18)] + ten[1:]), 0, 1),
+    ("drift: one line gone warns", base, L({"AAA": 5}, ten[1:]), 0, 1),
+    ("drift: half the lines gone fail", base, L({"AAA": 5}, ten[5:]), 1, 0),
+    ("drift: a transfer is a new line, not a jump", base, L({"AAA": 5, "BBB": 5}, ten + [R(pid="P1", c="BBB", gp=1, pts=20)]), 0, 0),
+]
+for name, old, new, want_f, want_w in drift_cases:
+    fails, warns = drift.check(old, new)
+    passed = len(fails) == want_f and len(warns) == want_w
+    ok &= passed
+    print(("PASS" if passed else "FAIL"), name, f"({len(fails)} failure(s), {len(warns)} warning(s))")
+    if not passed:
+        print(fails, warns)
 print("ALL PASS" if ok else "SOME FAILED")
 sys.exit(0 if ok else 1)

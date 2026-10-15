@@ -15,6 +15,7 @@ import os
 import re
 import sys
 import duckdb
+import drift
 
 SEASON = sys.argv[1] if len(sys.argv) > 1 else "E2026"
 ROOT = os.path.dirname(os.path.abspath(__file__))
@@ -24,6 +25,9 @@ OUT = os.path.join(ROOT, "teams", SEASON)
 _cname = os.path.join(ROOT, "CNAME")
 SITE = f"https://{open(_cname).read().strip()}/" if os.path.exists(_cname) and open(_cname).read().strip() else "https://baranerdogan11.github.io/Euroleague-Player-Lab/"
 os.makedirs(OUT, exist_ok=True)
+# the previous build's leaders file, kept before the club files are cleared: every player's totals are checked against it (drift_check)
+_prev = os.path.join(OUT, "leaders.json")
+PREV_LEADERS = json.load(open(_prev, encoding="utf-8")) if os.path.exists(_prev) else None
 for stale in glob.glob(os.path.join(OUT, "*.json")):
     if os.path.basename(stale) not in ("monitor.json",):      # club files are regenerated; the monitoring snapshot is owned by monitor.py
         os.remove(stale)
@@ -721,8 +725,25 @@ def leaders_json():
                              "q": int(t["gp"] >= need and t["min"] / t["gp"] >= LB_MPG)})
     out = {"season": SEASON, "built": datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC"), "rounds": rounds, "min_gp": L.get("min_gp"), "min_mpg": L.get("min_mpg", LB_MPG),
            "min_3pa": L.get("min_3pa"), "provisional": bool(L.get("provisional")), "games": cg, "rows": out_rows}
+    drift_check(PREV_LEADERS, out)
     json.dump(out, open(os.path.join(OUT, "leaders.json"), "w"), separators=(",", ":"), ensure_ascii=False)
     return {"n": len(out_rows)}
+
+
+def drift_check(old, new):
+    """Build-to-build plausibility of every player's totals against the previous build (drift.py); the verdict goes to
+    teams/<season>/drift.json and the log, a failure stops the build (PL_NO_DRIFT=1 overrides, for a known reset)."""
+    if not old:
+        return
+    fails, warns = drift.check(old, new)
+    json.dump({"checked": new["built"], "against": old.get("built"), "failures": fails, "warnings": warns}, open(os.path.join(OUT, "drift.json"), "w"), indent=1, ensure_ascii=False)
+    for w in warns:
+        print("drift warning:", w)
+    for f in fails:
+        print("DRIFT FAILURE:", f)
+    print(f"drift check against the build of {old.get('built')}: {len(fails)} failure(s), {len(warns)} warning(s)")
+    if fails and not os.environ.get("PL_NO_DRIFT"):
+        raise SystemExit("drift check failed: the new build disagrees with the previous one beyond what new games explain (PL_NO_DRIFT=1 to override)")
 
 
 def standings():
@@ -796,7 +817,34 @@ open(os.path.join(ROOT, "sw.js"), "w", encoding="utf-8").write(sw.replace("/*BUI
 json.dump(meta["roster"], open(os.path.join(OUT, "roster.json"), "w"), separators=(",", ":"), ensure_ascii=False)
 inline = {k: v for k, v in meta.items() if k != "roster"}; inline["n_players"] = len(meta["roster"])
 tpl = open(os.path.join(ROOT, "template.html"), encoding="utf-8").read()
-open(os.path.join(ROOT, "index.html"), "w", encoding="utf-8").write(tpl.replace("/*META*/", json.dumps(inline, ensure_ascii=False)).replace("/*OG*/", SITE + "og/home.png").replace("/*TR*/{}", json.dumps(json.load(open(os.path.join(ROOT, "lang", "tr.json"), encoding="utf-8")), ensure_ascii=False)))   # the Turkish dictionary, keyed by the English text
+# usage and error reporting: analytics.txt holds a GoatCounter endpoint (https://<site>.goatcounter.com/count); without the file nothing is loaded.
+# Every hash route counts as a page view, an uncaught error or rejection as an event named error/<message>. No cookies, no personal data.
+_an = os.path.join(ROOT, "analytics.txt")
+ANALYTICS = open(_an, encoding="utf-8").read().strip() if os.path.exists(_an) else ""
+if ANALYTICS and not re.fullmatch(r"https://[A-Za-z0-9.-]+/count", ANALYTICS):
+    raise SystemExit("analytics.txt must hold a GoatCounter endpoint such as https://site.goatcounter.com/count")
+ANALYTICS_SNIPPET = ("""<script>
+(function(){
+  var pend = [], seen = null;
+  window.goatcounter = {no_onload: true, endpoint: %s};
+  function count(v){ if (window.goatcounter && goatcounter.count) goatcounter.count(v); else if (pend.length < 50) pend.push(v); }
+  function view(){ var p = '/' + location.hash.replace(/^#/, ''); if (p === seen) return; seen = p; count({path: p, title: document.title}); }
+  addEventListener('load', view);
+  addEventListener('hashchange', function(){ setTimeout(view, 400); });
+  addEventListener('error', function(e){ count({path: 'error/' + String(e.message || 'script error').slice(0, 120), title: (e.filename || '').replace(location.origin, '') + ':' + (e.lineno || 0), event: true}); });
+  addEventListener('unhandledrejection', function(e){ var r = e.reason; count({path: 'error/' + String(r && r.message || r || 'rejection').slice(0, 120), event: true}); });
+  var s = document.createElement('script'); s.async = true; s.src = 'https://gc.zgo.at/count.js';
+  s.onload = function(){ pend.splice(0).forEach(count); };
+  document.head.appendChild(s);
+})();
+</script>
+""" % json.dumps(ANALYTICS)) if ANALYTICS else ""
+open(os.path.join(ROOT, "index.html"), "w", encoding="utf-8").write(tpl.replace("/*META*/", json.dumps(inline, ensure_ascii=False)).replace("/*OG*/", SITE + "og/home.png").replace("<!--ANALYTICS-->", ANALYTICS_SNIPPET).replace("/*TR*/{}", json.dumps(json.load(open(os.path.join(ROOT, "lang", "tr.json"), encoding="utf-8")), ensure_ascii=False)))   # the Turkish dictionary, keyed by the English text
 for s in summary:
     print("%-4s players %2d  games %2d  shots %4d" % s)
 print("index.html + teams/%s/*.json written from warehouse" % SEASON)
+# the built site opens in headless Chrome and must draw its pages without an error before anything is published (tests/test_site.py)
+if not os.environ.get("PL_NO_SMOKE"):
+    import subprocess
+    if subprocess.run([sys.executable, os.path.join(ROOT, "tests", "test_site.py"), SEASON]).returncode:
+        raise SystemExit("site smoke test failed: the built page does not open cleanly (PL_NO_SMOKE=1 skips it)")
