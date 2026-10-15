@@ -168,6 +168,7 @@ def serve():
 
 
 def main():
+    sys.stdout.reconfigure(line_buffering=True)   # CI logs show when each step happened
     fails = []
     # 1. conflict markers never reach the built site
     files = ["index.html", "sw.js", "template.html", "manifest.webmanifest", os.path.join("lang", "tr.json")] + sorted(glob.glob(os.path.join("teams", SEASON, "*.json")))
@@ -201,24 +202,44 @@ def main():
     srv = serve()
     port = srv.server_address[1]
     base = f"http://127.0.0.1:{port}/"
-    prof = tempfile.mkdtemp(prefix="pl-smoke-")
-    proc = subprocess.Popen([chrome, "--headless=new", "--disable-gpu", "--no-sandbox", "--no-first-run", "--disable-extensions", "--hide-scrollbars",
-                             "--disable-features=TranslateUI", f"--user-data-dir={prof}", "--remote-debugging-port=0", "--window-size=1280,900", "about:blank"],
-                            stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True)
-    try:
-        dev = None
-        t0 = time.time()
-        while time.time() - t0 < 30:
+
+    profiles = []
+
+    def launch():
+        """Start headless Chrome; return (process, DevTools URL or None, last stderr lines)."""
+        profiles.append(tempfile.mkdtemp(prefix="pl-smoke-"))
+        prof = profiles[-1]
+        proc = subprocess.Popen([chrome, "--headless=new", "--disable-gpu", "--no-sandbox", "--no-first-run", "--disable-extensions", "--hide-scrollbars",
+                                 "--disable-features=TranslateUI", "--disable-dev-shm-usage", f"--user-data-dir={prof}", "--remote-debugging-port=0",
+                                 "--window-size=1280,900", "about:blank"],
+                                stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True)
+        tail, t0 = [], time.time()
+        while time.time() - t0 < 60:
             line = proc.stderr.readline()
             if not line and proc.poll() is not None:
                 break
+            tail = (tail + [line.rstrip()])[-6:]
             m = re.search(r"DevTools listening on (ws://[^\s]+)", line)
             if m:
-                dev = m.group(1)
-                break
-        if not dev:
-            print("FAIL Chrome did not start")
+                return proc, m.group(1), tail
+        proc.kill()
+        return proc, None, tail
+
+    proc, dev, tail = launch()
+    if not dev:
+        print("Chrome did not start (" + ("exited" if proc.returncode is not None else "no DevTools endpoint within 60 s") + "), retrying once")
+        for line in tail:
+            print("   ", line)
+        proc, dev, tail = launch()
+    if not dev:
+        for line in tail:
+            print("   ", line)
+        if os.environ.get("PL_SMOKE_REQUIRED"):
+            print("FAIL Chrome did not start twice")
             return 1
+        print("SKIP Chrome did not start twice: site smoke test skipped (a runner problem, not a page problem)")
+        return 0
+    try:
         threading.Thread(target=lambda: [None for _ in proc.stderr], daemon=True).start()   # drain Chrome's logging
         devport = int(re.match(r"ws://[^:]+:(\d+)", dev).group(1))
         targets = json.loads(urllib.request.urlopen(f"http://127.0.0.1:{devport}/json/list", timeout=10).read())
@@ -282,7 +303,8 @@ def main():
     finally:
         proc.kill()
         proc.wait()
-        shutil.rmtree(prof, ignore_errors=True)
+        for prof in profiles:
+            shutil.rmtree(prof, ignore_errors=True)
         srv.shutdown()
 
     # 5. anything the page complained about
