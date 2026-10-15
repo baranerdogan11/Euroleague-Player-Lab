@@ -1,50 +1,6 @@
 // Euroleague Player Lab service worker: the page and every JSON go network-first (a rebuild is never masked), the heavy
 // static files (photos, crests, fonts, the 3D library) cache-first for thirty days so a club already opened reads offline.
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-const V = 'pl-2026-10-15_0740_UTC';
-=======
-const V = 'pl-2026-10-13_2230_UTC';
->>>>>>> b2c5f15 (Visible page wipe for dark clubs in dark mode)
-=======
-const V = 'pl-2026-10-13_2106_UTC';
->>>>>>> 5ba587e (Standings without the ordering note)
-=======
-const V = 'pl-2026-10-13_2050_UTC';
->>>>>>> 4d72449 (Dark mode for the Club Edition)
-=======
-const V = 'pl-2026-10-13_1313_UTC';
->>>>>>> 1f2da95 (Club page to player page with the wipe and a fresh top)
-=======
-const V = 'pl-2026-10-12_2111_UTC';
->>>>>>> ad2f5af (Club Edition look on every page, phone chrome and bottom bar)
-=======
-const V = 'pl-2026-10-11_1740_UTC';
->>>>>>> 02ac42f (Lineups page: five-man units and on/off ratings)
-=======
-const V = 'pl-2026-10-10_1048_UTC';
->>>>>>> Standings in the top menu
-=======
-const V = 'pl-2026-10-08_1536_UTC';
->>>>>>> Minutes and usage trend as rows that read like the log
-=======
-const V = 'pl-2026-10-05_1108_UTC';
->>>>>>> Turkish mode keeps Latin capitals
-=======
-const V = 'pl-2026-10-05_0853_UTC';
->>>>>>> Drop the shots-charted count from the opening page
-=======
-const V = 'pl-2026-10-02_1430_UTC';
->>>>>>> Turkish and English, switched with two flags at the top right
+const V = 'pl-2026-10-15_1441_UTC';
 const STATIC = /\/(photos|logos|fonts|icons)\/|cdnjs\.cloudflare\.com/;
 const DAY = 864e5, TTL = 30 * DAY;
 self.addEventListener('install', e => { self.skipWaiting(); });

@@ -788,6 +788,7 @@ def draw_icons():
 draw_icons()
 # the service worker carries the build stamp so every build replaces the cached page and JSON
 sw = open(os.path.join(ROOT, "sw.js"), encoding="utf-8").read()
+assert "<<<<<<<" not in sw and ">>>>>>>" not in sw, "sw.js carries git conflict markers; the service worker would not parse"
 if "/*BUILT*/" not in sw:
     sw = re.sub(r"const V = 'pl-[^']*';", "const V = 'pl-/*BUILT*/';", sw, count=1)
 open(os.path.join(ROOT, "sw.js"), "w", encoding="utf-8").write(sw.replace("/*BUILT*/", meta["built"].replace(" ", "_").replace(":", "")))
