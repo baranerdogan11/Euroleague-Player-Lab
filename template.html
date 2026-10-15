@@ -710,7 +710,8 @@ body.cv-on .top,body.cv-on .wrap{display:none}
 body.st-on .st-lnk{color:var(--ink)}
 body.st-on .st-lnk::after{content:"";position:absolute;left:14px;right:14px;bottom:0;height:3px;background:var(--club2);transform:skewX(-14deg)}
 body.st-on .wrap>*,body.ln-on .wrap>*{display:none}
-body.st-on.no-team .sel.team,body.st-on.no-team .sel.player,body.ln-on.no-team .sel.team,body.ln-on.no-team .sel.player{display:none}
+body.no-team .sel.player,body.no-team #crest-img{display:none}
+body.no-team .sel.team .dd-val .ph{opacity:.75;font-weight:500}
 body.st-on .wrap>#standings,body.ln-on .wrap>#lineups{display:block}
 body.cmp-on .wrap>*{display:none}
 body.cmp-on .wrap>#cmp-panel{display:block}
@@ -1508,6 +1509,7 @@ function setLang(l){
   LANG = l; try { localStorage.setItem('pl-lang', l); } catch (e) {}
   applyLang();
   if (typeof COVER !== 'undefined') COVER.render();
+  if (document.body.classList.contains('no-team') && typeof DD !== 'undefined') noTeam(true);
   if (typeof STAND !== 'undefined' && document.body.classList.contains('st-on')) STAND.render();
   if (typeof LINE !== 'undefined' && document.body.classList.contains('ln-on')) LINE.render();
   if (typeof CMP !== 'undefined' && document.body.classList.contains('cmp-on')) CMP.render();
@@ -1607,7 +1609,7 @@ async function loadTeam(code){
     wrap.classList.remove('loading'); bar.className = 'progress done'; setTimeout(() => { if (bar.className === 'progress done') bar.className = 'progress'; }, 500);
   }
   $('#fail').hidden = true;
-  state.team = code; state.data = cache[code];
+  state.team = code; state.data = cache[code]; document.body.classList.remove('no-team');
   const c = CLUBS[code];
   applyPalette(c);
   $('#crest-img').src = c.logo || ''; $('#club-logo').src = c.logo || ''; $('#club-name').textContent = c.name;
@@ -2141,7 +2143,7 @@ function Dropdown(sel, item){
   const btn = dd.querySelector('.dd-btn'), list = dd.querySelector('.dd-list'), val = dd.querySelector('.dd-val');
   let hi = -1;
   const opts = () => [...sel.options];
-  const refresh = () => { const o = opts(); val.innerHTML = o.length && sel.selectedIndex >= 0 ? item(o[sel.selectedIndex], true) : ''; list.innerHTML = o.map((op, i) => `<li role="option" id="${sel.id}-opt-${i}" data-i="${i}" aria-selected="${i === sel.selectedIndex}">${item(op, false)}</li>`).join(''); btn.disabled = sel.disabled; dd.classList.toggle('na', sel.disabled); };
+  const refresh = () => { const o = opts(); val.innerHTML = o.length && sel.selectedIndex >= 0 ? item(o[sel.selectedIndex], true) : sel.dataset.ph ? `<span class="ph">${esc(sel.dataset.ph)}</span>` : ''; list.innerHTML = o.map((op, i) => `<li role="option" id="${sel.id}-opt-${i}" data-i="${i}" aria-selected="${i === sel.selectedIndex}">${item(op, false)}</li>`).join(''); btn.disabled = sel.disabled; dd.classList.toggle('na', sel.disabled); };
   const close = () => { dd.setAttribute('aria-expanded', 'false'); btn.setAttribute('aria-expanded', 'false'); btn.removeAttribute('aria-activedescendant'); list.hidden = true; hi = -1; };
   const open = () => { if (sel.disabled) return; document.querySelectorAll('.dd[aria-expanded="true"]').forEach(d => d !== dd && d.dispatchEvent(new Event('dd-close'))); refresh(); dd.setAttribute('aria-expanded', 'true'); btn.setAttribute('aria-expanded', 'true'); list.hidden = false; fitList(list); hi = sel.selectedIndex; mark(); const cur = list.children[hi]; if (cur) cur.scrollIntoView({block: 'nearest'}); };
   const mark = () => { [...list.children].forEach((li, i) => li.classList.toggle('hi', i === hi)); if (hi >= 0 && !list.hidden) btn.setAttribute('aria-activedescendant', `${sel.id}-opt-${hi}`); };
@@ -2341,7 +2343,7 @@ const STAND = (() => {
   }
   return {
     render,
-    show(){ applyPalette(HOUSE); document.body.classList.add('st-on'); document.body.classList.toggle('no-team', !state.team); el.hidden = false; render(); document.title = `${t('Standings')} · Player Lab`; },   // straight from the cover there is no club yet, so the two empty pickers stay out of the bar
+    show(){ applyPalette(HOUSE); document.body.classList.add('st-on'); noTeam(!state.team); el.hidden = false; render(); document.title = `${t('Standings')} · Player Lab`; },   // straight from the cover there is no club yet, so the two empty pickers stay out of the bar
     hide(){ document.body.classList.remove('st-on'); el.hidden = true; }
   };
 })();
@@ -2442,7 +2444,7 @@ const LINE = (() => {
   return {
     render,
     async show(){
-      applyPalette(HOUSE); document.body.classList.add('ln-on'); document.body.classList.toggle('no-team', !state.team); el.hidden = false;
+      applyPalette(HOUSE); document.body.classList.add('ln-on'); noTeam(!state.team); el.hidden = false;
       document.title = `${t('Lineups')} · Player Lab`;
       if (state.team && st.club === 'all' && !D) st.club = state.team;   // opened from a club page: that club first, the reader can widen to all
       render();
@@ -2564,7 +2566,7 @@ const LEAD = (() => {
   }
   return {
     async show(){
-      document.body.classList.add('ld-on'); $('#leaders').hidden = false; applyPalette(HOUSE);
+      document.body.classList.add('ld-on'); $('#leaders').hidden = false; applyPalette(HOUSE); noTeam(!state.team);
       document.title = `${t('Leaders')} · Player Lab`;
       if (!wire.done) wire();
       render();
@@ -2663,6 +2665,8 @@ const CLUB = (() => {
   };
 })();
 const HOUSE = {base: '#1f2b47', accent: '#f26f21'};
+// the house pages reached straight from the cover have no club yet: the club picker stays in the bar as a way in, the player picker waits
+function noTeam(on){ document.body.classList.toggle('no-team', on); if (on) { const s = $('#team'); s.dataset.ph = t('Pick a club'); s.selectedIndex = -1; DD.team.refresh(); } }
 const pause = ms => new Promise(r => setTimeout(r, ms));
 const WIPE = (() => {
   const el = $('#wipe'), reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
