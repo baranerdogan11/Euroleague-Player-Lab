@@ -1,17 +1,17 @@
 {
  "season": "E2026",
- "generated_at": "2026-10-15 20:41 UTC",
+ "generated_at": "2026-10-15 21:12 UTC",
  "pipeline": {
   "last": {
    "date": "2026-10-15",
-   "at": "2026-10-15T20:41:57Z",
+   "at": "2026-10-15T21:12:12Z",
    "ok": true,
-   "games": 52,
-   "shots": 6809,
+   "games": 54,
+   "shots": 7082,
    "players": 333,
    "failures": 0,
    "ci": true,
-   "run_id": "38803865817"
+   "run_id": "38807825986"
   },
   "history": [
    {
@@ -236,23 +236,23 @@
    },
    {
     "date": "2026-10-15",
-    "at": "2026-10-15T20:41:57Z",
+    "at": "2026-10-15T21:12:12Z",
     "ok": true,
-    "games": 52,
-    "shots": 6809,
+    "games": 54,
+    "shots": 7082,
     "players": 333,
     "failures": 0,
     "ci": true,
-    "run_id": "38803865817"
+    "run_id": "38807825986"
    }
   ],
   "tests": 30
  },
  "freshness": {
   "scheduled": 380,
-  "played": 52,
+  "played": 54,
   "last_played_date": "2026-10-15",
-  "next_game_date": "2026-10-15",
+  "next_game_date": "2026-10-16",
   "last_round": 6,
   "days_since_last_game": 0,
   "rounds": [
@@ -284,7 +284,7 @@
    {
     "round": 6,
     "scheduled": 10,
-    "played": 2
+    "played": 4
    },
    {
     "round": 7,
@@ -485,7 +485,7 @@
     "shots": 1306,
     "actual": 0.4556,
     "predicted": 0.458,
-    "pae_ctx": -14.09,
+    "pae_ctx": -14.1,
     "logloss": 0.6351,
     "brier": 0.2229,
     "logloss_constant": 0.6899
@@ -495,82 +495,82 @@
     "shots": 1307,
     "actual": 0.4744,
     "predicted": 0.4821,
-    "pae_ctx": -17.61,
+    "pae_ctx": -17.6,
     "logloss": 0.6254,
     "brier": 0.2197,
     "logloss_constant": 0.6918
    },
    {
     "round": 6,
-    "shots": 256,
-    "actual": 0.4648,
-    "predicted": 0.5023,
-    "pae_ctx": -23.49,
-    "logloss": 0.5999,
-    "brier": 0.2082,
-    "logloss_constant": 0.6908
+    "shots": 529,
+    "actual": 0.4953,
+    "predicted": 0.4832,
+    "pae_ctx": 15.37,
+    "logloss": 0.61,
+    "brier": 0.2133,
+    "logloss_constant": 0.694
    }
   ],
   "live_deciles": [
    {
-    "n": 682,
+    "n": 713,
     "predicted": 0.282,
-    "actual": 0.296
+    "actual": 0.299
    },
    {
-    "n": 683,
+    "n": 705,
     "predicted": 0.345,
-    "actual": 0.332
+    "actual": 0.336
    },
    {
-    "n": 678,
+    "n": 708,
     "predicted": 0.367,
-    "actual": 0.358
+    "actual": 0.357
    },
    {
-    "n": 681,
+    "n": 707,
     "predicted": 0.385,
     "actual": 0.382
    },
    {
-    "n": 681,
-    "predicted": 0.405,
-    "actual": 0.426
+    "n": 712,
+    "predicted": 0.404,
+    "actual": 0.421
    },
    {
-    "n": 680,
+    "n": 704,
     "predicted": 0.429,
-    "actual": 0.397
+    "actual": 0.409
    },
    {
-    "n": 683,
-    "predicted": 0.472,
-    "actual": 0.438
+    "n": 708,
+    "predicted": 0.471,
+    "actual": 0.435
    },
    {
-    "n": 679,
-    "predicted": 0.557,
-    "actual": 0.513
+    "n": 710,
+    "predicted": 0.556,
+    "actual": 0.518
    },
    {
-    "n": 681,
-    "predicted": 0.647,
-    "actual": 0.658
+    "n": 706,
+    "predicted": 0.646,
+    "actual": 0.661
    },
    {
-    "n": 681,
-    "predicted": 0.856,
-    "actual": 0.859
+    "n": 709,
+    "predicted": 0.857,
+    "actual": 0.862
    }
   ],
   "live_summary": {
-   "shots": 6809,
-   "logloss": 0.6288,
-   "brier": 0.221,
-   "actual": 0.4659,
-   "predicted": 0.4745,
-   "logloss_constant": 0.6909,
-   "pae_ctx_per100": -2.46
+   "shots": 7082,
+   "logloss": 0.6285,
+   "brier": 0.2209,
+   "actual": 0.4681,
+   "predicted": 0.4741,
+   "logloss_constant": 0.6912,
+   "pae_ctx_per100": -1.81
   },
   "reference_rounds": [
    {
@@ -1010,14 +1010,14 @@
   "constant_baseline": 0.474
  },
  "shooter_coverage": {
-  "shots": 6809,
-  "known_shooter_share": 0.732
+  "shots": 7082,
+  "known_shooter_share": 0.733
  },
  "api": {
   "url": "https://euroleague-xfg.onrender.com",
   "reachable": true,
-  "latency_ms": 189,
-  "cold_start_ms": 62299,
+  "latency_ms": 209,
+  "cold_start_ms": 62261,
   "model_version": "2026-09-30",
   "model_sha256": "da04bae2c5f6"
  },
