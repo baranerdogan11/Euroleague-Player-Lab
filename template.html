@@ -711,7 +711,7 @@ body.st-on .st-lnk{color:var(--ink)}
 body.st-on .st-lnk::after{content:"";position:absolute;left:14px;right:14px;bottom:0;height:3px;background:var(--club2);transform:skewX(-14deg)}
 body.st-on .wrap>*,body.ln-on .wrap>*{display:none}
 body.no-team .sel.player,body.no-team #crest-img{display:none}
-body.no-team .sel.team .dd-val .ph{opacity:.75;font-weight:500}
+body.no-team .sel.team .dd-val .ph{opacity:.75;font-weight:500;white-space:nowrap}
 body.st-on .wrap>#standings,body.ln-on .wrap>#lineups{display:block}
 body.cmp-on .wrap>*{display:none}
 body.cmp-on .wrap>#cmp-panel{display:block}
@@ -1247,6 +1247,9 @@ html[data-look="club"] #ld-wrap{overflow:visible;mask-image:none}
 }
 /* ---- end Club Edition · Leaders page ---- */
 @media (min-width:761px) and (max-width:900px){html[data-look="club"] .top .st-lnk{padding:0 10px}html[data-look="club"] .top .st-lnk span{font-size:14.5px}html[data-look="club"] .top .search{flex:0 1 150px;min-width:104px}html[data-look="club"] .top :is(.lang,.theme) button{width:40px}html[data-look="club"] .top .id{padding:0 14px 0 12px}}
+/* the house pages with no club yet (Lineups, Standings, Leaders from the cover): the club picker is the way to a club, so on a laptop it is read whole instead of being squeezed to its arrow; the page links and the search box give way */
+@media (min-width:901px){html[data-look="club"] body.no-team .top .sel.team{min-width:max-content}html[data-look="club"] body.no-team .top .search{min-width:72px}}
+@media (min-width:901px) and (max-width:1199px){html[data-look="club"] body.no-team .top .st-lnk{padding:0 10px}}
 /* ---- end narrow-desktop header ---- */
 /* the Dark button sits beside the language toggle (header, cover, phone menu) and only exists in the Club Edition */
 .theme{margin-left:0}.theme button{width:auto;min-width:56px;padding:0 12px}.theme svg{width:18px;height:18px;filter:none;opacity:.6}.theme button[aria-pressed="true"] svg{opacity:1}
@@ -2750,6 +2753,10 @@ async function route(){
       try { await go(); }
       catch (e) { console.error(e); $('#fail').hidden = false; $('#fail-sub').textContent = t('This page could not be drawn ({err}). Try again or pick another club.', {err: e.message || e}); }   // a fault never leaves the screen covered
       if (newPage) { scrollTo(0, 0); await settled(); }
+      else if (!booted && toStand) {   // a first visit to #lineups, #standings or #leaders: the browser jumps to the section of that id, which on a desktop takes the top menu and its club picker off screen
+        const sec = document.getElementById(h[0]), back = () => { if (sec && Math.abs(sec.getBoundingClientRect().top) < 2) scrollTo(0, 0); };   // only while the page still sits on the jump, never over a reader who has scrolled
+        scrollTo(0, 0); if (document.readyState !== 'complete') addEventListener('load', back, {once: true});
+      }
       if (!toCover && !toStand) { try { sessionStorage.setItem('pl-in', '1'); } catch (e) {} }
       booted = true;
     } while (queued);
