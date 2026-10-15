@@ -476,5 +476,15 @@
  "AST/TOV": "AST/TK",
  "Dark": "Koyu",
  "Dark mode": "Koyu mod",
- "Theme": "Tema"
+ "Theme": "Tema",
+ "By game": "Maç maç",
+ "Stints": "Kez",
+ "Score": "Skor",
+ "When": "Ne zaman",
+ "Starters": "İlk beş",
+ "{n} possessions": "{n} hücum",
+ "No game for this club yet.": "Bu kulübün henüz maçı yok.",
+ "No lineups for this game.": "Bu maç için beşli yok.",
+ "Every five a club used in one game: minutes, the score while it was on the floor, ratings per 100 possessions and when it played.": "Bir kulübün tek bir maçta kullandığı her beşli: dakikalar, sahadayken skor, 100 hücum başına reytingler ve ne zaman oynadığı.",
+ "Every five the club put on the floor in this game is listed, most minutes first, with the score while it was out there, its ratings per 100 possessions and a strip showing when in the game it played; the ticks mark the quarters.": "Kulübün bu maçta sahaya sürdüğü her beşli, en çok süre alandan başlayarak listelenir: sahadayken skor, 100 hücum başına reytingleri ve maçın hangi anlarında oynadığını gösteren şerit; çizgiler periyotları işaretler."
 }

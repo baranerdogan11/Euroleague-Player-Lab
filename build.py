@@ -696,10 +696,53 @@ def lineups_json():
         name_of(r["player"])
     for ps in onoff.values():
         ps.sort(key=lambda p: -p["s"])
+    # ---- every five a club used in each game and when it was on the floor, for the By game tab. Stints are contiguous and
+    # in order of play, so the running sum of a club's stint seconds places each one on the game clock (0 .. game length).
+    # A zero-second stint (a substitution around a free throw) keeps its points and its count but gets no segment.
+    surname = lambda pid: name_of(pid).partition(",")[0].strip()
+    counts = ("fga", "oreb", "tov", "fta", "opp_fga", "opp_oreb", "opp_tov", "opp_fta")
+    gmeta = {g["game"]: g for g in rows("select game, round, cast(date as varchar) as date, home, away, home_score, away_score from games where played")}
+    club_games = {}
+    for r in rows("select * from stints order by club, game, stint"):
+        club_games.setdefault((r["club"], r["game"]), []).append(r)
+    bygame, n_bygame = {}, 0
+    for (club, game), sts in club_games.items():
+        g, fives, t = gmeta[game], {}, 0
+        for s in sts:
+            f = fives.setdefault(tuple(sorted(s["players"])), {"s": 0, "k": 0, "pts": 0, "opp": 0, "seg": [], "first": s["stint"], **{k: 0 for k in counts}})
+            f["s"] += s["sec"]; f["k"] += 1; f["pts"] += s["pts"]; f["opp"] += s["opp_pts"]
+            for k in counts:
+                f[k] += s[k]
+            if s["sec"]:
+                f["seg"].append([t, t + s["sec"]])
+            t += s["sec"]
+        tot = {k: sum(s[k] for s in sts) for k in counts}
+        lus = []
+        for five, f in sorted(fives.items(), key=lambda kv: (-kv[1]["s"], kv[1]["first"])):
+            po, pd = poss(f), poss(f, "opp_")
+            lus.append({"p": sorted(five, key=surname), "s": f["s"], "k": f["k"], "pts": f["pts"], "opp": f["opp"], "po": po, "pd": pd, **rate(f["pts"], f["opp"], po, pd), "seg": f["seg"]})
+        bygame.setdefault(club, []).append({"code": game, "round": g["round"], "date": g["date"], "home": g["home"], "away": g["away"], "hs": g["home_score"], "as": g["away_score"], "len": t,
+                                            "pts": sum(s["pts"] for s in sts), "opp": sum(s["opp_pts"] for s in sts), "poss": round((poss(tot) + poss(tot, "opp_")) / 2), "lineups": lus})
+        n_bygame += len(lus)
+    for gs in bygame.values():
+        gs.sort(key=lambda x: (x["date"], x["code"]), reverse=True)
+    # player ids leave with the site's "P" prefix, the key the club files, roster.json and the #CLUB/PID routes use; the
+    # feed's bare number never reaches the page (a bare id in a link lands the reader on the club's first player)
+    P = lambda pid: "P" + pid
+    for l in lineups:
+        l["p"] = [P(x) for x in l["p"]]
+    for ps in onoff.values():
+        for pl in ps:
+            pl["pid"] = P(pl["pid"])
+    for gs in bygame.values():
+        for g in gs:
+            for l in g["lineups"]:
+                l["p"] = [P(x) for x in l["p"]]
+    names = {P(k): v for k, v in names.items()}
     out = {"season": SEASON, "built": datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC"), "games": {c: t["g"] for c, t in team.items()}, "names": names, "lineups": lineups, "onoff": onoff,
-           "n_all": con.execute("select count(*) from (select club, players from stints group by 1, 2)").fetchone()[0]}
+           "n_all": con.execute("select count(*) from (select club, players from stints group by 1, 2)").fetchone()[0], "bygame": bygame}
     json.dump(out, open(os.path.join(OUT, "lineups.json"), "w"), separators=(",", ":"), ensure_ascii=False)
-    return {"n": len(lineups), "n_all": out["n_all"], "players": sum(len(v) for v in onoff.values())}
+    return {"n": len(lineups), "n_all": out["n_all"], "players": sum(len(v) for v in onoff.values()), "bygame": n_bygame}
 
 
 def leaders_json():

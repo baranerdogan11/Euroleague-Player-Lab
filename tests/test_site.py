@@ -287,6 +287,11 @@ def main():
             cdp.eval(f"location.hash = '#{h}'")
             cdp.wait(f"document.body.classList.contains('{cls}') && !document.querySelector('.wipe.on') && document.querySelector('#fail').hidden && ({probe})", what)
             print(f"desktop: #{h} drawn")
+        # the lineups by-game tab: one game of one club, every five with a floor-time strip
+        BYGAME = "document.querySelectorAll('#ln-wrap .ln-tab tbody tr').length >= 5 && !!document.querySelector('#ln-wrap .ln-strip')"
+        cdp.eval("document.querySelector('#ln-tabs button[data-v=game]').click()")
+        cdp.wait(BYGAME, "the lineups by-game table")
+        print("desktop: #lineups by game drawn (%d fives)" % cdp.eval("document.querySelectorAll('#ln-wrap .ln-tab tbody tr').length"))
 
         # 4. phone
         device(390, 844, True)
@@ -298,6 +303,14 @@ def main():
         cdp.eval("location.hash = '#standings'")
         cdp.wait("document.body.classList.contains('st-on') && !document.querySelector('.wipe.on')", "the standings page on a phone")
         print("phone: opening page, player page and standings drawn, overflow %dpx" % wide)
+        cdp.eval("location.hash = '#lineups'")
+        cdp.wait("document.body.classList.contains('ln-on') && !document.querySelector('.wipe.on') && document.querySelector('#fail').hidden && document.querySelector('#lineups').getBoundingClientRect().height > 300", "the lineups page on a phone")
+        cdp.eval("document.querySelector('#ln-tabs button[data-v=game]').click()")
+        cdp.wait(BYGAME, "the lineups by-game table on a phone")
+        wide = cdp.eval("document.documentElement.scrollWidth - document.documentElement.clientWidth")
+        if wide > 2:
+            fails.append(f"phone: the lineups by-game page scrolls sideways by {wide}px")
+        print("phone: #lineups by game drawn (%d fives), overflow %dpx" % (cdp.eval("document.querySelectorAll('#ln-wrap .ln-tab tbody tr').length"), wide))
         time.sleep(0.5)
         cdp.call("Runtime.evaluate", {"expression": "1"})   # flushes queued events
     finally:
