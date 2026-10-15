@@ -281,6 +281,9 @@ html[data-look="club"] .cmp-side.r .cmp-facts{justify-content:flex-end}
 html[data-look="club"] .cmp-facts span{display:block;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;opacity:.75}
 html[data-look="club"] .cmp-facts b{font-family:var(--cond);font-weight:var(--cond-w);font-size:22px}
 html[data-look="club"] body.cmp-on .cmp-pick,html[data-look="club"] body.cmp-on .cmp-row{display:flex;align-items:center;gap:10px;margin-top:4px}
+html[data-look="club"] body.cmp-on .cmp-picks{display:grid;grid-template-columns:max-content minmax(200px,320px);gap:12px 10px;align-items:center;margin-top:4px}   /* club and player pickers: one label column, the pills aligned */
+html[data-look="club"] body.cmp-on .cmp-picks .cmp-pick{display:contents}
+html[data-look="club"] body.cmp-on .cmp-picks .cmp-sel{max-width:none;min-width:0}
 html[data-look="club"] body.cmp-on .cmp-lab{font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;color:inherit;opacity:.8}
 html[data-look="club"] body.cmp-on .cmp-sel{border:0;padding:0;flex:0 1 320px;max-width:320px;min-width:200px}
 html[data-look="club"] body.cmp-on .cmp-side .dd{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.35);color:inherit;min-height:44px;border-radius:999px}
@@ -334,8 +337,10 @@ html[data-look="club"] .cmp-empty{background:var(--panel);border:1px solid var(-
   html[data-look="club"] .cmp-side.r .cmp-club{flex-direction:row}
   html[data-look="club"] .cmp-side.r .cmp-facts{justify-content:flex-start}
   html[data-look="club"] .cmp-nm{font-size:44px}
-  html[data-look="club"] .cmp-vs{width:44px;height:44px;font-size:20px}
+  html[data-look="club"] .cmp-hero>.cmp-side.l{grid-area:1/1}html[data-look="club"] .cmp-hero>.cmp-side.r{grid-area:2/1}   /* both placed by hand, so the badge sharing row 2 opens no second column */
+  html[data-look="club"] .cmp-vs{width:44px;height:44px;font-size:20px;position:relative;left:auto;top:auto;grid-row:2;grid-column:1;justify-self:center;align-self:start;transform:translateY(-50%)}   /* stacked sides: the badge sits on the seam, whatever the left side holds */
   html[data-look="club"] body.cmp-on .cmp-sel{flex:1 1 auto;max-width:none;min-width:0}
+  html[data-look="club"] body.cmp-on .cmp-picks{grid-template-columns:max-content minmax(0,1fr)}
   html[data-look="club"] .cmp-h2h{padding:12px 10px}
   html[data-look="club"] .cmp-m{grid-template-columns:58px minmax(0,1fr) 58px;gap:8px}
   html[data-look="club"] .cmp-m .v{font-size:22px}
@@ -711,10 +716,10 @@ body.cmp-on .wrap>*{display:none}
 body.cmp-on .wrap>#cmp-panel{display:block}
 body.ld-on .wrap>*,body.cb-on .wrap>*{display:none}
 body.ld-on .wrap>#leaders,body.cb-on .wrap>#club{display:block}
-body:not(.cmp-on) .cmp-who,body:not(.cmp-on) .cmp-pick,body:not(.cmp-on) .cmp-vs,body:not(.cmp-on) #cmp-page,body:not(.cmp-on) #cmp-empty{display:none!important}
+body:not(.cmp-on) .cmp-who,body:not(.cmp-on) .cmp-picks,body:not(.cmp-on) .cmp-pick,body:not(.cmp-on) .cmp-vs,body:not(.cmp-on) #cmp-page,body:not(.cmp-on) #cmp-empty{display:none!important}
 body:not(.cmp-on) .cmp-hero,body:not(.cmp-on) .cmp-side{display:contents}
 body.cmp-on #cmp-open,body.cmp-on .cmp-row .cmp-lab{display:none}
-html:not([data-look="club"]) .cmp-who,html:not([data-look="club"]) .cmp-pick,html:not([data-look="club"]) .cmp-vs,html:not([data-look="club"]) #cmp-page{display:none!important}
+html:not([data-look="club"]) .cmp-who,html:not([data-look="club"]) .cmp-picks,html:not([data-look="club"]) .cmp-pick,html:not([data-look="club"]) .cmp-vs,html:not([data-look="club"]) #cmp-page{display:none!important}
 html:not([data-look="club"]) .cmp-hero,html:not([data-look="club"]) .cmp-side{display:contents}
 html[data-look="club"] body.cmp-on #cmp-table{display:none}
 body.ln-on #ln-lnk{color:var(--ink)}
@@ -1378,7 +1383,7 @@ html[data-look="club"] body.cv-on .top{display:none}   /* the phone band rules s
       <p class="sub" id="cmp-sub"></p>
       <!-- Club Edition compare: on the player page only the picker row shows (a teaser); on #compare the hero, bars, shot diets and actions show -->
       <div class="cmp-hero" id="cmp-hero">
-        <div class="cmp-side l" id="cmp-l"><div class="cmp-who" id="cmp-who-l"></div><div class="cmp-pick"><label class="cmp-lab" for="cmp-me">Change player</label><div class="sel cmp-sel"><select id="cmp-me" aria-label="Change player"></select></div></div></div>
+        <div class="cmp-side l" id="cmp-l"><div class="cmp-who" id="cmp-who-l"></div><div class="cmp-picks"><div class="cmp-pick"><label class="cmp-lab" for="cmp-club">Change club</label><div class="sel cmp-sel"><select id="cmp-club" aria-label="Change club"></select></div></div><div class="cmp-pick"><label class="cmp-lab" for="cmp-me">Change player</label><div class="sel cmp-sel"><select id="cmp-me" aria-label="Change player"></select></div></div></div></div>
         <div class="cmp-side r" id="cmp-r"><div class="cmp-who" id="cmp-who-r"></div><div class="cmp-row"><label class="cmp-lab" for="cmp">Compare with</label><div class="sel cmp-sel" style="border:0;padding:0;flex:1;max-width:420px"><select id="cmp" aria-label="Compare with"></select></div><a class="cmp-open" id="cmp-open" href="#compare">Open compare</a></div></div>
         <span class="cmp-vs" aria-hidden="true">VS</span>
       </div>
@@ -1802,6 +1807,11 @@ function cmpMeOptions(){
   sel.innerHTML = ps.map((p, i) => `<option value="${i}">#${p.dorsal || '–'} ${nameOf(p.name).first} ${nameOf(p.name).sur}</option>`).join('');
   sel.value = state.player;
   if (DD.cmpMe) DD.cmpMe.refresh();
+  // and to any club: the list names every club, the viewed one selected
+  const cs = $('#cmp-club');
+  cs.innerHTML = META.clubs.slice().sort((a, b) => a.name.localeCompare(b.name)).map(c => `<option value="${c.code}">${c.name}</option>`).join('');
+  cs.value = state.team;
+  if (DD.cmpClub) DD.cmpClub.refresh();
 }
 async function renderCompare(){
   const tb = $('#cmp-table'), page = $('#cmp-page'), d = ds(), me = player(), onPage = document.body.classList.contains('cmp-on');
@@ -2188,6 +2198,13 @@ $('#embed').addEventListener('click', async () => {
 });
 $('#retry').addEventListener('click', () => route());
 $('#cmp').addEventListener('change', e => { state.cmp = e.target.value || null; renderCompare(); });
+$('#cmp-club').addEventListener('change', async e => {   // the compare page's left side: another club, opened on its most-used player (a roster entry without minutes has nothing to compare)
+  const code = e.target.value; if (!CLUBS[code] || code === state.team) return;
+  const cmp = state.cmp;   // the opponent stays when he still qualifies against the new player (loading the club renders its first player meanwhile, which would drop him)
+  $('#team').value = code; if (!await loadTeam(code)) return;
+  let i = 0, best = -1; team().players.forEach((p, j) => { const m = (p.cur && p.cur.tot && p.cur.tot.min) || 0; if (m > best) { best = m; i = j; } });
+  state.player = i; state.cmp = cmp; $('#player').value = i; state.game = 'all'; renderGames(); renderPlayer(); DD.team.refresh(); DD.player.refresh(); DD.statGame.refresh();
+});
 $('#cmp-me').addEventListener('change', e => { state.player = +e.target.value; $('#player').value = state.player; state.game = 'all'; renderGames(); renderPlayer(); DD.player.refresh(); });   // the compare page's left side: a teammate, without leaving #compare
 $('#replay').addEventListener('click', () => renderChart(true));
 $('#f-rate').querySelectorAll('button').forEach(b => b.addEventListener('click', () => { $('#f-rate').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b)); state.rate = b.dataset.v; renderTiles(); }));
@@ -2200,6 +2217,7 @@ const DD = {
   team: Dropdown($('#team'), (op, head) => { const c = CLUBS[op.value]; return `${c && c.logo && !head ? `<img src="${c.logo}" alt="">` : ''}<span>${c.name}</span>`; }),
   player: Dropdown($('#player'), (op, head) => { const p = team() && team().players[+op.value]; if (!p) return op.text; const n = nameOf(p.name); return head ? `#${p.dorsal || '–'} ${n.first} ${n.sur}` : `<span class="no">${p.dorsal || '–'}</span><span>${n.first} ${n.sur}</span><small>${t(p.position || '').slice(0, 7)}</small>`; }),
   cmpMe: Dropdown($('#cmp-me'), op => op.text),
+  cmpClub: Dropdown($('#cmp-club'), (op, head) => { const c = CLUBS[op.value]; if (!c) return op.text; return `${c.logo && !head ? `<img src="${c.logo}" alt="">` : ''}<span>${c.name}</span>`; }),
   cmp: Dropdown($('#cmp'), (op, head) => { if (!op.value) return op.text; const r = ROSTER.byPid[op.value]; if (!r) return op.text; const c = CLUBS[r.club], n = nameOf(r.name); return head ? `${n.first} ${n.sur}` : `${c && c.logo ? `<img src="${c.logo}" alt="">` : ''}<span class="no">${r.dorsal || '–'}</span><span>${n.first} ${n.sur}</span><small>${shortName(r.club)}</small>`; }),
   statGame: Dropdown($('#stat-game'), (op, head) => { if (op.value === 'all' || !team()) return op.text; const g = ds().games[+op.value]; if (!g) return op.text; const l = gameLabel(g); return head ? `${l.txt} · ${l.res} ${l.score}` : `<span>${l.txt}</span><small class="${l.res === 'W' ? 'w' : 'l'}">${l.res} ${l.score}</small>`; })
 };
