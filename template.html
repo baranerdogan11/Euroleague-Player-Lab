@@ -402,7 +402,7 @@ html[data-look="club"] .cmp-empty{background:var(--panel);border:1px solid var(-
 .caption b{font-family:var(--cond);font-weight:700;font-size:16px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink)}
 .legend{display:flex;gap:16px;font-size:12px;color:var(--muted)}
 .legend i{display:inline-block;width:11px;height:11px;border-radius:50%;vertical-align:-1px;margin-right:6px}
-.legend i.m{background:var(--hit,var(--club2))} .legend i.x{border:2px solid var(--miss)}
+.legend i.m{background:var(--hit,var(--club2))}.legend .lg-t{font-style:normal} .legend i.x{border:2px solid var(--miss)}
 /* season stats */
 .splits{display:grid;gap:10px;margin:4px 0 16px}
 .split{display:grid;grid-template-columns:52px 1fr 96px;align-items:center;gap:12px;font-variant-numeric:tabular-nums}
@@ -1297,7 +1297,7 @@ html[data-look="club"] body.cv-on .top{display:none}   /* the phone band rules s
   </div>
 </main>
 <header class="top">
-  <a class="id no-t" href="#" title="Back to the opening page">Player Lab<span>Euroleague <b id="tag-season"></b></span></a>
+  <a class="id no-t" href="#" title="Back to the opening page" data-ttitle="Back to the opening page">Player Lab<span>Euroleague <b id="tag-season"></b></span></a>
   <div class="sel team"><img id="crest-img" alt="" width="26" height="26"><select id="team" aria-label="Team"></select></div>
   <div class="sel player"><select id="player" aria-label="Player"></select></div>
   <div class="search"><input type="search" id="q" placeholder="Find a player" aria-label="Find a player across all clubs" autocomplete="off" spellcheck="false" role="combobox" aria-expanded="false" aria-controls="q-list" aria-autocomplete="list"><kbd>/</kbd><ul class="dd-list" id="q-list" role="listbox" aria-label="Players" hidden></ul><button type="button" class="q-x" id="q-x" aria-label="Close search" hidden>&times;</button></div>
@@ -1328,8 +1328,8 @@ html[data-look="club"] body.cv-on .top{display:none}   /* the phone band rules s
     <div class="ph"><div class="num" id="num"></div><img id="photo" alt="" width="360" height="480" decoding="async"></div>
     <div class="bio" id="bio"></div>
     <div class="lt">
-      <div class="tagrow"><div class="tag"><img id="club-logo" alt="" width="20" height="20"><span id="club-name"></span><span id="pos"></span></div><div class="pnav"><button type="button" id="prev" aria-label="Previous player" title="Previous player">&lsaquo;</button><button type="button" id="next" aria-label="Next player" title="Next player">&rsaquo;</button><button type="button" id="share" title="Copy a link to this player">Copy link</button><button type="button" id="embed" title="Copy an iframe that shows this player's shot chart on your own site">Embed</button></div></div>
-      <h1 id="name"><span id="nm"></span></h1>
+      <div class="tagrow"><div class="tag"><img id="club-logo" alt="" width="20" height="20"><span id="club-name" lang="en"></span><span id="pos"></span></div><div class="pnav"><button type="button" id="prev" aria-label="Previous player" title="Previous player">&lsaquo;</button><button type="button" id="next" aria-label="Next player" title="Next player">&rsaquo;</button><button type="button" id="share" title="Copy a link to this player">Copy link</button><button type="button" id="embed" title="Copy an iframe that shows this player's shot chart on your own site">Embed</button></div></div>
+      <h1 id="name" lang="en"><span id="nm"></span></h1>
       <div class="facts" id="facts"></div>
     </div>
   </section>
@@ -1369,7 +1369,7 @@ html[data-look="club"] body.cv-on .top{display:none}   /* the phone band rules s
           </div>
           <div class="empty" id="empty" hidden><div><b>No games yet</b><span id="empty-sub"></span></div></div>
         </div>
-        <div class="caption"><b id="cap" aria-live="polite"></b><div class="legend"><span><i class="m"></i>Made</span><span><i class="x"></i>Missed</span></div></div>
+        <div class="caption"><b id="cap" aria-live="polite"></b><div class="legend"><span><i class="m"></i><em class="lg-t">Made</em></span><span><i class="x"></i><em class="lg-t">Missed</em></span></div></div>
       </div>
     </section>
     <section class="panel prof" id="prof-panel" hidden style="margin-top:18px">
@@ -1477,7 +1477,7 @@ html[data-look="club"] body.cv-on .top{display:none}   /* the phone band rules s
       <p class="ln-foot" id="ln-foot"></p>
     </div>
   </section>
-  <div class="foot"><span><a href="monitor.html">System status</a> · <a href="feed.xml">Updates feed</a> · Data: Euroleague official feeds · Photos: Euroleague media days</span><span id="foot-status">Euroleague Player Lab</span></div>
+  <div class="foot"><span><a href="monitor.html">System status</a> · <a href="feed.xml">Updates feed</a> · <span>Data: Euroleague official feeds</span> · <span>Photos: Euroleague media days</span></span><span id="foot-status">Euroleague Player Lab</span></div>
 </div>
 <div class="tip" id="tip"></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -1501,7 +1501,9 @@ function i18nScan(){
   });
 }
 function applyLang(){
-  document.documentElement.lang = 'en';   // kept at 'en' on purpose: with lang="tr" the browser uppercases every i as İ (OLYMPİACOS), and the owner wants Latin capitals
+  // lang="tr" so the capitals of Turkish words come out right (İLK BEŞ, not ILK BEŞ); club, player and city names keep Latin
+  // capitals (OLYMPIACOS, not OLYMPİACOS) because every place that prints one wraps it in lang="en" (see EN below)
+  document.documentElement.lang = LANG === 'tr' ? 'tr' : 'en';
   document.documentElement.dataset.lang = LANG;
   document.querySelectorAll('[data-t]').forEach(el => { el.textContent = t(el.dataset.t); });
   for (const [a, k] of [['title', 'ttitle'], ['aria-label', 'tarialabel'], ['placeholder', 'tplaceholder']]) document.querySelectorAll(`[data-${k}]`).forEach(el => el.setAttribute(a, t(el.dataset[k])));
@@ -1520,8 +1522,16 @@ function setLang(l){
   if (typeof CLUB !== 'undefined' && document.body.classList.contains('cb-on')) CLUB.render();
   if (state.data) { renderOpener(); renderGames(); renderPlayer(); DD.team.refresh(); DD.player.refresh(); DD.statGame.refresh(); DD.cmp.refresh(); const n = nameOf(player().name); document.title = `${n.first} ${n.sur} · ${shortName(state.team)} · Player Lab`; }
 }
+// numbers in Turkish take a decimal comma and the percent sign in front (%47,4, not 47.4%). The pages print numbers with toFixed in
+// many places, so rather than touch each one the Turkish page rewrites every text node as it is drawn; thousands (7.082),
+// attributes, inputs and code are left as they are
+const trNum = s => s.replace(/(\d)\.(\d{1,2})(?!\d|\.\d)/g, '$1,$2').replace(/(?<![\w%.,])([+−-]?)(\d+(?:,\d+)?) ?%/g, '$1%$2');
+const trNumNode = n => { const v = n.nodeValue; if (!/\d[.%\s]/.test(v) || !n.parentElement || n.parentElement.closest('script, style, code, pre, textarea')) return; const w = trNum(v); if (w !== v) n.nodeValue = w; };
+const trNumTree = root => { if (root.nodeType === 3) return trNumNode(root); if (root.nodeType !== 1) return; const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT); let n; while ((n = w.nextNode())) trNumNode(n); };
+new MutationObserver(ms => { if (LANG !== 'tr') return; for (const m of ms) { if (m.type === 'characterData') trNumNode(m.target); else m.addedNodes.forEach(trNumTree); } }).observe(document.body, {childList: true, subtree: true, characterData: true});
 const CLUBS = Object.fromEntries(META.clubs.map(c => [c.code, c]));
 const shortName = code => (CLUBS[code] && CLUBS[code].short) || code;
+const EN = s => `<span lang="en">${s}</span>`;   // a club or player name inside Turkish text keeps Latin capitals (OLYMPIACOS)
 const PLACEHOLDER = "data:image/svg+xml;utf8," + encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 360 480'><defs><linearGradient id='g' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='#343841'/><stop offset='1' stop-color='#131519'/></linearGradient></defs><circle cx='180' cy='150' r='80' fill='url(#g)'/><path d='M40 480 C40 330 110 280 180 280 C250 280 320 330 320 480Z' fill='url(#g)'/></svg>`);
 const state = {team: null, data: null, player: 0, result: 'all', view: 'dots', game: 'all', rate: 'pg', ast: 'all', cmp: null, timers: [], accent: '#f26f21', base: '#1f2b47', hit: '#f26f21'};
 const cache = {};
@@ -1600,7 +1610,7 @@ function playerShots(){
   return ds().shots.filter(s => (state.game === 'all' || s[0] === +state.game) && (state.result === 'all' || (state.result === 'made') === !!s[3]) && (state.ast === 'all' || (s[3] && s[11] != null && (state.ast === 'ast') === (s[11] === 1))));
 }
 const realCode = () => team().real_code || team().code;
-const gameLabel = g => { const home = g.home === (g.own || realCode()), opp = home ? g.away : g.home, ts = home ? g.hs : g.as, os = home ? g.as : g.hs; return {opp: shortName(opp), home, res: ts > os ? t('W') : t('L'), score: `${ts}-${os}`, txt: `${t('R')}${g.round} · ${home ? t('vs') : '@'} ${shortName(opp)}`}; };
+const gameLabel = g => { const home = g.home === (g.own || realCode()), opp = home ? g.away : g.home, ts = home ? g.hs : g.as, os = home ? g.as : g.hs; return {opp: EN(shortName(opp)), home, win: ts > os, res: ts > os ? t('W') : t('L'), score: `${ts}-${os}`, txt: `${t('R')}${g.round} · ${home ? t('vs') : '@'} ${EN(shortName(opp))}`, plain: `${t('R')}${g.round} · ${home ? t('vs') : '@'} ${shortName(opp)}`}; };
 
 // ---- loading
 async function loadTeam(code){
@@ -1626,7 +1636,7 @@ function renderOpener(){
   const nx = tm.upcoming && tm.upcoming[0];
   $('#opener-cal').href = `cal/${state.team}.ics`;
   $('#opener-sub').textContent = nx ? `${t('Round {n}', {n: nx.round})} · ${nx.home === realCode() ? t('vs') + ' ' + shortName(nx.away) : '@ ' + shortName(nx.home)} · ${fmtDate(nx.date)}` : '';
-  $('#roster').innerHTML = tm.players.map((p, i) => { const n = nameOf(p.name); return `<a href="#${state.team}/${p.pid}" data-i="${i}"><i>${p.dorsal || ''}</i><img src="${p.photo || PLACEHOLDER}" alt="" loading="lazy" decoding="async"><b>${n.first} ${n.sur}</b><small>${t(p.position || '')}</small></a>`; }).join('');
+  $('#roster').innerHTML = tm.players.map((p, i) => { const n = nameOf(p.name); return `<a href="#${state.team}/${p.pid}" data-i="${i}"><i>${p.dorsal || ''}</i><img src="${p.photo || PLACEHOLDER}" alt="" loading="lazy" decoding="async"><b lang="en">${n.first} ${n.sur}</b><small>${t(p.position || '')}</small></a>`; }).join('');
 }
 function skeleton(){
   $('#nm').innerHTML = `<span class="sk">${t('Loading')}</span><span class="sk">${t('Player')}</span>`; $('#club-name').innerHTML = `<span class="sk">${t('Club name')}</span>`;
@@ -1643,7 +1653,7 @@ function renderPlayers(){
 }
 function renderGames(){
   const games = ds().games;
-  const html = games.length ? `<option value="all">${t('Season')} (${games.length})</option>` + games.map((g, i) => { const l = gameLabel(g); return `<option value="${i}">${l.txt} · ${l.res} ${l.score}</option>`; }).join('') : `<option value="all">${t('No games yet')}</option>`;
+  const html = games.length ? `<option value="all">${t('Season')} (${games.length})</option>` + games.map((g, i) => { const l = gameLabel(g); return `<option value="${i}">${l.plain} · ${l.res} ${l.score}</option>`; }).join('') : `<option value="all">${t('No games yet')}</option>`;
   const sel = $('#stat-game'); sel.innerHTML = html; sel.disabled = !games.length; sel.value = String(state.game);
 }
 // one game in view for the whole page: the stats band, the role tiles, the shot chart and the highlighted log row follow it
@@ -1658,7 +1668,7 @@ function renderTicker(){
   const up = (tm.upcoming || []).slice(0, 10);
   const medal = code => { const c = CLUBS[code]; return c && c.logo ? `<i class="medal"><img src="${c.logo}" alt="" loading="lazy"></i>` : ''; };   // the opponent crest, shown by the Club Edition strip only
   const results = d.log.slice(-5).map(r => { const g = games[r[0]], l = gameLabel(g); return `<span>${medal(l.home ? g.away : g.home)}${l.txt} <b class="${l.res === t('W') ? '' : 'l'}">${l.res} ${l.score}</b> · ${r[2]} ${t('pts')} · ${r[14]} PIR</span>`; });
-  const fixtures = up.map((g, i) => `<span>${medal(g.home === realCode() ? g.away : g.home)}${i === 0 ? t('Next') + ': ' : ''}${t('R')}${g.round} ${g.home === realCode() ? t('vs') + ' ' + shortName(g.away) : '@ ' + shortName(g.home)} · ${fmtDate(g.date)}</span>`);
+  const fixtures = up.map((g, i) => `<span>${medal(g.home === realCode() ? g.away : g.home)}${i === 0 ? t('Next') + ': ' : ''}${t('R')}${g.round} ${g.home === realCode() ? t('vs') + ' ' + EN(shortName(g.away)) : '@ ' + EN(shortName(g.home))} · ${fmtDate(g.date)}</span>`);
   let items = results.concat(fixtures);
   if (!items.length) items = [`<span>${t('The season has not started')}</span>`];
   $('#ticker-lab').textContent = t('Fixtures'); $('#ticker-lab').href = `cal/${state.team}.ics`;
@@ -1675,11 +1685,11 @@ function renderPlayer(){
   const dob = p.birth ? new Date(p.birth + 'T12:00:00').toLocaleDateString(LOCALE(), {day: 'numeric', month: 'long', year: 'numeric'}) : null;
   const yrs = s => s.from == null ? '' : s.to == null || s.to === s.from ? String(s.from) : `${s.from}-${String(s.to).slice(2)}`;
   const career = p.career || [], CAP = 7;
-  const spells = career.map((s, i) => `<li class="${i === 0 ? 'cur' : ''}${i >= CAP ? ' more' : ''}"><b title="${s.name}${s.league ? ' · ' + t(s.league) : ''}">${s.name}</b>${s.league ? `<i>${t(s.league)}</i>` : ''}<span>${yrs(s)}</span></li>`).join('');
+  const spells = career.map((s, i) => `<li class="${i === 0 ? 'cur' : ''}${i >= CAP ? ' more' : ''}"><b lang="en" title="${s.name}${s.league ? ' · ' + t(s.league) : ''}">${s.name}</b>${s.league ? `<i>${t(s.league)}</i>` : ''}<span>${yrs(s)}</span></li>`).join('');
   const cl = p.career_src === 'wikipedia' ? t('Career') : t('Euroleague career');
   $('#bio').innerHTML = `<dl>${dob ? `<div><dt>${t('Date of birth')}</dt><dd><span class="full">${dob}${a ? ` <small>${t('{n} yrs', {n: a})}</small>` : ''}</span><span class="short">${a ? t('{n} yrs', {n: a}) : dob}</span></dd></div>` : ''}${p.height ? `<div><dt>${t('Height')}</dt><dd>${p.height} cm</dd></div>` : ''}${p.weight ? `<div><dt>${t('Weight')}</dt><dd>${p.weight} kg</dd></div>` : ''}${spells ? `<div class="career"><dt>${cl}</dt><dd><details${PHONE.matches ? '' : ' open'}><summary>${cl} · ${plural(career.length, '{n} spell', '{n} spells')}</summary><ol>${spells}</ol>${career.length > CAP ? `<button type="button" class="lnk" id="bio-more">${t('Show all {n}', {n: career.length})}</button>` : ''}</details></dd></div>` : ''}</dl>`;
   const more = $('#bio-more'); if (more) more.addEventListener('click', () => { $('#bio').classList.toggle('all'); more.textContent = $('#bio').classList.contains('all') ? t('Show fewer') : t('Show all {n}', {n: career.length}); });
-  $('#facts').innerHTML = [p.country ? `<span>${p.country.replace('United States of America', 'USA')}</span>` : '',
+  $('#facts').innerHTML = [p.country ? `<span>${t(p.country.replace('United States of America', 'USA'))}</span>` : '',
     played ? `<span>${plural(tot.gp, '<b>{n}</b> game', '<b>{n}</b> games')}</span>${tot.starts ? `<span>${plural(tot.starts, '<b>{n}</b> start', '<b>{n}</b> starts')}</span>` : ''}<span><b>${f1(tot.min / gp)}</b> ${t('min')}</span>` : `<span>${t('<b>{n}</b> games', {n: 0})}</span>`].join('');
   // no minutes yet: the splits, zones and shot tools would be a page of dashes, so one line says when he plays instead
   const nx = tm.upcoming && tm.upcoming[0], nxTxt = nx ? `${t('Round {n}', {n: nx.round})} ${nx.home === realCode() ? t('vs') + ' ' + shortName(nx.away) : '@ ' + shortName(nx.home)} · ${fmtDate(nx.date)}` : null;
@@ -1691,7 +1701,7 @@ function renderPlayer(){
   const fga = tot.fga2 + tot.fga3, ts = (fga + 0.44 * tot.fta) ? tot.pts / (2 * (fga + 0.44 * tot.fta)) : 0;
   const rows = [['2P', tot.fgm2, tot.fga2, tot.fga2 ? tot.fgm2 / tot.fga2 : 0], ['3P', tot.fgm3, tot.fga3, tot.fga3 ? tot.fgm3 / tot.fga3 : 0], ['FG', tot.fgm2 + tot.fgm3, fga, fga ? (tot.fgm2 + tot.fgm3) / fga : 0], ['FT', tot.ftm, tot.fta, tot.ftm / (tot.fta || 1)], ['TS', null, null, ts, fga + 0.44 * tot.fta]];
   const lgs = LG ? {'2P': LG.splits.fg2, '3P': LG.splits.fg3, 'FG': LG.splits.fg, 'FT': LG.splits.ft, 'TS': LG.splits.ts} : {};
-  $('#splits').innerHTML = rows.map(([k, m, at, v, sp]) => { const w = m !== null && at ? wilson(m, at) : null, small = (m !== null && at > 0 && at < MIN_ATT) || (sp != null && sp > 0 && sp < MIN_ATT), lg = lgs[k]; return `<div class="split${small ? ' small' : ''}" data-tip="${m !== null && at ? `${t('{m} of {a}', {m, a: at})} · ${ival(m, at)}${small ? ' · ' + t('small sample') : ''}` : sp != null ? `${t('{pts} points on {n} shooting possessions', {pts: tot.pts, n: sp.toFixed(1)})}${small ? ' · ' + t('small sample') : ''} · ${t('points per shooting possession, halved; free throws count 0.44 of a possession, so a perfect night can pass 100%')}` : ''}${lg != null ? ` · ${t('league')} ${(100 * lg).toFixed(1)}%` : ''}"><span class="k">${k}%</span><div class="bar"><i class="fill" style="width:${played ? Math.min(100, v * 100) : 0}%"></i></div><div class="v"><b>${played ? (v * 100).toFixed(1) : '–'}</b>${m !== null && played ? `${m}/${at}` : ''}</div></div>`; }).join('');
+  $('#splits').innerHTML = rows.map(([k, m, at, v, sp]) => { const w = m !== null && at ? wilson(m, at) : null, small = (m !== null && at > 0 && at < MIN_ATT) || (sp != null && sp > 0 && sp < MIN_ATT), lg = lgs[k]; return `<div class="split${small ? ' small' : ''}" data-tip="${m !== null && at ? `${t('{m} of {a}', {m, a: at})} · ${ival(m, at)}${small ? ' · ' + t('small sample') : ''}` : sp != null ? `${t('{pts} points on {n} shooting possessions', {pts: tot.pts, n: sp.toFixed(1)})}${small ? ' · ' + t('small sample') : ''} · ${t('points per shooting possession, halved; free throws count 0.44 of a possession, so a perfect night can pass 100%')}` : ''}${lg != null ? ` · ${t('league')} ${(100 * lg).toFixed(1)}%` : ''}"><span class="k">${t(k + '%')}</span><div class="bar"><i class="fill" style="width:${played ? Math.min(100, v * 100) : 0}%"></i></div><div class="v"><b>${played ? (v * 100).toFixed(1) : '–'}</b>${m !== null && played ? `${m}/${at}` : ''}</div></div>`; }).join('');
   const lg = $('#log tbody');
   const RT = META.ratings || {};
   // club games he missed sit in the log too: DNP (in the box, no minutes) or not in the squad
@@ -1730,7 +1740,7 @@ function renderRole(){
   if (!r || !tot.gp) { el.hidden = true; $('#role-foot').hidden = true; return; }
   el.hidden = false; $('#role-foot').hidden = true;
   const ts = tsOf(tot.pts, tot.fga2 + tot.fga3, tot.fta);
-  const posN = t(d.pos_group ? d.pos_group + 's' : 'players'), lowPos = s => s.toLowerCase();
+  const posN = t(LANG === 'tr' ? d.pos_group || 'player' : d.pos_group ? d.pos_group + 's' : 'players'), lowPos = s => s.toLocaleLowerCase(LOCALE());   // these follow a count: Turkish keeps the singular (80 forvet)
   const items = [['usg', t('Usage'), r.usg, '%', t('share of team possessions he ends with a shot, free throws or a turnover while on court')], ['ts', t('True shooting'), ts != null ? (100 * ts).toFixed(1) : null, '%', `${t('points per shooting possession, halved so 50% is a coin flip; free throws count 0.44 of a possession, so a perfect night can pass 100%')}${(tot.fga2 + tot.fga3 + 0.44 * tot.fta) < MIN_ATT ? ' · ' + t('small sample') : ''}`],
     ['ast_pct', t('Assist rate'), r.ast_pct, '%', t('share of teammate field goals he assisted while on court')], ['tov_pct', t('Turnover rate'), r.tov_pct, '%', t('turnovers per 100 plays he used')],
     ['reb_pct', t('Rebound rate'), r.reb_pct, '%', t('share of available rebounds he took while on court')], ['plusminus', row ? '+/-' : t('+/- per game'), row ? (row[15] ?? null) : tot.gp ? Math.round(10 * (tot.plusminus || 0) / tot.gp) / 10 : null, '', row ? t('team score margin while he was on court in this game') : t('team score margin while he was on court, per game ({pm} over {n} games)', {pm: ((tot.plusminus || 0) >= 0 ? '+' : '') + (tot.plusminus || 0), n: tot.gp})]];
@@ -1825,7 +1835,7 @@ function renderCompareOptions(){
 const cmpInk = base => (lum(base) + .05) / (lum('#0b0d10') + .05) >= 1.05 / (lum(base) + .05) ? '#0b0d10' : '#ffffff';
 function cmpWho(side, p, club, c){
   const k = CLUBS[club] || {}, n = nameOf(p.name), gp = c && c.tot ? c.tot.gp : 0, posT = c && c.pos_group ? t(c.pos_group) : (p.pos ? t(p.pos) : '');
-  $(`#cmp-who-${side}`).innerHTML = `<div class="cmp-club"><span class="medal"><img src="${k.logo || ''}" alt="" width="28" height="28"></span>${k.name || club}</div><p class="cmp-nm">${n.first}<b>${n.sur}</b></p><div class="cmp-line">${[shortName(club), p.dorsal ? '#' + p.dorsal : null, posT, c && c.tot ? t('<b>{n}</b> games', {n: gp}).replace(/<\/?b>/g, '') : null].filter(Boolean).join(' · ')}</div>`;
+  $(`#cmp-who-${side}`).innerHTML = `<div class="cmp-club"><span class="medal"><img src="${k.logo || ''}" alt="" width="28" height="28"></span>${EN(k.name || club)}</div><p class="cmp-nm" lang="en">${n.first}<b>${n.sur}</b></p><div class="cmp-line">${[EN(shortName(club)), p.dorsal ? '#' + p.dorsal : null, posT, c && c.tot ? t('<b>{n}</b> games', {n: gp}).replace(/<\/?b>/g, '') : null].filter(Boolean).join(' · ')}</div>`;
   const root = $('#cmp-panel'), i = side === 'l' ? 1 : 2;
   root.style.setProperty(`--cb${i}`, k.base || '#1f2b47'); root.style.setProperty(`--ca${i}`, k.accent || '#f26f21'); root.style.setProperty(`--ci${i}`, cmpInk(k.base || '#1f2b47'));
 }
@@ -1876,7 +1886,7 @@ async function renderCompare(){
   const diet = (c, side) => { const q = z(c), tot = Object.values(q).reduce((s, v) => s + v.a, 0); if (tot < MIN_ATT) return null; const sh = {paint: (q.rim.a + q.paint.a) / tot, mid: q.mid.a / tot, c3: q.c3.a / tot, a3: q.a3.a / tot}; return {sh, tot}; };
   const court = (nm, k, dt, base) => { const P = v => (100 * v).toFixed(0) + '%';
     const z = (x, y, w, h, v) => `<rect class="zn" x="${x}" y="${y}" width="${w}" height="${h}" rx="4" fill="${base}" opacity="${(0.08 + 0.55 * v).toFixed(2)}"/>`;
-    return `<div class="cmp-court"><h4><i style="background:${base}"></i>${nm}</h4><svg viewBox="0 0 300 282" role="img" aria-label="${t('Shot diet')} · ${nm}">
+    return `<div class="cmp-court"><h4><i style="background:${base}"></i>${nm}</h4><svg viewBox="0 0 300 282" role="img" aria-label="${t('Shot diet')} · ${nm.replace(/<[^>]+>/g, '')}">
       ${z(101, 166, 98, 116, dt.sh.paint)}${z(60, 96, 180, 64, dt.sh.mid)}${z(2, 196, 40, 86, dt.sh.c3)}${z(258, 196, 40, 86, dt.sh.c3)}${z(60, 10, 180, 80, dt.sh.a3)}
       <rect class="ln" x="1" y="1" width="298" height="280"/><rect class="ln" x="101" y="166" width="98" height="116"/><path class="ln" d="M18 282V222A135 135 0 0 1 282 222V282"/><path class="ln" d="M125 250.5a25 25 0 0 1 50 0"/><circle class="ln" cx="150" cy="166" r="30"/><circle cx="150" cy="250.5" r="4" fill="none" stroke="${base}" stroke-width="2"/>
       <text class="n" x="150" y="218" text-anchor="middle">${P(dt.sh.paint)}</text><text x="150" y="234" text-anchor="middle">${t('Paint')}</text>
@@ -1886,8 +1896,8 @@ async function renderCompare(){
     </svg><div class="cmp-dz"><div><b>${P(dt.sh.paint)}</b><span>${t('Paint')}</span></div><div><b>${P(dt.sh.mid)}</b><span>${t('Mid-range')}</span></div><div><b>${P(dt.sh.c3)}</b><span>${t('Corner 3')}</span></div><div><b>${P(dt.sh.a3)}</b><span>${t('Above-break 3')}</span></div></div></div>`; };
   const d1 = diet(d), d2 = diet(other.cur), k1 = CLUBS[state.team] || {}, k2 = CLUBS[r.club] || {};
   $('#cmp-diet-t').textContent = t('Shot diet'); $('#cmp-diet-sub').textContent = t('Share of attempts by zone this season; darker means more of his shots come from there.');
-  $('#cmp-diet').innerHTML = (d1 ? court(`${nameOf(me.name).first} ${nameOf(me.name).sur}`, 1, d1, k1.base || '#1f2b47') : `<div class="cmp-court"><h4>${nameOf(me.name).sur}</h4><p class="sub">${t('Fewer than {n} attempts', {n: MIN_ATT})}</p></div>`) + (d2 ? court(`${nameOf(other.name).first} ${nameOf(other.name).sur}`, 2, d2, k2.base || '#1f2b47') : `<div class="cmp-court"><h4>${nameOf(other.name).sur}</h4><p class="sub">${t('Fewer than {n} attempts', {n: MIN_ATT})}</p></div>`);
-  $('#cmp-acts').innerHTML = `<a class="a1" href="#${state.team}/${me.pid}">${t("Open {name}'s page", {name: nameOf(me.name).sur})}</a><a class="a2" href="#${r.club}/${r.pid}">${t("Open {name}'s page", {name: nameOf(other.name).sur})}</a><button type="button" id="cmp-copy">${t('Copy link')}</button>`;
+  $('#cmp-diet').innerHTML = (d1 ? court(EN(`${nameOf(me.name).first} ${nameOf(me.name).sur}`), 1, d1, k1.base || '#1f2b47') : `<div class="cmp-court"><h4 lang="en">${nameOf(me.name).sur}</h4><p class="sub">${t('Fewer than {n} attempts', {n: MIN_ATT})}</p></div>`) + (d2 ? court(EN(`${nameOf(other.name).first} ${nameOf(other.name).sur}`), 2, d2, k2.base || '#1f2b47') : `<div class="cmp-court"><h4 lang="en">${nameOf(other.name).sur}</h4><p class="sub">${t('Fewer than {n} attempts', {n: MIN_ATT})}</p></div>`);
+  $('#cmp-acts').innerHTML = `<a class="a1" href="#${state.team}/${me.pid}">${t("Open {name}'s page", {name: EN(nameOf(me.name).sur)})}</a><a class="a2" href="#${r.club}/${r.pid}">${t("Open {name}'s page", {name: EN(nameOf(other.name).sur)})}</a><button type="button" id="cmp-copy">${t('Copy link')}</button>`;
   $('#cmp-copy').addEventListener('click', async () => { try { await navigator.clipboard.writeText(location.href); toast(t('Link copied')); } catch (e) {} });
   page.hidden = false;
 }
@@ -1941,7 +1951,7 @@ function renderChart(animate){
   $('#zones tbody').innerHTML = ['rim', 'paint', 'mid'].map(k => zoneRow(k, ZONES[k], zs[k])).join('')
     + `<tr class="grp"><td colspan="7">${t('3 point shooting')}</td></tr>`
     + zoneRow('c3', ZONES.c3, zs.c3, 'sub') + zoneRow('a3', ZONES.a3, zs.a3, 'sub') + zoneRow('three', t('All 3s'), threes, 'tot');
-  $('#zone-cap').textContent = `${t('Shooting by zone')} · ${state.game === 'all' ? t('all games') : gameLabel(games[+state.game]).txt}${LG ? ` · ${t('league')} ${seasonLabel(LG.season)}` : ''}`;
+  $('#zone-cap').innerHTML = `${t('Shooting by zone')} · ${state.game === 'all' ? t('all games') : gameLabel(games[+state.game]).txt}${LG ? ` · ${t('league')} ${seasonLabel(LG.season)}` : ''}`;
   renderTiming(tableShots); renderDiet(zs, tableShots.length);
   const empty = $('#empty');
   const is3d = state.view === '3d';
@@ -1965,7 +1975,7 @@ function renderChart(animate){
       <circle class="zone" cx="${X(0)}" cy="${Y(0)}" r="150" fill="${col('rim', zs.rim.m, zs.rim.a)}"/>`;
     svg.querySelector('#labels-layer').innerHTML = `${lab('a3', X(0), Y(820))}${lab('c3', X(-705), Y(30), true)}${lab('c3', X(705), Y(30), true)}${lab('mid', X(-430), Y(330))}${lab('paint', X(0), Y(300))}${lab('rim', X(0), Y(70))}`;
     svg.querySelector('.paint').style.display = 'none';
-    const zm = tableShots.filter(s => s[3]).length; $('#cap').textContent = `${zm} / ${tableShots.length} ${t('made')} · ${pct(zm, tableShots.length)}${state.game !== 'all' ? ' · ' + gameLabel(games[+state.game]).txt : ''}`;
+    const zm = tableShots.filter(s => s[3]).length; $('#cap').innerHTML = `${zm} / ${tableShots.length} ${t('made')} · ${pct(zm, tableShots.length)}${state.game !== 'all' ? ' · ' + gameLabel(games[+state.game]).txt : ''}`;
     return;
   }
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -1984,11 +1994,11 @@ function renderChart(animate){
       el.addEventListener('mouseleave', () => { if (!tip.pin) hideTip(); });
       el.addEventListener('click', e => { e.stopPropagation(); if (tip.pin === el) { tip.pin = null; hideTip(); } else { tip.pin = el; showTip(e, html); } });   // a tap pins the tooltip until the next tap
       layer.appendChild(el);
-      if (step) capEl.textContent = `${l.txt} · ${i + 1} / ${shots.length}`;
+      if (step) capEl.innerHTML = `${l.txt} · ${i + 1} / ${shots.length}`;
     };
     if (step) state.timers.push(setTimeout(draw, i * step)); else draw();
   });
-  const done = () => { const m = shots.filter(s => s[3]).length; capEl.textContent = shots.length ? `${m} / ${shots.length} ${t('made')} · ${pct(m, shots.length)}${state.game !== 'all' ? ' · ' + gameLabel(games[+state.game]).txt : ''}` : t('No attempts in this selection'); };
+  const done = () => { const m = shots.filter(s => s[3]).length; capEl.innerHTML = shots.length ? `${m} / ${shots.length} ${t('made')} · ${pct(m, shots.length)}${state.game !== 'all' ? ' · ' + gameLabel(games[+state.game]).txt : ''}` : t('No attempts in this selection'); };
   if (step) state.timers.push(setTimeout(done, shots.length * step + 200)); else done();
 }
 
@@ -2085,7 +2095,7 @@ const Shot3D = (() => {
         f.ball.position.lerpVectors(f.release, f.end, u); f.ball.position.y = f.release.y + (f.end.y - f.release.y) * u + 4 * f.apex * u * (1 - u); f.ball.rotation.x += dt * 9;
         if (f.t >= 1) {
           f.phase = 1; mark(f.s); if (!f.s[3]) f.ball.material = R.missBall;
-          const l = S.labelOf(f.s); $('#cap').textContent = `${l.txt} · ${S.seen} / ${S.list.length}`;
+          const l = S.labelOf(f.s); $('#cap').innerHTML = `${l.txt} · ${S.seen} / ${S.list.length}`;
         }
       } else {
         f.post += dt;
@@ -2190,7 +2200,7 @@ document.querySelectorAll('.scroll').forEach(el => el.addEventListener('scroll',
 addEventListener('resize', scrollEnds);
 let toastT; function toast(msg){ const t = $('#toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('on'), 2200); }
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
-const tipOf = t => esc(t.dataset.tip);
+const tipOf = el => esc(t(el.dataset.tip));   // static tips carry their English as the key, drawn ones are already translated
 document.addEventListener('mouseover', e => { const t = e.target.closest('[data-tip]'); if (t && !tip.pin) showTip(e, tipOf(t)); });
 document.addEventListener('mousemove', e => { if (!tip.pin && e.target.closest('[data-tip]')) moveTip(e); });
 document.addEventListener('mouseout', e => { const t = e.target.closest('[data-tip]'); if (t && !tip.pin && !(e.relatedTarget && t.contains(e.relatedTarget))) hideTip(); });
@@ -2243,12 +2253,12 @@ $('#f-rate').querySelectorAll('button').forEach(b => b.addEventListener('click',
   }));
 });
 const DD = {
-  team: Dropdown($('#team'), (op, head) => { const c = CLUBS[op.value]; return `${c && c.logo && !head ? `<img src="${c.logo}" alt="">` : ''}<span>${c.name}</span>`; }),
-  player: Dropdown($('#player'), (op, head) => { const p = team() && team().players[+op.value]; if (!p) return op.text; const n = nameOf(p.name); return head ? `#${p.dorsal || '–'} ${n.first} ${n.sur}` : `<span class="no">${p.dorsal || '–'}</span><span>${n.first} ${n.sur}</span><small>${t(p.position || '').slice(0, 7)}</small>`; }),
-  cmpMe: Dropdown($('#cmp-me'), op => op.text),
-  cmpClub: Dropdown($('#cmp-club'), (op, head) => { const c = CLUBS[op.value]; if (!c) return op.text; return `${c.logo && !head ? `<img src="${c.logo}" alt="">` : ''}<span>${c.name}</span>`; }),
-  cmp: Dropdown($('#cmp'), (op, head) => { if (!op.value) return op.text; const r = ROSTER.byPid[op.value]; if (!r) return op.text; const c = CLUBS[r.club], n = nameOf(r.name); return head ? `${n.first} ${n.sur}` : `${c && c.logo ? `<img src="${c.logo}" alt="">` : ''}<span class="no">${r.dorsal || '–'}</span><span>${n.first} ${n.sur}</span><small>${shortName(r.club)}</small>`; }),
-  statGame: Dropdown($('#stat-game'), (op, head) => { if (op.value === 'all' || !team()) return op.text; const g = ds().games[+op.value]; if (!g) return op.text; const l = gameLabel(g); return head ? `${l.txt} · ${l.res} ${l.score}` : `<span>${l.txt}</span><small class="${l.res === 'W' ? 'w' : 'l'}">${l.res} ${l.score}</small>`; })
+  team: Dropdown($('#team'), (op, head) => { const c = CLUBS[op.value]; return `${c && c.logo && !head ? `<img src="${c.logo}" alt="">` : ''}<span lang="en">${c.name}</span>`; }),
+  player: Dropdown($('#player'), (op, head) => { const p = team() && team().players[+op.value]; if (!p) return op.text; const n = nameOf(p.name); return head ? `#${p.dorsal || '–'} ${EN(`${n.first} ${n.sur}`)}` : `<span class="no">${p.dorsal || '–'}</span><span lang="en">${n.first} ${n.sur}</span><small>${t(p.position || '').slice(0, 7)}</small>`; }),
+  cmpMe: Dropdown($('#cmp-me'), op => EN(op.text)),
+  cmpClub: Dropdown($('#cmp-club'), (op, head) => { const c = CLUBS[op.value]; if (!c) return op.text; return `${c.logo && !head ? `<img src="${c.logo}" alt="">` : ''}<span lang="en">${c.name}</span>`; }),
+  cmp: Dropdown($('#cmp'), (op, head) => { if (!op.value) return op.text; const r = ROSTER.byPid[op.value]; if (!r) return op.text; const c = CLUBS[r.club], n = nameOf(r.name); return head ? EN(`${n.first} ${n.sur}`) : `${c && c.logo ? `<img src="${c.logo}" alt="">` : ''}<span class="no">${r.dorsal || '–'}</span><span lang="en">${n.first} ${n.sur}</span><small lang="en">${shortName(r.club)}</small>`; }),
+  statGame: Dropdown($('#stat-game'), (op, head) => { if (op.value === 'all' || !team()) return op.text; const g = ds().games[+op.value]; if (!g) return op.text; const l = gameLabel(g); return head ? `${l.txt} · ${l.res} ${l.score}` : `<span>${l.txt}</span><small class="${l.win ? 'w' : 'l'}">${l.res} ${l.score}</small>`; })
 };
 // ---- player search across every club: name, club and code, accents folded
 const fold = s => (s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
@@ -2260,7 +2270,7 @@ function bindSearch(q, list){
   const close = () => { list.hidden = true; q.setAttribute('aria-expanded', 'false'); q.removeAttribute('aria-activedescendant'); hi = -1; };
   const mark = () => { [...list.children].forEach((li, i) => { li.classList.toggle('hi', i === hi); li.setAttribute('aria-selected', i === hi); }); if (hi >= 0) q.setAttribute('aria-activedescendant', `q-opt-${hi}`); else q.removeAttribute('aria-activedescendant'); };
   const go = x => { location.hash = `${x.r.club}/${x.r.pid}`; q.value = ''; close(); q.blur(); $('.top').classList.remove('q-on'); };
-  const show = () => { if (!q.value.trim()) { close(); return; } hits = findPlayers(q.value); list.innerHTML = hits.length ? hits.map((x, i) => { const c = CLUBS[x.r.club] || {}; return `<li role="option" id="q-opt-${i}" data-i="${i}" aria-selected="false">${c.logo ? `<img src="${c.logo}" alt="">` : ''}<span class="no">${x.r.dorsal || '–'}</span><span>${x.n.first} ${x.n.sur}</span><small>${shortName(x.r.club)}</small></li>`; }).join('') : `<li class="none">${t('No player matches')}</li>`; list.hidden = false; fitList(list); q.setAttribute('aria-expanded', 'true'); hi = hits.length ? 0 : -1; mark(); };
+  const show = () => { if (!q.value.trim()) { close(); return; } hits = findPlayers(q.value); list.innerHTML = hits.length ? hits.map((x, i) => { const c = CLUBS[x.r.club] || {}; return `<li role="option" id="q-opt-${i}" data-i="${i}" aria-selected="false">${c.logo ? `<img src="${c.logo}" alt="">` : ''}<span class="no">${x.r.dorsal || '–'}</span><span lang="en">${x.n.first} ${x.n.sur}</span><small lang="en">${shortName(x.r.club)}</small></li>`; }).join('') : `<li class="none">${t('No player matches')}</li>`; list.hidden = false; fitList(list); q.setAttribute('aria-expanded', 'true'); hi = hits.length ? 0 : -1; mark(); };
   q.addEventListener('input', show); q.addEventListener('focus', show);
   if (q.id === 'q') {
     $('#q-btn').addEventListener('click', () => { $('.top').classList.add('q-on'); $('#q-x').hidden = false; q.focus(); });   // phones: the field opens over the bar from the icon
@@ -2288,7 +2298,7 @@ const COVER = (() => {
   $('#cv-season').textContent = META.label;
   const st = META.status || {};
   // each club card carries its own colourway (--cb base, --ca accent) for the strip at its edge; the country is shown by the Club Edition look only
-  $('#cv-clubs').innerHTML = META.clubs.map(c => `<a href="#${c.code}" title="${c.name}" style="--cb:${c.base || '#1f2b47'};--ca:${c.accent || '#f26f21'}"><span class="medal"><img src="${c.logo || ''}" alt="" width="34" height="34" loading="lazy" decoding="async"></span><span class="txt"><span class="nm">${c.short || c.code}</span><span class="co">${t(c.country || '')}</span></span></a>`).join('');
+  $('#cv-clubs').innerHTML = META.clubs.map(c => `<a href="#${c.code}" title="${c.name}" style="--cb:${c.base || '#1f2b47'};--ca:${c.accent || '#f26f21'}"><span class="medal"><img src="${c.logo || ''}" alt="" width="34" height="34" loading="lazy" decoding="async"></span><span class="txt"><span class="nm" lang="en">${c.short || c.code}</span><span class="co">${t(c.country || '')}</span></span></a>`).join('');
   const rounds = META.leaders && META.leaders.rounds;
   const last = (() => { try { return JSON.parse(localStorage.getItem('pl-last')); } catch (e) { return null; } })();
   const go = $('#cv-go');
@@ -2328,9 +2338,9 @@ const STAND = (() => {
     if (nr && nextWanted !== nr) { nextWanted = nr; nextRound = null; const code = lead.code;
       const take = d => { const g = (d.upcoming || []).filter(x => x.round === nr).sort((a, b) => a.date < b.date ? -1 : 1)[0]; nextRound = g ? {round: nr, date: g.date} : null; if (nextWanted === nr) render(); };
       if (cache[code]) take(cache[code]); else fetch(`${META.path}${code}.json?v=${encodeURIComponent(META.built || '')}`).then(r => r.ok ? r.json() : null).then(d => { if (d) { cache[code] = d; take(d); } }).catch(() => {}); }
-    box.innerHTML = `<div class="st-tile"><span class="lab">${t('Leader')}</span><span class="val"><a href="#${lead.code}"><span class="medal" style="border-color:${c.accent || '#f26f21'}"><img src="${c.logo || ''}" alt="" width="26" height="26"></span><span>${c.short || lead.code}</span></a><em>${lead.w}-${lead.l}</em></span><span class="note">${lead.l === 0 ? t('Unbeaten') : t('{n} wins', {n: lead.w})} · ${c.city ? c.city[0] + c.city.slice(1).toLowerCase() : ''}</span></div>`
-      + `<div class="st-tile"><span class="lab">${t('Best net')}</span><span class="val"><em>${best.diff > 0 ? '+' : ''}${best.diff}</em><span>${bc.short || best.code}</span></span><span class="note">${t('{v} a game', {v: (best.diff > 0 ? '+' : '') + (best.diff / best.gp).toFixed(1)})}</span></div>`
-      + (nr && nextRound ? `<div class="st-tile"><span class="lab">${t('Next round')}</span><span class="val"><span>R${nextRound.round}</span></span><span class="note">${fmtDate(nextRound.date)}</span></div>` : nr ? `<div class="st-tile"><span class="lab">${t('Next round')}</span><span class="val"><span>R${nr}</span></span><span class="note">&nbsp;</span></div>` : '');
+    box.innerHTML = `<div class="st-tile"><span class="lab">${t('Leader')}</span><span class="val"><a href="#${lead.code}"><span class="medal" style="border-color:${c.accent || '#f26f21'}"><img src="${c.logo || ''}" alt="" width="26" height="26"></span><span lang="en">${c.short || lead.code}</span></a><em>${lead.w}-${lead.l}</em></span><span class="note">${lead.l === 0 ? t('Unbeaten') : t('{n} wins', {n: lead.w})} · ${c.city ? t(cap(c.city)) : ''}</span></div>`
+      + `<div class="st-tile"><span class="lab">${t('Best net')}</span><span class="val"><em>${best.diff > 0 ? '+' : ''}${best.diff}</em><span lang="en">${bc.short || best.code}</span></span><span class="note">${t('{v} a game', {v: (best.diff > 0 ? '+' : '') + (best.diff / best.gp).toFixed(1)})}</span></div>`
+      + (nr && nextRound ? `<div class="st-tile"><span class="lab">${t('Next round')}</span><span class="val"><span>${t('R')}${nextRound.round}</span></span><span class="note">${fmtDate(nextRound.date)}</span></div>` : nr ? `<div class="st-tile"><span class="lab">${t('Next round')}</span><span class="val"><span>${t('R')}${nr}</span></span><span class="note">&nbsp;</span></div>` : '');
     box.hidden = false;
   }
   function render(){
@@ -2341,7 +2351,7 @@ const STAND = (() => {
     $('#st-body').innerHTML = S.map(r => { const c = CLUBS[r.code] || {}, me = state.team === r.code;
       const form = r.form.map(w => `<i class="${w ? 'w' : 'l'}" title="${w ? t('W') : t('L')}">${w ? t('W') : t('L')}</i>`).join('');
       const streak = r.streak ? `${r.streak > 0 ? t('W') : t('L')}${Math.abs(r.streak)}` : '–';
-      return `<tr class="${me ? 'me' : ''}${r.pos === 6 || r.pos === 10 ? ' cut' : ''}" style="--cb:${c.base || '#8a919f'};--ca:${c.accent || '#f26f21'}"><td>${r.pos}</td><td class="club"><a href="#${r.code}"><span class="medal"><img src="${c.logo || ''}" alt="" width="24" height="24" loading="lazy"></span><span class="full">${c.name || r.code}</span><span class="short">${c.short || r.code}</span></a></td><td class="k w">${r.w}</td><td class="l">${r.l}</td><td class="${r.diff > 0 ? 'up' : r.diff < 0 ? 'down' : ''}">${r.diff > 0 ? '+' : ''}${r.diff}</td><td><span class="form">${form || '–'}</span></td><td>${r.pf}</td><td>${r.pa}</td><td>${r.hw}-${r.hl}</td><td>${r.aw}-${r.al}</td><td class="${r.streak > 0 ? 'up' : r.streak < 0 ? 'down' : ''}">${streak}</td></tr>${cutrow(r.pos)}`; }).join('');
+      return `<tr class="${me ? 'me' : ''}${r.pos === 6 || r.pos === 10 ? ' cut' : ''}" style="--cb:${c.base || '#8a919f'};--ca:${c.accent || '#f26f21'}"><td>${r.pos}</td><td class="club"><a href="#${r.code}"><span class="medal"><img src="${c.logo || ''}" alt="" width="24" height="24" loading="lazy"></span><span class="full" lang="en">${c.name || r.code}</span><span class="short" lang="en">${c.short || r.code}</span></a></td><td class="k w">${r.w}</td><td class="l">${r.l}</td><td class="${r.diff > 0 ? 'up' : r.diff < 0 ? 'down' : ''}">${r.diff > 0 ? '+' : ''}${r.diff}</td><td><span class="form">${form || '–'}</span></td><td>${r.pf}</td><td>${r.pa}</td><td>${r.hw}-${r.hl}</td><td>${r.aw}-${r.al}</td><td class="${r.streak > 0 ? 'up' : r.streak < 0 ? 'down' : ''}">${streak}</td></tr>${cutrow(r.pos)}`; }).join('');
     $('#st-foot').hidden = true;   // the ordering note under the table was removed at the owner's request
   }
   return {
@@ -2387,7 +2397,7 @@ const LINE = (() => {
     const head = `<tr><th>#</th><th class="l"></th><th class="l">${t('Lineup')}</th><th class="ph">${t('G')}</th><th>${t('Min')}</th><th class="ph dim">${t('Poss')}</th><th class="ph">${t('ORtg')}</th><th class="ph">${t('DRtg')}</th><th>${t('Net')}</th><th class="ph dim">+/-</th></tr>`;
     const maxN = Math.max(1, ...L.map(l => Math.abs(l.n || 0))), most = L.reduce((a, l) => l.s > a.s ? l : a, L[0]);   // the net bar is scaled to the largest |net| in view; the most-used five gets a chip
     const body = L.map((l, i) => { const c = CLUBS[l.c] || {}, me = state.team === l.c && st.club === 'all';
-      const names = l.p.map(pid => link(pid, l.c, `<span class="full">${nm(pid)}</span><span class="short">${sur(pid)}</span>`)).join(' <i>·</i> ');
+      const names = l.p.map(pid => link(pid, l.c, `<span class="full" lang="en">${nm(pid)}</span><span class="short" lang="en">${sur(pid)}</span>`)).join(' <i>·</i> ');
       return `<tr class="${me ? 'me' : ''}" style="--ca:${c.accent || '#f26f21'}"><td>${i + 1}</td><td class="crest"><a href="#${l.c}" title="${c.name || l.c}"><span class="medal"><img src="${c.logo || ''}" alt="" width="24" height="24" loading="lazy"></span></a></td><td class="five l">${names}${l === most && L.length > 1 ? `<span class="chip">${t('Most used')}</span>` : ''}</td><td class="ph">${l.g}</td><td>${num(l.s / 60)}</td><td class="ph dim">${l.poss}</td><td class="ph">${num(l.o)}</td><td class="ph">${num(l.d)}</td><td class="k bar-cell${sign(l.n)}">${num(l.n, true)}<span class="nbar"><i style="width:${Math.round(100 * Math.abs(l.n || 0) / maxN)}%"></i></span></td><td class="ph dim">${int(l.pts - l.opp, true)}</td></tr>`; }).join('');
     return `<table class="ln-tab"><thead>${head}</thead><tbody>${body}</tbody></table>`;
   }
@@ -2400,7 +2410,7 @@ const LINE = (() => {
     const head = `<tr><th>#</th><th class="l"></th><th class="l">${t('Player')}</th><th class="ph">${t('G')}</th><th>${t('Min on')}</th><th class="ph dim">${t('Min off')}</th><th>${t('Net on')}</th><th>${t('Net off')}</th><th>${t('On − off')}</th><th class="ph">${t('ORtg on / off')}</th><th class="ph">${t('DRtg on / off')}</th><th class="ph dim">${t('+/- on / off')}</th></tr>`;
     const body = P.map((p, i) => { const c = CLUBS[p.club] || {}, me = state.team === p.club && st.club === 'all';
       const on = Math.abs(p.on.n || 0), off = Math.abs(p.off.n || 0), tot = on + off || 1;   // the two-colour bar: how much of the swing is the floor time against the bench time
-      return `<tr class="${me ? 'me' : ''}" style="--ca:${c.accent || '#f26f21'}"><td>${i + 1}</td><td class="crest"><a href="#${p.club}" title="${c.name || p.club}"><span class="medal"><img src="${c.logo || ''}" alt="" width="24" height="24" loading="lazy"></span></a></td><td class="name l">${link(p.pid, p.club, nm(p.pid))}<small>${c.short || p.club}</small></td><td class="ph">${p.g}/${p.tg}</td><td>${num(p.s / 60)}</td><td class="ph dim">${num(p.off_s / 60)}</td><td class="${sign(p.on.n)}">${num(p.on.n, true)}</td><td class="${sign(p.off.n)}">${num(p.off.n, true)}</td><td class="k oo${sign(p.diff)}">${num(p.diff, true)}<span class="oobar" aria-hidden="true"><i class="${(p.on.n || 0) >= 0 ? 'on' : 'off'}" style="width:${Math.round(100 * on / tot)}%"></i><i class="${(p.off.n || 0) >= 0 ? 'on' : 'off'}" style="width:${Math.round(100 * off / tot)}%"></i></span></td><td class="ph pair"><b>${num(p.on.o)}</b><i>/</i>${num(p.off.o)}</td><td class="ph pair"><b>${num(p.on.d)}</b><i>/</i>${num(p.off.d)}</td><td class="ph pair dim"><b>${int(p.pm, true)}</b><i>/</i>${int(p.off_pm, true)}</td></tr>`; }).join('');
+      return `<tr class="${me ? 'me' : ''}" style="--ca:${c.accent || '#f26f21'}"><td>${i + 1}</td><td class="crest"><a href="#${p.club}" title="${c.name || p.club}"><span class="medal"><img src="${c.logo || ''}" alt="" width="24" height="24" loading="lazy"></span></a></td><td class="name l">${link(p.pid, p.club, EN(nm(p.pid)))}<small lang="en">${c.short || p.club}</small></td><td class="ph">${p.g}/${p.tg}</td><td>${num(p.s / 60)}</td><td class="ph dim">${num(p.off_s / 60)}</td><td class="${sign(p.on.n)}">${num(p.on.n, true)}</td><td class="${sign(p.off.n)}">${num(p.off.n, true)}</td><td class="k oo${sign(p.diff)}">${num(p.diff, true)}<span class="oobar" aria-hidden="true"><i class="${(p.on.n || 0) >= 0 ? 'on' : 'off'}" style="width:${Math.round(100 * on / tot)}%"></i><i class="${(p.off.n || 0) >= 0 ? 'on' : 'off'}" style="width:${Math.round(100 * off / tot)}%"></i></span></td><td class="ph pair"><b>${num(p.on.o)}</b><i>/</i>${num(p.off.o)}</td><td class="ph pair"><b>${num(p.on.d)}</b><i>/</i>${num(p.off.d)}</td><td class="ph pair dim"><b>${int(p.pm, true)}</b><i>/</i>${int(p.off_pm, true)}</td></tr>`; }).join('');
     return `<table class="ln-tab"><thead>${head}</thead><tbody>${body}</tbody></table>`;
   }
   function game(){
@@ -2408,14 +2418,14 @@ const LINE = (() => {
     if (!g) return `<p class="ln-empty">${t('No game for this club yet.')}</p>`;
     const home = st.club === g.home, won = home ? g.hs > g.as : g.as > g.hs, mins = Math.round(g.len / 60), ot = g.len > 2400;
     const crest = code => { const k = CLUBS[code] || {}; return `<a href="#${code}" title="${k.name || code}"><span class="medal"><img src="${k.logo || ''}" alt="" width="24" height="24" loading="lazy"></span></a>`; };
-    const head = `<div class="ln-game"><span class="tm">${crest(g.home)}<b>${shortName(g.home)}</b></span><span class="sc">${g.hs}<i>–</i>${g.as}</span><span class="tm">${crest(g.away)}<b>${shortName(g.away)}</b></span><span class="meta"><em class="res ${won ? 'w' : 'l'}">${won ? t('W') : t('L')}</em><span>${t('R')}${g.round} · ${fmtDate(g.date)}</span><span>${mins} ${t('min')}${ot ? ` (${t('OT')})` : ''}</span><span>${t('{n} possessions', {n: g.poss})}</span></span></div>`;
+    const head = `<div class="ln-game"><span class="tm">${crest(g.home)}<b lang="en">${shortName(g.home)}</b></span><span class="sc">${g.hs}<i>–</i>${g.as}</span><span class="tm">${crest(g.away)}<b lang="en">${shortName(g.away)}</b></span><span class="meta"><em class="res ${won ? 'w' : 'l'}">${won ? t('W') : t('L')}</em><span>${t('R')}${g.round} · ${fmtDate(g.date)}</span><span>${mins} ${t('min')}${ot ? ` (${t('OT')})` : ''}</span><span>${t('{n} possessions', {n: g.poss})}</span></span></div>`;
     const L = g.lineups || [];
     if (!L.length) return head + `<p class="ln-empty">${t('No lineups for this game.')}</p>`;
     const maxN = Math.max(1, ...L.map(l => Math.abs(l.n || 0))), most = L.reduce((a, l) => l.s > a.s ? l : a, L[0]);
     const pct = v => (100 * v / g.len).toFixed(2), ticks = [600, 1200, 1800].concat(g.len > 2400 ? [2400] : []).map(v => `<i style="left:${pct(v)}%"></i>`).join('');   // quarter ticks, and the end of regulation when there was overtime
     const th = `<tr><th>#</th><th class="l">${t('Lineup')}</th><th>${t('Min')}</th><th class="ph">${t('Stints')}</th><th>${t('Score')}</th><th>+/-</th><th class="ph dim">${t('Poss')}</th><th class="ph">${t('ORtg')}</th><th class="ph">${t('DRtg')}</th><th>${t('Net')}</th><th class="l when">${t('When')}</th></tr>`;
     const body = L.map((l, i) => { const seg = l.seg || [], pm = l.pts - l.opp;
-      const names = l.p.map(pid => link(pid, st.club, `<span class="full">${nm(pid)}</span><span class="short">${sur(pid)}</span>`)).join(' <i>·</i> ');
+      const names = l.p.map(pid => link(pid, st.club, `<span class="full" lang="en">${nm(pid)}</span><span class="short" lang="en">${sur(pid)}</span>`)).join(' <i>·</i> ');
       const chips = (l === most && L.length > 1 ? `<span class="chip">${t('Most used')}</span>` : '') + (seg.length && seg[0][0] === 0 ? `<span class="chip">${t('Starters')}</span>` : '');   // the starting five is the one on the floor at 0:00
       const when = seg.map(([a, b]) => `${mmss(a)}–${mmss(b)}`).join(', ') || '–';
       const bars = seg.map(([a, b]) => `<b style="left:${pct(a)}%;width:${Math.max(0.5, 100 * (b - a) / g.len).toFixed(2)}%"></b>`).join('');
@@ -2532,7 +2542,7 @@ const LEAD = (() => {
       const pool = D.rows.filter(r => b.k === 'fg3p' ? r.fga3 >= (D.min_3pa || 15) : r.q);
       const top = pool.map(r => ({r, v: b.k === 'fg3p' ? r.fgm3 / r.fga3 : r[b.k] / r.gp})).sort((a, c) => (c.v - a.v) || (c.r.gp - a.r.gp)).slice(0, 5);
       return `<button type="button" class="ld-board${st.sort === b.k && st.group === b.g ? ' on' : ''}" data-k="${b.k}" data-g="${b.g}"><b>${t(b.t)}</b><ol>${top.map(({r, v}) => { const n = nameOf(r.name), c = CLUBS[r.c] || {};
-        return `<li${r.pid === me ? ' class="me"' : ''}><img src="${c.logo || ''}" alt="" width="20" height="20" loading="lazy"><span>${n.first.slice(0, 1)}. ${n.sur}</span><i>${b.k === 'fg3p' ? num(100 * v) : num(v)}</i></li>`; }).join('')}</ol></button>`;
+        return `<li${r.pid === me ? ' class="me"' : ''}><img src="${c.logo || ''}" alt="" width="20" height="20" loading="lazy"><span lang="en">${n.first.slice(0, 1)}. ${n.sur}</span><i>${b.k === 'fg3p' ? num(100 * v) : num(v)}</i></li>`; }).join('')}</ol></button>`;
     }).join('');
   }
   function render(){
@@ -2550,7 +2560,7 @@ const LEAD = (() => {
     const th = k => { const c = COLS[k], on = st.sort === k; return `<th scope="col" class="n${on ? ' on' : ''}" data-k="${k}" aria-sort="${on ? (st.dir < 0 ? 'descending' : 'ascending') : 'none'}"><button type="button">${t(c.l)}${on ? `<i>${st.dir < 0 ? '▼' : '▲'}</i>` : ''}</button></th>`; };
     el.innerHTML = list.length ? `<table class="ld-tab"><thead><tr><th scope="col">#</th><th scope="col">${t('Player')}</th><th scope="col" class="ph">${t('Club')}</th>${cols.map(th).join('')}</tr></thead><tbody>${list.map(({r, s}, i) => {
       const n = nameOf(r.name), c = CLUBS[r.c] || {};
-      return `<tr class="${r.pid === me ? 'me' : ''}${s.q ? '' : ' unq'}"${s.q ? '' : ` title="${t('not qualified')}"`}><td class="rk">${i + 1}</td><td class="pl"><a href="#${r.c}/${r.pid}"><span class="medal" style="--club2:${c.accent || 'var(--line2)'}"><img src="${c.logo || ''}" alt="" loading="lazy"></span><span class="nm"><b>${n.first} ${n.sur}</b><small>${r.d ? '#' + r.d + ' · ' : ''}${t(r.pos)}</small></span></a></td><td class="ph">${shortName(r.c)}</td>${cols.map(k => { const x = k === st.sort ? s : cell(r, k); return `<td class="n${k === st.sort ? ' on' : ''}${x.q ? '' : ' unq'}">${x.txt}</td>`; }).join('')}</tr>`; }).join('')}</tbody></table>`
+      return `<tr class="${r.pid === me ? 'me' : ''}${s.q ? '' : ' unq'}"${s.q ? '' : ` title="${t('not qualified')}"`}><td class="rk">${i + 1}</td><td class="pl"><a href="#${r.c}/${r.pid}"><span class="medal" style="--club2:${c.accent || 'var(--line2)'}"><img src="${c.logo || ''}" alt="" loading="lazy"></span><span class="nm"><b lang="en">${n.first} ${n.sur}</b><small>${r.d ? '#' + r.d + ' · ' : ''}${t(r.pos)}</small></span></a></td><td class="ph" lang="en">${shortName(r.c)}</td>${cols.map(k => { const x = k === st.sort ? s : cell(r, k); return `<td class="n${k === st.sort ? ' on' : ''}${x.q ? '' : ' unq'}">${x.txt}</td>`; }).join('')}</tr>`; }).join('')}</tbody></table>`
       : `<p class="ln-empty">${t('No player matches')}</p>`;
     $('#ld-foot').textContent = `${t('{n} of {m} players', {n: list.length, m: D.rows.length})} · ${D.rounds <= 1 ? t('Round 1 played, so every average above is one game.') : t('Through round {r}. Qualifying takes {g} of {r} games at {mpg} minutes a game.', {r: D.rounds, g: D.min_gp, mpg: D.min_mpg})}${D.provisional ? ' · ' + t('{n}+ three-point attempts', {n: D.min_3pa}) + ', ' + t('provisional') : ''}`;
     if (typeof scrollEnds === 'function') scrollEnds();
@@ -2591,11 +2601,11 @@ const CLUB = (() => {
   function hero(code){
     const c = CLUBS[code] || {}, S = META.standings || [], row = S.find(r => r.code === code), up = (team().upcoming || [])[0], games = clubGames(), last = games[games.length - 1];
     const line = row && row.gp ? `${ord(row.pos)} · ${row.w}-${row.l} · ${row.diff > 0 ? '+' : ''}${row.diff}` : t('No games yet');
-    const nextTxt = up ? `${t('R')}${up.round} ${up.home === realCode() ? t('vs') + ' ' + shortName(up.away) : '@ ' + shortName(up.home)} · ${fmtDate(up.date)}` : '';
+    const nextTxt = up ? `${t('R')}${up.round} ${up.home === realCode() ? t('vs') + ' ' + EN(shortName(up.away)) : '@ ' + EN(shortName(up.home))} · ${fmtDate(up.date)}` : '';
     const lastTxt = last ? (() => { const l = gameLabel(last); return `${t('R')}${last.round} ${l.home ? t('vs') : '@'} ${l.opp} <b class="${l.res === t('W') ? 'w' : 'l'}">${l.res} ${l.score}</b>`; })() : '';
     return `<div class="cb-hero band cut-br">
       <div class="cb-crest"><span class="medal"><img src="${c.logo || ''}" alt="" width="72" height="72"></span></div>
-      <div class="cb-id"><p class="cb-eyebrow">${t('Club')} · ${cap(c.city || '')}${c.country ? ' · ' + t(c.country) : ''}</p><h1 class="cb-name">${c.name || code}</h1><p class="cb-line"><a href="#standings">${line}</a></p></div>
+      <div class="cb-id"><p class="cb-eyebrow">${t('Club')} · ${t(cap(c.city || ''))}${c.country ? ' · ' + t(c.country) : ''}</p><h1 class="cb-name" lang="en">${c.name || code}</h1><p class="cb-line"><a href="#standings">${line}</a></p></div>
       <div class="cb-side">${up ? `<div class="cb-next"><span class="lab">${t('Next')}</span>${medal(up.home === realCode() ? up.away : up.home, 24)}<span>${nextTxt}</span></div>` : ''}${last ? `<div class="cb-next"><span class="lab">${t('Last result')}</span>${medal(gameLabel(last).home ? last.away : last.home, 24)}<span>${lastTxt}</span></div>` : ''}</div>
     </div>`;
   }
@@ -2615,8 +2625,8 @@ const CLUB = (() => {
     const num = r => { const d = parseInt(r.p.dorsal, 10); return isNaN(d) ? Infinity : d; };   // jersey number ascending, players without one at the end
     const rows = key === 'no' ? ps.slice().sort((a, b) => num(a) - num(b) || String(a.p.name).localeCompare(String(b.p.name))) : ps.filter(r => r.tot.gp).sort((a, b) => val(b) - val(a)).concat(ps.filter(r => !r.tot.gp));
     const th = (k, l, sortable = true) => sortable ? `<th scope="col" class="${k === 'no' ? 'no' : 'k'}${key === k ? ' on' : ''}" aria-sort="${key === k ? (k === 'no' ? 'ascending' : 'descending') : 'none'}"><button type="button" data-sort="${k}">${l}</button></th>` : `<th scope="col">${l}</th>`;
-    const row = r => { const n = nameOf(r.p.name), a = age(r.p.birth); return `<tr class="${r.tot.gp ? '' : 'na'}"><td class="no">${r.p.dorsal != null ? '#' + r.p.dorsal : ''}</td><td class="nm"><a href="#${code}/${r.p.pid}">${n.first} ${n.sur}</a></td><td>${t(r.p.position || '')}</td><td class="k">${a != null ? a : '–'}</td><td class="k">${r.p.height ? r.p.height + ' cm' : '–'}</td><td class="k">${r.tot.gp || 0}</td><td class="k">${r.tot.gp ? (r.tot.min / r.tot.gp).toFixed(1) : '–'}</td><td class="k">${pg(r.tot.pts, r.tot.gp)}</td><td class="k">${pg(r.tot.reb, r.tot.gp)}</td><td class="k">${pg(r.tot.ast, r.tot.gp)}</td><td class="k">${pg(r.tot.pir, r.tot.gp)}</td></tr>`; };
-    return `<h2>${t('Roster')}</h2><p class="cb-sub">${t('Per game this season; sort by a column, open a name for his page.')}</p><div class="cb-wrap scroll"><table class="cb-tab"><thead><tr>${th('no', '#')}${th('nm', t('Player'), false)}${th('pos', t('Position'), false)}${th('age', t('Age'), false)}${th('ht', t('Height'), false)}${th('gp', 'GP', false)}${th('min', t('Min'))}${th('pts', t('Pts'))}${th('reb', t('Reb'))}${th('ast', t('Ast'))}${th('pir', 'PIR')}</tr></thead><tbody>${rows.map(row).join('')}</tbody></table></div>`;
+    const row = r => { const n = nameOf(r.p.name), a = age(r.p.birth); return `<tr class="${r.tot.gp ? '' : 'na'}"><td class="no">${r.p.dorsal != null ? '#' + r.p.dorsal : ''}</td><td class="nm"><a href="#${code}/${r.p.pid}" lang="en">${n.first} ${n.sur}</a></td><td>${t(r.p.position || '')}</td><td class="k">${a != null ? a : '–'}</td><td class="k">${r.p.height ? r.p.height + ' cm' : '–'}</td><td class="k">${r.tot.gp || 0}</td><td class="k">${r.tot.gp ? (r.tot.min / r.tot.gp).toFixed(1) : '–'}</td><td class="k">${pg(r.tot.pts, r.tot.gp)}</td><td class="k">${pg(r.tot.reb, r.tot.gp)}</td><td class="k">${pg(r.tot.ast, r.tot.gp)}</td><td class="k">${pg(r.tot.pir, r.tot.gp)}</td></tr>`; };
+    return `<h2>${t('Roster')}</h2><p class="cb-sub">${t('Per game this season; sort by a column, open a name for his page.')}</p><div class="cb-wrap scroll"><table class="cb-tab"><thead><tr>${th('no', '#')}${th('nm', t('Player'), false)}${th('pos', t('Position'), false)}${th('age', t('Age'), false)}${th('ht', t('Height'), false)}${th('gp', t('GP'), false)}${th('min', t('Min'))}${th('pts', t('Pts'))}${th('reb', t('Reb'))}${th('ast', t('Ast'))}${th('pir', 'PIR')}</tr></thead><tbody>${rows.map(row).join('')}</tbody></table></div>`;
   }
   function lineups(code){
     if (!lu) return `<h2>${t('Best lineups')}</h2><p class="cb-sub">${t('Loading…')}</p>`;
@@ -2627,7 +2637,7 @@ const CLUB = (() => {
     const fiveRows = fives.map((l, i) => `<tr><td class="no">${i + 1}</td><td class="nm">${l.p.map(nm).join(' <i>·</i> ')}</td><td class="k">${(l.s / 60).toFixed(1)}</td><td class="k">${l.o.toFixed(1)}</td><td class="k">${l.d.toFixed(1)}</td><td class="k net ${l.n >= 0 ? 'w' : 'l'}">${sg(l.n)}</td></tr>`).join('');
     const ooRows = oo.map((p, i) => `<tr><td class="no">${i + 1}</td><td class="nm"><a href="#${code}/${p.pid}">${nm(p.pid)}</a></td><td class="k">${Math.round(p.s / 60)}</td><td class="k">${sg(p.on.n)}</td><td class="k">${sg(p.off.n)}</td><td class="k net ${p.diff >= 0 ? 'w' : 'l'}">${sg(p.diff)}</td></tr>`).join('');
     return `<h2>${t('Best lineups')}</h2><p class="cb-sub">${t('Five-man units with at least 5 minutes together, ranked by net rating per 100 possessions, and the players the club does best with.')}</p>
-      <div class="cb-two"><div class="cb-wrap scroll"><table class="cb-tab"><thead><tr><th>#</th><th>${t('Lineup')}</th><th class="k">${t('Min')}</th><th class="k">ORtg</th><th class="k">DRtg</th><th class="k">${t('Net')}</th></tr></thead><tbody>${fiveRows || `<tr><td colspan="6">${t('No five has 5 minutes together yet')}</td></tr>`}</tbody></table></div>
+      <div class="cb-two"><div class="cb-wrap scroll"><table class="cb-tab"><thead><tr><th>#</th><th>${t('Lineup')}</th><th class="k">${t('Min')}</th><th class="k">${t('ORtg')}</th><th class="k">${t('DRtg')}</th><th class="k">${t('Net')}</th></tr></thead><tbody>${fiveRows || `<tr><td colspan="6">${t('No five has 5 minutes together yet')}</td></tr>`}</tbody></table></div>
       <div class="cb-wrap scroll"><table class="cb-tab"><thead><tr><th>#</th><th>${t('Player')}</th><th class="k">${t('Min')}</th><th class="k">${t('On')}</th><th class="k">${t('Off')}</th><th class="k">${t('On − off')}</th></tr></thead><tbody>${ooRows || `<tr><td colspan="6">${t('No games yet')}</td></tr>`}</tbody></table></div></div>
       <p class="cb-more"><a class="lnk" href="#lineups">${t('All lineups')}</a></p>`;
   }
@@ -2645,7 +2655,7 @@ const CLUB = (() => {
   }
   function fixtures(code){
     const up = (team().upcoming || []).slice(0, 10); if (!up.length) return '';
-    const chips = up.map(g => { const home = g.home === realCode(), opp = home ? g.away : g.home; return `<span class="cb-chip">${medal(opp, 24)}<b>${t('R')}${g.round}</b> ${home ? t('vs') : '@'} ${shortName(opp)} <i>${fmtDate(g.date)}</i></span>`; }).join('');
+    const chips = up.map(g => { const home = g.home === realCode(), opp = home ? g.away : g.home; return `<span class="cb-chip">${medal(opp, 24)}<b>${t('R')}${g.round}</b> ${home ? t('vs') : '@'} ${EN(shortName(opp))} <i>${fmtDate(g.date)}</i></span>`; }).join('');
     return `<h2>${t('Fixtures')}</h2><p class="cb-sub">${t('The next games, home and away.')}</p><div class="cb-chips">${chips}</div><p class="cb-more"><a class="lnk" href="cal/${code}.ics">${t('Add fixtures to calendar')}</a></p>`;
   }
   function render(){
