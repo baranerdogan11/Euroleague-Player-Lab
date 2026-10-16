@@ -1372,6 +1372,31 @@ html[data-look="club"] .ld-tab tr.me td{background:color-mix(in srgb,var(--gc) 1
 @media (min-width:901px) and (max-width:1199px){html[data-look="club"] body.no-team .top .st-lnk{padding:0 10px}}
 /* six page links leave the club picker no room on a narrow laptop: up to 1000px they show as icons, each with its name on hover */
 @media (min-width:761px) and (max-width:1000px){html[data-look="club"] .top .st-lnk{padding:0 12px}html[data-look="club"] .top .st-lnk span{display:none}html[data-look="club"] .top .st-lnk svg{display:block}}
+/* with a club chosen, the club and player pickers get the room first: the page links stay icons up to 1599px, and up to 1365px the search box folds into a magnifier that opens the field over the bar, as on phones (without a club, up to 900px) */
+@media (min-width:761px){html[data-look="club"] .top .sel.team{flex:1.15 1 0;min-width:min-content}html[data-look="club"] .top .sel.player{flex:1 1 0}}
+@media (min-width:1001px) and (max-width:1599px){html[data-look="club"] body:not(.no-team) .top .st-lnk{padding:0 12px}html[data-look="club"] body:not(.no-team) .top .st-lnk span{display:none}html[data-look="club"] body:not(.no-team) .top .st-lnk svg{display:block}}
+@media (min-width:1366px) and (max-width:1599px){html[data-look="club"] body:not(.no-team) .top .search{flex:0 1 210px}}
+@media (min-width:761px) and (max-width:1365px){
+  html[data-look="club"] body:not(.no-team) .top{position:relative}
+  html[data-look="club"] body:not(.no-team) .top .search{display:none;position:absolute;left:0;right:0;top:0;bottom:0;padding:0 8px 0 16px;background:var(--club);border:0;z-index:2;flex:none;min-width:0}
+  html[data-look="club"] body:not(.no-team) .top.q-on .search{display:flex;align-items:center}
+  html[data-look="club"] body:not(.no-team) .top .search input{margin:0;padding:8px 44px 8px 14px}
+  html[data-look="club"] body:not(.no-team) .top .search kbd{display:none}
+  html[data-look="club"] body:not(.no-team) .top .q-x{display:grid;place-items:center;width:44px;height:44px;flex:none;background:transparent;border:0;color:var(--club-ink);font-size:26px;line-height:1;cursor:pointer}
+  html[data-look="club"] body:not(.no-team) .top .q-btn{display:grid;place-items:center;width:52px;flex:none;background:transparent;border:0;border-left:1px solid color-mix(in srgb,var(--club-ink) 18%,transparent);cursor:pointer;padding:0}
+}
+@media (min-width:761px) and (max-width:900px){
+  html[data-look="club"] body.no-team .top{position:relative}
+  html[data-look="club"] body.no-team .top .search{display:none;position:absolute;left:0;right:0;top:0;bottom:0;padding:0 8px 0 16px;background:var(--club);border:0;z-index:2;flex:none;min-width:0}
+  html[data-look="club"] body.no-team .top.q-on .search{display:flex;align-items:center}
+  html[data-look="club"] body.no-team .top .search input{margin:0;padding:8px 44px 8px 14px}
+  html[data-look="club"] body.no-team .top .search kbd{display:none}
+  html[data-look="club"] body.no-team .top .q-x{display:grid;place-items:center;width:44px;height:44px;flex:none;background:transparent;border:0;color:var(--club-ink);font-size:26px;line-height:1;cursor:pointer}
+  html[data-look="club"] body.no-team .top .q-btn{display:grid;place-items:center;width:52px;flex:none;background:transparent;border:0;border-left:1px solid color-mix(in srgb,var(--club-ink) 18%,transparent);cursor:pointer;padding:0}
+}
+/* up to 1000px the language switch shows only the other language and the theme switch only its icon, and the player picker drops the first name */
+@media (min-width:761px) and (max-width:1000px){html[data-look="club"] .top .lang button[aria-pressed="true"]{display:none}html[data-look="club"] .top .theme button{min-width:0;width:44px;padding:0}html[data-look="club"] .top .theme button span{display:none}html[data-look="club"] .top .sel.player .fn{display:none}}
+@media (min-width:761px) and (max-width:900px){html[data-look="club"] .top .id{font-size:17px;padding:0 12px 0 10px}html[data-look="club"] .top .st-lnk{padding:0 9px}html[data-look="club"] .top .sel{padding-left:12px;gap:8px}html[data-look="club"] .top .sel .dd-btn{padding-right:22px}}
 /* ---- end narrow-desktop header ---- */
 /* the Dark button sits beside the language toggle (header, cover, phone menu) and only exists in the Club Edition */
 .theme{margin-left:0}.theme button{width:auto;min-width:56px;padding:0 12px}.theme svg{width:18px;height:18px;filter:none;opacity:.6}.theme button[aria-pressed="true"] svg{opacity:1}
@@ -2647,8 +2672,8 @@ $('#f-rate').querySelectorAll('button').forEach(b => b.addEventListener('click',
   }));
 });
 const DD = {
-  team: Dropdown($('#team'), (op, head) => { const c = CLUBS[op.value]; return `${c && c.logo && !head ? `<img src="${c.logo}" alt="">` : ''}<span lang="en">${c.name}</span>`; }),
-  player: Dropdown($('#player'), (op, head) => { const p = team() && team().players[+op.value]; if (!p) return op.text; const n = nameOf(p.name); return head ? `#${p.dorsal || '–'} ${EN(`${n.first} ${n.sur}`)}` : `<span class="no">${p.dorsal || '–'}</span><span lang="en">${n.first} ${n.sur}</span><small>${t(p.position || '').slice(0, 7)}</small>`; }),
+  team: Dropdown($('#team'), (op, head) => { const c = CLUBS[op.value]; return `${c && c.logo && !head ? `<img src="${c.logo}" alt="">` : ''}<span lang="en">${head && c.short || c.name}</span>`; }),   // the bar shows the short name, the list the full one
+  player: Dropdown($('#player'), (op, head) => { const p = team() && team().players[+op.value]; if (!p) return op.text; const n = nameOf(p.name); return head ? `#${p.dorsal || '–'} ${EN(`<span class="fn">${n.first} </span>${n.sur}`)}` : `<span class="no">${p.dorsal || '–'}</span><span lang="en">${n.first} ${n.sur}</span><small>${t(p.position || '').slice(0, 7)}</small>`; }),
   cmpMe: Dropdown($('#cmp-me'), op => EN(op.text)),
   cmpClub: Dropdown($('#cmp-club'), (op, head) => { const c = CLUBS[op.value]; if (!c) return op.text; return `${c.logo && !head ? `<img src="${c.logo}" alt="">` : ''}<span lang="en">${c.name}</span>`; }),
   cmpOClub: Dropdown($('#cmp-oclub'), (op, head) => { const c = CLUBS[op.value]; if (!c) return op.text; return `${c.logo && !head ? `<img src="${c.logo}" alt="">` : ''}<span lang="en">${c.name}</span>`; }),
@@ -2684,7 +2709,7 @@ function bindSearch(q, list){
   document.addEventListener('pointerdown', e => { if (!q.closest('.search').contains(e.target)) close(); });
 }
 bindSearch($('#q'), $('#q-list')); bindSearch($('#cq'), $('#cq-list'));
-document.addEventListener('keydown', e => { if (e.key === '/' && !e.ctrlKey && !e.metaKey && !e.altKey && !['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) { e.preventDefault(); const q = document.body.classList.contains('cv-on') ? $('#cq') : $('#q'); if (q === $('#q') && PHONE.matches) $('#q-btn').click(); q.focus(); q.select(); } });   // "/" jumps to the search box on either page
+document.addEventListener('keydown', e => { if (e.key === '/' && !e.ctrlKey && !e.metaKey && !e.altKey && !['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) { e.preventDefault(); const q = document.body.classList.contains('cv-on') ? $('#cq') : $('#q'); if (q === $('#q') && getComputedStyle($('#q-btn')).display !== 'none') $('#q-btn').click(); q.focus(); q.select(); } });   // "/" jumps to the search box on either page
 
 // ---- league leaderboards: four boards precomputed by build.py, one visible at a time
 
