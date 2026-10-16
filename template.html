@@ -1261,64 +1261,124 @@ html[data-look="club"] body.cv-on .top{display:none}   /* the phone band rules s
 @media (max-width:760px){html[data-look="club"] .cv .theme{right:118px}.theme button[aria-pressed="true"]{display:flex}html[data-look="club"] body.menu-on .theme{order:13}}
 /* ---- Game pages (#game/<code>) and the cover's Last night strip ---- */
 body.gm-on .wrap>*{display:none}body.gm-on .wrap>#game{display:block}
-#game{padding:0;overflow:hidden}
-#game .cb-in{padding:18px 24px 28px}
-#game h2{margin:22px 0 4px;font-family:var(--cond);font-weight:var(--cond-w,400);font-size:30px;letter-spacing:.03em;text-transform:uppercase;color:var(--ink);padding:0}
-#game .gm-hero,#game .gm-hero a,#game .gm-q th,#game .gm-q td{color:var(--club-ink,#fff)}
-#game .gm-q td,#game .gm-q th{border:0;background:none;font-family:var(--sans)}
-#game .gm-q td{font-size:15px;font-weight:500}
-#game .gm-round a,#game .gm-round a span{color:var(--muted)}#game .gm-round a span.w{color:var(--ink)}
-#game .gm-top{color:var(--ink2)}
-.gm-hero{background:var(--club);color:var(--club-ink,#fff);padding:30px 28px 52px}
-.gm-hero-in{max-width:980px;margin:0 auto;display:grid;gap:16px}
-.gm-hero .cb-eyebrow{text-align:center}
-.gm-score{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:12px 22px}
+#game{padding:0;overflow:clip;--gc:#f26f21}
+html[data-theme="dark"] #game{--gc:#ff7b30}
+#game .cb-in{padding:22px 24px 30px}
+/* Game Center look: square cards, condensed caps headings with the orange marker, the orange rail for the tabs */
+#game h2{display:flex;align-items:center;gap:10px;margin:28px 0 12px;font-family:var(--cond);font-weight:var(--cond-w,400);font-size:28px;line-height:1;letter-spacing:.03em;text-transform:uppercase;color:var(--ink);padding:0}
+#game h2::before{content:"";flex:none;width:5px;height:22px;background:var(--gc)}
+#game .gm-body>h2:first-child{margin-top:4px}
+#game .cb-sub{margin:-4px 0 12px}
+/* the scoreboard: home colour on the left, away on the right, a seam between them and a vignette so white text holds on any club */
+.gm-hero{position:relative;color:#fff;background:#05080f;padding:24px 28px 20px;overflow:hidden;isolation:isolate}
+.gm-hero::before{content:"";position:absolute;inset:0;z-index:-2;background:linear-gradient(105deg,var(--gh) 0 49.6%,var(--ga) 50.4% 100%)}
+.gm-hero::after{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(120% 90% at 50% 0%,transparent 40%,rgba(0,0,0,.55) 100%),linear-gradient(180deg,rgba(0,0,0,.12),rgba(0,0,0,.45))}
+#game .gm-hero,#game .gm-hero a,#game .gm-q th,#game .gm-q td{color:#fff}
+.gm-hero-in{max-width:900px;margin:0 auto;display:grid;gap:16px;justify-items:center}
+.gm-hero .cb-eyebrow{margin:0;text-align:center;font-family:var(--cond);font-weight:700;font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.75);opacity:1}
+.gm-score{width:100%;display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:12px 22px}
 .gm-tm{display:flex;align-items:center;gap:14px;color:inherit;text-decoration:none;min-width:0}
-.gm-tm.h{justify-content:flex-end}.gm-tm.a{flex-direction:row-reverse;justify-content:flex-end}
-.gm-tm b{font-family:var(--cond);font-weight:var(--cond-w,400);font-size:30px;line-height:1;letter-spacing:.03em;text-transform:uppercase;min-width:0;overflow-wrap:anywhere}
-.gm-tm em{font-style:normal;font-family:var(--cond);font-weight:var(--cond-w,400);font-size:64px;line-height:1;font-variant-numeric:tabular-nums;opacity:.62}
-.gm-tm.win em{opacity:1}
+.gm-tm.a{flex-direction:row-reverse;text-align:right}
+.gm-tm .disc{flex:none;width:66px;height:66px;border-radius:50%;background:#fff;display:grid;place-items:center;box-shadow:0 4px 18px rgba(0,0,0,.35)}
+.gm-tm .disc img{width:46px;height:46px;object-fit:contain;display:block}
+.gm-tm b{flex:1;min-width:0;font-family:var(--cond);font-weight:var(--cond-w,400);font-size:26px;line-height:1;letter-spacing:.03em;text-transform:uppercase;overflow-wrap:anywhere}
+.gm-tm em{flex:none;font-style:normal;font-family:var(--cond);font-weight:var(--cond-w,400);font-size:72px;line-height:.9;font-variant-numeric:tabular-nums;color:rgba(255,255,255,.55)}
+.gm-tm.win em{color:#fff}
 .gm-tm .short{display:none}
-.gm-tm:hover b{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:4px}
-html[data-look="club"] .gm-tm .medal{width:64px;height:64px;border-width:3px}html[data-look="club"] .gm-tm .medal img{width:46px;height:46px}
-.gm-dash{font-family:var(--cond);font-size:40px;opacity:.5}
-.gm-q{justify-self:center;max-width:100%}
-.gm-q table{border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:15px}
-.gm-q th,.gm-q td{padding:4px 12px;text-align:center;white-space:nowrap}
-.gm-q thead th{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;opacity:.75}
-.gm-q tbody th{text-align:left;font-weight:600;letter-spacing:.04em;text-transform:uppercase;font-size:13px}
-.gm-q td{opacity:.8}.gm-q td.w{opacity:1;font-weight:700}.gm-q td.tot{opacity:1;font-weight:700}#game .gm-q td.tot{border-left:1px solid currentColor}
-.gm-round{display:flex;gap:8px;overflow-x:auto;padding:2px 0 4px;margin:0 0 6px;scrollbar-width:thin}
-.gm-round a{flex:none;display:grid;gap:2px;padding:7px 12px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--muted);text-decoration:none;font-size:14px;font-variant-numeric:tabular-nums;line-height:1.25}
-.gm-round a span.w{color:var(--ink);font-weight:700}
-.gm-round a:hover{border-color:var(--line2)}
-.gm-round a[aria-current]{border-color:var(--club2);box-shadow:inset 0 -3px 0 var(--club2)}
+.gm-tm:hover b>span{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:4px}
+.gm-mid{display:grid;justify-items:center;gap:6px}
+.gm-dash{font-family:var(--cond);font-size:34px;line-height:1;opacity:.5}
+.gm-final{font-family:var(--sans);font-weight:700;font-size:11px;letter-spacing:.16em;text-transform:uppercase;background:var(--gc);color:#fff;padding:5px 9px 4px;white-space:nowrap}
+.gm-q{max-width:100%}
+.gm-q table{border-collapse:collapse;font-variant-numeric:tabular-nums;background:rgba(0,0,0,.3);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+#game .gm-q td,#game .gm-q th{border:0;background:none;font-family:var(--sans);padding:7px 12px;text-align:center;white-space:nowrap}
+#game .gm-q thead th{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.7)}
+#game .gm-q tbody th{text-align:left;font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:13px}
+#game .gm-q td{font-size:15px;font-weight:500;color:rgba(255,255,255,.72)}#game .gm-q td.w{color:#fff;font-weight:700}#game .gm-q td.tot{color:#fff;font-weight:700;border-left:1px solid rgba(255,255,255,.35)}
+/* the round's results: a dark ticker straight under the scoreboard, the open game underlined in orange */
+.gm-round{background:#05080f;border-top:1px solid rgba(255,255,255,.08)}
+.gm-round-in{display:flex;gap:1px;overflow-x:auto;scrollbar-width:none}.gm-round-in::-webkit-scrollbar{display:none}
+.gm-round a{flex:1 0 auto;min-width:150px;display:grid;gap:4px;padding:10px 16px 9px;border-bottom:3px solid transparent;text-decoration:none;font-size:13px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;font-variant-numeric:tabular-nums;line-height:1.2}
+#game .gm-round a,#game .gm-round a span{color:rgba(255,255,255,.62)}
+.gm-round a>span{display:flex;justify-content:space-between;gap:12px}
+#game .gm-round a>span.w,#game .gm-round a>span.w span{color:#fff;font-weight:800}
+.gm-round a:hover{background:rgba(255,255,255,.05)}
+.gm-round a[aria-current]{background:rgba(255,255,255,.07);border-bottom-color:var(--gc)}
+/* the tabs: a sticky rail, the open tab underlined */
+.gm-tabs{position:sticky;top:0;z-index:5;background:var(--panel);border-bottom:1px solid var(--line)}
+.gm-tabs-in{display:flex;gap:4px;overflow-x:auto;padding:0 14px;scrollbar-width:none}.gm-tabs-in::-webkit-scrollbar{display:none}
+.gm-tabs button{position:relative;flex:none;border:0;background:none;cursor:pointer;padding:16px 14px 14px;font-family:var(--cond);font-weight:var(--cond-w,400);font-size:17px;line-height:1;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.gm-tabs button:hover{color:var(--ink)}
+.gm-tabs button[aria-selected="true"]{color:var(--ink)}
+.gm-tabs button::after{content:"";position:absolute;left:10px;right:10px;bottom:0;height:3px;background:var(--gc);transform:scaleX(0);transition:transform .3s cubic-bezier(.22,1,.36,1)}
+.gm-tabs button[aria-selected="true"]::after{transform:none}
+.gm-tabs button:focus-visible{outline:2px solid var(--gc);outline-offset:-4px}
+@media (prefers-reduced-motion:reduce){.gm-tabs button::after{transition:none}}
+/* the Summary tab: leaders head to head, the team comparison */
+.gm-ldr{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.gm-ldr-c{background:var(--panel);border:1px solid var(--line);padding:12px 14px 14px}
+#game .gm-ldr-c h3{margin:0 0 10px;text-align:center;font-family:var(--sans);font-weight:700;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.gm-ldr-c .duel{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:end;gap:8px}
+.gm-ldr-c .p{display:grid;justify-items:center;gap:5px;text-align:center;min-width:0;font-size:13px;font-weight:600;line-height:1.2;color:var(--ink2)}
+.gm-ldr-c .p a{display:block;border-radius:50%}
+.gm-ldr-c .ph{width:64px;height:64px;border-radius:50%;object-fit:cover;object-position:top;background:var(--panel2);display:block}
+.gm-ldr-c .p em{font-style:normal;font-family:var(--cond);font-weight:var(--cond-w,400);font-size:36px;line-height:1;color:var(--ink);font-variant-numeric:tabular-nums}
+.gm-ldr-c .p.lo em{color:var(--muted)}
+.gm-ldr-c .duel>i{font-style:normal;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding-bottom:30px}
+.gm-cmp{background:var(--panel);border:1px solid var(--line);padding:4px 18px 10px}
+.gm-cmp .hd{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.gm-cmp .hd>span{display:flex;align-items:center;gap:8px;font-family:var(--cond);font-weight:var(--cond-w,400);font-size:18px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink)}
+html[data-look="club"] .gm-cmp .medal{width:28px;height:28px;border-width:2px}html[data-look="club"] .gm-cmp .medal img{width:19px;height:19px}
+.gm-cmp .row{display:grid;grid-template-columns:64px minmax(0,1fr) 64px;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid var(--line)}
+.gm-cmp .row:last-child{border-bottom:0}
+.gm-cmp .v{font-family:var(--cond);font-weight:var(--cond-w,400);font-size:21px;line-height:1;color:var(--ink);font-variant-numeric:tabular-nums}
+.gm-cmp .v.r{text-align:right}.gm-cmp .v.lo{color:var(--muted)}
+.gm-cmp .mid{display:grid;gap:6px}
+.gm-cmp .lab{text-align:center;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.gm-cmp .bars{display:grid;grid-template-columns:1fr 1fr;gap:4px;height:8px}
+.gm-cmp .bars i{position:relative;display:block;height:100%;background:var(--panel2);overflow:hidden}
+.gm-cmp .bars b{position:absolute;top:0;bottom:0}
+.gm-cmp .bars i:first-child b{right:0;background:var(--gh)}.gm-cmp .bars i:last-child b{left:0;background:var(--ga)}
 .gm-tops{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:0 0 6px}
-.gm-top{display:grid;grid-template-columns:64px minmax(0,1fr) auto;grid-template-areas:"ph who pir" "ph line line";align-items:center;gap:4px 12px;padding:12px 14px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink2);text-decoration:none;border-bottom:3px solid var(--club2)}
-a.gm-top:hover{border-color:var(--line2);border-bottom-color:var(--club2)}
+.gm-top{display:grid;grid-template-columns:64px minmax(0,1fr) auto;grid-template-areas:"ph who pir" "ph line line";align-items:center;gap:4px 12px;padding:12px 14px;border:1px solid var(--line);background:var(--panel);color:var(--ink2);text-decoration:none;border-bottom:3px solid var(--gc)}
+#game .gm-top{color:var(--ink2)}
+a.gm-top:hover{border-color:var(--line2);border-bottom-color:var(--gc)}
 .gm-top .ph{grid-area:ph;width:64px;height:64px;border-radius:50%;object-fit:cover;object-position:top;background:var(--panel2)}
 .gm-top .who{grid-area:who;display:grid;gap:2px;min-width:0}
 .gm-top .who b{color:var(--ink);font-size:17px;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.gm-top .who>span{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.gm-top .who>span{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}
 html[data-look="club"] .gm-top .who .medal{width:20px;height:20px;border-width:1.5px}html[data-look="club"] .gm-top .who .medal img{width:13px;height:13px}
 .gm-top .line{grid-area:line;font-size:14px;color:var(--muted);white-space:nowrap}
-.gm-top .line em{font-style:normal;font-family:var(--cond);font-size:22px;color:var(--ink);letter-spacing:.02em}
-.gm-top .pir{grid-area:pir;align-self:start;font-size:12px;font-weight:700;letter-spacing:.06em;padding:3px 8px;border-radius:999px;background:var(--panel2);color:var(--ink);white-space:nowrap}
-.gm-tabs{margin:8px 0 14px}
-.gm-side{margin:0 0 12px}
-.gm-h3{display:flex;align-items:center;gap:10px;margin:18px 0 8px;font-family:var(--cond);font-weight:var(--cond-w,400);font-size:24px;letter-spacing:.03em;text-transform:uppercase;color:var(--ink)}
+.gm-top .line em{font-style:normal;font-family:var(--cond);font-weight:var(--cond-w,400);font-size:22px;color:var(--ink);letter-spacing:.02em}
+.gm-top .pir{grid-area:pir;align-self:start;font-size:12px;font-weight:700;letter-spacing:.06em;padding:4px 8px;background:var(--panel2);color:var(--ink);white-space:nowrap}
+/* the club picker on the Shots and Fives tabs: square, the chosen club filled */
+html[data-look="club"] #game .gm-side{border-radius:0;padding:0;gap:0;border:1px solid var(--line);margin:0 0 14px;display:inline-flex}
+html[data-look="club"] #game .gm-side button{border-radius:0;min-height:42px;padding:8px 18px;font-family:var(--cond);font-weight:var(--cond-w,400);font-size:16px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+html[data-look="club"] #game .gm-side button[aria-pressed="true"]{background:var(--ink);color:var(--panel)}
+.gm-h3{display:flex;align-items:center;gap:10px;margin:22px 0 10px;font-family:var(--cond);font-weight:var(--cond-w,400);font-size:22px;letter-spacing:.03em;text-transform:uppercase;color:var(--ink)}
+.gm-body>.gm-h3:first-child{margin-top:4px}
 #game .gm-h3 a{color:inherit;text-decoration:none}.gm-h3 a:hover{text-decoration:underline}
 html[data-look="club"] .gm-h3 .medal{width:30px;height:30px;border-width:2px}html[data-look="club"] .gm-h3 .medal img{width:20px;height:20px}
-.gm-h3 .res{font-style:normal;font-family:var(--sans);font-size:13px;font-weight:700;letter-spacing:.06em;padding:3px 9px;border-radius:4px;color:#fff;margin-left:4px}.gm-h3 .res.w{background:var(--good)}.gm-h3 .res.l{background:var(--bad)}
+.gm-h3 .res{font-style:normal;font-family:var(--sans);font-size:12px;font-weight:700;letter-spacing:.06em;padding:4px 8px;color:#fff;margin-left:4px}.gm-h3 .res.w{background:var(--good)}.gm-h3 .res.l{background:var(--bad)}
+/* the box score: the header row in the club's colour, the name column pinned while the numbers scroll */
+#game .gm-boxwrap{border:1px solid var(--line);border-radius:0}
+#game .gm-box{border-collapse:separate;border-spacing:0}
+#game .gm-box thead th{background:var(--tc);color:#fff;font-family:var(--sans);font-weight:700;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;border-color:transparent}
+#game .gm-box th:first-child,#game .gm-box td.nm{position:sticky;left:0;z-index:1;box-shadow:1px 0 0 var(--line)}
+#game .gm-box tbody td.nm{background:var(--panel)}
+#game .gm-box thead th:first-child{z-index:2;background:var(--tc)}
+#game .gm-box tbody tr:nth-child(even) td.nm{background:var(--zebra,var(--panel))}
 .gm-box td.nm{min-width:170px}
 .gm-box td.nm .no{font-style:normal;display:inline-block;min-width:26px;color:var(--muted);font-weight:500;font-variant-numeric:tabular-nums}
 .gm-box td.nm .st{margin:0 0 0 6px}
 .gm-box td.pts{font-weight:700;color:var(--ink)}
 .gm-box tr.tot td{font-weight:700;color:var(--ink);background:var(--panel2);border-top:2px solid var(--line2)}
+#game .gm-box tr.tot td.nm{background:var(--panel2)}
 .gm-box tr.tot small{display:block;font-size:11.5px;font-weight:500;color:var(--muted);line-height:1}
 .gm-box tr.na td{color:var(--muted)}
 .gm-box td.up,.gm-chart td.up{color:var(--good)}.gm-box td.down,.gm-chart td.down{color:var(--bad)}
 .gm-box .full,.gm-fives .full{display:inline}.gm-box .short,.gm-fives .short{display:none}
+#game .cb-wrap,#game .cb-court,#game .cb-tab{border-radius:0}
 .gm-shooters{margin-top:14px}
 #game .cb-tab td.k.up{color:var(--good)}#game .cb-tab td.k.down{color:var(--bad)}
 .gm-chart>div{min-width:0}
@@ -1326,6 +1386,7 @@ html[data-look="club"] .gm-h3 .medal{width:30px;height:30px;border-width:2px}htm
 .gm-chart .cb-court circle{cursor:pointer}
 .gm-fives td.five{min-width:240px}
 .gm-fives .chips{display:inline-flex;margin-left:8px}
+#game .gm-fives .chip{border-radius:0}
 /* the cover strip: the latest game day, one card per game; a row on a laptop, a swipeable rail on a phone */
 .cv-last-sub{margin:-6px 0 14px;color:var(--muted);font-size:15px}
 .cv-games{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
@@ -1345,17 +1406,21 @@ html[data-look="club"] .cv-game .medal{width:30px;height:30px;border-width:2px}h
 .cb-next a{color:inherit}
 #log td a.gm-lnk{color:inherit;text-decoration:none;border-bottom:1px dotted currentColor}#log td a.gm-lnk:hover{border-bottom-style:solid}
 .ln-game .meta a{color:inherit}
-@media (max-width:1000px){.gm-tops{grid-template-columns:1fr}}
+@media (max-width:1000px){.gm-tops{grid-template-columns:1fr}.gm-ldr{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:760px){
-  #game .cb-in{padding:12px 12px 20px}#game h2{font-size:26px}
-  .gm-hero{padding:22px 12px 56px}.gm-hero-in{gap:12px}
-  .gm-score{gap:8px;align-items:start}.gm-tm{gap:6px;flex-direction:column!important;justify-content:flex-start!important;text-align:center}.gm-dash{align-self:end;padding-bottom:6px}
-  .gm-tm .full{display:none}.gm-tm .short{display:inline}.gm-tm b{font-size:20px}.gm-tm em{font-size:44px}.gm-dash{font-size:28px}
-  html[data-look="club"] .gm-tm .medal{width:48px;height:48px}html[data-look="club"] .gm-tm .medal img{width:34px;height:34px}
-  .gm-q th,.gm-q td{padding:3px 7px;font-size:13px}
-  .gm-tabs{display:flex;width:100%}.gm-tabs button{flex:1 1 0;text-align:center;padding-left:6px;padding-right:6px}
+  #game .cb-in{padding:14px 12px 22px}#game h2{font-size:24px;margin-top:24px}
+  .gm-hero{padding:18px 12px 16px}.gm-hero-in{gap:12px}.gm-hero .cb-eyebrow{font-size:11.5px;letter-spacing:.12em}
+  .gm-score{gap:6px;align-items:start}.gm-tm,.gm-tm.a{flex-direction:column;gap:6px;text-align:center}
+  .gm-tm .disc{width:50px;height:50px}.gm-tm .disc img{width:36px;height:36px}
+  .gm-tm .full{display:none}.gm-tm .short{display:inline}.gm-tm b{font-size:16px;flex:none}.gm-tm em{font-size:46px}
+  .gm-mid{align-self:end;padding-bottom:8px}.gm-dash{font-size:24px}
+  #game .gm-q th,#game .gm-q td{padding:6px 8px;font-size:13px}
+  .gm-round a{min-width:132px;padding:9px 12px 8px}
+  .gm-tabs{top:56px}.gm-tabs-in{padding:0 4px}.gm-tabs button{flex:1 0 auto;padding:15px 10px 13px;font-size:15px}
+  .gm-ldr{gap:8px}.gm-ldr-c{padding:10px 8px 12px}.gm-ldr-c .ph{width:48px;height:48px}.gm-ldr-c .p em{font-size:30px}.gm-ldr-c .p{font-size:12px}.gm-ldr-c .duel{gap:4px}.gm-ldr-c .duel>i{padding-bottom:26px;font-size:10px}
+  .gm-cmp{padding:2px 12px 8px}.gm-cmp .row{grid-template-columns:54px minmax(0,1fr) 54px;gap:8px}.gm-cmp .v{font-size:18px}.gm-cmp .lab{font-size:11px;letter-spacing:.06em}
   .gm-box .full,.gm-fives .full{display:none}.gm-box .short,.gm-fives .short{display:inline}
-  #game .cb-tab td.nm{min-width:0;left:0;background:var(--panel)}#game .cb-tab tbody tr:nth-child(even) td.nm{background:var(--zebra)}#game .gm-box tr.tot td.nm{background:var(--panel2)}.gm-fives td.five{min-width:160px}
+  #game .cb-tab td.nm{min-width:0}.gm-fives td.five{min-width:160px}
   .cv-games{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:minmax(232px,78%);overflow-x:auto;scroll-snap-type:x mandatory;overscroll-behavior-x:contain;padding-bottom:6px;scrollbar-width:none}
   .cv-games::-webkit-scrollbar{display:none}.cv-game{scroll-snap-align:start}
 }
@@ -2828,10 +2893,10 @@ const CLUB = (() => {
 // Last night strip, the fixtures ticker, a club's last result, a player's game log and the lineups by-game tab; no tab of its own.
 const GAME = (() => {
   const el = $('#game'), files = {};
-  const st = {tab: 'box', side: {}};   // side: the club shown on the Shots and Fives tabs, per game (the home club first)
+  const st = {tab: 'summary', side: {}};   // side: the club shown on the Shots and Fives tabs, per game (the home club first)
   let G = null, cur = null;
   const B = {pid: 0, name: 1, no: 2, st: 3, min: 4, pts: 5, fgm2: 6, fga2: 7, fgm3: 8, fga3: 9, ftm: 10, fta: 11, oreb: 12, dreb: 13, reb: 14, ast: 15, stl: 16, tov: 17, blk: 18, blka: 19, pf: 20, fd: 21, pir: 22, pm: 23, page: 24, photo: 25};
-  const TABS = ['box', 'shots', 'fives'];
+  const TABS = ['summary', 'box', 'shots', 'fives'];
   const load = code => files[code] || (files[code] = fetch(`${META.path}games/${code}.json?v=${encodeURIComponent(META.built || '')}`).then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }).catch(e => { delete files[code]; throw e; }));
   const medal = (code, size = 26) => { const c = CLUBS[code] || {}; return `<span class="medal" style="border-color:${c.accent || '#f26f21'}"><img src="${c.logo || ''}" alt="" width="${size}" height="${size}" loading="lazy"></span>`; };
   const full = raw => { const n = nameOf(raw); return `${n.first} ${n.sur}`.trim(); };
@@ -2844,24 +2909,57 @@ const GAME = (() => {
   const sides = () => [G.home, G.away];
   const side = () => { const s = st.side[G.code]; return s && sides().includes(s) ? s : G.home; };
   const names = () => { const m = {}; for (const c of sides()) for (const b of G.box[c] || []) m[b[B.pid]] = b; return m; };
+  // the scoreboard: both clubs' colours meet on a dark board (Game Center look), the final and the score by period under it
   function hero(){
     const won = G.hs > G.as, ot = G.q.length > 4, per = i => i < 4 ? `${t('Q')}${i + 1}` : G.q.length > 5 ? `${t('OT')}${i - 3}` : t('OT');
-    const tm = (code, pts, win, cls) => { const c = CLUBS[code] || {}; return `<a class="gm-tm ${cls}${win ? ' win' : ''}" href="#${code}">${medal(code, 56)}<b lang="en"><span class="full">${c.name || code}</span><span class="short">${c.short || code}</span></b><em>${pts}</em></a>`; };
+    const tm = (code, pts, win, cls) => { const c = CLUBS[code] || {}; return `<a class="gm-tm ${cls}${win ? ' win' : ''}" href="#${code}"><span class="disc"><img src="${c.logo || ''}" alt="" width="46" height="46" loading="lazy"></span><b lang="en"><span class="full">${c.name || code}</span><span class="short">${c.short || code}</span></b><em>${pts}</em></a>`; };
     const q = G.q.length ? `<div class="gm-q scroll"><table><thead><tr><th></th>${G.q.map((_, i) => `<th>${per(i)}</th>`).join('')}<th>${t('Total')}</th></tr></thead><tbody>${[[G.home, 0, G.hs], [G.away, 1, G.as]].map(([code, k, tot]) => `<tr><th lang="en">${shortName(code)}</th>${G.q.map(x => `<td class="${x[k] > x[1 - k] ? 'w' : ''}">${x[k]}</td>`).join('')}<td class="tot">${tot}</td></tr>`).join('')}</tbody></table></div>` : '';
-    return `<div class="gm-hero band cut-br"><div class="gm-hero-in">
-      <p class="cb-eyebrow">${G.phase === 'RS' ? t('Regular season') + ' · ' : ''}${t('Round {n}', {n: G.round})} · ${longDate(G.date)} · ${t('Final')}${ot ? ' (' + t('OT') + ')' : ''}</p>
-      <div class="gm-score">${tm(G.home, G.hs, won, 'h')}<span class="gm-dash" aria-hidden="true">–</span>${tm(G.away, G.as, !won, 'a')}</div>
+    const h = CLUBS[G.home] || {}, a = CLUBS[G.away] || {};
+    return `<div class="gm-hero" style="--gh:${h.base || HOUSE.base};--ga:${a.base || HOUSE.base}"><div class="gm-hero-in">
+      <p class="cb-eyebrow">${G.phase === 'RS' ? t('Regular season') + ' · ' : ''}${t('Round {n}', {n: G.round})} · ${longDate(G.date)}</p>
+      <div class="gm-score">${tm(G.home, G.hs, won, 'h')}<span class="gm-mid"><span class="gm-dash" aria-hidden="true">–</span><span class="gm-final">${t('Final')}${ot ? ' · ' + t('OT') : ''}</span></span>${tm(G.away, G.as, !won, 'a')}</div>
       ${q}</div></div>`;
   }
+  // the round's other results, a dark ticker under the scoreboard
   function round(){
     const R = G.round_games || []; if (R.length < 2) return '';
-    return `<nav class="gm-round scroll" aria-label="${t('Round {n}', {n: G.round})}">${R.map(([code, h, a, hs, as]) => `<a href="#game/${code}"${code === G.code ? ' aria-current="page"' : ''}><span lang="en" class="${hs > as ? 'w' : ''}">${shortName(h)} ${hs}</span><span lang="en" class="${as > hs ? 'w' : ''}">${shortName(a)} ${as}</span></a>`).join('')}</nav>`;
+    return `<nav class="gm-round" aria-label="${t('Round {n}', {n: G.round})}"><div class="gm-round-in">${R.map(([code, h, a, hs, as]) => `<a href="#game/${code}"${code === G.code ? ' aria-current="page"' : ''}><span class="${hs > as ? 'w' : ''}"><span lang="en">${shortName(h)}</span><b>${hs}</b></span><span class="${as > hs ? 'w' : ''}"><span lang="en">${shortName(a)}</span><b>${as}</b></span></a>`).join('')}</div></nav>`;
   }
   function tops(){
     if (!G.top.length) return '';
     return `<h2>${t('Standouts')}</h2><p class="cb-sub">${t('The three best lines of the game by PIR, the league\'s efficiency rating. Open one for his page with this game selected.')}</p><div class="gm-tops">${G.top.map(([pid, raw, club, pts, reb, ast, pir, page, photo]) => {
       const inner = `<img class="ph" src="${photo || PLACEHOLDER}" alt="" width="64" height="64" loading="lazy"><span class="who"><b lang="en">${full(raw)}</b><span>${medal(club, 16)}<span lang="en">${shortName(club)}</span></span></span><span class="line"><em>${pts}</em> ${t('pts')} · <em>${reb}</em> ${t('reb')} · <em>${ast}</em> ${t('ast')}</span><span class="pir">${pir} PIR</span>`;
       return page && CLUBS[page] ? `<a class="gm-top" href="#${page}/${pid}/g${G.code}">${inner}</a>` : `<div class="gm-top">${inner}</div>`; }).join('')}</div>`;
+  }
+  // the two clubs' colours on the page surface: each club's base, or its accent where the base would vanish (a near-black base in dark mode); never two alike
+  function clubPair(){
+    const bg = (getComputedStyle(document.documentElement).getPropertyValue('--panel').trim().match(/^#[0-9a-f]{6}$/i) || ['#ffffff'])[0], lb = lum(bg);
+    const ratio = (x, y) => (Math.max(lum(x), lum(y)) + .05) / (Math.min(lum(x), lum(y)) + .05);
+    const pick = c => { const k = CLUBS[c] || HOUSE; return [k.base, k.accent].filter(Boolean).sort((x, y) => ratio(y, bg) - ratio(x, bg)).find(x => ratio(x, bg) >= 2.2) || (lb > .5 ? '#2b3038' : '#c6cbd4'); };
+    let [h, a] = sides().map(pick);
+    if (ratio(h, a) < 1.4) a = lb > .5 ? '#9aa2b1' : '#6b7383';
+    if (ratio(h, a) < 1.2) a = HOUSE.accent;
+    return [h, a];
+  }
+  // the Summary tab: each club's best line in four categories, the two clubs' team stats side by side, then the standouts
+  function summary(){
+    const S = sides(), cats = [['pts', 'Points'], ['reb', 'Rebounds'], ['ast', 'Assists'], ['pir', 'PIR']];
+    const best = (c, k) => (G.box[c] || []).filter(b => b[B.min]).reduce((x, b) => !x || b[B[k]] > x[B[k]] || (b[B[k]] === x[B[k]] && b[B.pts] > x[B.pts]) ? b : x, null);
+    const ldr = cats.map(([k, l]) => { const p = S.map(c => best(c, k)); if (!p[0] || !p[1]) return '';
+      return `<div class="gm-ldr-c"><h3>${t(l)}</h3><div class="duel">${p.map((b, i) => `<span class="p${b[B[k]] < p[1 - i][B[k]] ? ' lo' : ''}">${plink(b[B.pid], b[B.page], `<img class="ph" src="${b[B.photo] || PLACEHOLDER}" alt="" width="64" height="64" loading="lazy">`)}<em>${b[B[k]]}</em><span lang="en">${short(b[B.name])}</span></span>`).join(`<i>${t('vs')}</i>`)}</div></div>`; }).join('');
+    const [h, a] = S.map(c => G.tot[c]); if (!h || !a) return tops();
+    const xf = k => { const sc = G.shots.filter(s => s[0] === k && s[7] != null); return sc.length ? 100 * sc.reduce((n, s) => n + s[7], 0) / sc.length : null; };
+    const P = (m, n) => n ? 100 * m / n : null, f1 = v => v == null ? '–' : v.toFixed(1) + '%';
+    const rows = [['Field goals', P(h.fgm2 + h.fgm3, h.fga2 + h.fga3), P(a.fgm2 + a.fgm3, a.fga2 + a.fga3), `${h.fgm2 + h.fgm3}/${h.fga2 + h.fga3}`, `${a.fgm2 + a.fgm3}/${a.fga2 + a.fga3}`],
+      ['2 pointers', P(h.fgm2, h.fga2), P(a.fgm2, a.fga2), `${h.fgm2}/${h.fga2}`, `${a.fgm2}/${a.fga2}`], ['3 pointers', P(h.fgm3, h.fga3), P(a.fgm3, a.fga3), `${h.fgm3}/${h.fga3}`, `${a.fgm3}/${a.fga3}`],
+      ['Free throws', P(h.ftm, h.fta), P(a.ftm, a.fta), `${h.ftm}/${h.fta}`, `${a.ftm}/${a.fta}`], ['xFG%', xf(0), xf(1)],
+      ['Rebounds', h.reb, a.reb], ['Offensive rebounds', h.oreb, a.oreb], ['Assists', h.ast, a.ast], ['Steals', h.stl, a.stl], ['Blocks', h.blk, a.blk], ['Turnovers', h.tov, a.tov, null, null, true], ['PIR', h.pir, a.pir]];
+    const cmp = rows.map(([l, hv, av, hs, as, low]) => { const isP = hs !== undefined && hs !== null || l === 'xFG%', fv = v => isP ? f1(v) : v, mx = Math.max(hv || 0, av || 0) || 1, hb = low ? hv <= av : hv >= av, ab = low ? av <= hv : av >= hv;
+      return `<div class="row"><span class="v${hb ? '' : ' lo'}">${fv(hv)}</span><span class="mid"><span class="lab">${l === 'xFG%' || l === 'PIR' ? l : t(l)}${hs ? ` · ${hs} / ${as}` : ''}</span><span class="bars"><i><b style="width:${(100 * (hv || 0) / mx).toFixed(1)}%"></b></i><i><b style="width:${(100 * (av || 0) / mx).toFixed(1)}%"></b></i></span></span><span class="v r${ab ? '' : ' lo'}">${fv(av)}</span></div>`; }).join('');
+    const pair = clubPair();
+    return `<h2>${t('Game leaders')}</h2><div class="gm-ldr">${ldr}</div>
+      <h2>${t('Team comparison')}</h2><div class="gm-cmp" style="--gh:${pair[0]};--ga:${pair[1]}"><div class="hd"><span>${medal(G.home, 24)}<span lang="en">${shortName(G.home)}</span></span><span><span lang="en">${shortName(G.away)}</span>${medal(G.away, 24)}</span></div>${cmp}</div>
+      ${tops()}`;
   }
   function boxTable(code){
     const L = G.box[code] || [], T = G.tot[code], c = CLUBS[code] || {}, won = code === G.home ? G.hs > G.as : G.as > G.hs;
@@ -2874,7 +2972,7 @@ const GAME = (() => {
     const tot = `<tr class="tot"><td class="nm">${t('Totals')}</td><td class="k"></td><td class="k pts">${T.pts}</td><td class="k">${T.reb}</td><td class="k">${T.ast}</td><td class="k">${T.stl}</td><td class="k">${T.blk}</td><td class="k">${T.tov}</td><td class="k">${m(T.fgm2, T.fga2)}${fg(T.fgm2, T.fga2)}</td><td class="k">${m(T.fgm3, T.fga3)}${fg(T.fgm3, T.fga3)}</td><td class="k">${m(T.ftm, T.fta)}${fg(T.ftm, T.fta)}</td><td class="k">${T.pir}</td><td class="k"></td></tr>`;
     return `<h3 class="gm-h3">${medal(code, 22)}<a href="#${code}" lang="en">${c.name || code}</a><em class="res ${won ? 'w' : 'l'}">${won ? t('W') : t('L')} ${T.pts}</em></h3>
       <p class="scroll-hint">${t('Scroll for more columns')}</p>
-      <div class="cb-wrap scroll"><table class="cb-tab gm-box"><thead><tr><th>${t('Player')}</th><th class="k">${t('Min')}</th><th class="k">${t('Pts')}</th><th class="k">${t('Reb')}</th><th class="k">${t('Ast')}</th><th class="k">${t('Stl')}</th><th class="k">${t('Blk')}</th><th class="k">${t('Tov')}</th><th class="k">2P</th><th class="k">3P</th><th class="k">${t('FT')}</th><th class="k">PIR</th><th class="k">+/-</th></tr></thead><tbody>${L.map(row).join('')}${tot}</tbody></table></div>`;
+      <div class="cb-wrap scroll gm-boxwrap" style="--tc:${c.base || HOUSE.base}"><table class="cb-tab gm-box"><thead><tr><th>${t('Player')}</th><th class="k">${t('Min')}</th><th class="k">${t('Pts')}</th><th class="k">${t('Reb')}</th><th class="k">${t('Ast')}</th><th class="k">${t('Stl')}</th><th class="k">${t('Blk')}</th><th class="k">${t('Tov')}</th><th class="k">2P</th><th class="k">3P</th><th class="k">${t('FT')}</th><th class="k">PIR</th><th class="k">+/-</th></tr></thead><tbody>${L.map(row).join('')}${tot}</tbody></table></div>`;
   }
   function box(){
     return sides().map(boxTable).join('');
@@ -2914,12 +3012,13 @@ const GAME = (() => {
   }
   function render(){
     if (!G) return;
-    const tabs = `<div class="seg gm-tabs" role="tablist">${TABS.map(k => `<button type="button" role="tab" data-tab="${k}" aria-pressed="${st.tab === k}" aria-selected="${st.tab === k}">${t({box: 'Box score', shots: 'Shots', fives: 'Fives'}[k])}</button>`).join('')}</div>`;
-    el.innerHTML = hero() + `<div class="in cb-in">${round()}${tops()}<h2>${t('The game')}</h2>${tabs}<div class="gm-body">${st.tab === 'shots' ? shots() : st.tab === 'fives' ? fives() : box()}</div></div>`;
+    const tabs = `<div class="gm-tabs" role="tablist"><div class="gm-tabs-in">${TABS.map(k => `<button type="button" role="tab" data-tab="${k}" aria-pressed="${st.tab === k}" aria-selected="${st.tab === k}">${t({summary: 'Summary', box: 'Box score', shots: 'Shots', fives: 'Fives'}[k])}</button>`).join('')}</div></div>`;
+    const body = st.tab === 'shots' ? shots() : st.tab === 'fives' ? fives() : st.tab === 'box' ? box() : summary();
+    el.innerHTML = hero() + round() + tabs + `<div class="in cb-in"><div class="gm-body">${body}</div></div>`;
     document.title = `${shortName(G.home)} ${G.hs}–${G.as} ${shortName(G.away)} · ${t('R')}${G.round} · Player Lab`;
     if (typeof scrollEnds === 'function') scrollEnds();
   }
-  const setHash = () => { const want = `#game/${G.code}${st.tab === 'box' ? '' : '/' + st.tab}`; if (location.hash !== want) history.replaceState(null, '', location.pathname + location.search + want); };
+  const setHash = () => { const want = `#game/${G.code}${st.tab === 'summary' ? '' : '/' + st.tab}`; if (location.hash !== want) history.replaceState(null, '', location.pathname + location.search + want); };
   el.addEventListener('click', e => {
     const b = e.target.closest('button[data-tab]'); if (b) { st.tab = b.dataset.tab; render(); setHash(); return; }
     const s = e.target.closest('button[data-side]'); if (s && G) { st.side[G.code] = s.dataset.side; render(); return; }
@@ -2934,7 +3033,7 @@ const GAME = (() => {
     render,
     async show(code, tab){
       applyPalette(HOUSE); document.body.classList.add('gm-on'); noTeam(!state.team); el.hidden = false;
-      st.tab = TABS.includes(tab) ? tab : 'box';
+      st.tab = TABS.includes(tab) ? tab : 'summary';
       const fresh = String(code) !== String(cur); cur = String(code);
       if (fresh || !G) { el.innerHTML = `<div class="in cb-in"><p class="cb-sub">${t('Loading…')}</p></div>`; document.title = `${t('Game')} · Player Lab`; }
       try { const d = await load(code); if (cur !== String(code)) return; G = d; }

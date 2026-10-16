@@ -293,6 +293,10 @@ def main():
         def game_page(where):
             cdp.wait("!document.querySelector('#cv-last').hidden && document.querySelectorAll('#cv-games a.cv-game').length >= 1", f"the Last night strip on the opening page ({where})")
             cdp.eval("document.querySelector('#cv-games a.cv-game').click()")
+            # the game opens on its Summary: four leader duels and the team comparison, then the box score one tab over
+            cdp.wait("document.body.classList.contains('gm-on') && !document.querySelector('.wipe.on') && document.querySelector('#fail').hidden"
+                     " && document.querySelectorAll('#game .gm-ldr-c').length === 4 && document.querySelectorAll('#game .gm-cmp .row').length >= 10 && !!document.querySelector('#game .gm-tm')", f"a game page's summary ({where})")
+            cdp.eval("document.querySelector('#game button[data-tab=box]').click()")
             cdp.wait(GAME_UP, f"a game page with both box scores ({where})")
             bad = cdp.eval("""(() => { const em = [...document.querySelectorAll('#game .gm-tm em')].map(e => +e.textContent), tot = [...document.querySelectorAll('#game .gm-box tr.tot td.pts')].map(e => +e.textContent);
                               return em.length === 2 && tot.length === 2 && em[0] === tot[0] && em[1] === tot[1] ? '' : `header ${em} against box totals ${tot}`; })()""")
