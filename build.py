@@ -16,6 +16,7 @@ import re
 import sys
 import duckdb
 import drift
+import rapm
 
 SEASON = sys.argv[1] if len(sys.argv) > 1 else "E2026"
 ROOT = os.path.dirname(os.path.abspath(__file__))
@@ -177,6 +178,9 @@ clubs = rows("select * from clubs order by name")
 for c in clubs:
     c["logo"] = crest_webp(c["club"])
 summary = []
+# regularized adjusted plus-minus from the reconstructed stints (rapm.py): one season-long fit, by player across clubs
+RAPM = rapm.fit(con, os.path.join(W, "stints.parquet"))
+RAPM_P = RAPM["players"] if RAPM else {}
 collected = {}
 # Euroleague career as spells: consecutive seasons at one club fold into "from-to", most recent first; club names are the
 # current short name where the club is in the league today, else the name the feed used that season
@@ -267,6 +271,8 @@ for c in clubs:
             adj = sum((s["made"] - (s["xfg_ctx"] + DEF_ADJ.get(opp_of(s["game"], s["club"]), {}).get(zone_of(s["x"], s["y"], s["pts"]), 0.0))) * s["pts"] for s in sh if s["game"] in gidx and s["xfg_ctx"] is not None)
             xfg["pae_adj"] = round(adj, 2)
         role = role_metrics(lines)
+        if role and (rp := RAPM_P.get(r["player"])):
+            role.update({"rapm": rp["t"], "rapm_o": rp["o"], "rapm_d": rp["d"], "rapm_poss": rp["poss"]})
         # the same shares for each game on its own, in log order, so the stats band can show a single game
         role_g = [{k: m[k] for k in ("usg", "ast_pct", "tov_pct", "reb_pct")} if (m := role_metrics([b])) else None for b in lines]
         games = [{"code": b["game"], "round": b["round"], "date": str(b["date"]), "home": b["home"], "away": b["away"], "hs": b["home_score"], "as": b["away_score"], "phase": b["phase"], "own": b["club"],
@@ -288,7 +294,7 @@ def per_game(tot, per40=False):
             "ft": tot["ftm"] / tot["fta"] if tot["fta"] >= 10 else None, "ts": tot["pts"] / (2 * (fga + 0.44 * tot["fta"])) if fga else None}
 eligible = lambda tot: tot["gp"] >= 3 and tot["min"] / tot["gp"] >= 10
 pools = {False: [], True: []}
-ROLE_KEYS = ("usg", "ast_pct", "tov_pct", "reb_pct", "fg3_rate", "ft_rate", "onoff_shrunk")
+ROLE_KEYS = ("usg", "ast_pct", "tov_pct", "reb_pct", "fg3_rate", "ft_rate", "onoff_shrunk", "rapm")
 def full_rates(cur, per40=False):
     d = per_game(cur["tot"], per40)
     d.update({k: (cur["role"] or {}).get(k) for k in ROLE_KEYS})

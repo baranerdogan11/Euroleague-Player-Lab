@@ -79,6 +79,7 @@ jobs:
           python tests/test_profile.py
           python tests/test_service.py
           python tests/test_monitor.py
+          python tests/test_rapm.py
 
       - name: Restore feed cache
         uses: actions/cache@v4
