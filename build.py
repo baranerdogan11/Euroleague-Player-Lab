@@ -739,10 +739,88 @@ def lineups_json():
             for l in g["lineups"]:
                 l["p"] = [P(x) for x in l["p"]]
     names = {P(k): v for k, v in names.items()}
+    BYGAME.update(bygame)                       # the game pages (games_json) carry each game's fives from here
     out = {"season": SEASON, "built": datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC"), "games": {c: t["g"] for c, t in team.items()}, "names": names, "lineups": lineups, "onoff": onoff,
            "n_all": con.execute("select count(*) from (select club, players from stints group by 1, 2)").fetchone()[0], "bygame": bygame}
     json.dump(out, open(os.path.join(OUT, "lineups.json"), "w"), separators=(",", ":"), ensure_ascii=False)
     return {"n": len(lineups), "n_all": out["n_all"], "players": sum(len(v) for v in onoff.values()), "bygame": n_bygame}
+
+
+BYGAME = {}
+
+
+def games_json():
+    """One file per played game for the game pages (teams/<season>/games/<game>.json, fetched when a game is opened): the
+    score by quarter from the play-by-play, both box scores straight from the box table (the same lines the player pages
+    log), every shot with its context-only xFG, and the fives each club used (lineups_json). Returns the latest game
+    day for the cover's Last night strip. Every club's box points must add up to its final score, and the quarters to
+    the final, or the build stops: a game page never disagrees with the standings."""
+    gdir = os.path.join(OUT, "games")
+    os.makedirs(gdir, exist_ok=True)
+    for stale in glob.glob(os.path.join(gdir, "*.json")):
+        os.remove(stale)
+    ev_path = os.path.join(W, "events.parquet")
+    if os.path.exists(ev_path):
+        con.execute(f"create or replace view events as select * from read_parquet('{ev_path}')")
+    played = rows("select game, round, phase, cast(date as varchar) as date, date_utc, home, away, home_score, away_score from games where played order by date_utc, game")
+    if not played:
+        return None
+    # the club a player's page lives under (his active stint), so a box line links to it; a player who has left has no page
+    page_club = {r["player"]: r["club"] for r in rows("select player, club from roster_stints where active")}
+    photo = lambda pid: f"photos/{pid}.webp" if os.path.exists(os.path.join(ROOT, "photos", f"{pid}.webp")) else None
+    by_round = {}
+    for g in played:
+        by_round.setdefault(g["round"], []).append([g["game"], g["home"], g["away"], g["home_score"], g["away_score"]])
+    quarters = {}
+    if os.path.exists(ev_path):
+        for r in rows("""select game, period, max(score_home) h, max(score_away) a from events where score_home is not null or score_away is not null
+                         group by 1, 2 order by 1, 2"""):
+            quarters.setdefault(r["game"], []).append(r)
+    keys = ("minutes", "pts", "fgm2", "fga2", "fgm3", "fga3", "ftm", "fta", "oreb", "dreb", "reb", "ast", "stl", "tov", "blk", "blka", "pf", "fd", "pir", "plusminus")
+    tops, n_lines = {}, 0
+    for g in played:
+        code, sides = g["game"], (g["home"], g["away"])
+        score = {g["home"]: g["home_score"], g["away"]: g["away_score"]}
+        # box lines in the order the league prints them: starters first, then by minutes; players without minutes stay listed (DNP)
+        lines = rows(f"""select b.player, p.name, b.club, b.starter, {', '.join('b.' + k for k in keys)}, s.dorsal
+                         from box b join players p using (player)
+                         left join (select player, club, max_by(dorsal, start_date) dorsal from roster_stints group by 1, 2) s on s.player = b.player and s.club = b.club
+                         where b.game = ? order by b.club, b.starter desc, b.minutes desc, p.name""", code)
+        box, tot = {}, {}
+        for c in sides:
+            ls = [b for b in lines if b["club"] == c]
+            t = {k: sum(b[k] or 0 for b in ls) for k in keys if k not in ("minutes", "plusminus")}
+            t["min"] = round(sum(b["minutes"] or 0 for b in ls), 1)
+            if t["pts"] != score[c]:
+                raise SystemExit(f"game {code}: {c} box points add up to {t['pts']}, the final score says {score[c]}")
+            tot[c] = t
+            box[c] = [["P" + b["player"], b["name"], b["dorsal"], int(bool(b["starter"])), round(b["minutes"] or 0, 1), *[b[k] for k in keys[1:]],
+                       page_club.get(b["player"]), photo(b["player"])] for b in ls]
+            n_lines += len(ls)
+        # the score at the end of each period, from the running score on the play-by-play (carried forward over periods with no basket)
+        q, h, a = [], 0, 0
+        for r in quarters.get(code, []):
+            h, a = max(h, r["h"] or 0), max(a, r["a"] or 0)
+            q.append([h, a])
+        if q and q[-1] != [g["home_score"], g["away_score"]]:
+            print(f"game {code}: play-by-play ends {q[-1]}, final {g['home_score']}-{g['away_score']}; quarter scores left out")
+            q = []
+        q = [[x[0] - (q[i - 1][0] if i else 0), x[1] - (q[i - 1][1] if i else 0)] for i, x in enumerate(q)]
+        sh = rows("""select s.club, s.player, s.x, s.y, s.made, s.pts, s.minute, x.xfg_ctx, c.assisted from shots s left join shots_xfg x using (game, seq)
+                     left join shot_context c using (game, seq) where s.game = ? order by s.minute, s.seq""", code)
+        shots = [[sides.index(s["club"]), "P" + s["player"], s["x"], s["y"], int(s["made"]), s["pts"], s["minute"], round(s["xfg_ctx"], 3) if s["xfg_ctx"] is not None else None, s["assisted"]] for s in sh]
+        # three standout lines: PIR, the league's own efficiency figure, then points
+        top = sorted((b for b in lines if b["minutes"]), key=lambda b: (-b["pir"], -b["pts"], b["name"]))[:3]
+        tops[code] = [["P" + b["player"], b["name"], b["club"], b["pts"], b["reb"], b["ast"], b["pir"], page_club.get(b["player"]), photo(b["player"])] for b in top]
+        fives = {c: next((x for x in BYGAME.get(c, []) if x["code"] == code), None) for c in sides}
+        out = {"season": SEASON, "code": code, "round": g["round"], "phase": g["phase"], "date": g["date"], "home": g["home"], "away": g["away"], "hs": g["home_score"], "as": g["away_score"],
+               "q": q, "box": box, "tot": tot, "shots": shots, "top": tops[code], "poss": game_poss(code),
+               "fives": {c: ({k: f[k] for k in ("len", "pts", "opp", "poss", "lineups")} if f else None) for c, f in fives.items()},
+               "round_games": by_round[g["round"]]}
+        json.dump(out, open(os.path.join(gdir, f"{code}.json"), "w"), separators=(",", ":"), ensure_ascii=False)
+    last_date = played[-1]["date"]
+    day = [g for g in played if g["date"] == last_date]
+    return {"n": len(played), "lines": n_lines, "last": {"date": last_date, "games": [{"code": g["game"], "round": g["round"], "home": g["home"], "away": g["away"], "hs": g["home_score"], "as": g["away_score"], "top": tops[g["game"]][0] if tops[g["game"]] else None} for g in day]}}
 
 
 def leaders_json():
@@ -831,6 +909,8 @@ meta = {"season": SEASON, "label": label(SEASON), "min_sd": MIN_SD, "model": {"v
                    "tau_skill": PRIORS["tau_skill"]} if PRIORS else None,
         "built": datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC"), "path": f"teams/{SEASON}/",
         "status": {k: status.get(k) for k in ("checked_at", "games", "shots", "players", "tests", "ok", "failures", "warnings")} if status else None}
+GAMES = games_json()             # the game pages' files; the latest game day rides in the page for the cover strip
+meta["last_night"] = GAMES and GAMES["last"]
 json.dump(meta, open(os.path.join(OUT, "index.json"), "w"), ensure_ascii=False)
 # app icons drawn from the house mark (a dark square, the orange ball, court lines), written once
 def draw_icons():
