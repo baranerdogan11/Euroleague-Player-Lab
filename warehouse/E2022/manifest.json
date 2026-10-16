@@ -1,0 +1,17 @@
+{
+ "season": "E2022",
+ "tables": {
+  "clubs": 18,
+  "players": 325,
+  "careers": 1948,
+  "careers_wiki": 0,
+  "roster_stints": 326,
+  "games": 328,
+  "box": 7785,
+  "shots": 39939,
+  "events": 171870,
+  "shot_context": 39939,
+  "stints": 23218,
+  "oncourt": 7785
+ }
+}

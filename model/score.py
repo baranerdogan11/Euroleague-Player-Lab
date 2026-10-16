@@ -14,13 +14,12 @@ import pandas as pd
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from features import featurize  # noqa: E402
-from xfg import load_shots  # noqa: E402
+from xfg import PRIOR_DECAY, load_shots  # noqa: E402
 
 SEASON = sys.argv[1] if len(sys.argv) > 1 else "E2026"
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MODEL_DIR = os.path.join(ROOT, "model")
 W = os.path.join(ROOT, "warehouse", SEASON)
-PRIOR_DECAY = 0.6
 
 bundle = joblib.load(os.path.join(MODEL_DIR, "xfg_model.joblib"))
 model, feats, k = bundle["model"], bundle["features"], bundle["k_shrink"]

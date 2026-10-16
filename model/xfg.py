@@ -1,12 +1,15 @@
 """Expected field-goal model (xFG): the probability a shot goes in given where and when it was taken.
 
-Trained on a past season's warehouse. Context features only in the base model (location, distance, angle,
-shot value, clock, game state, transition flags); shooter quality enters as a separate, leak-free feature:
-each shooter's shrunk residual (made minus xFG) accumulated over his earlier shots only. Validation is by
-time: the last 25% of games by date are held out. Outputs the fitted model, a model card with metrics and
-calibration, and per-shooter effects for use as priors next season.
+Trained on past seasons' warehouses (model/training.json lists them, oldest first). Context features only in
+the base model (location, distance, angle, shot value, clock, game state, transition flags); shooter quality
+enters as a separate, leak-free feature: each shooter's shrunk residual (made minus xFG) accumulated over his
+earlier shots only, decayed at each new season exactly as model/score.py decays last season's effects. Validation
+is by time: the last 25% of the latest season's games are held out, everything before them trains. Outputs the
+fitted model, a model card with metrics and calibration, and per-shooter effects (as of the end of the latest
+season) for use as priors next season.
 
-usage: python model/xfg.py E2025
+usage: python model/xfg.py                          # seasons from model/training.json
+       python model/xfg.py E2022 E2023 E2024 E2025  # explicit list, oldest first
 """
 import datetime
 import json
@@ -20,11 +23,12 @@ import pandas as pd
 from sklearn.ensemble import HistGradientBoostingClassifier
 from sklearn.metrics import brier_score_loss, log_loss, roc_auc_score
 
-SEASON = sys.argv[1] if len(sys.argv) > 1 else "E2025"
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-W = os.path.join(ROOT, "warehouse", SEASON)
 OUT = os.path.join(ROOT, "model")
+SEASONS = [a for a in sys.argv[1:] if a.startswith("E")] or json.load(open(os.path.join(OUT, "training.json")))["seasons"]
+SEASON = SEASONS[-1]   # the latest training season: validation, shooter effects and the model card's trained_on
 K_SHRINK = 150.0       # attempts at which a shooter's own record gets half the weight of the league prior
+PRIOR_DECAY = 0.6      # a shooter's record carried into a new season keeps this share of its weight (rosters and roles change)
 SEED = 7
 
 from features import NUMERIC, BINARY, CATEG, FEATURES, featurize  # noqa: E402
@@ -45,20 +49,29 @@ def load_shots(season):
     return con.execute(q).df()
 
 
+def load_seasons(seasons):
+    """Shots of several seasons, oldest first; game codes restart every season, so (season, game) is the key."""
+    return pd.concat([load_shots(s).assign(season=s) for s in seasons], ignore_index=True)
+
+
 def make_model(seed=SEED):
     return HistGradientBoostingClassifier(learning_rate=0.05, max_iter=600, max_leaf_nodes=31, min_samples_leaf=40, l2_regularization=1.0,
                                           early_stopping=True, validation_fraction=0.1, n_iter_no_change=40, categorical_features=[FEATURES.index(c) for c in CATEG],
                                           random_state=seed)
 
 
-def shooter_effects(df, resid, k=K_SHRINK):
-    """Sequential shrunk residual per shooter: uses only shots before each shot (leak-free feature)."""
+def shooter_effects(df, resid, k=K_SHRINK, decay=PRIOR_DECAY):
+    """Sequential shrunk residual per shooter: uses only shots before each shot (leak-free feature). At each new
+    season every running record is decayed, as model/score.py does with last season's effects."""
     prior = np.zeros(len(df))
     acc, n = {}, {}
+    seasons = df.season.values if "season" in df else np.zeros(len(df))
     for i, (p, r) in enumerate(zip(df.player.values, resid)):
+        if i and seasons[i] != seasons[i - 1]:
+            acc = {q: v * decay for q, v in acc.items()}; n = {q: v * decay for q, v in n.items()}
         prior[i] = acc.get(p, 0.0) / (n.get(p, 0) + k)
         acc[p] = acc.get(p, 0.0) + r; n[p] = n.get(p, 0) + 1
-    final = pd.DataFrame({"player": list(acc), "n": [n[p] for p in acc], "effect": [acc[p] / (n[p] + k) for p in acc]})
+    final = pd.DataFrame({"player": list(acc), "n": [round(float(n[p]), 1) for p in acc], "effect": [acc[p] / (n[p] + k) for p in acc]})
     return prior, final
 
 
@@ -73,12 +86,15 @@ def calibration(y, p, bins=10):
 
 
 if __name__ == "__main__":
-    raw = load_shots(SEASON)
+    raw = load_seasons(SEASONS)
     df = featurize(raw)
     df["date"] = pd.to_datetime(df.date)
-    cut = df.date.quantile(0.75)
-    train, test = df[df.date <= cut], df[df.date > cut]
-    print(f"{SEASON}: {len(df)} shots, {df.player.nunique()} shooters; train {len(train)} (to {cut.date()}), test {len(test)}")
+    df["gkey"] = df.season + "/" + df.game.astype(str)
+    cut = df[df.season == SEASON].date.quantile(0.75)
+    held = (df.season == SEASON) & (df.date > cut)
+    train, test = df[~held], df[held]
+    by_season = {s: int(n) for s, n in df.groupby("season").size().items()}
+    print(f"{'+'.join(SEASONS)}: {len(df)} shots {by_season}, {df.player.nunique()} shooters; train {len(train)} (to {cut.date()}), test {len(test)} ({SEASON})")
 
     # baselines
     base_rate = train.made.mean()
@@ -91,11 +107,14 @@ if __name__ == "__main__":
     # base model, out-of-fold residuals on train for the shooter feature
     from sklearn.model_selection import GroupKFold
     oof = np.zeros(len(train))
-    for tr, va in GroupKFold(5).split(train, groups=train.game):
+    for tr, va in GroupKFold(5).split(train, groups=train.gkey):
         m = make_model().fit(train.iloc[tr][FEATURES], train.iloc[tr].made)
         oof[va] = m.predict_proba(train.iloc[va][FEATURES])[:, 1]
     base = make_model().fit(train[FEATURES], train.made)
     p_base_test = base.predict_proba(test[FEATURES])[:, 1]
+    # the same context model fitted on the latest season's training games only (the setup before multi-season training)
+    last = train[train.season == SEASON]
+    p_last_test = make_model().fit(last[FEATURES], last.made).predict_proba(test[FEATURES])[:, 1] if len(SEASONS) > 1 else p_base_test
 
     # shooter feature: sequential over the whole season, residuals from OOF (train) and from the base model (test, using earlier shots only)
     resid_all = np.concatenate([train.made.values - oof, test.made.values - p_base_test])
@@ -106,7 +125,7 @@ if __name__ == "__main__":
     p_aug_test = aug.predict_proba(test[FEAT2])[:, 1]
 
     res = {"constant": metrics(test.made, np.full(len(test), base_rate)), "zone_fg": metrics(test.made, p_zone), "distance_bins": metrics(test.made, p_dist),
-           "xfg_context": metrics(test.made, p_base_test), "xfg_context_plus_shooter": metrics(test.made, p_aug_test)}
+           "xfg_context_latest_season_only": metrics(test.made, p_last_test), "xfg_context": metrics(test.made, p_base_test), "xfg_context_plus_shooter": metrics(test.made, p_aug_test)}
     print(pd.DataFrame(res).T.to_string())
     use_shooter = res["xfg_context_plus_shooter"]["logloss"] < res["xfg_context"]["logloss"]
     chosen = "xfg_context_plus_shooter" if use_shooter else "xfg_context"
@@ -127,13 +146,15 @@ if __name__ == "__main__":
     importance = sorted(zip(feats, pi.importances_mean.round(4)), key=lambda t: -t[1])
 
     os.makedirs(OUT, exist_ok=True)
-    joblib.dump({"model": final, "features": feats, "categories": {"zone": list(df.zone.cat.categories), "poss_start": list(df.poss_start.cat.categories)}, "k_shrink": K_SHRINK, "trained_on": SEASON}, os.path.join(OUT, "xfg_model.joblib"))
+    joblib.dump({"model": final, "features": feats, "categories": {"zone": list(df.zone.cat.categories), "poss_start": list(df.poss_start.cat.categories)}, "k_shrink": K_SHRINK, "trained_on": SEASON, "training_seasons": SEASONS}, os.path.join(OUT, "xfg_model.joblib"))
     effects.to_parquet(os.path.join(OUT, f"shooter_effects_{SEASON}.parquet"), index=False)
-    card = {"model": "xFG (expected field goal)", "version": datetime.date.today().isoformat(), "trained_on": SEASON, "n_shots": int(len(df)), "n_shooters": int(df.player.nunique()),
-            "split": f"time-based, test = games after {cut.date()} ({len(test)} shots)", "features": feats, "chosen": chosen, "metrics_test": res,
+    card = {"model": "xFG (expected field goal)", "version": datetime.date.today().isoformat(), "trained_on": SEASON, "training_seasons": SEASONS, "n_shots": int(len(df)),
+            "n_shots_by_season": by_season, "n_shooters": int(df.player.nunique()),
+            "split": f"time-based, test = {SEASON} games after {cut.date()} ({len(test)} shots), train = every earlier game of {', '.join(SEASONS)}", "features": feats, "chosen": chosen, "metrics_test": res,
             "calibration_test": cal, "permutation_importance": importance, "shooter_shrinkage_k": K_SHRINK,
-            "algorithm": "sklearn HistGradientBoostingClassifier, early stopping", "notes": "Shooter effect is a sequential shrunk residual computed from earlier shots only; no leakage.",
-            "changes": "Adds poss_sec (seconds into the possession) and poss_start (how the possession began) from the play-by-play layer; both are known before the release and missing for games without play-by-play.",
+            "algorithm": "sklearn HistGradientBoostingClassifier, early stopping", "notes": "Shooter effect is a sequential shrunk residual computed from earlier shots only, decayed by PRIOR_DECAY at each new season; no leakage.",
+            "shooter_prior_decay": PRIOR_DECAY,
+            "changes": "Trained on several seasons instead of one (model/training.json); the context model fitted on the latest season alone is kept as a comparison row in metrics_test.",
             "context_coverage": round(float(df.poss_sec.notna().mean()), 3)}
     json.dump(card, open(os.path.join(OUT, "model_card.json"), "w"), indent=1)
     print(f"\nchosen: {chosen}; saved model, card and {len(effects)} shooter effects")

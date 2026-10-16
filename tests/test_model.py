@@ -22,6 +22,12 @@ df = pd.DataFrame({"game": 1, "seq": [r["NUM_ANOT"] for r in shots], "player": [
                    "pts": [3 if r["ID_ACTION"].strip().startswith("3") else 2 for r in shots], "zone": [r["ZONE"].strip() for r in shots],
                    "minute": [r["MINUTE"] for r in shots], "clock": [r["CONSOLE"] for r in shots], "fastbreak": False, "second_chance": False, "points_off_tov": False,
                    "score_home": [r["POINTS_A"] for r in shots], "score_away": [r["POINTS_B"] for r in shots], "date": "2025-09-30", "home": "IST", "away": "TEL", "round": 1})
+# the fixture is game 1 of 2025-26: take its possession context from the warehouse, as nightly scoring does, so the
+# check measures shots as the site scores them rather than the model's branch for games without play-by-play
+ctx_path = os.path.join(ROOT, "warehouse", "E2025", "shot_context.parquet")
+if os.path.exists(ctx_path):
+    ctx = pd.read_parquet(ctx_path, columns=["game", "seq", "poss_sec", "poss_start"])
+    df = df.merge(ctx[ctx.game == 1].drop(columns="game"), on="seq", how="left")
 f = featurize(df)
 f["zone"] = pd.Categorical(f.zone.astype(str), categories=bundle["categories"]["zone"])
 if "poss_start" in bundle["categories"]:

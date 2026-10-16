@@ -1,0 +1,13 @@
+{
+ "season": "E2023",
+ "checked_at": "2026-10-16T10:34:13Z",
+ "clubs": 18,
+ "players": 313,
+ "games": 331,
+ "shots": 41331,
+ "box_lines": 7883,
+ "tests": 26,
+ "failures": 0,
+ "warnings": 1,
+ "ok": true
+}

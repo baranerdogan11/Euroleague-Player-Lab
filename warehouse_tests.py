@@ -1,6 +1,7 @@
 """SQL assertions over the silver layer. Exits non-zero if any fails.
 
 usage: python warehouse_tests.py E2026
+       python warehouse_tests.py E2022 --no-lineups   # past seasons kept only for xFG training: the lineup layer is not used or kept
 """
 import os
 import sys
@@ -20,9 +21,12 @@ con.execute(f"create view stints as select * from read_parquet('{p}')" if os.pat
 p = os.path.join(W, "oncourt.parquet")
 con.execute(f"create view oncourt as select * from read_parquet('{p}')" if os.path.exists(p) else "create view oncourt as select null::int game, null::varchar player, null::varchar club, null::int sec, null::double box_min where false")
 
+N_CLUBS = {"E2022": 18, "E2023": 18, "E2024": 18}.get(SEASON, 20)   # past seasons kept for xFG training had 18 clubs
+N_RS = 2 * (N_CLUBS - 1)                                             # double round robin
+
 # (name, query returning the number of offending rows)
 TESTS = [
-    ("clubs: 20 rows, unique codes", "select abs(count(*) - 20) + (count(*) - count(distinct club)) from clubs"),
+    (f"clubs: {N_CLUBS} rows, unique codes", f"select abs(count(*) - {N_CLUBS}) + (count(*) - count(distinct club)) from clubs"),
     ("players: unique codes, non-empty names", "select count(*) - count(distinct player) + sum(case when name is null or name = '' then 1 else 0 end) from players"),
     ("roster_stints: player exists", "select count(*) from roster_stints s left join players p using (player) where p.player is null"),
     ("roster_stints: club exists", "select count(*) from roster_stints s left join clubs c using (club) where c.club is null"),
@@ -33,7 +37,7 @@ TESTS = [
     ("games: both clubs known", "select count(*) from games g left join clubs h on h.club = g.home left join clubs a on a.club = g.away where h.club is null or a.club is null"),
     ("games: played games have a score", "select count(*) from games where played and coalesce(home_score, 0) + coalesce(away_score, 0) = 0"),
     ("games: played games are not in the future", "select count(*) from games where played and date > current_date"),
-    ("games: each club plays 38 regular-season games", "select count(*) from (select c.club, sum(case when g.phase = 'RS' then 1 else 0 end) n from clubs c join games g on c.club in (g.home, g.away) group by c.club having n != 38)"),
+    (f"games: each club plays {N_RS} regular-season games", f"select count(*) from (select c.club, sum(case when g.phase = 'RS' then 1 else 0 end) n from clubs c join games g on c.club in (g.home, g.away) group by c.club having n != {N_RS})"),
     ("box: game exists and was played", "select count(*) from box b left join games g using (game) where g.game is null or not g.played"),
     ("box: club is one of the game's clubs", "select count(*) from box b join games g using (game) where b.club not in (g.home, g.away)"),
     ("box: one line per player per game", "select count(*) - count(distinct (game, player)) from box"),
@@ -73,6 +77,9 @@ WARNINGS = [
     ("oncourt: reconstructed minutes agree with the box score within a minute", "select count(*) from oncourt where abs(sec / 60.0 - box_min) > 1.0"),
     ("shots: shot value consistent with distance (3s from 6.4 m out, 2s inside 7 m)", "select count(*) from shots where (pts = 3 and sqrt(x*x + y*y) < 640) or (pts = 2 and sqrt(x*x + y*y) > 700)"),
 ]
+if "--no-lineups" in sys.argv:   # older substitution logs do not always reconstruct five on the floor; nothing built from them is kept
+    TESTS = [t for t in TESTS if not t[0].startswith(("stints:", "oncourt:"))]
+    WARNINGS = [t for t in WARNINGS if not t[0].startswith(("stints:", "oncourt:"))]
 warn = 0
 for name, q in WARNINGS:
     n = con.execute(q).fetchone()[0] or 0

@@ -32,8 +32,9 @@ if not os.path.exists(clubs_path):
     fail("clubs.json missing"); clubs = []
 else:
     clubs = json.load(open(clubs_path))["clubs"]
-if len(clubs) != 20:
-    fail(f"expected 20 clubs, found {len(clubs)}")
+N_CLUBS = {"E2022": 18, "E2023": 18, "E2024": 18}.get(SEASON, 20)   # past seasons kept for xFG training had 18 clubs
+if len(clubs) != N_CLUBS:
+    fail(f"expected {N_CLUBS} clubs, found {len(clubs)}")
 
 games_seen, total_players, total_games, total_shots, reconciled, photo_missing = {}, 0, 0, 0, 0, 0
 for c in clubs:

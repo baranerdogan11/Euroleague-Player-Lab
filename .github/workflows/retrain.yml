@@ -1,0 +1,159 @@
+name: Retrain xFG
+
+# Retrains the xFG model on the seasons in model/training.json. Past seasons missing from warehouse/ are fetched
+# and built first (the same gate, warehouse and play-by-play steps as the nightly run), and only what training
+# needs is kept: shots, games and shot context. Then the model is trained and registered, last season and this
+# season are rescored, the shooting priors are recalibrated, the site is rebuilt, and the result is committed back
+# to the branch with a report of how far xFG% moved. Runs when model/training.json changes on a branch, or by hand.
+
+on:
+  push:
+    branches-ignore: [main]
+    paths: [model/training.json, model/xfg.py, model/features.py, tests/test_model.py, .github/workflows/retrain.yml]   
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: retrain-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  SEASON: E2026
+  PL_SMOKE_REQUIRED: "1"
+
+jobs:
+  plan:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      missing: ${{ steps.p.outputs.missing }}
+      any: ${{ steps.p.outputs.any }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: p
+        name: Which training seasons are not in the warehouse yet?
+        run: |
+          python - <<'EOF'
+          import json, os
+          seasons = json.load(open("model/training.json"))["seasons"]
+          missing = [s for s in seasons if not os.path.exists(f"warehouse/{s}/shots.parquet")]
+          print("training seasons:", seasons, "to fetch:", missing)
+          open(os.environ["GITHUB_OUTPUT"], "a").write(f"missing={json.dumps(missing)}\nany={'true' if missing else 'false'}\n")
+          EOF
+
+  fetch:
+    needs: plan
+    if: needs.plan.outputs.any == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      matrix:
+        season: ${{ fromJson(needs.plan.outputs.missing) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Restore feed cache
+        uses: actions/cache/restore@v4
+        with:
+          path: cache/${{ matrix.season }}
+          key: feeds-${{ matrix.season }}-${{ github.run_id }}
+          restore-keys: feeds-${{ matrix.season }}-
+      - name: Fetch the season (stats and shots, no photos)
+        run: python fetch_season.py ${{ matrix.season }} --no-photos
+      - name: Save feed cache, even if a later step fails (a past season is fetched once)
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: cache/${{ matrix.season }}
+          key: feeds-${{ matrix.season }}-${{ github.run_id }}-${{ github.run_attempt }}
+      - name: Raw-feed gate
+        run: python checks.py ${{ matrix.season }}
+      - name: Build warehouse
+        run: python warehouse.py ${{ matrix.season }}
+      - name: Play-by-play events and shot context
+        run: python events.py ${{ matrix.season }}
+      - name: Warehouse assertions
+        run: python warehouse_tests.py ${{ matrix.season }} --no-lineups
+      - name: Keep only what training needs
+        run: |
+          cd warehouse/${{ matrix.season }}
+          find . -type f ! -name shots.parquet ! -name games.parquet ! -name shot_context.parquet ! -name manifest.json ! -name status.json -delete
+          ls -la
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.season }}
+          path: warehouse/${{ matrix.season }}
+          retention-days: 7
+
+  train:
+    needs: [plan, fetch]
+    if: ${{ !failure() && !cancelled() }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Chrome for the site test
+        run: |
+          CHROME=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser || true)
+          if [ -z "$CHROME" ]; then echo "::error::no Chrome on the runner"; exit 1; fi
+          echo "CHROME=$CHROME" >> "$GITHUB_ENV"
+      - name: Fetched seasons
+        if: needs.plan.outputs.any == 'true'
+        uses: actions/download-artifact@v4
+        with:
+          path: warehouse
+      - name: Keep the current expectations for the shift report
+        run: |
+          cp warehouse/E2025/shots_xfg.parquet "$RUNNER_TEMP/E2025_before.parquet"
+          cp warehouse/$SEASON/shots_xfg.parquet "$RUNNER_TEMP/${SEASON}_before.parquet"
+      - name: Train
+        run: python model/xfg.py
+      - name: Register as production
+        run: python model/register.py --activate
+      - name: Rescore last season and recalibrate the shooting priors on the new expectations
+        run: |
+          python model/score.py E2025
+          python model/profile.py E2025 --calibrate
+      - name: Rescore this season
+        run: |
+          python model/score.py $SEASON
+          python model/profile.py $SEASON
+      - name: Model tests
+        run: |
+          python tests/test_model.py
+          python tests/test_profile.py
+          python tests/test_service.py
+      - name: Build site
+        run: python build.py $SEASON
+      - name: How far xFG% moved
+        run: |
+          {
+            echo "## xFG% before and after retraining"
+            python model/shift.py $SEASON "$RUNNER_TEMP/${SEASON}_before.parquet"
+            echo
+            python model/shift.py E2025 "$RUNNER_TEMP/E2025_before.parquet"
+          } | tee -a "$GITHUB_STEP_SUMMARY"
+      - name: Commit to the branch
+        run: |
+          for f in sitemap.xml warehouse/$SEASON/run_history.jsonl warehouse/$SEASON/status.json teams/$SEASON/status.json teams/$SEASON/monitor.json; do
+            git checkout -- "$f" 2>/dev/null || true
+          done
+          git config user.name "github-actions[bot]"
+          git config user.email "41898299+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git status --short | head -50
+          git diff --cached --quiet && { echo "nothing to commit"; exit 0; }
+          git commit -m "Retrain xFG on $(python -c 'import json;print(", ".join(json.load(open("model/training.json"))["seasons"]))')"
+          git push origin HEAD:${GITHUB_REF_NAME}
