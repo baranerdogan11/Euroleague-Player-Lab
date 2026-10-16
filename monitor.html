@@ -103,6 +103,7 @@ tbody tr:hover td{background:rgba(255,255,255,.03)}
 const $ = s => document.querySelector(s);
 const pct = v => v == null ? '–' : (100 * v).toFixed(1) + '%';
 const seasonLabel = s => s ? s.replace('E', '').replace(/(\d{4})/, (m, y) => y + '-' + (+y + 1).toString().slice(2)) : '';
+const trainedLabel = m => (m.training_seasons || []).length > 1 ? `${seasonLabel(m.training_seasons[0])} to ${seasonLabel(m.training_seasons[m.training_seasons.length - 1])}` : seasonLabel(m.trained_on);
 fetch('teams/E2026/monitor.json?t=' + Date.now()).then(r => r.json()).then(M => {
   $('#gen').textContent = 'Generated ' + M.generated_at;
   const P = M.pipeline.last, F = M.freshness, L = M.calibration.live_summary, A = M.api, MO = M.model;
@@ -114,7 +115,7 @@ fetch('teams/E2026/monitor.json?t=' + Date.now()).then(r => r.json()).then(M => 
     tile('Live log loss', L ? L.logloss.toFixed(3) : '–', L ? `${L.shots.toLocaleString()} shots · constant ${L.logloss_constant.toFixed(3)} · trained ${MO.metrics_test.logloss}` : 'no scored shots yet', L ? (L.logloss < L.logloss_constant ? 'ok' : 'bad') : ''),
     tile('League points vs expectation', L && L.pae_ctx_per100 != null ? (L.pae_ctx_per100 >= 0 ? '+' : '') + L.pae_ctx_per100.toFixed(1) : '–', 'per 100 attempts, all shooters, season to date · should sit near 0; a drift means every player reads above or below expectation at once', L && L.pae_ctx_per100 != null ? (Math.abs(L.pae_ctx_per100) < 2 ? 'ok' : 'bad') : ''),
     tile('Serving API', A.reachable ? 'UP' : 'DOWN', A.reachable ? `${A.latency_ms} ms warm${A.cold_start_ms ? ` · woke in ${(A.cold_start_ms / 1000).toFixed(0)} s` : ''} · model ${A.model_version} (${A.model_sha256})` : `${A.error || 'unreachable'} · the free instance sleeps when idle and did not wake within the probe; the site does not depend on it`, A.reachable ? 'ok' : 'bad'),
-    tile('Production model', MO.version || '–', `${MO.stage || ''} · ${MO.sha256} · trained on ${seasonLabel(MO.trained_on)} (${(MO.n_shots || 0).toLocaleString()} shots)`, 'ok'),
+    tile('Production model', MO.version || '–', `${MO.stage || ''} · ${MO.sha256} · trained on ${trainedLabel(MO)} (${(MO.n_shots || 0).toLocaleString()} shots)`, 'ok'),
   ].join('');
 
   // ---- calibration by round
@@ -150,7 +151,7 @@ fetch('teams/E2026/monitor.json?t=' + Date.now()).then(r => r.json()).then(M => 
   $('#serving').innerHTML = `<table><tbody>
     <tr><td>API</td><td>${A.url} · ${A.reachable ? `<span class="pill ok">up</span> ${A.latency_ms} ms` : `<span class="pill bad">down</span> ${A.error || ''}`}</td></tr>
     <tr><td>Model served</td><td>${A.model_version || '–'} (${A.model_sha256 || '–'})${MO.sha256 && A.model_sha256 && A.model_sha256 !== MO.sha256 ? ' <span class="pill bad">differs from registry</span>' : ' <span class="pill ok">matches registry</span>'}</td></tr>
-    <tr><td>Production model</td><td>${MO.version} · trained on ${seasonLabel(MO.trained_on)} · ${(MO.n_shots || 0).toLocaleString()} shots · held-out log loss ${MO.metrics_test?.logloss} vs zone baseline ${MO.baseline_zone?.logloss} · AUC ${MO.metrics_test?.auc}</td></tr>
+    <tr><td>Production model</td><td>${MO.version} · trained on ${trainedLabel(MO)} · ${(MO.n_shots || 0).toLocaleString()} shots · held-out log loss ${MO.metrics_test?.logloss} vs zone baseline ${MO.baseline_zone?.logloss} · AUC ${MO.metrics_test?.auc}</td></tr>
     <tr><td>Registry</td><td>${MO.registry_entries} entr${MO.registry_entries === 1 ? 'y' : 'ies'}</td></tr>
     <tr><td>Shooter effects</td><td>${sc && sc.shots ? `${pct(sc.known_shooter_share)} of ${sc.shots.toLocaleString()} live shots by shooters with a prior` : 'no live shots yet'}</td></tr>
   </tbody></table>`;

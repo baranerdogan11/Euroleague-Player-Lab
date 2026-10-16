@@ -128,7 +128,7 @@ except Exception as e:
 reg_path = os.path.join(ROOT, "model", "registry.json")
 registry = json.load(open(reg_path))["models"] if os.path.exists(reg_path) else []
 prod = next((m for m in registry if m.get("stage") == "production"), None)
-model_info = {"version": card.get("version"), "trained_on": card.get("trained_on"), "n_shots": card.get("n_shots"), "metrics_test": card.get("metrics_test", {}).get(card.get("chosen")),
+model_info = {"version": card.get("version"), "trained_on": card.get("trained_on"), "training_seasons": card.get("training_seasons"), "n_shots": card.get("n_shots"), "metrics_test": card.get("metrics_test", {}).get(card.get("chosen")),
               "baseline_zone": card.get("metrics_test", {}).get("zone_fg"), "sha256": (prod or {}).get("sha256", "")[:12], "stage": (prod or {}).get("stage"), "registry_entries": len(registry)}
 
 monitor = {"season": SEASON, "generated_at": now.strftime("%Y-%m-%d %H:%M UTC"), "pipeline": {"last": record, "history": history[-60:], "tests": status.get("tests")},

@@ -1,0 +1,4 @@
+{
+ "seasons": ["E2022", "E2023", "E2024", "E2025"],
+ "note": "Seasons the xFG model is trained on, oldest first. The last one is held out by time for validation and its shooter effects seed the next season. Older seasons keep only shots, games and shot_context in warehouse/."
+}

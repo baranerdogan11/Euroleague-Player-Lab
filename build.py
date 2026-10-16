@@ -903,7 +903,7 @@ card_path = os.path.join(ROOT, "model", "model_card.json")
 card = json.load(open(card_path)) if os.path.exists(card_path) else None
 _ref_box = os.path.join(ROOT, "warehouse", PRIORS["reference_season"] if PRIORS else "E2025", "box.parquet")
 MIN_SD = round(float(con.execute(f"select median(sd) from (select player, stddev_samp(minutes) sd, count(*) n, avg(minutes) m from read_parquet('{_ref_box}') where minutes > 0 group by 1 having n >= 10 and m >= 10)").fetchone()[0] or 5.5), 1) if os.path.exists(_ref_box) else 5.5
-meta = {"season": SEASON, "label": label(SEASON), "min_sd": MIN_SD, "model": {"version": card["version"], "trained_on": card["trained_on"], "logloss": card["metrics_test"][card["chosen"]]["logloss"],
+meta = {"season": SEASON, "label": label(SEASON), "min_sd": MIN_SD, "model": {"version": card["version"], "trained_on": card["trained_on"], "training_seasons": card.get("training_seasons", [card["trained_on"]]), "logloss": card["metrics_test"][card["chosen"]]["logloss"],
                                                            "auc": card["metrics_test"][card["chosen"]]["auc"], "n_shots": card["n_shots"]} if card else None, "clubs": [{"code": c["club"], "name": c["name"], "short": c["short"], "country": c["country"], "city": c["city"], "logo": c["logo"], "base": PALETTES.get(c["club"], DEFAULT_PALETTE)[0], "accent": PALETTES.get(c["club"], DEFAULT_PALETTE)[1]} for c in clubs],
         "league_n": league_n, "pool_rule": "3+ games, 10+ minutes a game", "league": league, "def_adjusted": DEF_ADJ is not None,
         "ratings": club_ratings(), "standings": standings(), "lineups": lineups_json(), "medians": medians, "leaders": LEADERS,

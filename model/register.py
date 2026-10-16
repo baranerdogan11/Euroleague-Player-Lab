@@ -15,9 +15,12 @@ REG = os.path.join(M, "registry.json")
 sha = lambda p: hashlib.sha256(open(p, "rb").read()).hexdigest()
 card = json.load(open(os.path.join(M, "model_card.json")))
 manifest_path = os.path.join(ROOT, "warehouse", card["trained_on"], "manifest.json")
-data_hash = sha(os.path.join(ROOT, "warehouse", card["trained_on"], "shots.parquet")) if os.path.exists(manifest_path) else None
+seasons = card.get("training_seasons") or [card["trained_on"]]
+shot_files = [os.path.join(ROOT, "warehouse", s, "shots.parquet") for s in seasons]
+# one season: the file's hash; several: the hash of the per-season hashes in training order
+data_hash = (sha(shot_files[0]) if len(seasons) == 1 else hashlib.sha256("".join(sha(p) for p in shot_files).encode()).hexdigest()) if os.path.exists(manifest_path) else None
 entry = {"name": "xfg", "version": card["version"], "sha256": sha(os.path.join(M, "xfg_model.joblib")), "registered_at": datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
-         "trained_on": card["trained_on"], "training_shots_sha256": data_hash, "n_shots": card["n_shots"], "features": card["features"], "chosen": card["chosen"],
+         "trained_on": card["trained_on"], "training_seasons": seasons, "training_shots_sha256": data_hash, "n_shots": card["n_shots"], "features": card["features"], "chosen": card["chosen"],
          "metrics_test": card["metrics_test"][card["chosen"]], "baseline_zone_logloss": card["metrics_test"]["zone_fg"]["logloss"], "algorithm": card["algorithm"],
          "stage": "production" if "--activate" in sys.argv else "candidate"}
 reg = json.load(open(REG)) if os.path.exists(REG) else {"models": []}
