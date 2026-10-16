@@ -112,6 +112,8 @@ html[data-look="club"] .progress{background:var(--club2)}
   html[data-look="club"] .search input{min-height:40px;margin:6px 0}
   html[data-look="club"] .st-lnk,html[data-look="club"] .q-btn,html[data-look="club"] :is(.lang,.theme){height:52px}
 }
+/* Game Center look (game, compare, lineups and standings pages): the house orange marks headings, open tabs and the current item, as on the league's own pages */
+html[data-look="club"]{--gc:#f26f21}html[data-look="club"][data-theme="dark"]{--gc:#ff7b30}
 /* ---- end Club Edition foundation ---- */
 *{box-sizing:border-box}
 [hidden]{display:none!important}
@@ -346,6 +348,46 @@ html[data-look="club"] .cmp-empty{background:var(--panel);border:1px solid var(-
   html[data-look="club"] .cmp-m{grid-template-columns:58px minmax(0,1fr) 58px;gap:8px}
   html[data-look="club"] .cmp-m .v{font-size:22px}
   html[data-look="club"] .cmp-diet{grid-template-columns:1fr}
+}
+/* Game Center look · compare: the two sides meet on a dark board in their club colours, square controls, the head to head and the shot diets on square cards */
+html[data-look="club"] body.cmp-on #cmp-panel>h2{display:flex;align-items:center;gap:12px;font-family:var(--cond);font-size:40px}
+html[data-look="club"] body.cmp-on #cmp-panel>h2::before{width:6px;height:30px;background:var(--gc);border-radius:0}
+html[data-look="club"] .cmp-hero{border-radius:0;background:#05080f;isolation:isolate}
+html[data-look="club"] .cmp-side.l,html[data-look="club"] .cmp-side.r{position:relative;border-radius:0;color:#fff;isolation:isolate}
+html[data-look="club"] .cmp-side.l{background:var(--cb1);clip-path:polygon(0 0,100% 0,calc(100% - 28px) 100%,0 100%);margin-right:-28px;z-index:1}
+html[data-look="club"] .cmp-side.r{background:var(--cb2);padding-left:58px}
+html[data-look="club"] .cmp-side::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(120% 100% at 50% 0%,transparent 40%,rgba(0,0,0,.5) 100%),linear-gradient(180deg,rgba(0,0,0,.08),rgba(0,0,0,.4))}
+html[data-look="club"] .cmp-club{font-family:var(--cond);font-weight:var(--cond-w);font-size:16px;letter-spacing:.12em}
+html[data-look="club"] .cmp-club .medal{border-radius:50%}
+html[data-look="club"] .cmp-line{font-family:var(--sans);font-weight:600;font-size:14px;letter-spacing:.06em;text-transform:uppercase;opacity:.8}
+html[data-look="club"] .cmp-facts{border-top-color:rgba(255,255,255,.18)}
+html[data-look="club"] .cmp-facts span{font-weight:700;letter-spacing:.12em}
+html[data-look="club"] body.cmp-on .cmp-lab{font-weight:700;letter-spacing:.12em;opacity:.72}
+html[data-look="club"] body.cmp-on .cmp-side .dd{border-radius:0;background:rgba(0,0,0,.28);border-color:rgba(255,255,255,.28)}
+html[data-look="club"] body.cmp-on .cmp-side .dd .dd-btn{font-family:var(--cond);font-weight:var(--cond-w);font-size:16px;letter-spacing:.06em;text-transform:uppercase}
+html[data-look="club"] body.cmp-on .cmp-side .dd-list{border-radius:0;border-top-color:var(--gc)}
+html[data-look="club"] .cmp-vs{z-index:3;width:56px;height:56px;border-radius:0;background:var(--gc);color:#fff;font-family:var(--cond);font-weight:var(--cond-w);font-size:22px;letter-spacing:.06em;box-shadow:0 6px 18px rgba(0,0,0,.35)}
+html[data-look="club"] .cmp-h3{display:flex;align-items:center;gap:10px;font-size:28px;margin:30px 0 12px}
+html[data-look="club"] .cmp-h3::before{content:"";flex:none;width:5px;height:22px;background:var(--gc)}
+html[data-look="club"] .cmp-h2h{border-radius:0;gap:2px;padding:6px 22px 10px}
+html[data-look="club"] .cmp-m{border-bottom:1px solid var(--line);padding:6px 0}
+html[data-look="club"] .cmp-m:last-child{border-bottom:0}
+html[data-look="club"] .cmp-m .lab{font-weight:700;font-size:12px;letter-spacing:.1em}
+html[data-look="club"] .cmp-m .bl{border-radius:0;background:var(--bar1,var(--cb1))}html[data-look="club"] .cmp-m .br{border-radius:0;background:var(--bar2,var(--cb2))}
+html[data-look="club"] .cmp-m .bl,html[data-look="club"] .cmp-m .br{height:10px;bottom:10px}
+html[data-look="club"] .cmp-court{border-radius:0}
+html[data-look="club"] .cmp-court h4 i{border-radius:0}
+html[data-look="club"] .cmp-dz div{border-radius:0}
+html[data-look="club"] .cmp-dz span{font-weight:700;letter-spacing:.08em}
+html[data-look="club"] .cmp-acts a,html[data-look="club"] .cmp-acts button{display:inline-block;line-height:44px;border-radius:0;font-family:var(--cond);font-weight:var(--cond-w);font-size:16px;letter-spacing:.08em;text-transform:uppercase}
+html[data-look="club"] .cmp-empty{border-radius:0;border-bottom:3px solid var(--gc)}
+html[data-look="club"] .cmp-open{border-radius:0;font-family:var(--cond);font-weight:var(--cond-w);font-size:16px;letter-spacing:.08em;text-transform:uppercase}
+@media (max-width:760px){
+  html[data-look="club"] body.cmp-on #cmp-panel>h2{font-size:32px}
+  html[data-look="club"] .cmp-side.l{clip-path:none;margin-right:0}
+  html[data-look="club"] .cmp-side.r{padding-left:16px;padding-top:30px}
+  html[data-look="club"] .cmp-h2h{padding:4px 10px 8px}
+  html[data-look="club"] .cmp-vs{width:44px;height:44px;font-size:18px}
 }
 /* ---- end Club Edition compare ---- */
 #cmp-table td.me{color:var(--ink);font-weight:700}
@@ -1261,8 +1303,7 @@ html[data-look="club"] body.cv-on .top{display:none}   /* the phone band rules s
 @media (max-width:760px){html[data-look="club"] .cv .theme{right:118px}.theme button[aria-pressed="true"]{display:flex}html[data-look="club"] body.menu-on .theme{order:13}}
 /* ---- Game pages (#game/<code>) and the cover's Last night strip ---- */
 body.gm-on .wrap>*{display:none}body.gm-on .wrap>#game{display:block}
-#game{padding:0;overflow:clip;--gc:#f26f21}
-html[data-theme="dark"] #game{--gc:#ff7b30}
+#game{padding:0;overflow:clip}
 #game .cb-in{padding:22px 24px 30px}
 /* Game Center look: square cards, condensed caps headings with the orange marker, the orange rail for the tabs */
 #game h2{display:flex;align-items:center;gap:10px;margin:28px 0 12px;font-family:var(--cond);font-weight:var(--cond-w,400);font-size:28px;line-height:1;letter-spacing:.03em;text-transform:uppercase;color:var(--ink);padding:0}
@@ -2005,6 +2046,19 @@ function renderCompareOptions(){
   if (onPage) { cmpWho('l', me, state.team, d); cmpMeOptions(); cmpOppOptions(peers); }
   renderCompare();
 }
+// two clubs' colours on the page surface, for bars that must tell them apart: each club's base, or its accent where the base would vanish
+// (a near-black base in dark mode); a neutral grey, then the house orange, when the two would look alike
+function clubColours(c1, c2){
+  const bg = (getComputedStyle(document.documentElement).getPropertyValue('--panel').trim().match(/^#[0-9a-f]{6}$/i) || ['#ffffff'])[0], lb = lum(bg);
+  const ratio = (x, y) => (Math.max(lum(x), lum(y)) + .05) / (Math.min(lum(x), lum(y)) + .05);
+  const pick = c => { const k = CLUBS[c] || HOUSE; return [k.base, k.accent].filter(Boolean).sort((x, y) => ratio(y, bg) - ratio(x, bg)).find(x => ratio(x, bg) >= 2.2) || (lb > .5 ? '#2b3038' : '#c6cbd4'); };
+  const k2 = CLUBS[c2] || HOUSE;
+  let h = pick(c1), a = pick(c2);
+  if (ratio(h, a) < 1.4 && k2.accent && ratio(k2.accent, bg) >= 2.2 && ratio(k2.accent, h) >= 1.4) a = k2.accent;
+  if (ratio(h, a) < 1.4) a = lb > .5 ? '#9aa2b1' : '#6b7383';
+  if (ratio(h, a) < 1.2) a = HOUSE.accent;
+  return [h, a];
+}
 // the club colours on the compare page: base, accent and the ink that reads on the base (the same contrast rule applyPalette uses for --club-ink)
 const cmpInk = base => (lum(base) + .05) / (lum('#0b0d10') + .05) >= 1.05 / (lum(base) + .05) ? '#0b0d10' : '#ffffff';
 function cmpWho(side, p, club, c){
@@ -2082,6 +2136,7 @@ async function renderCompare(){
   const d1 = diet(d), d2 = diet(other.cur), k1 = CLUBS[state.team] || {}, k2 = CLUBS[r.club] || {};
   $('#cmp-diet-t').textContent = t('Shot diet'); $('#cmp-diet-sub').textContent = t('Share of attempts by zone this season; darker means more of his shots come from there.');
   $('#cmp-diet').innerHTML = (d1 ? court(EN(`${nameOf(me.name).first} ${nameOf(me.name).sur}`), 1, d1, k1.base || '#1f2b47') : `<div class="cmp-court"><h4 lang="en">${nameOf(me.name).sur}</h4><p class="sub">${t('Fewer than {n} attempts', {n: MIN_ATT})}</p></div>`) + (d2 ? court(EN(`${nameOf(other.name).first} ${nameOf(other.name).sur}`), 2, d2, k2.base || '#1f2b47') : `<div class="cmp-court"><h4 lang="en">${nameOf(other.name).sur}</h4><p class="sub">${t('Fewer than {n} attempts', {n: MIN_ATT})}</p></div>`);
+  { const [b1, b2] = clubColours(state.team, r.club), root = $('#cmp-panel'); root.style.setProperty('--bar1', b1); root.style.setProperty('--bar2', b2); }
   $('#cmp-acts').innerHTML = `<a class="a1" href="#${state.team}/${me.pid}">${t("Open {name}'s page", {name: EN(nameOf(me.name).sur)})}</a><a class="a2" href="#${r.club}/${r.pid}">${t("Open {name}'s page", {name: EN(nameOf(other.name).sur)})}</a><button type="button" id="cmp-copy">${t('Copy link')}</button>`;
   $('#cmp-copy').addEventListener('click', async () => { try { await navigator.clipboard.writeText(location.href); toast(t('Link copied')); } catch (e) {} });
   page.hidden = false;
@@ -2931,16 +2986,7 @@ const GAME = (() => {
       const inner = `<img class="ph" src="${photo || PLACEHOLDER}" alt="" width="64" height="64" loading="lazy"><span class="who"><b lang="en">${full(raw)}</b><span>${medal(club, 16)}<span lang="en">${shortName(club)}</span></span></span><span class="line"><em>${pts}</em> ${t('pts')} · <em>${reb}</em> ${t('reb')} · <em>${ast}</em> ${t('ast')}</span><span class="pir">${pir} PIR</span>`;
       return page && CLUBS[page] ? `<a class="gm-top" href="#${page}/${pid}/g${G.code}">${inner}</a>` : `<div class="gm-top">${inner}</div>`; }).join('')}</div>`;
   }
-  // the two clubs' colours on the page surface: each club's base, or its accent where the base would vanish (a near-black base in dark mode); never two alike
-  function clubPair(){
-    const bg = (getComputedStyle(document.documentElement).getPropertyValue('--panel').trim().match(/^#[0-9a-f]{6}$/i) || ['#ffffff'])[0], lb = lum(bg);
-    const ratio = (x, y) => (Math.max(lum(x), lum(y)) + .05) / (Math.min(lum(x), lum(y)) + .05);
-    const pick = c => { const k = CLUBS[c] || HOUSE; return [k.base, k.accent].filter(Boolean).sort((x, y) => ratio(y, bg) - ratio(x, bg)).find(x => ratio(x, bg) >= 2.2) || (lb > .5 ? '#2b3038' : '#c6cbd4'); };
-    let [h, a] = sides().map(pick);
-    if (ratio(h, a) < 1.4) a = lb > .5 ? '#9aa2b1' : '#6b7383';
-    if (ratio(h, a) < 1.2) a = HOUSE.accent;
-    return [h, a];
-  }
+  const clubPair = () => clubColours(G.home, G.away);
   // the Summary tab: each club's best line in four categories, the two clubs' team stats side by side, then the standouts
   function summary(){
     const S = sides(), cats = [['pts', 'Points'], ['reb', 'Rebounds'], ['ast', 'Assists'], ['pir', 'PIR']];
