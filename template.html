@@ -1435,6 +1435,23 @@ body.gm-on .wrap>*{display:none}body.gm-on .wrap>#game{display:block}
 .gm-tabs button:focus-visible{outline:2px solid var(--gc);outline-offset:-4px}
 @media (prefers-reduced-motion:reduce){.gm-tabs button::after{transition:none}}
 /* the Summary tab: leaders head to head, the team comparison */
+.gm-wp{display:grid;grid-template-columns:auto minmax(0,1fr) auto;grid-template-rows:auto auto;gap:8px 12px;background:var(--panel);border:1px solid var(--line);padding:14px 16px 10px}
+.gm-wp-k{display:grid;align-content:space-between;padding:2px 0}
+.gm-wp-k>span>i{flex:none;width:10px;height:10px}
+.gm-wp-k>span{display:flex;align-items:center;gap:7px;font-family:var(--cond);font-weight:var(--cond-w,400);font-size:16px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink)}
+html[data-look="club"] .gm-wp-k .medal{width:24px;height:24px;border-width:1.5px}html[data-look="club"] .gm-wp-k .medal img{width:16px;height:16px}
+.gm-wp-y{display:grid;align-content:space-between;font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--muted);font-variant-numeric:tabular-nums;text-align:right}
+.gm-wp-plot{position:relative;height:220px;touch-action:pan-y;cursor:crosshair}
+.gm-wp-plot svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible;display:block}
+.gm-wp-plot .ln{fill:none;stroke-width:2.5;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.gm-wp-plot .ar{opacity:.14}
+.gm-wp-plot .mid{stroke:var(--line2,var(--line));stroke-width:1;stroke-dasharray:4 4;vector-effect:non-scaling-stroke}
+.gm-wp-plot .qt{stroke:var(--line);stroke-width:1;vector-effect:non-scaling-stroke}
+.gm-wp-cur{position:absolute;top:0;bottom:0;width:0;border-left:1px solid var(--ink);opacity:0;pointer-events:none}
+.gm-wp-dot{position:absolute;width:10px;height:10px;margin:-5px 0 0 -5px;border-radius:50%;border:2px solid var(--panel);background:var(--ink);opacity:0;pointer-events:none}
+.gm-wp-plot.on .gm-wp-cur,.gm-wp-plot.on .gm-wp-dot{opacity:1}
+.gm-wp-x{grid-column:2;position:relative;height:16px;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.gm-wp-x span{position:absolute;top:0;transform:translateX(-50%);white-space:nowrap}
 .gm-ldr{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
 .gm-ldr-c{background:var(--panel);border:1px solid var(--line);padding:12px 14px 14px}
 #game .gm-ldr-c h3{margin:0 0 10px;text-align:center;font-family:var(--sans);font-weight:700;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
@@ -1550,6 +1567,8 @@ html[data-look="club"] #games .cv-game{border-radius:0;border-bottom-color:var(-
   .gm-round a{min-width:132px;padding:9px 12px 8px}
   .gm-tabs{top:56px}.gm-tabs-in{padding:0 4px}.gm-tabs button{flex:1 0 auto;padding:15px 10px 13px;font-size:15px}
   .gm-ldr{gap:8px}.gm-ldr-c{padding:10px 8px 12px}.gm-ldr-c .ph{width:48px;height:48px}.gm-ldr-c .p em{font-size:30px}.gm-ldr-c .p{font-size:12px}.gm-ldr-c .duel{gap:4px}.gm-ldr-c .duel>i{padding-bottom:26px;font-size:10px}
+  .gm-wp{grid-template-columns:minmax(0,1fr) auto;padding:10px 10px 8px;gap:8px}.gm-wp-k{grid-column:1/-1;display:flex;justify-content:space-between;gap:8px}.gm-wp-k>span{font-size:14px;gap:5px}.gm-wp-k>span+span{flex-direction:row-reverse}
+  .gm-wp-plot{height:170px}.gm-wp-x{grid-column:1;letter-spacing:.06em}
   .gm-cmp{padding:2px 12px 8px}.gm-cmp .row{grid-template-columns:54px minmax(0,1fr) 54px;gap:8px}.gm-cmp .v{font-size:18px}.gm-cmp .lab{font-size:11px;letter-spacing:.06em}
   .gm-box .full,.gm-fives .full{display:none}.gm-box .short,.gm-fives .short{display:inline}
   #game .cb-tab td.nm{min-width:0}.gm-fives td.five{min-width:160px}
@@ -3149,13 +3168,32 @@ const GAME = (() => {
       return page && CLUBS[page] ? `<a class="gm-top" href="#${page}/${pid}/g${G.code}">${inner}</a>` : `<div class="gm-top">${inner}</div>`; }).join('')}</div>`;
   }
   const clubPair = () => clubColours(G.home, G.away);
+  // win probability (winprob.py, fitted on last season's play-by-play): the home club's chance every few seconds, home colour
+  // above the even line and away colour below it, the quarters marked; the pointer (or a finger) reads off any moment
+  const wpPer = sec => sec < 2400 ? [Math.min(3, Math.floor(sec / 600)) + 1, 600 - (sec - 600 * Math.min(3, Math.floor(sec / 600)))] : [5 + Math.floor((sec - 2400) / 300), 300 - (sec - 2400) % 300];
+  const wpWhen = sec => { const [p, c] = wpPer(sec), lbl = p <= 4 ? `${t('Q')}${p}` : G.q.length > 5 ? `${t('OT')}${p - 4}` : t('OT'); return `${lbl} · ${Math.floor(c / 60)}:${String(c % 60).padStart(2, '0')}`; };
+  function wpChart(){
+    const W = G.wp; if (!W || !W.v || W.v.length < 2) return '';
+    const L = W.len, n = W.v.length - 1, X = i => Math.min(L, i * W.step), pair = clubPair();
+    const line = W.v.map((v, i) => `${i ? 'L' : 'M'}${X(i)} ${1000 - v}`).join('');
+    const area = `${line}L${L} 500L0 500Z`, id = `wp${G.code}`;
+    const qs = [600, 1200, 1800].concat(Array.from({length: Math.max(0, (L - 2400) / 300)}, (_, i) => 2400 + 300 * i));
+    const xl = [[300, `${t('Q')}1`], [900, `${t('Q')}2`], [1500, `${t('Q')}3`], [2100, `${t('Q')}4`]].concat(qs.filter(q => q >= 2400).map((q, i, a) => [q + 150, a.length > 1 ? `${t('OT')}${i + 1}` : t('OT')]));
+    const svg = `<svg viewBox="0 0 ${L} 1000" preserveAspectRatio="none" role="img" aria-label="${t('Win probability')}"><defs><clipPath id="${id}h"><rect x="0" y="-10" width="${L}" height="510"/></clipPath><clipPath id="${id}a"><rect x="0" y="500" width="${L}" height="510"/></clipPath></defs>
+      ${qs.map(q => `<line class="qt" x1="${q}" x2="${q}" y1="0" y2="1000"/>`).join('')}<line class="mid" x1="0" x2="${L}" y1="500" y2="500"/>
+      <path class="ar" d="${area}" fill="${pair[0]}" clip-path="url(#${id}h)"/><path class="ar" d="${area}" fill="${pair[1]}" clip-path="url(#${id}a)"/>
+      <path class="ln" d="${line}" stroke="${pair[0]}" clip-path="url(#${id}h)"/><path class="ln" d="${line}" stroke="${pair[1]}" clip-path="url(#${id}a)"/></svg>`;
+    return `<h2>${t('Win probability')}</h2><div class="gm-wp"><div class="gm-wp-k"><span>${medal(G.home, 16)}<span lang="en">${shortName(G.home)}</span><i style="background:${pair[0]}"></i></span><span>${medal(G.away, 16)}<span lang="en">${shortName(G.away)}</span><i style="background:${pair[1]}"></i></span></div>
+      <div class="gm-wp-plot" id="gm-wp" data-n="${n}">${svg}<i class="gm-wp-cur"></i><i class="gm-wp-dot"></i></div><div class="gm-wp-y"><span>100%</span><span>50%</span><span>100%</span></div>
+      <div class="gm-wp-x">${xl.map(([x, l]) => `<span style="left:${(100 * x / L).toFixed(2)}%">${l}</span>`).join('')}</div></div>`;
+  }
   // the Summary tab: each club's best line in four categories, the two clubs' team stats side by side, then the standouts
   function summary(){
     const S = sides(), cats = [['pts', 'Points'], ['reb', 'Rebounds'], ['ast', 'Assists'], ['pir', 'PIR']];
     const best = (c, k) => (G.box[c] || []).filter(b => b[B.min]).reduce((x, b) => !x || b[B[k]] > x[B[k]] || (b[B[k]] === x[B[k]] && b[B.pts] > x[B.pts]) ? b : x, null);
     const ldr = cats.map(([k, l]) => { const p = S.map(c => best(c, k)); if (!p[0] || !p[1]) return '';
       return `<div class="gm-ldr-c"><h3>${t(l)}</h3><div class="duel">${p.map((b, i) => `<span class="p${b[B[k]] < p[1 - i][B[k]] ? ' lo' : ''}">${plink(b[B.pid], b[B.page], `<img class="ph" src="${b[B.photo] || PLACEHOLDER}" alt="" width="64" height="64" loading="lazy">`)}<em>${b[B[k]]}</em><span lang="en">${short(b[B.name])}</span></span>`).join(`<i>${t('vs')}</i>`)}</div></div>`; }).join('');
-    const [h, a] = S.map(c => G.tot[c]); if (!h || !a) return tops();
+    const [h, a] = S.map(c => G.tot[c]); if (!h || !a) return wpChart() + tops();
     const xf = k => { const sc = G.shots.filter(s => s[0] === k && s[7] != null); return sc.length ? 100 * sc.reduce((n, s) => n + s[7], 0) / sc.length : null; };
     const P = (m, n) => n ? 100 * m / n : null, f1 = v => v == null ? '–' : v.toFixed(1) + '%';
     const rows = [['Field goals', P(h.fgm2 + h.fgm3, h.fga2 + h.fga3), P(a.fgm2 + a.fgm3, a.fga2 + a.fga3), `${h.fgm2 + h.fgm3}/${h.fga2 + h.fga3}`, `${a.fgm2 + a.fgm3}/${a.fga2 + a.fga3}`],
@@ -3165,7 +3203,7 @@ const GAME = (() => {
     const cmp = rows.map(([l, hv, av, hs, as, low]) => { const isP = hs !== undefined && hs !== null || l === 'xFG%', fv = v => isP ? f1(v) : v, mx = Math.max(hv || 0, av || 0) || 1, hb = low ? hv <= av : hv >= av, ab = low ? av <= hv : av >= hv;
       return `<div class="row"><span class="v${hb ? '' : ' lo'}">${fv(hv)}</span><span class="mid"><span class="lab">${l === 'xFG%' || l === 'PIR' ? l : t(l)}${hs ? ` · ${hs} / ${as}` : ''}</span><span class="bars"><i><b style="width:${(100 * (hv || 0) / mx).toFixed(1)}%"></b></i><i><b style="width:${(100 * (av || 0) / mx).toFixed(1)}%"></b></i></span></span><span class="v r${ab ? '' : ' lo'}">${fv(av)}</span></div>`; }).join('');
     const pair = clubPair();
-    return `<h2>${t('Game leaders')}</h2><div class="gm-ldr">${ldr}</div>
+    return `${wpChart()}<h2>${t('Game leaders')}</h2><div class="gm-ldr">${ldr}</div>
       <h2>${t('Team comparison')}</h2><div class="gm-cmp" style="--gh:${pair[0]};--ga:${pair[1]}"><div class="hd"><span>${medal(G.home, 24)}<span lang="en">${shortName(G.home)}</span></span><span><span lang="en">${shortName(G.away)}</span>${medal(G.away, 24)}</span></div>${cmp}</div>
       ${tops()}`;
   }
@@ -3235,6 +3273,16 @@ const GAME = (() => {
   const shotTip = (e, c) => { const k = sides().indexOf(side()), s = G.shots.filter(x => x[0] === k)[+c.dataset.i]; if (!s) return; const b = names()[s[1]];
     showTip(e, `<b lang="en">${b ? full(b[B.name]) : s[1]}</b><br>${s[4] ? t('Made') : t('Missed')} · ${s[5] === 3 ? '3P' : '2P'} · ${t('minute {m}', {m: s[6]})}${s[7] != null ? ` · xFG ${(100 * s[7]).toFixed(0)}%` : ''}${s[4] && s[8] === 1 ? ' · ' + t('assisted') : ''}`); };
   el.addEventListener('pointermove', e => { const c = e.target.closest('#gm-court circle[data-i]'); if (c && e.pointerType === 'mouse') shotTip(e, c); else if (e.pointerType === 'mouse') hideTip(); });
+  const wpTip = e => { const plot = e.target.closest('#gm-wp'); if (!plot || !G || !G.wp) return false; const W = G.wp, r = plot.getBoundingClientRect(), n = +plot.dataset.n;
+    const i = Math.max(0, Math.min(n, Math.round((e.clientX - r.left) / r.width * W.len / W.step))), sec = Math.min(W.len, i * W.step), v = W.v[i], m = W.m ? W.m[i] : null;
+    const fav = v >= 500 ? G.home : G.away, pc = Math.round((v >= 500 ? v : 1000 - v) / 10), x = 100 * sec / W.len;
+    plot.classList.add('on'); plot.querySelector('.gm-wp-cur').style.left = `${x}%`; const d = plot.querySelector('.gm-wp-dot'); d.style.left = `${x}%`; d.style.top = `${100 - v / 10}%`;
+    const lead = m == null ? '' : m === 0 ? ` · ${t('Tied')}` : ` · <span lang="en">${shortName(m > 0 ? G.home : G.away)}</span> +${Math.abs(m)}`;
+    showTip(e, `<b>${i === n ? t('Final') : wpWhen(sec)}</b><br><span lang="en">${shortName(fav)}</span> ${pc}%${lead}`); return true; };
+  const wpOff = () => { const plot = el.querySelector('#gm-wp'); if (plot) plot.classList.remove('on'); };
+  el.addEventListener('pointermove', e => { if (!wpTip(e) && el.querySelector('#gm-wp.on')) { wpOff(); hideTip(); } });
+  el.addEventListener('pointerdown', e => { if (e.pointerType !== 'mouse' && !wpTip(e)) wpOff(); });
+  el.addEventListener('pointerleave', wpOff);
   el.addEventListener('pointerleave', hideTip);
   el.addEventListener('pointerdown', e => { if (e.pointerType === 'mouse') return; const c = e.target.closest('#gm-court circle[data-i]'); if (c) shotTip(e, c); else hideTip(); });
   return {

@@ -587,5 +587,7 @@
  "2 pointers": "İki sayılık",
  "3 pointers": "Üç sayılık",
  "Free throws": "Serbest atış",
- "Offensive rebounds": "Hücum ribaundu"
+ "Offensive rebounds": "Hücum ribaundu",
+ "Win probability": "Kazanma olasılığı",
+ "Tied": "Eşit"
 }

@@ -17,6 +17,7 @@ import sys
 import duckdb
 import drift
 import rapm
+import winprob
 
 SEASON = sys.argv[1] if len(sys.argv) > 1 else "E2026"
 ROOT = os.path.dirname(os.path.abspath(__file__))
@@ -782,6 +783,13 @@ def games_json():
         for r in rows("""select game, period, max(score_home) h, max(score_away) a from events where score_home is not null or score_away is not null
                          group by 1, 2 order by 1, 2"""):
             quarters.setdefault(r["game"], []).append(r)
+    # win probability (winprob.py): the play-by-play of each game, and each club's form from its earlier games this season
+    WP = winprob.load()
+    wp_events = {}
+    if WP and os.path.exists(ev_path):
+        for r in rows("select game, seq, period, club, playtype, clock_sec, score_home, score_away from events order by game, seq"):
+            wp_events.setdefault(r["game"], []).append(r)
+    wp_strength = winprob.strengths(played)
     keys = ("minutes", "pts", "fgm2", "fga2", "fgm3", "fga3", "ftm", "fta", "oreb", "dreb", "reb", "ast", "stl", "tov", "blk", "blka", "pf", "fd", "pir", "plusminus")
     tops, n_lines = {}, 0
     for g in played:
@@ -815,12 +823,20 @@ def games_json():
         sh = rows("""select s.club, s.player, s.x, s.y, s.made, s.pts, s.minute, x.xfg_ctx, c.assisted from shots s left join shots_xfg x using (game, seq)
                      left join shot_context c using (game, seq) where s.game = ? order by s.minute, s.seq""", code)
         shots = [[sides.index(s["club"]), "P" + s["player"], s["x"], s["y"], int(s["made"]), s["pts"], s["minute"], round(s["xfg_ctx"], 3) if s["xfg_ctx"] is not None else None, s["assisted"]] for s in sh]
+        # the chance the home club wins, sampled every few seconds of game time; left out when the feed does not end on the final score
+        wp = None
+        if WP and wp_events.get(code):
+            S = winprob.states(wp_events[code], g["home"], g["away"])
+            if S and S[-1][3] == g["home_score"] - g["away_score"]:
+                wp = winprob.curve(WP["coef"], wp_events[code], dict(g, strength=wp_strength[code]))
+            else:
+                print(f"game {code}: play-by-play margin does not end on the final score; win probability left out")
         # three standout lines: PIR, the league's own efficiency figure, then points
         top = sorted((b for b in lines if b["minutes"]), key=lambda b: (-b["pir"], -b["pts"], b["name"]))[:3]
         tops[code] = [["P" + b["player"], b["name"], b["club"], b["pts"], b["reb"], b["ast"], b["pir"], page_club.get(b["player"]), photo(b["player"])] for b in top]
         fives = {c: next((x for x in BYGAME.get(c, []) if x["code"] == code), None) for c in sides}
         out = {"season": SEASON, "code": code, "round": g["round"], "phase": g["phase"], "date": g["date"], "home": g["home"], "away": g["away"], "hs": g["home_score"], "as": g["away_score"],
-               "q": q, "box": box, "tot": tot, "shots": shots, "top": tops[code], "poss": game_poss(code),
+               "q": q, "wp": wp, "box": box, "tot": tot, "shots": shots, "top": tops[code], "poss": game_poss(code),
                "fives": {c: ({k: f[k] for k in ("len", "pts", "opp", "poss", "lineups")} if f else None) for c, f in fives.items()},
                "round_games": by_round[g["round"]]}
         json.dump(out, open(os.path.join(gdir, f"{code}.json"), "w"), separators=(",", ":"), ensure_ascii=False)
