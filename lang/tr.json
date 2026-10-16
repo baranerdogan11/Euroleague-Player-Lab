@@ -573,5 +573,13 @@
  "The three best lines of the game by PIR, the league's efficiency rating. Open one for his page with this game selected.": "Ligin verimlilik puanı PIR'a göre maçın en iyi üç performansı. Birini açınca oyuncunun sayfası bu maç seçili olarak açılır.",
  "This game is not available. It may not have been played yet, or the data is still being updated.": "Bu maç görüntülenemiyor. Henüz oynanmamış olabilir ya da veriler güncelleniyor olabilir.",
  "Green made, grey missed. xFG% is the expected field-goal percentage of a league-average shooter on the same shots; +/- xPTS is the points scored on them minus that expectation.": "Yeşil isabet, gri kaçan. xFG%, lig ortalaması bir şutörün aynı şutlardaki beklenen isabet yüzdesidir; +/- xPTS bu şutlardan atılan sayı eksi o beklentidir.",
- "Every five the club used, most minutes first, with the score while it was on the floor, net rating per 100 possessions and when it played; the ticks mark the quarters. Who was on the floor is reconstructed from the substitution log.": "Kulübün kullandığı her beşli, en çok süre alandan başlayarak: sahadayken skor, 100 hücumdaki net reyting ve ne zaman oynadığı; çizgiler çeyrekleri gösterir. Sahada kimin olduğu oyuncu değişikliği kaydından yeniden kurulur."
+ "Every five the club used, most minutes first, with the score while it was on the floor, net rating per 100 possessions and when it played; the ticks mark the quarters. Who was on the floor is reconstructed from the substitution log.": "Kulübün kullandığı her beşli, en çok süre alandan başlayarak: sahadayken skor, 100 hücumdaki net reyting ve ne zaman oynadığı; çizgiler çeyrekleri gösterir. Sahada kimin olduğu oyuncu değişikliği kaydından yeniden kurulur.",
+ "Summary": "Özet",
+ "Game leaders": "Maçın liderleri",
+ "Team comparison": "Takım karşılaştırması",
+ "Field goals": "Saha içi",
+ "2 pointers": "İki sayılık",
+ "3 pointers": "Üç sayılık",
+ "Free throws": "Serbest atış",
+ "Offensive rebounds": "Hücum ribaundu"
 }
