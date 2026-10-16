@@ -1333,6 +1333,38 @@ html[data-look="club"] #ld-wrap{overflow:visible;mask-image:none}
   html[data-look="club"] .ld-bar .seg{width:100%;overflow-x:auto}
   html[data-look="club"] .ld-find{flex-basis:100%}
 }
+/* Game Center look · leaders: the stat groups on the orange rail, square controls, boards with a club-colour title strip, the table header in the club colour */
+html[data-look="club"] #leaders{border-radius:0}
+html[data-look="club"] #leaders h2{font-family:var(--cond);gap:12px}
+html[data-look="club"] #leaders h2::before{width:6px;height:28px;background:var(--gc);border-radius:0}
+html[data-look="club"] .ld-board{position:relative;border-radius:0;background:var(--panel);padding:0 0 8px;overflow:hidden}
+html[data-look="club"] .ld-board b{margin:0 0 6px;padding:9px 14px;background:var(--club);color:var(--club-ink);font-size:18px;letter-spacing:.06em}
+html[data-look="club"] .ld-board ol{padding:0 14px}
+html[data-look="club"] .ld-board.on{border-color:var(--gc);box-shadow:inset 0 -3px 0 var(--gc)}
+html[data-look="club"] .ld-board.on b{background:var(--gc);color:#fff}
+html[data-look="club"] .ld-board li:first-child i{color:var(--gc);font-size:22px}
+html[data-look="club"] #ld-group{flex:1 1 100%;display:flex;border:0;border-bottom:1px solid var(--line);border-radius:0;background:none;padding:0;gap:4px;overflow-x:auto;scrollbar-width:none}
+html[data-look="club"] #ld-group::-webkit-scrollbar{display:none}
+html[data-look="club"] #ld-group button{position:relative;flex:none;border-radius:0;background:none;min-height:0;padding:12px 14px;font-family:var(--cond);font-weight:var(--cond-w);font-size:17px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+html[data-look="club"] #ld-group button:hover,html[data-look="club"] #ld-group button[aria-pressed="true"]{background:none;color:var(--ink)}
+html[data-look="club"] #ld-group button::after{content:"";position:absolute;left:10px;right:10px;bottom:0;height:3px;background:var(--gc);transform:scaleX(0);transition:transform .3s cubic-bezier(.22,1,.36,1)}
+html[data-look="club"] #ld-group button[aria-pressed="true"]::after{transform:none}
+@media (prefers-reduced-motion:reduce){html[data-look="club"] #ld-group button::after{transition:none}}
+html[data-look="club"] #ld-mode{border-radius:0;padding:0;gap:0}
+html[data-look="club"] #ld-mode button{border-radius:0;min-height:40px;font-family:var(--cond);font-weight:var(--cond-w);font-size:15px;letter-spacing:.06em;text-transform:uppercase}
+html[data-look="club"] #ld-mode button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--panel)}
+html[data-look="club"] #leaders .ln-sel{border-radius:0;height:42px;font-family:var(--cond);font-weight:var(--cond-w);font-size:16px;letter-spacing:.06em;text-transform:uppercase}
+html[data-look="club"] #leaders .ln-sel label{font-family:var(--sans);font-weight:700;font-size:11px;letter-spacing:.12em}
+html[data-look="club"] .ld-qual,html[data-look="club"] .ld-find input{border-radius:0;min-height:42px;height:42px}
+html[data-look="club"] .ld-qual input{accent-color:var(--gc)}
+html[data-look="club"] .ld-tab th:nth-child(n){background:var(--club);color:color-mix(in srgb,var(--club-ink) 78%,transparent);font-weight:700;font-size:11.5px;letter-spacing:.12em}
+html[data-look="club"] .ld-tab th.on{color:var(--club-ink);box-shadow:inset 0 -3px 0 var(--gc)}
+html[data-look="club"] .ld-tab th.on button i{color:var(--gc)}
+html[data-look="club"] #ld-wrap{border:1px solid var(--line)}
+html[data-look="club"] .ld-tab td.on{background:color-mix(in srgb,var(--gc) 8%,var(--panel))}
+html[data-look="club"] .ld-tab tbody tr:nth-child(-n+3) td.rk{color:var(--gc)}
+html[data-look="club"] .ld-tab tr.me td{background:color-mix(in srgb,var(--gc) 12%,var(--panel))}
+@media (max-width:760px){html[data-look="club"] #ld-group button{padding:12px 10px;font-size:15px}html[data-look="club"] #ld-mode{width:100%;display:flex}html[data-look="club"] #ld-mode button{flex:1}}
 /* ---- end Club Edition · Leaders page ---- */
 @media (min-width:761px) and (max-width:900px){html[data-look="club"] .top .st-lnk{padding:0 10px}html[data-look="club"] .top .st-lnk span{font-size:14.5px}html[data-look="club"] .top .search{flex:0 1 150px;min-width:104px}html[data-look="club"] .top :is(.lang,.theme) button{width:40px}html[data-look="club"] .top .id{padding:0 14px 0 12px}}
 /* the house pages with no club yet (Lineups, Standings, Leaders from the cover): the club picker is the way to a club, so on a laptop it is read whole instead of being squeezed to its arrow; the page links and the search box give way */
@@ -1511,6 +1543,26 @@ html[data-look="club"] .cv-game .medal{width:30px;height:30px;border-width:2px}h
   .cv-games::-webkit-scrollbar{display:none}.cv-game{scroll-snap-align:start}
 }
 /* ---- end game pages ---- */
+/* ---- Game Center look · the rest of the app (header search, player, club and cover pages): square corners, orange heading markers, table headers in the club colour, square switches ---- */
+html[data-look="club"] .top #q{border-radius:0}
+html[data-look="club"] :is(.hero,.bio,.tag,.ticker,.tile,#log-panel,.trend,#shots-sec,.court-wrap,#prof-panel,.gauge,.form,.up,#cmp-panel,.panel,#club,.cb-next){border-radius:0}
+html[data-look="club"] .wrap .panel div:not(.medal):not(.disc){border-radius:0}
+html[data-look="club"] :is(#prev,#next,#share,#embed,.btn){border-radius:0}
+html[data-look="club"] .seg{border-radius:0;padding:0;gap:0}
+html[data-look="club"] .seg button{border-radius:0;font-family:var(--cond);font-weight:var(--cond-w);font-size:15px;letter-spacing:.06em;text-transform:uppercase}
+html[data-look="club"] .seg button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--panel)}
+html[data-look="club"] .panel h2::before,html[data-look="club"] .panel summary::before{width:6px;height:26px;background:var(--gc);border-radius:0;transform:none}
+html[data-look="club"] #club h2{display:flex;align-items:center;gap:12px;border-left:0;padding-left:0}
+html[data-look="club"] :is(#log,#zones,#timing,.ttab,.cb-tab) thead th:nth-child(n){background:var(--club);color:color-mix(in srgb,var(--club-ink) 80%,transparent);font-weight:700;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;border-bottom:0}
+html[data-look="club"] .cb-tab th.on button{color:var(--club-ink);border-bottom-color:var(--gc)}
+html[data-look="club"] .cb-tab th button:focus-visible{outline-color:var(--club-ink)}
+html[data-look="club"] #club .st-tile{border-bottom-color:var(--gc)}
+html[data-look="club"] .cb-chip{border-radius:0}
+html[data-look="club"] .cv-sec h2::before{width:6px;height:24px;background:var(--gc);border-radius:0}
+html[data-look="club"] :is(.cv-go,.cv-app,.cv-game,#cq,.cv-sec li,.cv-sec a){border-radius:0}
+html[data-look="club"] .cv-game{border-bottom-color:var(--gc)}
+html[data-look="club"] .cv-nums li,html[data-look="club"] #role>div{border-radius:0}
+/* ---- end Game Center look · the rest of the app ---- */
 </style>
 <div class="bar"></div>
 <main class="cv" id="cover" hidden>
