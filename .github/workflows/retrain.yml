@@ -9,7 +9,7 @@ name: Retrain xFG
 on:
   push:
     branches-ignore: [main]
-    paths: [model/training.json]
+    paths: [model/training.json, .github/workflows/retrain.yml]
   workflow_dispatch:
 
 permissions:
@@ -49,7 +49,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 120
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
         season: ${{ fromJson(needs.plan.outputs.missing) }}
     steps:
@@ -60,13 +60,19 @@ jobs:
           cache: pip
       - run: pip install -r requirements.txt
       - name: Restore feed cache
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
           path: cache/${{ matrix.season }}
           key: feeds-${{ matrix.season }}-${{ github.run_id }}
           restore-keys: feeds-${{ matrix.season }}-
       - name: Fetch the season (stats and shots, no photos)
         run: python fetch_season.py ${{ matrix.season }} --no-photos
+      - name: Save feed cache, even if a later step fails (a past season is fetched once)
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: cache/${{ matrix.season }}
+          key: feeds-${{ matrix.season }}-${{ github.run_id }}-${{ github.run_attempt }}
       - name: Raw-feed gate
         run: python checks.py ${{ matrix.season }}
       - name: Build warehouse

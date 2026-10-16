@@ -20,9 +20,12 @@ con.execute(f"create view stints as select * from read_parquet('{p}')" if os.pat
 p = os.path.join(W, "oncourt.parquet")
 con.execute(f"create view oncourt as select * from read_parquet('{p}')" if os.path.exists(p) else "create view oncourt as select null::int game, null::varchar player, null::varchar club, null::int sec, null::double box_min where false")
 
+N_CLUBS = {"E2022": 18, "E2023": 18, "E2024": 18}.get(SEASON, 20)   # past seasons kept for xFG training had 18 clubs
+N_RS = 2 * (N_CLUBS - 1)                                             # double round robin
+
 # (name, query returning the number of offending rows)
 TESTS = [
-    ("clubs: 20 rows, unique codes", "select abs(count(*) - 20) + (count(*) - count(distinct club)) from clubs"),
+    (f"clubs: {N_CLUBS} rows, unique codes", f"select abs(count(*) - {N_CLUBS}) + (count(*) - count(distinct club)) from clubs"),
     ("players: unique codes, non-empty names", "select count(*) - count(distinct player) + sum(case when name is null or name = '' then 1 else 0 end) from players"),
     ("roster_stints: player exists", "select count(*) from roster_stints s left join players p using (player) where p.player is null"),
     ("roster_stints: club exists", "select count(*) from roster_stints s left join clubs c using (club) where c.club is null"),
@@ -33,7 +36,7 @@ TESTS = [
     ("games: both clubs known", "select count(*) from games g left join clubs h on h.club = g.home left join clubs a on a.club = g.away where h.club is null or a.club is null"),
     ("games: played games have a score", "select count(*) from games where played and coalesce(home_score, 0) + coalesce(away_score, 0) = 0"),
     ("games: played games are not in the future", "select count(*) from games where played and date > current_date"),
-    ("games: each club plays 38 regular-season games", "select count(*) from (select c.club, sum(case when g.phase = 'RS' then 1 else 0 end) n from clubs c join games g on c.club in (g.home, g.away) group by c.club having n != 38)"),
+    (f"games: each club plays {N_RS} regular-season games", f"select count(*) from (select c.club, sum(case when g.phase = 'RS' then 1 else 0 end) n from clubs c join games g on c.club in (g.home, g.away) group by c.club having n != {N_RS})"),
     ("box: game exists and was played", "select count(*) from box b left join games g using (game) where g.game is null or not g.played"),
     ("box: club is one of the game's clubs", "select count(*) from box b join games g using (game) where b.club not in (g.home, g.away)"),
     ("box: one line per player per game", "select count(*) - count(distinct (game, player)) from box"),
