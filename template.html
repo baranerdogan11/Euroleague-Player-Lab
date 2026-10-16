@@ -93,7 +93,7 @@ html[data-look="club"] .q-btn{color:var(--club-ink);border-left:1px solid color-
 html[data-look="club"] .st-lnk{border-left:1px solid color-mix(in srgb,var(--club-ink) 18%,transparent);font-family:var(--sans);font-weight:600;font-size:15px;letter-spacing:.02em;text-transform:none;color:var(--club-ink);opacity:.86}
 html[data-look="club"] .st-lnk:hover{color:var(--club-ink);opacity:1}
 html[data-look="club"] body.st-on #st-lnk,html[data-look="club"] body.ln-on #ln-lnk,html[data-look="club"] body.cmp-on #cmp-lnk,html[data-look="club"] body.ld-on #ld-lnk{color:var(--club-ink);opacity:1}
-html[data-look="club"] body.st-on .st-lnk::after{content:none}
+html[data-look="club"] body.st-on .st-lnk{color:var(--club-ink)}html[data-look="club"] body.st-on .st-lnk::after{content:none}
 html[data-look="club"] body.st-on #st-lnk::after,html[data-look="club"] body.ln-on #ln-lnk::after,html[data-look="club"] body.cmp-on #cmp-lnk::after,html[data-look="club"] body.ld-on #ld-lnk::after{content:"";position:absolute;left:14px;right:14px;bottom:0;height:3px;background:var(--club2);transform:none}
 html[data-look="club"] :is(.lang,.theme){border-left:1px solid color-mix(in srgb,var(--club-ink) 18%,transparent)}
 html[data-look="club"] :is(.lang,.theme) button{color:var(--club-ink);opacity:.7;font-family:var(--sans);font-weight:700;font-size:11px}
@@ -953,6 +953,51 @@ html[data-look="club"] .ln-strip{height:16px;border-radius:4px}
   html[data-look="club"] .ln-tab td.five{font-size:14px}
   html[data-look="club"] .ln-tab td.crest .medal{width:28px;height:28px}html[data-look="club"] .ln-tab td.crest .medal img{width:20px;height:20px}
   html[data-look="club"] .ln-tab .nbar{width:40px;margin-left:6px}
+}
+/* Game Center look · lineups: square controls, the tabs on an orange rail, the table header in the club colour, the by-game header as a dark scoreboard */
+html[data-look="club"] #lineups h2,html[data-look="club"] #standings h2{font-family:var(--cond);gap:12px}
+html[data-look="club"] #lineups h2::before,html[data-look="club"] #standings h2::before{width:6px;height:28px;background:var(--gc);border-radius:0}
+html[data-look="club"] #lineups,html[data-look="club"] #standings{border-radius:0}
+html[data-look="club"] #ln-tabs{border:0;border-bottom:1px solid var(--line);border-radius:0;background:none;padding:0;gap:4px;flex:1 1 100%;display:flex}
+html[data-look="club"] #ln-tabs button{position:relative;border-radius:0;background:none;min-height:0;padding:12px 14px 12px;font-family:var(--cond);font-weight:var(--cond-w);font-size:17px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+html[data-look="club"] #ln-tabs button:hover{color:var(--ink)}
+html[data-look="club"] #ln-tabs button[aria-pressed="true"]{background:none;color:var(--ink)}
+html[data-look="club"] #ln-tabs button::after{content:"";position:absolute;left:10px;right:10px;bottom:-1px;height:3px;background:var(--gc);transform:scaleX(0);transition:transform .3s cubic-bezier(.22,1,.36,1)}
+html[data-look="club"] #ln-tabs button[aria-pressed="true"]::after{transform:none}
+@media (prefers-reduced-motion:reduce){html[data-look="club"] #ln-tabs button::after{transition:none}}
+html[data-look="club"] .ln-sel{border-radius:0;height:42px;font-family:var(--cond);font-weight:var(--cond-w);font-size:16px;letter-spacing:.06em;text-transform:uppercase}
+html[data-look="club"] .ln-sel label{font-family:var(--sans);font-weight:700;font-size:11px;letter-spacing:.12em}
+html[data-look="club"] .ln-defs div{border-radius:0;background:var(--panel);border-bottom:3px solid var(--gc)}
+html[data-look="club"] .ln-defs b{color:var(--gc)}
+html[data-look="club"] .ln-defs i{font-weight:700;letter-spacing:.1em}
+html[data-look="club"] .ln-tab thead th,html[data-look="club"] .st-tab thead th{background:var(--club);color:var(--club-ink);font-weight:700;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;border-bottom:0;padding-top:10px;padding-bottom:10px}
+html[data-look="club"] #ln-wrap,html[data-look="club"] #standings .scroll{border:1px solid var(--line)}
+html[data-look="club"] .ln-tab .chip{border-radius:0;background:var(--gc);color:#fff}
+html[data-look="club"] .ln-tab .nbar,html[data-look="club"] .ln-tab .nbar i,html[data-look="club"] .ln-tab .oobar{border-radius:0}
+html[data-look="club"] .ln-strip{border-radius:0}html[data-look="club"] .ln-strip b{border-radius:0;background:var(--gc)}
+html[data-look="club"] .ln-tab tr.me td,html[data-look="club"] .st-tab tr.me td{background:color-mix(in srgb,var(--gc) 9%,var(--panel))}
+html[data-look="club"] .ln-game{position:relative;isolation:isolate;border:0;border-radius:0;background:#05080f;color:#fff;padding:12px 16px}
+html[data-look="club"] .ln-game::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(105deg,color-mix(in srgb,var(--club) 70%,transparent) 0 40%,transparent 70%)}
+html[data-look="club"] .ln-game a,html[data-look="club"] .ln-game .sc{color:#fff}
+html[data-look="club"] .ln-game .sc{font-size:34px}html[data-look="club"] .ln-game .sc i{color:rgba(255,255,255,.4)}
+html[data-look="club"] .ln-game .meta{color:rgba(255,255,255,.72);font-weight:600;font-size:13px;letter-spacing:.08em;text-transform:uppercase}
+html[data-look="club"] .ln-game .meta a{color:#fff;text-decoration:underline;text-decoration-color:var(--gc);text-decoration-thickness:2px;text-underline-offset:3px}
+html[data-look="club"] .ln-game .res{border-radius:0}
+html[data-look="club"] .ln-game .medal{box-shadow:none}
+/* Game Center look · standings: square tiles with the orange rule, square form chips, the cut lines in orange */
+html[data-look="club"] .st-tile{border-radius:0;background:var(--panel);border-bottom:3px solid var(--gc)}
+html[data-look="club"] .st-tile .lab{font-weight:700;letter-spacing:.12em}
+html[data-look="club"] .st-tab .form i{border-radius:0}
+html[data-look="club"] .st-tab tr.cut td{border-bottom-color:var(--gc)}
+html[data-look="club"] .st-tab tr.cutrow td{color:var(--ink);font-weight:700;letter-spacing:.12em;background:color-mix(in srgb,var(--gc) 10%,var(--panel));border-top-color:var(--gc);border-bottom-color:var(--gc)}
+html[data-look="club"] .st-tab tr.cutrow td::before{border-radius:0;background:var(--gc)}
+html[data-look="club"] .st-tab tr.me td:first-child{color:var(--gc);font-weight:800}
+@media (max-width:760px){
+  html[data-look="club"] .ln-tab thead th:nth-child(n),html[data-look="club"] .st-tab thead th:nth-child(n){background:var(--club)}
+  html[data-look="club"] .st-tile{border-radius:0}
+  html[data-look="club"] #ln-tabs{overflow-x:auto;scrollbar-width:none}html[data-look="club"] #ln-tabs::-webkit-scrollbar{display:none}
+  html[data-look="club"] #ln-tabs button{flex:1 0 auto;padding:12px 10px;font-size:15px}
+  html[data-look="club"] .ln-game .sc{font-size:24px}
 }
 /* ---- end Club Edition standings and lineups ---- */
 .cv{position:relative;min-height:calc(100vh - 6px);overflow:hidden;display:flex;flex-direction:column;justify-content:center}
