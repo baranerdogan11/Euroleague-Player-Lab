@@ -292,6 +292,9 @@ def main():
                    " && document.querySelectorAll('#game .gm-box tbody tr').length >= 16 && !!document.querySelector('#game .gm-tm')")
         def game_page(where):
             cdp.wait("!document.querySelector('#cv-last').hidden && document.querySelectorAll('#cv-games a.cv-game').length >= 1", f"the Last night strip on the opening page ({where})")
+            # the Games section lists every game played so far, one card each
+            cdp.wait("!document.querySelector('#cv-all').hidden && document.querySelectorAll('#cv-rounds a.cv-game').length === META.games.length"
+                     " && META.games.length === META.standings.reduce((a, r) => a + r.gp, 0) / 2", f"every played game in the Games section ({where})")
             cdp.eval("document.querySelector('#cv-games a.cv-game').click()")
             # the game opens on its Summary: four leader duels and the team comparison, then the box score one tab over
             cdp.wait("document.body.classList.contains('gm-on') && !document.querySelector('.wipe.on') && document.querySelector('#fail').hidden"
