@@ -8,8 +8,10 @@ Checks, in order:
   1. no git conflict markers in the built files (index.html, sw.js, the club JSON, the template and the dictionary)
   2. sw.js compiles (Chrome's own parser, through the DevTools protocol)
   3. desktop (1280 px): the opening page lists every club; the Open button lands on a player page with a name, a drawn
-     shot chart and a game log; the standings, leaders, compare and lineups pages each show up on their hash
-  4. phone (390 px): the same entry, and the page never scrolls sideways
+     shot chart and a game log; the standings, leaders, compare and lineups pages each show up on their hash; the
+     opening page's Last night strip opens a game page with both box scores, whose totals match the final score, a shot
+     chart and the fives, and a player in the box opens his page on that game
+  4. phone (390 px): the same entry and the same game page, and the page never scrolls sideways
   5. throughout: no uncaught exception, no console.error, no failed request for a page, script or JSON file
 
 Chrome is found through $CHROME, then the usual names on PATH, then the macOS bundle. A Chrome that does not start is
@@ -181,7 +183,7 @@ def main():
     sys.stdout.reconfigure(line_buffering=True)   # CI logs show when each step happened
     fails = []
     # 1. conflict markers never reach the built site
-    files = ["index.html", "sw.js", "template.html", "manifest.webmanifest", os.path.join("lang", "tr.json")] + sorted(glob.glob(os.path.join("teams", SEASON, "*.json")))
+    files = ["index.html", "sw.js", "template.html", "manifest.webmanifest", os.path.join("lang", "tr.json")] + sorted(glob.glob(os.path.join("teams", SEASON, "*.json"))) + sorted(glob.glob(os.path.join("teams", SEASON, "games", "*.json")))
     for f in files:
         p = os.path.join(ROOT, f)
         if not os.path.exists(p):
@@ -284,8 +286,36 @@ def main():
             cdp.wait("document.querySelector('#nm') && document.querySelector('#nm').textContent.trim().length > 1 && document.querySelector('#court').childElementCount > 3"
                      " && document.querySelectorAll('#log tbody tr').length >= 1 && document.querySelector('#fail').hidden", "a player page with a name, a shot chart and a game log")
 
+        # the game page from the opening page's Last night strip: the first card, then every tab; the box totals must equal
+        # the score in the header, and a player in the box opens his page on that game
+        GAME_UP = ("document.body.classList.contains('gm-on') && !document.querySelector('.wipe.on') && document.querySelector('#fail').hidden"
+                   " && document.querySelectorAll('#game .gm-box tbody tr').length >= 16 && !!document.querySelector('#game .gm-tm')")
+        def game_page(where):
+            cdp.wait("!document.querySelector('#cv-last').hidden && document.querySelectorAll('#cv-games a.cv-game').length >= 1", f"the Last night strip on the opening page ({where})")
+            cdp.eval("document.querySelector('#cv-games a.cv-game').click()")
+            cdp.wait(GAME_UP, f"a game page with both box scores ({where})")
+            bad = cdp.eval("""(() => { const em = [...document.querySelectorAll('#game .gm-tm em')].map(e => +e.textContent), tot = [...document.querySelectorAll('#game .gm-box tr.tot td.pts')].map(e => +e.textContent);
+                              return em.length === 2 && tot.length === 2 && em[0] === tot[0] && em[1] === tot[1] ? '' : `header ${em} against box totals ${tot}`; })()""")
+            if bad:
+                fails.append(f"{where}: the game page's box totals disagree with its score: {bad}")
+            for tab, probe in (("shots", "document.querySelectorAll('#gm-court circle').length >= 20"), ("fives", "document.querySelectorAll('#game .gm-fives tbody tr').length >= 3 && !!document.querySelector('#game .ln-strip')")):
+                cdp.eval(f"document.querySelector('#game button[data-tab={tab}]').click()")
+                cdp.wait(probe, f"the game page's {tab} tab ({where})")
+            wide = cdp.eval("document.documentElement.scrollWidth - document.documentElement.clientWidth")
+            if wide > 2:
+                fails.append(f"{where}: the game page scrolls sideways by {wide}px")
+            cdp.eval("document.querySelector('#game button[data-tab=box]').click()")
+            cdp.wait(GAME_UP, f"the box score tab again ({where})")
+            cdp.eval("document.querySelector('#game .gm-box td.nm a').click()")
+            cdp.wait("!document.body.classList.contains('gm-on') && !document.querySelector('.wipe.on') && state.data && state.game !== 'all' && /\\/g\\d+$/.test(location.hash)"
+                     " && document.querySelector('#court').childElementCount > 3", f"a player page opened on that game from the box score ({where})")
+            cdp.eval("localStorage.removeItem('pl-last')")   # the opening page's Open button is tested from a fresh browser next
+            print(f"{where}: game page drawn from the Last night strip ({cdp.eval('document.title')}), overflow {wide}px, player link lands on the game")
+
         # 3. desktop
         device(1280, 900, False)
+        open_home()
+        game_page("desktop")
         open_home()
         enter_app()
         print("desktop: opening page, club and player page drawn (%s)" % cdp.eval("document.title"))
@@ -304,6 +334,8 @@ def main():
 
         # 4. phone
         device(390, 844, True)
+        open_home()
+        game_page("phone")
         open_home()
         enter_app()
         wide = cdp.eval("document.documentElement.scrollWidth - document.documentElement.clientWidth")
