@@ -8,7 +8,7 @@ Checks, in order:
   1. no git conflict markers in the built files (index.html, sw.js, the club JSON, the template and the dictionary)
   2. sw.js compiles (Chrome's own parser, through the DevTools protocol)
   3. desktop (1280 px): the opening page lists every club; the Open button lands on a player page with a name, a drawn
-     shot chart and a game log; the standings, leaders, compare and lineups pages each show up on their hash; the
+     shot chart and a game log; the standings, leaders, compare, lineups and games pages each show up on their hash; the
      opening page's Last night strip opens a game page with both box scores, whose totals match the final score, a shot
      chart and the fives, and a player in the box opens his page on that game
   4. phone (390 px): the same entry and the same game page, and the page never scrolls sideways
@@ -292,9 +292,6 @@ def main():
                    " && document.querySelectorAll('#game .gm-box tbody tr').length >= 16 && !!document.querySelector('#game .gm-tm')")
         def game_page(where):
             cdp.wait("!document.querySelector('#cv-last').hidden && document.querySelectorAll('#cv-games a.cv-game').length >= 1", f"the Last night strip on the opening page ({where})")
-            # the Games section lists every game played so far, one card each
-            cdp.wait("!document.querySelector('#cv-all').hidden && document.querySelectorAll('#cv-rounds a.cv-game').length === META.games.length"
-                     " && META.games.length === META.standings.reduce((a, r) => a + r.gp, 0) / 2", f"every played game in the Games section ({where})")
             cdp.eval("document.querySelector('#cv-games a.cv-game').click()")
             # the game opens on its Summary: four leader duels and the team comparison, then the box score one tab over
             cdp.wait("document.body.classList.contains('gm-on') && !document.querySelector('.wipe.on') && document.querySelector('#fail').hidden"
@@ -329,6 +326,8 @@ def main():
         for h, cls, probe, what in (("standings", "st-on", "document.querySelectorAll('#standings .st-tab tbody tr').length >= META.clubs.length", "the standings table"),
                                    ("leaders", "ld-on", "document.querySelector('#leaders').getBoundingClientRect().height > 300", "the leaders page"),
                                    ("compare", "cmp-on", "document.querySelector('#cmp-panel').getBoundingClientRect().height > 200", "the compare page"),
+                                   # every game played so far, one card each, as many as the standings count
+                                   ("games", "gs-on", "document.querySelectorAll('#gs-list a.cv-game').length === META.games.length && META.games.length === META.standings.reduce((a, r) => a + r.gp, 0) / 2", "the games page"),
                                    ("lineups", "ln-on", "document.querySelector('#lineups').getBoundingClientRect().height > 300", "the lineups page")):
             cdp.eval(f"location.hash = '#{h}'")
             cdp.wait(f"document.body.classList.contains('{cls}') && !document.querySelector('.wipe.on') && document.querySelector('#fail').hidden && ({probe})", what)
