@@ -265,7 +265,7 @@ html[data-look="club"] body.cmp-on .cmp-side.r .dd-list{left:auto;right:0;min-wi
 html[data-look="club"] .cmp-side{padding:26px 30px 24px;display:grid;align-content:start;gap:14px;min-height:250px}
 html[data-look="club"] .cmp-side.l{background:var(--cb1);color:var(--ci1)}
 html[data-look="club"] .cmp-side.r{background:var(--cb2);color:var(--ci2)}
-html[data-look="club"] .cmp-side.r .cmp-who,html[data-look="club"] .cmp-side.r .cmp-row{justify-self:end;text-align:right}
+html[data-look="club"] .cmp-side.r .cmp-who,html[data-look="club"] .cmp-side.r .cmp-row,html[data-look="club"] .cmp-side.r .cmp-picks{justify-self:end;text-align:right}
 html[data-look="club"] .cmp-club{display:flex;align-items:center;gap:10px;font-family:var(--sans);font-weight:600;font-size:14px;letter-spacing:.08em;text-transform:uppercase}
 html[data-look="club"] .cmp-side.r .cmp-club{flex-direction:row-reverse}
 html[data-look="club"] .cmp-side.l .cmp-club .medal{--ring:var(--ca1)}
@@ -284,6 +284,7 @@ html[data-look="club"] body.cmp-on .cmp-pick,html[data-look="club"] body.cmp-on 
 html[data-look="club"] body.cmp-on .cmp-picks{display:grid;grid-template-columns:max-content minmax(200px,320px);gap:12px 10px;align-items:center;margin-top:4px}   /* club and player pickers: one label column, the pills aligned */
 html[data-look="club"] body.cmp-on .cmp-picks .cmp-pick{display:contents}
 html[data-look="club"] body.cmp-on .cmp-picks .cmp-sel{max-width:none;min-width:0}
+html[data-look="club"] body.cmp-on .cmp-row{display:none}   /* the page's right side uses its own club and player pickers; the one long list stays the player page's teaser */
 html[data-look="club"] body.cmp-on .cmp-lab{font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;color:inherit;opacity:.8}
 html[data-look="club"] body.cmp-on .cmp-sel{border:0;padding:0;flex:0 1 320px;max-width:320px;min-width:200px}
 html[data-look="club"] body.cmp-on .cmp-side .dd{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.35);color:inherit;min-height:44px;border-radius:999px}
@@ -333,7 +334,7 @@ html[data-look="club"] .cmp-empty{background:var(--panel);border:1px solid var(-
   html[data-look="club"] .cmp-hero{grid-template-columns:1fr}
   html[data-look="club"] .cmp-side.l{border-radius:8px 8px 0 0}html[data-look="club"] .cmp-side.r{border-radius:0 0 8px 8px}
   html[data-look="club"] .cmp-side{padding:20px 16px 18px;min-height:0}
-  html[data-look="club"] .cmp-side.r .cmp-who,html[data-look="club"] .cmp-side.r .cmp-row{justify-self:start;text-align:left}
+  html[data-look="club"] .cmp-side.r .cmp-who,html[data-look="club"] .cmp-side.r .cmp-row,html[data-look="club"] .cmp-side.r .cmp-picks{justify-self:stretch;text-align:left}
   html[data-look="club"] .cmp-side.r .cmp-club{flex-direction:row}
   html[data-look="club"] .cmp-side.r .cmp-facts{justify-content:flex-start}
   html[data-look="club"] .cmp-nm{font-size:44px}
@@ -1411,12 +1412,11 @@ html[data-look="club"] body.cv-on .top{display:none}   /* the phone band rules s
       <!-- Club Edition compare: on the player page only the picker row shows (a teaser); on #compare the hero, bars, shot diets and actions show -->
       <div class="cmp-hero" id="cmp-hero">
         <div class="cmp-side l" id="cmp-l"><div class="cmp-who" id="cmp-who-l"></div><div class="cmp-picks"><div class="cmp-pick"><label class="cmp-lab" for="cmp-club">Change club</label><div class="sel cmp-sel"><select id="cmp-club" aria-label="Change club"></select></div></div><div class="cmp-pick"><label class="cmp-lab" for="cmp-me">Change player</label><div class="sel cmp-sel"><select id="cmp-me" aria-label="Change player"></select></div></div></div></div>
-        <div class="cmp-side r" id="cmp-r"><div class="cmp-who" id="cmp-who-r"></div><div class="cmp-row"><label class="cmp-lab" for="cmp">Compare with</label><div class="sel cmp-sel" style="border:0;padding:0;flex:1;max-width:420px"><select id="cmp" aria-label="Compare with"></select></div><a class="cmp-open" id="cmp-open" href="#compare">Open compare</a></div></div>
+        <div class="cmp-side r" id="cmp-r"><div class="cmp-who" id="cmp-who-r"></div><div class="cmp-picks"><div class="cmp-pick"><label class="cmp-lab" for="cmp-oclub">Change club</label><div class="sel cmp-sel"><select id="cmp-oclub" aria-label="Change club"></select></div></div><div class="cmp-pick"><label class="cmp-lab" for="cmp-opp">Change player</label><div class="sel cmp-sel"><select id="cmp-opp" aria-label="Change player"></select></div></div></div><div class="cmp-row"><label class="cmp-lab" for="cmp">Compare with</label><div class="sel cmp-sel" style="border:0;padding:0;flex:1;max-width:420px"><select id="cmp" aria-label="Compare with"></select></div><a class="cmp-open" id="cmp-open" href="#compare">Open compare</a></div></div>
         <span class="cmp-vs" aria-hidden="true">VS</span>
       </div>
       <div class="cmp-page" id="cmp-page" hidden>
         <h3 class="cmp-h3" id="cmp-h2h-t">Head to head</h3>
-        <p class="sub" id="cmp-h2h-sub"></p>
         <div class="cmp-h2h" id="cmp-h2h"></div>
         <p class="cmp-cap" id="cmp-cap"></p>
         <h3 class="cmp-h3" id="cmp-diet-t">Shot diet</h3>
@@ -1814,7 +1814,7 @@ function renderCompareOptions(){
     panel.hidden = false; $('#cmp-page').hidden = true; $('#cmp-table').hidden = true;
     $('#cmp-sub').textContent = t('Two {pos} side by side, per 40 minutes and per possession where it matters.', {pos: posNum});
     const em = $('#cmp-empty'); em.hidden = false; em.textContent = d.tot.gp ? t('No other {pos} has qualified yet. Pick another player from the bar above.', {pos: pos1}) : t('{name} has no Euroleague minutes yet, so there is nothing to compare. Pick another player from the bar above.', {name: `${nameOf(me.name).first} ${nameOf(me.name).sur}`.trim()});
-    cmpWho('l', me, state.team, d); cmpMeOptions();
+    cmpWho('l', me, state.team, d); cmpMeOptions(); cmpOppOptions([]);
     sel.innerHTML = `<option value="">${t('Choose a {pos} to compare', {pos: pos1})}</option>`; if (typeof DD !== 'undefined' && DD.cmp) DD.cmp.refresh();   // the right-hand pill still names its purpose
     $('#cmp-who-r').innerHTML = `<div class="cmp-club">${t('Opponent')}</div><p class="cmp-nm"><b>?</b></p>`;
     return;
@@ -1828,7 +1828,7 @@ function renderCompareOptions(){
   if (typeof DD !== 'undefined' && DD.cmp) DD.cmp.refresh();
   sel.value = keep; state.cmp = keep || null;
   $('#cmp-open').textContent = t('Open compare');
-  if (onPage) { cmpWho('l', me, state.team, d); cmpMeOptions(); }
+  if (onPage) { cmpWho('l', me, state.team, d); cmpMeOptions(); cmpOppOptions(peers); }
   renderCompare();
 }
 // the club colours on the compare page: base, accent and the ink that reads on the base (the same contrast rule applyPalette uses for --club-ink)
@@ -1851,6 +1851,17 @@ function cmpMeOptions(){
   cs.innerHTML = META.clubs.slice().sort((a, b) => a.name.localeCompare(b.name)).map(c => `<option value="${c.code}">${c.name}</option>`).join('');
   cs.value = state.team;
   if (DD.cmpClub) DD.cmpClub.refresh();
+}
+function cmpOppOptions(peers){
+  // the right side mirrors the left: a club, then one of its players at the same position
+  const cs = $('#cmp-oclub'), ps = $('#cmp-opp'), byClub = {}, cur = state.cmp && ROSTER.byPid[state.cmp];
+  peers.forEach(r => (byClub[r.club] = byClub[r.club] || []).push(r));
+  const club = cur && byClub[cur.club] ? cur.club : byClub[state.cmpClub] ? state.cmpClub : '';
+  cs.innerHTML = `<option value="">${t('Pick a club')}</option>` + META.clubs.filter(c => byClub[c.code]).sort((a, b) => a.name.localeCompare(b.name)).map(c => `<option value="${c.code}">${c.name}</option>`).join('');
+  cs.value = club;
+  ps.innerHTML = `<option value="">${t('Choose a {pos} to compare', {pos: t(ds().pos_group || 'player').toLowerCase()})}</option>` + (byClub[club] || []).sort((a, b) => nameOf(a.name).sur.localeCompare(nameOf(b.name).sur)).map(r => `<option value="${r.pid}">#${r.dorsal || '–'} ${nameOf(r.name).first} ${nameOf(r.name).sur}</option>`).join('');
+  ps.value = state.cmp || ''; ps.disabled = !club;
+  if (typeof DD !== 'undefined' && DD.cmpOClub) { DD.cmpOClub.refresh(); DD.cmpOpp.refresh(); }
 }
 async function renderCompare(){
   const tb = $('#cmp-table'), page = $('#cmp-page'), d = ds(), me = player(), onPage = document.body.classList.contains('cmp-on');
@@ -1879,7 +1890,7 @@ async function renderCompare(){
   // bars measure size from zero: a negative value draws a faded bar of its magnitude, so -0.3 never looks bigger than -0.1
   const barRow = x => { const vals = [x.a, x.b, x.m].filter(v => v != null); if (!vals.length) return ''; const span = Math.max(...vals.map(Math.abs)) * 1.08 || 1, w = v => v == null ? 0 : Math.abs(v) / span * 100 / 2, neg = v => v != null && v < 0 ? ' neg' : '';   // each half is 50% of the row, so a value spans up to half
     return `<div class="cmp-m"><div class="v l">${x.win === true ? '<i aria-label="' + t('better') + '"></i>' : ''}${x.fmt(x.a)}</div><div class="bars"><span class="lab">${t(x.label)}</span><span class="mid"></span><span class="bl${neg(x.a)}" style="width:${w(x.a).toFixed(2)}%"></span><span class="br${neg(x.b)}" style="width:${w(x.b).toFixed(2)}%"></span>${x.m != null ? `<span class="ml" style="right:${(50 + w(x.m)).toFixed(2)}%"></span><span class="mr" style="left:${(50 + w(x.m)).toFixed(2)}%"></span>` : ''}</div><div class="v r">${x.fmt(x.b)}${x.win === false ? '<i aria-label="' + t('better') + '"></i>' : ''}</div></div>`; };
-  $('#cmp-h2h-t').textContent = t('Head to head'); $('#cmp-h2h-sub').textContent = t('{a} grows left from the centre, {b} grows right; the blue tick is the position median.', {a: nameOf(me.name).sur, b: nameOf(other.name).sur});
+  $('#cmp-h2h-t').textContent = t('Head to head');
   $('#cmp-h2h').innerHTML = rows.map(barRow).join('');
   $('#cmp-cap').innerHTML = `${t('Better value marked with a triangle; turnover rate inverted.')} <i></i>${t('position median')}`;
   // shot diet: share of attempts by zone, drawn on a half court per player
@@ -2244,6 +2255,15 @@ $('#cmp-club').addEventListener('change', async e => {   // the compare page's l
   let i = 0, best = -1; team().players.forEach((p, j) => { const m = (p.cur && p.cur.tot && p.cur.tot.min) || 0; if (m > best) { best = m; i = j; } });
   state.player = i; state.cmp = cmp; $('#player').value = i; state.game = 'all'; renderGames(); renderPlayer(); DD.team.refresh(); DD.player.refresh(); DD.statGame.refresh();
 });
+$('#cmp-oclub').addEventListener('change', async e => {   // the compare page's right side: another club, opened on its most-used player at the position
+  const code = e.target.value, me = player(); state.cmpClub = code || null; if (!code) return;
+  const peers = ROSTER.list.filter(r => r.club === code && r.pos === ds().pos_group && r.pid !== me.pid); if (!peers.length) return;
+  if (!cache[code]) { try { cache[code] = await (await fetch(`${META.path}${code}.json?v=${encodeURIComponent(META.built || '')}`)).json(); } catch (e) { return; } }
+  let pick = peers[0].pid, best = -1; cache[code].players.forEach(p => { const m = (p.cur && p.cur.tot && p.cur.tot.min) || 0; if (m > best && peers.some(r => r.pid === p.pid)) { best = m; pick = p.pid; } });
+  if (state.cmpClub !== code) return;   // a later pick won the race
+  state.cmp = pick; $('#cmp').value = pick; DD.cmp.refresh(); renderCompareOptions();
+});
+$('#cmp-opp').addEventListener('change', e => { state.cmp = e.target.value || null; $('#cmp').value = state.cmp || ''; DD.cmp.refresh(); renderCompare(); });
 $('#cmp-me').addEventListener('change', e => { state.player = +e.target.value; $('#player').value = state.player; state.game = 'all'; renderGames(); renderPlayer(); DD.player.refresh(); });   // the compare page's left side: a teammate, without leaving #compare
 $('#replay').addEventListener('click', () => renderChart(true));
 $('#f-rate').querySelectorAll('button').forEach(b => b.addEventListener('click', () => { $('#f-rate').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b)); state.rate = b.dataset.v; renderTiles(); }));
@@ -2257,6 +2277,8 @@ const DD = {
   player: Dropdown($('#player'), (op, head) => { const p = team() && team().players[+op.value]; if (!p) return op.text; const n = nameOf(p.name); return head ? `#${p.dorsal || '–'} ${EN(`${n.first} ${n.sur}`)}` : `<span class="no">${p.dorsal || '–'}</span><span lang="en">${n.first} ${n.sur}</span><small>${t(p.position || '').slice(0, 7)}</small>`; }),
   cmpMe: Dropdown($('#cmp-me'), op => EN(op.text)),
   cmpClub: Dropdown($('#cmp-club'), (op, head) => { const c = CLUBS[op.value]; if (!c) return op.text; return `${c.logo && !head ? `<img src="${c.logo}" alt="">` : ''}<span lang="en">${c.name}</span>`; }),
+  cmpOClub: Dropdown($('#cmp-oclub'), (op, head) => { const c = CLUBS[op.value]; if (!c) return op.text; return `${c.logo && !head ? `<img src="${c.logo}" alt="">` : ''}<span lang="en">${c.name}</span>`; }),
+  cmpOpp: Dropdown($('#cmp-opp'), op => EN(op.text)),
   cmp: Dropdown($('#cmp'), (op, head) => { if (!op.value) return op.text; const r = ROSTER.byPid[op.value]; if (!r) return op.text; const c = CLUBS[r.club], n = nameOf(r.name); return head ? EN(`${n.first} ${n.sur}`) : `${c && c.logo ? `<img src="${c.logo}" alt="">` : ''}<span class="no">${r.dorsal || '–'}</span><span lang="en">${n.first} ${n.sur}</span><small lang="en">${shortName(r.club)}</small>`; }),
   statGame: Dropdown($('#stat-game'), (op, head) => { if (op.value === 'all' || !team()) return op.text; const g = ds().games[+op.value]; if (!g) return op.text; const l = gameLabel(g); return head ? `${l.txt} · ${l.res} ${l.score}` : `<span>${l.txt}</span><small class="${l.win ? 'w' : 'l'}">${l.res} ${l.score}</small>`; })
 };
