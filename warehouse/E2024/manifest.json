@@ -1,0 +1,17 @@
+{
+ "season": "E2024",
+ "tables": {
+  "clubs": 18,
+  "players": 319,
+  "careers": 1678,
+  "careers_wiki": 0,
+  "roster_stints": 326,
+  "games": 330,
+  "box": 7863,
+  "shots": 41533,
+  "events": 176483,
+  "shot_context": 41533,
+  "stints": 23076,
+  "oncourt": 7863
+ }
+}

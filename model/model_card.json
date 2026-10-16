@@ -1,10 +1,22 @@
 {
  "model": "xFG (expected field goal)",
- "version": "2026-09-30",
+ "version": "2026-10-16",
  "trained_on": "E2025",
- "n_shots": 51750,
- "n_shooters": 329,
- "split": "time-based, test = games after 2026-03-12 (12782 shots)",
+ "training_seasons": [
+  "E2022",
+  "E2023",
+  "E2024",
+  "E2025"
+ ],
+ "n_shots": 174553,
+ "n_shots_by_season": {
+  "E2022": 39939,
+  "E2023": 41331,
+  "E2024": 41533,
+  "E2025": 51750
+ },
+ "n_shooters": 578,
+ "split": "time-based, test = E2025 games after 2026-03-12 (12782 shots), train = every earlier game of E2022, E2023, E2024, E2025",
  "features": [
   "dist",
   "angle",
@@ -31,124 +43,125 @@
   "zone_fg": {
    "logloss": 0.6447,
    "brier": 0.2277,
-   "auc": 0.6455
+   "auc": 0.6458
   },
   "distance_bins": {
-   "logloss": 0.6459,
-   "brier": 0.227,
+   "logloss": 0.6458,
+   "brier": 0.2269,
    "auc": 0.6522
   },
-  "xfg_context": {
+  "xfg_context_latest_season_only": {
    "logloss": 0.627,
    "brier": 0.2199,
    "auc": 0.6812
   },
+  "xfg_context": {
+   "logloss": 0.6253,
+   "brier": 0.2191,
+   "auc": 0.6827
+  },
   "xfg_context_plus_shooter": {
-   "logloss": 0.6264,
-   "brier": 0.2196,
-   "auc": 0.6829
+   "logloss": 0.6244,
+   "brier": 0.2187,
+   "auc": 0.685
   }
  },
  "calibration_test": [
   {
    "n": 1279,
-   "pred": 0.288,
+   "pred": 0.283,
    "actual": 0.28
   },
   {
    "n": 1278,
-   "pred": 0.349,
-   "actual": 0.322
+   "pred": 0.342,
+   "actual": 0.33
   },
   {
    "n": 1278,
-   "pred": 0.37,
+   "pred": 0.366,
    "actual": 0.345
   },
   {
    "n": 1278,
-   "pred": 0.388,
-   "actual": 0.392
+   "pred": 0.387,
+   "actual": 0.372
   },
   {
    "n": 1278,
    "pred": 0.409,
-   "actual": 0.415
+   "actual": 0.417
   },
   {
    "n": 1278,
-   "pred": 0.433,
-   "actual": 0.449
+   "pred": 0.436,
+   "actual": 0.437
   },
   {
    "n": 1278,
-   "pred": 0.479,
-   "actual": 0.461
+   "pred": 0.484,
+   "actual": 0.463
   },
   {
    "n": 1278,
-   "pred": 0.565,
-   "actual": 0.559
+   "pred": 0.568,
+   "actual": 0.565
   },
   {
    "n": 1278,
-   "pred": 0.664,
-   "actual": 0.646
+   "pred": 0.67,
+   "actual": 0.658
   },
   {
    "n": 1279,
-   "pred": 0.865,
-   "actual": 0.882
+   "pred": 0.869,
+   "actual": 0.884
   }
  ],
  "permutation_importance": [
   [
    "dist",
-   0.1107
+   0.0911
   ],
   [
    "poss_sec",
-   0.0061
+   0.0074
+  ],
+  [
+   "zone",
+   0.0035
   ],
   [
    "y",
+   0.0028
+  ],
+  [
+   "poss_start",
    0.0019
   ],
   [
    "shooter",
-   0.0017
-  ],
-  [
-   "x",
-   0.0015
-  ],
-  [
-   "poss_start",
-   0.0014
+   0.0018
   ],
   [
    "clock_sec",
-   0.0012
+   0.0011
   ],
   [
    "angle",
-   0.0004
+   0.0005
   ],
   [
-   "zone",
-   0.0002
+   "x",
+   0.0003
   ],
   [
    "minute",
-   0.0001
+   0.0003
   ],
   [
    "home",
    0.0001
-  ],
-  [
-   "margin",
-   -0.0
   ],
   [
    "quarter",
@@ -157,11 +170,16 @@
   [
    "three",
    0.0
+  ],
+  [
+   "margin",
+   -0.0001
   ]
  ],
  "shooter_shrinkage_k": 150.0,
  "algorithm": "sklearn HistGradientBoostingClassifier, early stopping",
- "notes": "Shooter effect is a sequential shrunk residual computed from earlier shots only; no leakage.",
- "changes": "Adds poss_sec (seconds into the possession) and poss_start (how the possession began) from the play-by-play layer; both are known before the release and missing for games without play-by-play.",
- "context_coverage": 0.982
+ "notes": "Shooter effect is a sequential shrunk residual computed from earlier shots only, decayed by PRIOR_DECAY at each new season; no leakage.",
+ "shooter_prior_decay": 0.6,
+ "changes": "Trained on several seasons instead of one (model/training.json); the context model fitted on the latest season alone is kept as a comparison row in metrics_test.",
+ "context_coverage": 0.987
 }

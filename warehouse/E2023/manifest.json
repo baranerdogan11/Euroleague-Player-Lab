@@ -1,0 +1,17 @@
+{
+ "season": "E2023",
+ "tables": {
+  "clubs": 18,
+  "players": 313,
+  "careers": 1806,
+  "careers_wiki": 0,
+  "roster_stints": 320,
+  "games": 331,
+  "box": 7883,
+  "shots": 41331,
+  "events": 172265,
+  "shot_context": 41331,
+  "stints": 22644,
+  "oncourt": 7883
+ }
+}
