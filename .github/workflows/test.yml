@@ -51,6 +51,7 @@ jobs:
           python tests/test_profile.py
           python tests/test_service.py
           python tests/test_monitor.py
+          python tests/test_rapm.py
 
       - name: Warehouse assertions on the committed warehouse
         run: python warehouse_tests.py $SEASON
