@@ -1515,10 +1515,17 @@ html[data-look="club"] .gm-h3 .medal{width:30px;height:30px;border-width:2px}htm
 .cv-game .tm em{font-style:normal;font-family:var(--cond);font-weight:var(--cond-w,400);font-size:28px;line-height:1;font-variant-numeric:tabular-nums}
 .cv-game .tm.win{color:var(--ink)}
 html[data-look="club"] .cv-game .medal{width:30px;height:30px;border-width:2px}html[data-look="club"] .cv-game .medal img{width:20px;height:20px}
-.cv-game .top{display:flex;align-items:center;gap:10px;margin-top:4px;padding-top:8px;border-top:1px solid var(--line);font-size:14px;color:var(--muted);min-width:0}
-.cv-game .top img{width:32px;height:32px;border-radius:50%;object-fit:cover;object-position:top;background:var(--panel2);flex:none}
-.cv-game .top span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.cv-game .top b{color:var(--ink);font-weight:700}
+.cv-game .best{display:flex;align-items:center;gap:10px;margin-top:4px;padding-top:8px;border-top:1px solid var(--line);font-size:14px;color:var(--muted);min-width:0}
+.cv-game .best img{width:32px;height:32px;border-radius:50%;object-fit:cover;object-position:top;background:var(--panel2);flex:none}
+.cv-game .best span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cv-game .best b{color:var(--ink);font-weight:700}
+/* the cover's Games section: every game so far, one block per round under a round heading, newest first */
+.cv-rd{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 14px;margin:22px 0 10px}
+.cv-rd:first-child{margin-top:0}
+.cv-rd h3{margin:0;font-family:var(--cond);font-weight:var(--cond-w,400);font-size:20px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink)}
+.cv-rd span{color:var(--muted);font-size:14px}
+html[data-look="club"] .cv-rd h3{display:flex;align-items:center;gap:8px}
+html[data-look="club"] .cv-rd h3::before{content:"";width:4px;height:16px;background:var(--gc)}
 /* the result in the fixtures ticker, a club's last result and a log row open the game page */
 .ticker .run a{color:inherit;text-decoration:none}.ticker .run a:hover{text-decoration:underline}
 .cb-next a{color:inherit}
@@ -1589,6 +1596,10 @@ html[data-look="club"] .cv-nums li,html[data-look="club"] #role>div{border-radiu
       <h2 class="no-t" id="cv-last-h"></h2>
       <p class="cv-last-sub no-t" id="cv-last-sub"></p>
       <div class="cv-games" id="cv-games"></div>
+    </section>
+    <section class="cv-sec cv-all" id="cv-all" hidden>
+      <h2 class="no-t" id="cv-all-h">Games</h2>
+      <div id="cv-rounds"></div>
     </section>
     <section class="cv-sec">
       <h2>Pick a club</h2>
@@ -2655,6 +2666,7 @@ const COVER = (() => {
     $('#cv-round').textContent = rounds ? ` · ${t('Regular season')} · ${t('through round {r}', {r: rounds})}` : '';   // in the eyebrow, re-rendered with the language
     $('#cv-nums').innerHTML = [[META.clubs.length, 'Clubs'], [META.n_players, 'Players'], [st.games, 'Games']].map(([v, k]) => `<li><b>${n(v)}</b><span>${t(k)}</span></li>`).join('');
     lastNight();
+    allGames();
     if (last && last.hash && CLUBS[last.hash.split('/')[0]]) go.innerHTML = `${t('Continue')}<small>${esc(last.name)}</small>`; else go.textContent = t('Open the app');
   }
   // the latest game day, one card per game opening its game page: the score and the night's best line by PIR
@@ -2665,10 +2677,27 @@ const COVER = (() => {
     $('#cv-last-h').textContent = L.date === iso(now) ? t('Tonight') : L.date === iso(new Date(now - 864e5)) ? t('Last night') : t('Latest results');
     const rounds = [...new Set(L.games.map(g => g.round))];
     $('#cv-last-sub').textContent = `${rounds.map(r => t('Round {n}', {n: r})).join(', ')} · ${new Date(L.date + 'T12:00:00').toLocaleDateString(LOCALE(), {weekday: 'long', day: 'numeric', month: 'long'})} · ${plural(L.games.length, '{n} game', '{n} games')}`;
-    const medal = code => { const c = CLUBS[code] || {}; return `<span class="medal" style="border-color:${c.accent || '#f26f21'}"><img src="${c.logo || ''}" alt="" width="20" height="20" loading="lazy"></span>`; };
-    const row = (code, pts, win) => `<span class="tm${win ? ' win' : ''}">${medal(code)}<b lang="en">${shortName(code)}</b><em>${pts}</em></span>`;
-    $('#cv-games').innerHTML = L.games.map(g => { const tp = g.top, n = tp ? nameOf(tp[1]) : null;
-      return `<a class="cv-game" href="#game/${g.code}" aria-label="${shortName(g.home)} ${g.hs}, ${shortName(g.away)} ${g.as}">${row(g.home, g.hs, g.hs > g.as)}${row(g.away, g.as, g.as > g.hs)}${tp ? `<span class="top"><img src="${tp[8] || PLACEHOLDER}" alt="" width="32" height="32" loading="lazy"><span><b lang="en">${n.first ? n.first[0] + '. ' : ''}${n.sur}</b> ${tp[3]} ${t('pts')} · ${tp[6]} PIR</span></span>` : ''}</a>`; }).join('');
+    $('#cv-games').innerHTML = L.games.map(g => gameCard(g.code, g.home, g.away, g.hs, g.as, g.top && [g.top[1], g.top[3], g.top[6], g.top[8]])).join('');
+    sec.hidden = false;
+  }
+  // one card per game, shared by the Last night strip and the Games section: the score and the best line by PIR ([name, pts, PIR, photo])
+  function gameCard(code, home, away, hs, as, tp){
+    const medal = c => { const k = CLUBS[c] || {}; return `<span class="medal" style="border-color:${k.accent || '#f26f21'}"><img src="${k.logo || ''}" alt="" width="20" height="20" loading="lazy"></span>`; };
+    const row = (c, pts, win) => `<span class="tm${win ? ' win' : ''}">${medal(c)}<b lang="en">${shortName(c)}</b><em>${pts}</em></span>`;
+    const n = tp && tp[0] ? nameOf(tp[0]) : null;
+    return `<a class="cv-game" href="#game/${code}" aria-label="${shortName(home)} ${hs}, ${shortName(away)} ${as}">${row(home, hs, hs > as)}${row(away, as, as > hs)}${n ? `<span class="best"><img src="${tp[3] || PLACEHOLDER}" alt="" width="32" height="32" loading="lazy"><span><b lang="en">${n.first ? n.first[0] + '. ' : ''}${n.sur}</b> ${tp[1]} ${t('pts')} · ${tp[2]} PIR</span></span>` : ''}</a>`;
+  }
+  // every game played so far, grouped by round, newest round first; each round a grid on a laptop and a swipeable rail on a phone
+  function allGames(){
+    const G = META.games, sec = $('#cv-all');
+    if (!G || !G.length) { sec.hidden = true; return; }
+    $('#cv-all-h').textContent = LANG === 'en' ? 'Games' : t('Games · heading');
+    const by = new Map();
+    for (const g of G) { if (!by.has(g[1])) by.set(g[1], []); by.get(g[1]).push(g); }
+    const day = d => new Date(d + 'T12:00:00').toLocaleDateString(LOCALE(), {day: 'numeric', month: 'long'});
+    $('#cv-rounds').innerHTML = [...by].map(([r, gs]) => { const ds = gs.map(g => g[2]).sort(), a = ds[0], b = ds[ds.length - 1];
+      return `<div class="cv-rd"><h3>${t('Round {n}', {n: r})}</h3><span>${a === b ? day(a) : `${day(a)} – ${day(b)}`} · ${plural(gs.length, '{n} game', '{n} games')}</span></div>`
+        + `<div class="cv-games">${gs.map(g => gameCard(g[0], g[3], g[4], g[5], g[6], g.slice(7))).join('')}</div>`; }).join('');
     sec.hidden = false;
   }
   render();
