@@ -2871,13 +2871,13 @@ const GAME = (() => {
       if (!b[B.min]) return `<tr class="na">${who}<td colspan="12">${t('Did not play')}</td></tr>`;
       return `<tr>${who}<td class="k">${b[B.min].toFixed(1)}</td><td class="k pts">${b[B.pts]}</td><td class="k">${b[B.reb]}</td><td class="k">${b[B.ast]}</td><td class="k">${b[B.stl]}</td><td class="k">${b[B.blk]}</td><td class="k">${b[B.tov]}</td><td class="k">${m(b[B.fgm2], b[B.fga2])}</td><td class="k">${m(b[B.fgm3], b[B.fga3])}</td><td class="k">${m(b[B.ftm], b[B.fta])}</td><td class="k">${b[B.pir]}</td><td class="k ${b[B.pm] > 0 ? 'up' : b[B.pm] < 0 ? 'down' : ''}">${sg(b[B.pm])}</td></tr>`; };
     const fg = (a, b) => b ? `<small>${(100 * a / b).toFixed(1)}%</small>` : '';
-    const tot = `<tr class="tot"><td class="nm">${t('Totals')}</td><td class="k">${T.min.toFixed(0)}</td><td class="k pts">${T.pts}</td><td class="k">${T.reb}</td><td class="k">${T.ast}</td><td class="k">${T.stl}</td><td class="k">${T.blk}</td><td class="k">${T.tov}</td><td class="k">${m(T.fgm2, T.fga2)}${fg(T.fgm2, T.fga2)}</td><td class="k">${m(T.fgm3, T.fga3)}${fg(T.fgm3, T.fga3)}</td><td class="k">${m(T.ftm, T.fta)}${fg(T.ftm, T.fta)}</td><td class="k">${T.pir}</td><td class="k"></td></tr>`;
+    const tot = `<tr class="tot"><td class="nm">${t('Totals')}</td><td class="k"></td><td class="k pts">${T.pts}</td><td class="k">${T.reb}</td><td class="k">${T.ast}</td><td class="k">${T.stl}</td><td class="k">${T.blk}</td><td class="k">${T.tov}</td><td class="k">${m(T.fgm2, T.fga2)}${fg(T.fgm2, T.fga2)}</td><td class="k">${m(T.fgm3, T.fga3)}${fg(T.fgm3, T.fga3)}</td><td class="k">${m(T.ftm, T.fta)}${fg(T.ftm, T.fta)}</td><td class="k">${T.pir}</td><td class="k"></td></tr>`;
     return `<h3 class="gm-h3">${medal(code, 22)}<a href="#${code}" lang="en">${c.name || code}</a><em class="res ${won ? 'w' : 'l'}">${won ? t('W') : t('L')} ${T.pts}</em></h3>
       <p class="scroll-hint">${t('Scroll for more columns')}</p>
       <div class="cb-wrap scroll"><table class="cb-tab gm-box"><thead><tr><th>${t('Player')}</th><th class="k">${t('Min')}</th><th class="k">${t('Pts')}</th><th class="k">${t('Reb')}</th><th class="k">${t('Ast')}</th><th class="k">${t('Stl')}</th><th class="k">${t('Blk')}</th><th class="k">${t('Tov')}</th><th class="k">2P</th><th class="k">3P</th><th class="k">${t('FT')}</th><th class="k">PIR</th><th class="k">+/-</th></tr></thead><tbody>${L.map(row).join('')}${tot}</tbody></table></div>`;
   }
   function box(){
-    return sides().map(boxTable).join('') + `<p class="cb-foot">${t('Straight from the official box score; each line matches the game log on the player\'s page. {n} possessions.', {n: G.poss != null ? G.poss.toFixed(0) : '–'})}</p>`;
+    return sides().map(boxTable).join('');
   }
   function sidePick(){
     return `<div class="seg gm-side" role="group" aria-label="${t('Club')}">${sides().map(c => `<button type="button" data-side="${c}" aria-pressed="${side() === c}"><span lang="en">${shortName(c)}</span></button>`).join('')}</div>`;
