@@ -1,6 +1,7 @@
 """SQL assertions over the silver layer. Exits non-zero if any fails.
 
 usage: python warehouse_tests.py E2026
+       python warehouse_tests.py E2022 --no-lineups   # past seasons kept only for xFG training: the lineup layer is not used or kept
 """
 import os
 import sys
@@ -76,6 +77,9 @@ WARNINGS = [
     ("oncourt: reconstructed minutes agree with the box score within a minute", "select count(*) from oncourt where abs(sec / 60.0 - box_min) > 1.0"),
     ("shots: shot value consistent with distance (3s from 6.4 m out, 2s inside 7 m)", "select count(*) from shots where (pts = 3 and sqrt(x*x + y*y) < 640) or (pts = 2 and sqrt(x*x + y*y) > 700)"),
 ]
+if "--no-lineups" in sys.argv:   # older substitution logs do not always reconstruct five on the floor; nothing built from them is kept
+    TESTS = [t for t in TESTS if not t[0].startswith(("stints:", "oncourt:"))]
+    WARNINGS = [t for t in WARNINGS if not t[0].startswith(("stints:", "oncourt:"))]
 warn = 0
 for name, q in WARNINGS:
     n = con.execute(q).fetchone()[0] or 0

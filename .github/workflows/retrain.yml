@@ -80,7 +80,7 @@ jobs:
       - name: Play-by-play events and shot context
         run: python events.py ${{ matrix.season }}
       - name: Warehouse assertions
-        run: python warehouse_tests.py ${{ matrix.season }}
+        run: python warehouse_tests.py ${{ matrix.season }} --no-lineups
       - name: Keep only what training needs
         run: |
           cd warehouse/${{ matrix.season }}
