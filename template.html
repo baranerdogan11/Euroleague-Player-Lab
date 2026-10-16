@@ -3266,8 +3266,7 @@ const GAME = (() => {
     return sidePick() + `<div class="cb-two cb-chart gm-chart"><div><svg class="court cb-court" id="gm-court" viewBox="-30 0 1580 1440" role="img" aria-label="${t('Shot chart')}">${courtBase().replace(/ id="[^"]*"/g, '')}<g>${dots}</g></svg>
       <p class="cb-foot">${all.m} / ${all.a} ${t('made')} · ${pct(all.m, all.a)} · xFG% ${xpct(all)} · ${t('{v} points against expectation', {v: sg1(d)})}</p></div>
       <div><div class="cb-wrap scroll"><table class="cb-tab"><thead><tr><th>${t('Zone')}</th><th class="k">${t('FGM / FGA')}</th><th class="k">FG%</th><th class="k">xFG%</th></tr></thead><tbody>${zr}</tbody></table></div>
-      <div class="cb-wrap scroll gm-shooters"><table class="cb-tab"><thead><tr><th>${t('Player')}</th><th class="k">${t('FGM / FGA')}</th><th class="k">FG%</th><th class="k">xFG%</th><th class="k" title="${t('Points scored on his field goals minus what a league-average shooter would score on the same shots')}">+/- xPTS</th></tr></thead><tbody>${pr}</tbody></table></div></div></div>
-      <p class="cb-foot">${t('Green made, grey missed. xFG% is the expected field-goal percentage of a league-average shooter on the same shots; +/- xPTS is the points scored on them minus that expectation.')}</p>`;
+      <div class="cb-wrap scroll gm-shooters"><table class="cb-tab"><thead><tr><th>${t('Player')}</th><th class="k">${t('FGM / FGA')}</th><th class="k">FG%</th><th class="k">xFG%</th><th class="k" title="${t('Points scored on his field goals minus what a league-average shooter would score on the same shots')}">+/- xPTS</th></tr></thead><tbody>${pr}</tbody></table></div></div></div>`;
   }
   function fives(){
     const code = side(), F = G.fives[code], P = names();
