@@ -1543,6 +1543,26 @@ html[data-look="club"] .cv-game .medal{width:30px;height:30px;border-width:2px}h
   .cv-games::-webkit-scrollbar{display:none}.cv-game{scroll-snap-align:start}
 }
 /* ---- end game pages ---- */
+/* ---- Game Center look · the rest of the app (header search, player, club and cover pages): square corners, orange heading markers, table headers in the club colour, square switches ---- */
+html[data-look="club"] .top #q{border-radius:0}
+html[data-look="club"] :is(.hero,.bio,.tag,.ticker,.tile,#log-panel,.trend,#shots-sec,.court-wrap,#prof-panel,.gauge,.form,.up,#cmp-panel,.panel,#club,.cb-next){border-radius:0}
+html[data-look="club"] .wrap .panel div:not(.medal):not(.disc){border-radius:0}
+html[data-look="club"] :is(#prev,#next,#share,#embed,.btn){border-radius:0}
+html[data-look="club"] .seg{border-radius:0;padding:0;gap:0}
+html[data-look="club"] .seg button{border-radius:0;font-family:var(--cond);font-weight:var(--cond-w);font-size:15px;letter-spacing:.06em;text-transform:uppercase}
+html[data-look="club"] .seg button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--panel)}
+html[data-look="club"] .panel h2::before,html[data-look="club"] .panel summary::before{width:6px;height:26px;background:var(--gc);border-radius:0;transform:none}
+html[data-look="club"] #club h2{display:flex;align-items:center;gap:12px;border-left:0;padding-left:0}
+html[data-look="club"] :is(#log,#zones,#timing,.ttab,.cb-tab) thead th:nth-child(n){background:var(--club);color:color-mix(in srgb,var(--club-ink) 80%,transparent);font-weight:700;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;border-bottom:0}
+html[data-look="club"] .cb-tab th.on button{color:var(--club-ink);border-bottom-color:var(--gc)}
+html[data-look="club"] .cb-tab th button:focus-visible{outline-color:var(--club-ink)}
+html[data-look="club"] #club .st-tile{border-bottom-color:var(--gc)}
+html[data-look="club"] .cb-chip{border-radius:0}
+html[data-look="club"] .cv-sec h2::before{width:6px;height:24px;background:var(--gc);border-radius:0}
+html[data-look="club"] :is(.cv-go,.cv-app,.cv-game,#cq,.cv-sec li,.cv-sec a){border-radius:0}
+html[data-look="club"] .cv-game{border-bottom-color:var(--gc)}
+html[data-look="club"] .cv-nums li,html[data-look="club"] #role>div{border-radius:0}
+/* ---- end Game Center look · the rest of the app ---- */
 </style>
 <div class="bar"></div>
 <main class="cv" id="cover" hidden>
