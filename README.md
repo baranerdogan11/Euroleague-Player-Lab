@@ -75,21 +75,26 @@ current club.
 
 ## Expected field goal model (xFG)
 
-`model/xfg.py` trains a gradient-boosted classifier on a past season's warehouse to estimate the probability
+`model/xfg.py` trains a gradient-boosted classifier on past seasons' warehouses (listed in `model/training.json`) to estimate the probability
 that a shot goes in from its context: location, distance, angle, shot value, zone, quarter and clock, score
 margin, home court, and from the play-by-play layer the seconds into the possession and how the possession began
 (period start, opponent make, own defensive or offensive rebound, steal, opponent turnover), both known before the
 release and missing for games without play-by-play. Shooter quality is a separate, leak-free
 feature: each shooter's shrunk running residual (made minus xFG) over his earlier shots only, so the model never
-sees the outcome it predicts. Validation is time-based (the last quarter of the season's games held out) against
+sees the outcome it predicts; at each new season every running record keeps 60% of its weight, as in nightly scoring. Validation is time-based (the last quarter of the latest season's games held out, everything earlier trains) against
 constant, zone-average and distance-bin baselines; metrics, calibration by decile and permutation importance are
 written to `model/model_card.json`.
 
-Trained on 2025-26 (51,750 shots, 329 shooters), held-out log loss 0.626 against 0.645 for zone-average FG%
-and 0.692 for a constant, AUC 0.68, calibrated within 3 points in every decile. Distance dominates, the seconds into
+Trained on 2022-23 to 2025-26 (174,553 shots: 39,939, 41,331, 41,533 and 51,750; 578 shooters), held-out log
+loss 0.624 against 0.645 for zone-average FG% and 0.692 for a constant, AUC 0.685, calibrated within 2.1 points in
+every decile. The same model fitted on 2025-26 alone scores 0.627 on the same held-out games. Distance dominates, the seconds into
 the possession are the second strongest feature (FG% runs 55% in the first six seconds, 49% mid, 42% late), the
 shooter term adds a small, real gain. The 30 Sep 2026 version added the two possession features (log loss 0.630 to
-0.626) and the shooting priors were recalibrated on its expectations; `model/registry.json` keeps both versions. A first version scored 0.497 and was discarded: the feed's fast-break,
+0.626) and the shooting priors were recalibrated on its expectations. The 16 Oct 2026 version added the three earlier
+seasons (0.626 to 0.624); the priors were recalibrated again and `model/registry.json` keeps all three versions.
+The earlier seasons are kept in `warehouse/E2022` to `E2024` as shots, games and shot context only, built by
+`.github/workflows/retrain.yml` (fetch, gate, warehouse and play-by-play steps as nightly, without photos or the
+lineup layer), which also retrains, rescores and reports how far xFG% moved (`model/shift.py`). A first version scored 0.497 and was discarded: the feed's fast-break,
 second-chance and points-off-turnover flags are only set on made shots, and the running score includes the
 basket just made, so both leaked the label. They are excluded and the margin is taken before the shot.
 `model/score.py` scores the current season nightly, carrying last season's
@@ -118,7 +123,7 @@ With a context-only expectation for every shot (the same shot taken by a league-
 scoring splits into shot quality (expected points per attempt on the shots he takes) and shooting skill
 (what he scores on top of that, per attempt). Both are noisy over a few games, so `model/profile.py` shrinks
 them toward the league with empirical-Bayes weights estimated from 2025-26 by variance decomposition:
-skill needs 263 attempts before a player's own record outweighs the prior (between-player spread 7 points per
+skill needs 271 attempts before a player's own record outweighs the prior (between-player spread 7 points per
 100 attempts), shot quality only 10 (it is a stable trait of role and position). Split-half validation on
 197 players: shrinking first-half skill cuts the error in predicting the second half from 0.153 to 0.128
 points per attempt, and beats predicting zero for everyone (0.135). The page shows both figures with
