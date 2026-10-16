@@ -296,6 +296,12 @@ def main():
             # the game opens on its Summary: four leader duels and the team comparison, then the box score one tab over
             cdp.wait("document.body.classList.contains('gm-on') && !document.querySelector('.wipe.on') && document.querySelector('#fail').hidden"
                      " && document.querySelectorAll('#game .gm-ldr-c').length === 4 && document.querySelectorAll('#game .gm-cmp .row').length >= 10 && !!document.querySelector('#game .gm-tm')", f"a game page's summary ({where})")
+            # the win probability chart on the Summary, and it ends on the club that won
+            cdp.wait("!!document.querySelector('#gm-wp svg path.ln')", f"a game page's win probability chart ({where})")
+            bad = cdp.eval("""(() => { const em = [...document.querySelectorAll('#game .gm-tm em')].map(e => +e.textContent), w = document.querySelector('#gm-wp').closest('.gm-wp') && document.querySelector('#gm-wp path.ln').getAttribute('d').trim().split(/[ML]/).filter(Boolean).pop().split(' ').map(Number);
+                return w && (w[1] === 0) !== (em[0] > em[1]) ? JSON.stringify({score: em, end: w}) : ''; })()""")
+            if bad:
+                fails.append(f"{where}: the win probability chart ends on the wrong club: {bad}")
             cdp.eval("document.querySelector('#game button[data-tab=box]').click()")
             cdp.wait(GAME_UP, f"a game page with both box scores ({where})")
             bad = cdp.eval("""(() => { const em = [...document.querySelectorAll('#game .gm-tm em')].map(e => +e.textContent), tot = [...document.querySelectorAll('#game .gm-box tr.tot td.pts')].map(e => +e.textContent);
