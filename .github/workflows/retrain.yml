@@ -9,7 +9,7 @@ name: Retrain xFG
 on:
   push:
     branches-ignore: [main]
-    paths: [model/training.json, .github/workflows/retrain.yml]
+    paths: [model/training.json, model/xfg.py, model/features.py, tests/test_model.py, .github/workflows/retrain.yml]   
   workflow_dispatch:
 
 permissions:
