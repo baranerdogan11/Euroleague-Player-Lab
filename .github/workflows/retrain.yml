@@ -31,7 +31,7 @@ jobs:
       missing: ${{ steps.p.outputs.missing }}
       any: ${{ steps.p.outputs.any }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - id: p
         name: Which training seasons are not in the warehouse yet?
         run: |
@@ -53,14 +53,14 @@ jobs:
       matrix:
         season: ${{ fromJson(needs.plan.outputs.missing) }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.11"
           cache: pip
       - run: pip install -r requirements.txt
       - name: Restore feed cache
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v6
         with:
           path: cache/${{ matrix.season }}
           key: feeds-${{ matrix.season }}-${{ github.run_id }}
@@ -69,7 +69,7 @@ jobs:
         run: python fetch_season.py ${{ matrix.season }} --no-photos
       - name: Save feed cache, even if a later step fails (a past season is fetched once)
         if: always()
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v6
         with:
           path: cache/${{ matrix.season }}
           key: feeds-${{ matrix.season }}-${{ github.run_id }}-${{ github.run_attempt }}
@@ -86,7 +86,7 @@ jobs:
           cd warehouse/${{ matrix.season }}
           find . -type f ! -name shots.parquet ! -name games.parquet ! -name shot_context.parquet ! -name manifest.json ! -name status.json -delete
           ls -la
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: ${{ matrix.season }}
           path: warehouse/${{ matrix.season }}
@@ -98,8 +98,8 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.11"
           cache: pip
@@ -111,7 +111,7 @@ jobs:
           echo "CHROME=$CHROME" >> "$GITHUB_ENV"
       - name: Fetched seasons
         if: needs.plan.outputs.any == 'true'
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           path: warehouse
       - name: Keep the current expectations for the shift report
