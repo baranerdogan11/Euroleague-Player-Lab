@@ -63,8 +63,48 @@ jobs:
       - name: Rebuild from the warehouse (drift check, then the site smoke test on the rebuilt page)
         run: python build.py $SEASON
 
+  # Node tooling (package.json): lint and type checks on the page's script, then the Playwright tests on the committed site
+  browser:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - run: npm ci
+
+      - name: Lint (ESLint)
+        run: npm run lint
+
+      - name: Type check (TypeScript in JavaScript mode)
+        run: npm run typecheck
+
+      - name: Chrome for the browser tests
+        run: |
+          CHROME=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser || true)
+          if [ -z "$CHROME" ]; then echo "::error::no Chrome on the runner"; exit 1; fi
+          "$CHROME" --version
+          echo "CHROME=$CHROME" >> "$GITHUB_ENV"
+
+      - name: Browser tests (Playwright) on the committed site
+        run: npm run test:e2e
+
+      - name: Screenshots and report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 14
+
   deploy:
-    needs: test
+    needs: [test, browser]
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     permissions:
       contents: read
