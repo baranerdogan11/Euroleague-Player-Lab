@@ -1860,7 +1860,7 @@ html[data-look="club"] .cv-nums li,html[data-look="club"] #role>div{border-radiu
       <p class="sub" id="ld-sub"></p>
       <div class="ld-boards" id="ld-boards"></div>
       <div class="ln-bar ld-bar">
-        <div class="seg" id="ld-group" role="tablist"><button type="button" data-v="scoring" aria-pressed="true">Scoring</button><button type="button" data-v="rebounds" aria-pressed="false">Rebounds</button><button type="button" data-v="playmaking" aria-pressed="false">Playmaking</button><button type="button" data-v="shooting" aria-pressed="false">Shooting</button><button type="button" data-v="efficiency" aria-pressed="false">Efficiency</button></div>
+        <div class="seg" id="ld-group" role="tablist"><button type="button" data-v="scoring" aria-pressed="true">Scoring</button><button type="button" data-v="rebounds" aria-pressed="false">Rebounds</button><button type="button" data-v="playmaking" aria-pressed="false">Playmaking</button><button type="button" data-v="shooting" aria-pressed="false">Shooting</button><button type="button" data-v="efficiency" aria-pressed="false">Efficiency</button><button type="button" data-v="advanced" aria-pressed="false">Advanced</button></div>
         <div class="seg" id="ld-mode" role="tablist"><button type="button" data-v="pg" aria-pressed="true">Per game</button><button type="button" data-v="p40" aria-pressed="false">Per 40 min</button><button type="button" data-v="tot" aria-pressed="false">Totals</button></div>
         <div class="ln-sel"><label for="ld-pos">Position</label><select id="ld-pos" aria-label="Position"></select></div>
         <div class="ln-sel"><label for="ld-min">Min</label><select id="ld-min" aria-label="Minutes a game"></select></div>
@@ -2144,7 +2144,7 @@ function renderPlayer(){
   ['#splits', '#xfg', '#zone-cap'].forEach(id => { $(id).hidden = !played; }); $('#zones').closest('.scroll').hidden = !played; $('.toolbar').hidden = !played;
   renderTiles(); renderRole(); renderForm(); requestAnimationFrame(scrollEnds); $('#f-ast').hidden = !d.shots.some(s => s[11] != null); if ($('#f-ast').hidden) { state.ast = 'all'; $('#f-ast').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x.dataset.v === 'all')); }
   const xf = d.xfg;
-  $('#xfg').innerHTML = xf ? `<div class="xfg-row"><div><b>${(100 * xf.xfg).toFixed(1)}%</b><span>${t('Expected FG% for a league-average shooter on his shots')}</span></div><div><b>${((xf.pts / xf.att) || 0).toFixed(2)} <i>${t('vs')}</i> ${(xf.xpts / xf.att).toFixed(2)}</b><span>${t('Points per attempt, his vs a league-average shooter')}</span></div><div class="${xf.pts - xf.xpts >= 0 ? 'up' : 'down'}"><b>${xf.pts - xf.xpts >= 0 ? '+' : ''}${(xf.pts - xf.xpts).toFixed(1)}</b><span>${t('Points above expectation, {n} attempts', {n: xf.att})}</span></div></div>` : '';
+  $('#xfg').innerHTML = xf ? `<div class="xfg-row"><div><b>${(100 * xf.xfg).toFixed(1)}%</b><span>${t('Expected FG% for a league-average shooter on his shots')}</span></div><div><b>${((xf.pts / xf.att) || 0).toFixed(2)} <i>${t('vs')}</i> ${(xf.xpts / xf.att).toFixed(2)}</b><span>${t('Points per attempt, his vs a league-average shooter')}</span></div><div class="${xf.pts - xf.xpts >= 0 ? 'up' : 'down'}"><b>${xf.pts - xf.xpts >= 0 ? '+' : ''}${f1(xf.pts - xf.xpts)}</b><span>${t('Points above expectation, {n} attempts', {n: xf.att})}</span></div></div>` : '';
   const fga = tot.fga2 + tot.fga3, ts = (fga + 0.44 * tot.fta) ? tot.pts / (2 * (fga + 0.44 * tot.fta)) : 0;
   const rows = [['2P', tot.fgm2, tot.fga2, tot.fga2 ? tot.fgm2 / tot.fga2 : 0], ['3P', tot.fgm3, tot.fga3, tot.fga3 ? tot.fgm3 / tot.fga3 : 0], ['FG', tot.fgm2 + tot.fgm3, fga, fga ? (tot.fgm2 + tot.fgm3) / fga : 0], ['FT', tot.ftm, tot.fta, tot.ftm / (tot.fta || 1)], ['TS', null, null, ts, fga + 0.44 * tot.fta]];
   const lgs = LG ? {'2P': LG.splits.fg2, '3P': LG.splits.fg3, 'FG': LG.splits.fg, 'FT': LG.splits.ft, 'TS': LG.splits.ts} : {};
@@ -3041,14 +3041,17 @@ const LEAD = (() => {
   const st = {group: 'scoring', mode: 'pg', pos: 'all', min: 0, club: 'all', q: '', qual: false, sort: 'pts', dir: -1};
   let D = null, loading = null;
   const GROUPS = {scoring: ['pts', 'fg2', 'fg2p', 'fg3', 'fg3p', 'ft', 'ftp', 'ts'], rebounds: ['reb', 'oreb', 'dreb', 'reb_pct'], playmaking: ['ast', 'tov', 'ast_tov', 'ast_pct', 'tov_pct'],
-                  shooting: ['fga3', 'fg3p', 'fg2p', 'ftp', 'ts'], efficiency: ['pir', 'pm', 'stl', 'blk', 'usg']};
+                  shooting: ['fga3', 'fg3p', 'fg2p', 'ftp', 'ts'], efficiency: ['pir', 'pm', 'stl', 'blk', 'usg'], advanced: ['rapm', 'rapm_o', 'rapm_d', 'pax', 'ts', 'usg']};
   const COLS = {gp: {l: 'GP', k: 'gp'}, min: {l: 'MIN', k: 'min'},
     pts: {l: 'PTS', k: 'count'}, reb: {l: 'REB', k: 'count'}, oreb: {l: 'OREB', k: 'count'}, dreb: {l: 'DREB', k: 'count'}, ast: {l: 'AST', k: 'count'}, tov: {l: 'TOV', k: 'count', inv: true},
     stl: {l: 'STL', k: 'count'}, blk: {l: 'BLK', k: 'count'}, pir: {l: 'PIR', k: 'count'}, pm: {l: '+/-', k: 'count', plus: true}, fga3: {l: '3PA', k: 'count'},
     fg2: {l: '2PM-A', k: 'ma', m: 'fgm2', a: 'fga2'}, fg3: {l: '3PM-A', k: 'ma', m: 'fgm3', a: 'fga3'}, ft: {l: 'FTM-A', k: 'ma', m: 'ftm', a: 'fta'},
     fg2p: {l: '2P%', k: 'pct', m: 'fgm2', a: 'fga2', min: () => 15}, fg3p: {l: '3P%', k: 'pct', m: 'fgm3', a: 'fga3', min: () => D.min_3pa || 15}, ftp: {l: 'FT%', k: 'pct', m: 'ftm', a: 'fta', min: () => 10}, ts: {l: 'TS%', k: 'ts'},
-    usg: {l: 'USG%', k: 'rate'}, ast_pct: {l: 'AST%', k: 'rate'}, tov_pct: {l: 'TOV%', k: 'rate', inv: true}, reb_pct: {l: 'REB%', k: 'rate'}, ast_tov: {l: 'AST/TOV', k: 'ratio'}};
-  const BOARDS = [{k: 'pts', t: 'Points per game', g: 'scoring'}, {k: 'reb', t: 'Rebounds per game', g: 'rebounds'}, {k: 'ast', t: 'Assists per game', g: 'playmaking'}, {k: 'fg3p', t: '3-point percentage', g: 'shooting'}];
+    usg: {l: 'USG%', k: 'rate'}, ast_pct: {l: 'AST%', k: 'rate'}, tov_pct: {l: 'TOV%', k: 'rate', inv: true}, reb_pct: {l: 'REB%', k: 'rate'}, ast_tov: {l: 'AST/TOV', k: 'ratio'},
+    rapm: {l: 'RAPM', k: 'rate', plus: true}, rapm_o: {l: 'O-RAPM', k: 'rate', plus: true}, rapm_d: {l: 'D-RAPM', k: 'rate', plus: true}, pax: {l: 'PTS vs xFG', k: 'count', plus: true, d: 1}};
+  // the four basic boards, or with the Advanced group on, its own four; `m` is the mode a board reads and switches the table to
+  const BOARDS = [{k: 'pts', t: 'Points per game', g: 'scoring', m: 'pg'}, {k: 'reb', t: 'Rebounds per game', g: 'rebounds', m: 'pg'}, {k: 'ast', t: 'Assists per game', g: 'playmaking', m: 'pg'}, {k: 'fg3p', t: '3-point percentage', g: 'shooting'}];
+  const ADV_BOARDS = [{k: 'rapm', t: 'RAPM', g: 'advanced'}, {k: 'pax', t: 'Points above xFG', g: 'advanced', m: 'tot'}, {k: 'ts', t: 'True shooting', g: 'advanced'}, {k: 'usg', t: 'Usage rate', g: 'advanced'}];
   const num = (v, d = 1, plus) => v == null ? '–' : `${plus && v > 0 ? '+' : ''}${rnd(+v, d).toLocaleString(LOCALE(), {maximumFractionDigits: d, minimumFractionDigits: d})}`;
   const scale = r => st.mode === 'tot' ? 1 : st.mode === 'p40' ? (r.min ? 40 / r.min : 0) : 1 / r.gp;
   const dec = () => st.mode === 'tot' ? 0 : 1;
@@ -3057,14 +3060,15 @@ const LEAD = (() => {
     const c = COLS[k], q = st.mode === 'tot' ? true : !!r.q;
     if (c.k === 'gp') return {v: r.gp, txt: String(r.gp), q: true};
     if (c.k === 'min') return {v: r.min / r.gp, txt: num(r.min / r.gp), q: true};
-    if (c.k === 'count') { const v = r[k] * scale(r); return {v, txt: num(v, dec(), c.plus), q}; }
+    if (c.k === 'count') { if (r[k] == null) return {v: null, txt: '–', q: false}; const v = r[k] * scale(r); return {v, txt: num(v, c.d ?? dec(), c.plus), q}; }
     if (c.k === 'ma') { const m = r[c.m] * scale(r), a = r[c.a] * scale(r); return {v: m, txt: `${num(m, dec())}-${num(a, dec())}`, q}; }
     if (c.k === 'pct') { const ok = r[c.a] >= c.min(); return {v: ok ? r[c.m] / r[c.a] : null, txt: ok ? num(100 * r[c.m] / r[c.a]) : '–', q: ok}; }
-    if (c.k === 'ts') { const fga = r.fga2 + r.fga3, d = 2 * (fga + 0.44 * r.fta); return {v: d ? r.pts / d : null, txt: d ? num(100 * r.pts / d) : '–', q}; }
-    if (c.k === 'rate') return {v: r[k], txt: num(r[k]), q: q && r[k] != null};
+    if (c.k === 'ts') { const fga = r.fga2 + r.fga3, d = 2 * (fga + 0.44 * r.fta); return {v: d ? r.pts / d : null, txt: d ? num(100 * r.pts / d) : '–', q: q && d >= 2 * TS_MIN}; }
+    if (c.k === 'rate') return {v: r[k], txt: num(r[k], 1, c.plus), q: q && r[k] != null};
     if (c.k === 'ratio') return {v: r.tov ? r.ast / r.tov : null, txt: r.tov ? num(r.ast / r.tov, 2) : '–', q};
     return {v: null, txt: '–', q: false};
   }
+  const TS_MIN = 15;   // shooting possessions before true shooting ranks, the same 15 the 2P% and 3P% columns ask for
   const posLabel = p => t(p === 'Guard' ? 'Guards' : p === 'Center' ? 'Centers' : 'Forwards');
   function load(){
     if (D) return Promise.resolve(D);
@@ -3079,11 +3083,14 @@ const LEAD = (() => {
   }
   function boards(){
     const me = state.data && player() ? player().pid : null;
-    return BOARDS.map(b => {
-      const pool = D.rows.filter(r => b.k === 'fg3p' ? r.fga3 >= (D.min_3pa || 15) : r.q);
-      const top = pool.map(r => ({r, v: b.k === 'fg3p' ? r.fgm3 / r.fga3 : r[b.k] / r.gp})).sort((a, c) => (c.v - a.v) || (c.r.gp - a.r.gp)).slice(0, 5);
-      return `<button type="button" class="ld-board${st.sort === b.k && st.group === b.g ? ' on' : ''}" data-k="${b.k}" data-g="${b.g}"><b>${t(b.t)}</b><ol>${top.map(({r, v}) => { const n = nameOf(r.name), c = CLUBS[r.c] || {};
-        return `<li${r.pid === me ? ' class="me"' : ''}><img src="${c.logo || ''}" alt="" width="20" height="20" loading="lazy"><span lang="en">${n.first.slice(0, 1)}. ${n.sur}</span><i>${b.k === 'fg3p' ? num(100 * v) : num(v)}</i></li>`; }).join('')}</ol></button>`;
+    // every board takes the table's qualifiers (the 3-point board its attempt gate) and prints its value as the table does
+    const val = {fg3p: r => r.fgm3 / r.fga3, ts: r => { const d = 2 * (r.fga2 + r.fga3 + 0.44 * r.fta); return d ? r.pts / d : null; }, rapm: r => r.rapm, usg: r => r.usg, pax: r => r.pax};
+    const txt = {fg3p: v => num(100 * v), ts: v => num(100 * v), rapm: v => num(v, 1, true), pax: v => num(v, 1, true)};
+    return (st.group === 'advanced' ? ADV_BOARDS : BOARDS).map(b => {
+      const pool = D.rows.filter(r => b.k === 'fg3p' ? r.fga3 >= (D.min_3pa || 15) : b.k === 'ts' ? cell(r, 'ts').q && !!r.q : r.q);
+      const top = pool.map(r => ({r, v: (val[b.k] || (x => x[b.k] / x.gp))(r)})).filter(x => x.v != null).sort((a, c) => (c.v - a.v) || (c.r.gp - a.r.gp)).slice(0, 5);
+      return `<button type="button" class="ld-board${st.sort === b.k && st.group === b.g ? ' on' : ''}" data-k="${b.k}" data-g="${b.g}"${b.m ? ` data-m="${b.m}"` : ''}><b>${t(b.t)}</b><ol>${top.map(({r, v}) => { const n = nameOf(r.name), c = CLUBS[r.c] || {};
+        return `<li${r.pid === me ? ' class="me"' : ''}><img src="${c.logo || ''}" alt="" width="20" height="20" loading="lazy"><span lang="en">${n.first.slice(0, 1)}. ${n.sur}</span><i>${(txt[b.k] || num)(v)}</i></li>`; }).join('')}</ol></button>`;
     }).join('');
   }
   function render(){
@@ -3116,7 +3123,7 @@ const LEAD = (() => {
     $('#ld-qual').addEventListener('change', e => { st.qual = e.target.checked; render(); });
     let tm; $('#ld-find').addEventListener('input', e => { clearTimeout(tm); tm = setTimeout(() => { st.q = e.target.value.trim(); render(); $('#ld-find').focus(); }, 160); });
     $('#ld-wrap').addEventListener('click', e => { const th = e.target.closest('th[data-k]'); if (!th) return; const k = th.dataset.k; if (st.sort === k) st.dir = -st.dir; else { st.sort = k; st.dir = COLS[k].inv ? 1 : -1; } render(); });
-    $('#ld-boards').addEventListener('click', e => { const b = e.target.closest('.ld-board'); if (!b) return; st.group = b.dataset.g; st.sort = b.dataset.k; st.dir = -1; if (st.mode === 'tot' && b.dataset.k !== 'fg3p') st.mode = 'pg'; render(); $('#ld-wrap').scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start'}); });
+    $('#ld-boards').addEventListener('click', e => { const b = e.target.closest('.ld-board'); if (!b) return; st.group = b.dataset.g; st.sort = b.dataset.k; st.dir = -1; if (b.dataset.m) st.mode = b.dataset.m; render(); $('#ld-wrap').scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start'}); });
     wired = true;
   }
   return {

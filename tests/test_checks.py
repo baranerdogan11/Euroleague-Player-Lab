@@ -84,6 +84,11 @@ drift_cases = [
     ("drift: a total going down with a new game warns", base, L({"AAA": 6}, [R(pid="P1", gp=6, reb=18)] + ten[1:]), 0, 1),
     ("drift: one line gone warns", base, L({"AAA": 5}, ten[1:]), 0, 1),
     ("drift: half the lines gone fail", base, L({"AAA": 5}, ten[5:]), 1, 0),
+    ("drift: points above xFG falling with a new game passes", L({"AAA": 5}, [{**R(), "pax": 6.5}]), L({"AAA": 6}, [{**R(gp=6, pts=70), "pax": -3.1}]), 0, 0),
+    ("drift: points above xFG beyond a game's worth fail", L({"AAA": 5}, [{**R(), "pax": 6.5}]), L({"AAA": 6}, [{**R(gp=6, pts=70), "pax": 40.0}]), 1, 0),
+    ("drift: a stat the previous build lacked is not checked", base, L({"AAA": 5}, [{**r, "pax": 30.0, "rapm": 2.0} for r in ten]), 0, 0),
+    ("drift: RAPM moving with no new game warns", L({"AAA": 5}, [{**R(), "rapm": 1.2}]), L({"AAA": 5}, [{**R(), "rapm": 1.9}]), 0, 1),
+    ("drift: RAPM moving with a new game passes", L({"AAA": 5, "BBB": 5}, [{**R(), "rapm": 1.2}]), L({"AAA": 5, "BBB": 6}, [{**R(), "rapm": 1.9}]), 0, 0),
     ("drift: a transfer is a new line, not a jump", base, L({"AAA": 5, "BBB": 5}, ten + [R(pid="P1", c="BBB", gp=1, pts=20)]), 0, 0),
 ]
 for name, old, new, want_f, want_w in drift_cases:
