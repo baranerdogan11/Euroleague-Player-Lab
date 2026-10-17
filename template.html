@@ -3277,8 +3277,7 @@ const GAME = (() => {
     const body = L.map((l, i) => { const seg = l.seg || [], pm = l.pts - l.opp, when = seg.map(([a, b]) => `${mmss(a)}–${mmss(b)}`).join(', ') || '–';
       const start = seg.length && seg[0][0] === 0 ? `<span class="chip">${t('Starters')}</span>` : '';
       return `<tr><td>${i + 1}</td><td class="five l">${l.p.map(nm).join(' <i>·</i> ')}${start ? `<span class="chips">${start}</span>` : ''}</td><td>${(l.s / 60).toFixed(1)}</td><td>${l.pts}–${l.opp}</td><td class="${pm > 0 ? 'up' : pm < 0 ? 'down' : ''}">${sg(pm)}</td><td class="ph">${l.n == null ? '–' : sg1(l.n)}</td><td class="when l"><span class="ln-strip" role="img" title="${when}" aria-label="${when}">${ticks}${seg.map(([a, b]) => `<b style="left:${p100(a)}%;width:${Math.max(0.5, 100 * (b - a) / len).toFixed(2)}%"></b>`).join('')}</span></td></tr>`; }).join('');
-    return sidePick() + `<p class="scroll-hint">${t('Scroll for more columns')}</p><div class="scroll"><table class="ln-tab bygame gm-fives"><thead><tr><th>#</th><th class="l">${t('Lineup')}</th><th>${t('Min')}</th><th>${t('Score')}</th><th>+/-</th><th class="ph">${t('Net')}</th><th class="l when">${t('When')}</th></tr></thead><tbody>${body}</tbody></table></div>
-      <p class="cb-foot">${t('Every five the club used, most minutes first, with the score while it was on the floor, net rating per 100 possessions and when it played; the ticks mark the quarters. Who was on the floor is reconstructed from the substitution log.')} <a class="lnk" href="#lineups">${t('All lineups')}</a></p>`;
+    return sidePick() + `<p class="scroll-hint">${t('Scroll for more columns')}</p><div class="scroll"><table class="ln-tab bygame gm-fives"><thead><tr><th>#</th><th class="l">${t('Lineup')}</th><th>${t('Min')}</th><th>${t('Score')}</th><th>+/-</th><th class="ph">${t('Net')}</th><th class="l when">${t('When')}</th></tr></thead><tbody>${body}</tbody></table></div>`;
   }
   function render(){
     if (!G) return;
