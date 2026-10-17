@@ -69,6 +69,23 @@ self-tests, the warehouse assertions, the site smoke test on the committed page 
 warehouse (drift check and smoke test included). A push to main deploys to Pages only after all of that passes, so
 an untested commit never goes live. Pages must be set to deploy from GitHub Actions (Settings, Pages, Source).
 
+The same workflow also runs a Node job beside the Python one (Node is tooling only: the site and the data pipeline do
+not need it, and the game-night runs in `update.yml` do not use it):
+
+- `npm run lint`: ESLint over the page's script (copied out of `template.html` with the same line numbers), `sw.js`
+  and the Node tests; `npm run typecheck`: TypeScript's checker over the same script, plain JavaScript, no build step.
+  The loosened DOM types it assumes are in `tests/lint/globals.d.ts`.
+- `npm run test:e2e`: Playwright (`tests/e2e/`). Every page at 390 and 1280 px, in English and Turkish, light and
+  dark, must draw without an error or a sideways scroll, with a screenshot of each in the run's artifacts; every player
+  in last night's games must show the same numbers on the game page, his own page, his club page and the leaders page;
+  the New data notice must show when a newer build lands.
+
+```bash
+npm ci
+npm run lint && npm run typecheck
+CHROME=/path/to/chrome npm run test:e2e   # or: npx playwright install chromium
+```
+
 The assertions write `teams/E2026/status.json` (games, shots, box lines, tests, failures, warnings, time) and the page footer
 shows the check date, the game count and the verdict. A failed run leaves the previous good build live and uploads the status report as a
 workflow artifact. Roster stints mean a player who changes club mid-season keeps his full season under his
