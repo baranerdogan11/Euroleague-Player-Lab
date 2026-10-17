@@ -2809,7 +2809,7 @@ const COVER = (() => {
   const go = $('#cv-go');
   function render(){
     const n = v => (v || 0).toLocaleString(LOCALE());
-    $('#cv-round').textContent = rounds ? ` · ${t('Regular season')} · ${t('through round {r}', {r: rounds})}` : '';   // in the eyebrow, re-rendered with the language
+    $('#cv-round').textContent = rounds ? ` · ${t('Regular season')}` : '';   // in the eyebrow, re-rendered with the language
     $('#cv-nums').innerHTML = [[META.clubs.length, 'Clubs'], [META.n_players, 'Players'], [st.games, 'Games']].map(([v, k]) => `<li><b>${n(v)}</b><span>${t(k)}</span></li>`).join('');
     clubs(); lastNight();
     if (last && last.hash && CLUBS[last.hash.split('/')[0]]) go.innerHTML = `${t('Continue')}<small>${esc(last.name)}</small>`; else go.textContent = t('Open the app');
