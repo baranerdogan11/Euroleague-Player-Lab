@@ -1,6 +1,6 @@
 {
  "model": "xFG (expected field goal)",
- "version": "2026-10-16",
+ "version": "2026-10-17",
  "trained_on": "E2025",
  "training_seasons": [
   "E2022",
@@ -61,95 +61,95 @@
    "auc": 0.6827
   },
   "xfg_context_plus_shooter": {
-   "logloss": 0.6244,
-   "brier": 0.2187,
-   "auc": 0.685
+   "logloss": 0.6245,
+   "brier": 0.2188,
+   "auc": 0.6846
   }
  },
  "calibration_test": [
   {
    "n": 1279,
-   "pred": 0.283,
-   "actual": 0.28
+   "pred": 0.286,
+   "actual": 0.289
   },
   {
    "n": 1278,
-   "pred": 0.342,
-   "actual": 0.33
+   "pred": 0.343,
+   "actual": 0.321
   },
   {
    "n": 1278,
-   "pred": 0.366,
-   "actual": 0.345
+   "pred": 0.367,
+   "actual": 0.347
   },
   {
    "n": 1278,
    "pred": 0.387,
-   "actual": 0.372
+   "actual": 0.382
   },
   {
    "n": 1278,
-   "pred": 0.409,
-   "actual": 0.417
+   "pred": 0.408,
+   "actual": 0.423
   },
   {
    "n": 1278,
-   "pred": 0.436,
-   "actual": 0.437
+   "pred": 0.435,
+   "actual": 0.428
   },
   {
    "n": 1278,
    "pred": 0.484,
-   "actual": 0.463
+   "actual": 0.457
   },
   {
    "n": 1278,
    "pred": 0.568,
-   "actual": 0.565
+   "actual": 0.564
   },
   {
    "n": 1278,
-   "pred": 0.67,
-   "actual": 0.658
+   "pred": 0.668,
+   "actual": 0.664
   },
   {
    "n": 1279,
    "pred": 0.869,
-   "actual": 0.884
+   "actual": 0.877
   }
  ],
  "permutation_importance": [
   [
    "dist",
-   0.0911
+   0.0913
   ],
   [
    "poss_sec",
-   0.0074
+   0.007
   ],
   [
    "zone",
-   0.0035
+   0.0037
   ],
   [
    "y",
-   0.0028
-  ],
-  [
-   "poss_start",
-   0.0019
+   0.0024
   ],
   [
    "shooter",
+   0.0019
+  ],
+  [
+   "poss_start",
    0.0018
   ],
   [
    "clock_sec",
-   0.0011
+   0.0009
   ],
   [
    "angle",
-   0.0005
+   0.0007
   ],
   [
    "x",
@@ -160,8 +160,8 @@
    0.0003
   ],
   [
-   "home",
-   0.0001
+   "margin",
+   -0.0
   ],
   [
    "quarter",
@@ -172,8 +172,8 @@
    0.0
   ],
   [
-   "margin",
-   -0.0001
+   "home",
+   0.0
   ]
  ],
  "shooter_shrinkage_k": 150.0,
