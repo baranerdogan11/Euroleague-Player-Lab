@@ -2,7 +2,8 @@
 // the game's box score is checked against
 //   his own page: the game log row for that game (minutes, points, rebounds, ... +/-), and his season averages
 //   his club page: the roster's games, minutes, points, rebounds, assists and PIR a game
-//   the leaders page: games, minutes and points a game (every player, qualified or not)
+//   the leaders page: games, minutes and points a game (every player, qualified or not), and in its Advanced group, RAPM
+//   and points above xFG against his page's role strip and xFG row
 // All values are read from the drawn pages, so a formatting or rounding slip in one page is caught as well as a data one.
 import {test, expect} from '@playwright/test';
 import {DESKTOP, prepare, settled, go} from './site.js';
@@ -11,7 +12,7 @@ test.use(DESKTOP);
 
 const num = s => parseFloat(String(s).replace(/^[^\d+-]+/, ''));   // "S30.8" (a starter's mark) -> 30.8, "+16" -> 16
 const BOX_COLS = ['Min', 'Pts', 'Reb', 'Ast', 'Stl', 'Blk', 'Tov', '2P', '3P', 'FT', 'PIR', '+/-'];
-const same = (a, b) => /\//.test(a) ? a === b : num(a) === num(b);   // made/attempted pairs as text, the rest as numbers
+const same = (a, b) => a === b || (/\//.test(a) ? false : num(a) === num(b));   // made/attempted pairs as text, the rest as numbers ('–' only matches '–')
 
 test("last night's players agree across game, player, club and leaders pages", async ({page}) => {
   const problems = await prepare(page);
@@ -27,13 +28,19 @@ test("last night's players agree across game, player, club and leaders pages", a
   await go(page, '#leaders', () => document.querySelectorAll('#ld-wrap tbody tr').length >= 10);
   await page.evaluate(() => { const q = document.querySelector('#ld-qual'); if (q && q.checked) q.click(); });
   await settled(page);
-  const leaders = await page.evaluate(() => {
+  const readLeaders = () => page.evaluate(() => {
     const head = [...document.querySelectorAll('#ld-wrap thead th')].map(th => th.dataset.k || th.textContent.trim());
     return Object.fromEntries([...document.querySelectorAll('#ld-wrap tbody tr')].map(tr => {
       const pid = tr.querySelector('td.pl a').getAttribute('href').split('/')[1], cells = [...tr.children].map(td => td.textContent.trim());
       return [pid, Object.fromEntries(head.map((h, i) => [h, cells[i]]))];
     }));
   });
+  const leaders = await readLeaders();
+  // the Advanced group in season totals, so points above xFG is the same season figure his page prints
+  await page.click('#ld-group button[data-v="advanced"]');
+  await page.click('#ld-mode button[data-v="tot"]');
+  await settled(page);
+  const adv = await readLeaders();
 
   let players = 0;
   for (const g of games) {
@@ -62,7 +69,9 @@ test("last night's players agree across game, player, club and leaders pages", a
           const tiles = Object.fromEntries([...document.querySelectorAll('#tiles .tile')].map(t => [t.querySelector('span').textContent.trim(), t.querySelector('b').textContent.trim()]));
           const minCol = head.indexOf('Min');   // games played: log rows with minutes (a missed game has a row with none)
           const gp = [...document.querySelectorAll('#log tbody tr')].filter(tr => parseFloat(tr.children[minCol].textContent.replace(/^\D+/, '')) > 0).length;
-          return {log, tiles, gp};
+          const role = Object.fromEntries([...document.querySelectorAll('#role>div')].map(t => [t.querySelector('span').textContent.trim(), t.querySelector('b').textContent.trim()]));
+          const pax = document.querySelector('#xfg .xfg-row>div:last-child b')?.textContent.trim() ?? '–';
+          return {log, tiles, gp, rapm: role.RAPM ?? '–', pax};
         }, code);
         const who = `${r.name} (${club}, game ${code})`;
         if (!me.log) { mismatches.push(`${who}: in the box score but not in his game log`); continue; }
@@ -81,6 +90,11 @@ test("last night's players agree across game, player, club and leaders pages", a
           check(`${who} points a game, club page vs leaders`, ro.Pts, ld.pts);
           check(`${who} minutes a game, club page vs leaders`, ro.Min, ld.min);
           check(`${who} games, club page vs leaders`, ro.GP, ld.gp);
+        }
+        const la = adv[r.pid];
+        if (la) {
+          check(`${who} RAPM, his page vs leaders`, me.rapm, la.rapm);
+          check(`${who} points above xFG, his page vs leaders`, me.pax, la.pax);
         }
       }
     }
