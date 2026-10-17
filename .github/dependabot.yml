@@ -1,0 +1,32 @@
+# Weekly dependency updates. Each ecosystem's bumps arrive as one grouped PR, and test.yml gates them like any other change.
+version: 2
+updates:
+  - package-ecosystem: pip
+    directories: ["/", "/service"]
+    schedule:
+      interval: weekly
+      day: monday
+      timezone: Europe/Istanbul
+    open-pull-requests-limit: 3
+    groups:
+      python:
+        patterns: ["*"]
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      timezone: Europe/Istanbul
+    open-pull-requests-limit: 3
+    groups:
+      node:
+        patterns: ["*"]
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      timezone: Europe/Istanbul
+    groups:
+      actions:
+        patterns: ["*"]

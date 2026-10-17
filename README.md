@@ -227,6 +227,7 @@ curl -X POST localhost:8000/predict -H 'content-type: application/json' \
 ## Update by hand
 
 ```bash
+python3.11 -m venv .venv && . .venv/bin/activate   # CI runs 3.11 (.python-version); newer Pythons cannot build the pinned wheels
 pip install -r requirements.txt
 python fetch_season.py E2026   # clubs, crests, rosters, photos, then shots and box scores for new games
 python checks.py E2026 && python warehouse.py E2026 && python warehouse_tests.py E2026
@@ -234,7 +235,10 @@ python build.py E2026          # writes index.html and teams/E2026/*.json from t
 git add -A && git commit -m "Update after round" && git push   # test.yml checks the commit, then deploys it to Pages
 ```
 
-`fetch_season.py` caches every game, roster and image under `cache/`, so a rerun only downloads what is new.
+`fetch_season.py` caches every game, roster and image under `cache/`, so a rerun only downloads what is new. Games
+within 72 hours of tip-off are fetched again at most every six hours (`cache/<season>/fetched_at.json` keeps the times),
+so box-score and play-by-play corrections the league makes after the buzzer reach the site; the drift check reports
+them as warnings. If a refresh fails, the cached copy is kept.
 
 ## Layout
 
