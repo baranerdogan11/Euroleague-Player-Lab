@@ -1218,8 +1218,8 @@ html[data-look="club"] .cv-foot a{color:var(--cold)}
   html[data-look="club"] .tabbar>*{flex:1 1 0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:56px;border:0;background:none;color:var(--muted);font:600 10px/1 var(--sans);letter-spacing:.02em;white-space:nowrap;text-transform:uppercase;text-decoration:none;position:relative;cursor:pointer;padding:0}
   html[data-look="club"] .tabbar svg{width:22px;height:22px;display:block}
   html[data-look="club"] .tabbar>*:focus-visible{outline:2px solid var(--cold);outline-offset:-2px}
-  html[data-look="club"] body.st-on #tb-standings,html[data-look="club"] body.ln-on #tb-lineups,html[data-look="club"] body.cmp-on #tb-compare,html[data-look="club"] body.ld-on #tb-leaders,html[data-look="club"] body.gs-on #tb-games,html[data-look="club"] body:not(.st-on):not(.ln-on):not(.cmp-on):not(.ld-on):not(.gm-on):not(.gs-on) #tb-player{color:var(--club)}
-  html[data-look="club"] body.st-on #tb-standings::before,html[data-look="club"] body.ln-on #tb-lineups::before,html[data-look="club"] body.cmp-on #tb-compare::before,html[data-look="club"] body.ld-on #tb-leaders::before,html[data-look="club"] body.gs-on #tb-games::before,html[data-look="club"] body:not(.st-on):not(.ln-on):not(.cmp-on):not(.ld-on):not(.gm-on):not(.gs-on) #tb-player::before{content:"";position:absolute;left:12px;right:12px;top:0;height:3px;background:var(--club2)}
+  html[data-look="club"] body.st-on #tb-standings,html[data-look="club"] body.cmp-on #tb-compare,html[data-look="club"] body.ld-on #tb-leaders,html[data-look="club"] body.gs-on #tb-games,html[data-look="club"] body:not(.st-on):not(.ln-on):not(.cmp-on):not(.ld-on):not(.gm-on):not(.gs-on) #tb-player{color:var(--club)}
+  html[data-look="club"] body.st-on #tb-standings::before,html[data-look="club"] body.cmp-on #tb-compare::before,html[data-look="club"] body.ld-on #tb-leaders::before,html[data-look="club"] body.gs-on #tb-games::before,html[data-look="club"] body:not(.st-on):not(.ln-on):not(.cmp-on):not(.ld-on):not(.gm-on):not(.gs-on) #tb-player::before{content:"";position:absolute;left:12px;right:12px;top:0;height:3px;background:var(--club2)}
   html[data-look="club"] body.cv-on .tabbar{display:none}
   html[data-look="club"] body:not(.cv-on){padding-bottom:calc(60px + env(safe-area-inset-bottom))}
   html[data-look="club"] body:not(.cv-on) .wrap{padding-bottom:24px}
@@ -1271,6 +1271,10 @@ html[data-look="club"] .cb-tiles{margin-bottom:6px;grid-template-columns:repeat(
 .cb-court{width:100%;height:auto;max-width:520px;display:block}
 .cb-foot{margin:8px 0 0;color:var(--muted);font-size:14px}
 .cb-more{margin:12px 0 0}
+a.see-all,html[data-look] a.see-all{display:flex;align-items:center;justify-content:center;gap:8px;width:max-content;max-width:100%;min-height:44px;margin:14px 0 0;padding:0 18px;border:1px solid var(--line);border-left:4px solid var(--gc,var(--club2));background:var(--panel);color:var(--ink);font:700 15px/1 var(--cond);letter-spacing:.08em;text-transform:uppercase;text-decoration:none}
+a.see-all:hover,html[data-look] a.see-all:hover{border-color:var(--gc,var(--club2));color:var(--gc,var(--club2))}
+.see-all:focus-visible{outline:2px solid var(--cold);outline-offset:2px}
+@media (max-width:640px){html[data-look] a.see-all,a.see-all{width:100%}}
 .cb-chips{display:flex;flex-wrap:wrap;gap:10px}
 .cb-chip{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:4px 14px 4px 6px;border:1px solid var(--line);border-radius:999px;background:var(--panel);font-size:15px}
 html[data-look="club"] .cb-chip .medal{width:34px;height:34px;border-width:2px}html[data-look="club"] .cb-chip .medal img{width:22px;height:22px}
@@ -1729,7 +1733,6 @@ html[data-look="club"] .cv-nums li,html[data-look="club"] #role>div{border-radiu
 <nav class="tabbar" id="tabbar" aria-label="Pages">
   <button type="button" id="tb-player"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4 20c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>Player</span></button>
   <a id="tb-compare" href="#compare"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h13M14 4l4 4-4 4M20 16H7M10 12l-4 4 4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Compare</span></a>
-  <a id="tb-lineups" href="#lineups"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="6" r="2.4" fill="currentColor"/><circle cx="5" cy="11" r="2.4" fill="currentColor"/><circle cx="19" cy="11" r="2.4" fill="currentColor"/><circle cx="8" cy="18" r="2.4" fill="currentColor"/><circle cx="16" cy="18" r="2.4" fill="currentColor"/></svg><span>Lineups</span></a>
   <a id="tb-standings" href="#standings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>Standings</span></a>
   <a id="tb-games" href="#games"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 5v14M7 10v4M17 10v4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span class="no-t" data-t="Games@page">Games</span></a>
   <a id="tb-leaders" href="#leaders"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V10M12 20V4M19 20v-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>Leaders</span></a>
@@ -2895,6 +2898,8 @@ const STAND = (() => {
     hide(){ document.body.classList.remove('st-on'); el.hidden = true; }
   };
 })();
+// the way from a club's fives on a club or game page to every five it has used this season, now that Lineups is off the phone tab bar
+const seeAll = code => `<a class="see-all" href="#lineups/${code}">${t('See all fives')}<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square"/></svg></a>`;
 // ---- lineups: five-man units and per-player on/off from teams/<season>/lineups.json (lineups.py reconstructs who was on the
 // floor from the substitution log; build.py sums the stints). Fetched the first time the page opens, then filtered in place.
 const LINE = (() => {
@@ -2991,7 +2996,8 @@ const LINE = (() => {
   $('#ln-min').addEventListener('change', e => { st.min[st.tab] = +e.target.value; render(); });
   return {
     render,
-    async show(){
+    async show(club){
+      if (CLUBS[club]) st.club = club;   // #lineups/<club>, from the See all fives control on a club or game page
       applyPalette(HOUSE); document.body.classList.add('ln-on'); noTeam(!state.team); el.hidden = false;
       document.title = `${t('Lineups')} · Player Lab`;
       if (state.team && st.club === 'all' && !D) st.club = state.team;   // opened from a club page: that club first, the reader can widen to all
@@ -3205,7 +3211,7 @@ const CLUB = (() => {
     return `<h2>${t('Best lineups')}</h2><p class="cb-sub">${t('Five-man units with at least 5 minutes together, ranked by net rating per 100 possessions, and the players the club does best with.')}</p>
       <div class="cb-two"><div class="cb-wrap scroll"><table class="cb-tab"><thead><tr><th>#</th><th>${t('Lineup')}</th><th class="k">${t('Min')}</th><th class="k">${t('ORtg')}</th><th class="k">${t('DRtg')}</th><th class="k">${t('Net')}</th></tr></thead><tbody>${fiveRows || `<tr><td colspan="6">${t('No five has 5 minutes together yet')}</td></tr>`}</tbody></table></div>
       <div class="cb-wrap scroll"><table class="cb-tab"><thead><tr><th>#</th><th>${t('Player')}</th><th class="k">${t('Min')}</th><th class="k">${t('On')}</th><th class="k">${t('Off')}</th><th class="k">${t('On − off')}</th></tr></thead><tbody>${ooRows || `<tr><td colspan="6">${t('No games yet')}</td></tr>`}</tbody></table></div></div>
-      <p class="cb-more"><a class="lnk" href="#lineups">${t('All lineups')}</a></p>`;
+      ${seeAll(code)}`;
   }
   function chart(code){
     const shots = []; for (const p of team().players) for (const sh of ((p.cur && p.cur.shots) || [])) shots.push(sh);
@@ -3371,7 +3377,7 @@ const GAME = (() => {
     const body = L.map((l, i) => { const seg = l.seg || [], pm = l.pts - l.opp, when = seg.map(([a, b]) => `${mmss(a)}–${mmss(b)}`).join(', ') || '–';
       const start = seg.length && seg[0][0] === 0 ? `<span class="chip">${t('Starters')}</span>` : '';
       return `<tr><td>${i + 1}</td><td class="five l">${l.p.map(nm).join(' <i>·</i> ')}${start ? `<span class="chips">${start}</span>` : ''}</td><td>${(l.s / 60).toFixed(1)}</td><td>${l.pts}–${l.opp}</td><td class="${pm > 0 ? 'up' : pm < 0 ? 'down' : ''}">${sg(pm)}</td><td class="ph">${l.n == null ? '–' : sg1(l.n)}</td><td class="when l"><span class="ln-strip" role="img" title="${when}" aria-label="${when}">${ticks}${seg.map(([a, b]) => `<b style="left:${p100(a)}%;width:${Math.max(0.5, 100 * (b - a) / len).toFixed(2)}%"></b>`).join('')}</span></td></tr>`; }).join('');
-    return sidePick() + `<p class="scroll-hint">${t('Scroll for more columns')}</p><div class="scroll"><table class="ln-tab bygame gm-fives"><thead><tr><th>#</th><th class="l">${t('Lineup')}</th><th>${t('Min')}</th><th>${t('Score')}</th><th>+/-</th><th class="ph">${t('Net')}</th><th class="l when">${t('When')}</th></tr></thead><tbody>${body}</tbody></table></div>`;
+    return sidePick() + `<p class="scroll-hint">${t('Scroll for more columns')}</p><div class="scroll"><table class="ln-tab bygame gm-fives"><thead><tr><th>#</th><th class="l">${t('Lineup')}</th><th>${t('Min')}</th><th>${t('Score')}</th><th>+/-</th><th class="ph">${t('Net')}</th><th class="l when">${t('When')}</th></tr></thead><tbody>${body}</tbody></table></div>${seeAll(code)}`;
   }
   function render(){
     if (!G) return;
@@ -3452,7 +3458,7 @@ async function go(){
   if (h[0] === 'game') { COVER.hide(); STAND.hide(); LINE.hide(); CMP.hide(); LEAD.hide(); CLUB.hide(); await GAME.show(h[1], h[2]); return true; }
   if (h[0] === 'games') { COVER.hide(); STAND.hide(); LINE.hide(); CMP.hide(); LEAD.hide(); CLUB.hide(); GAMES.show(); return true; }
   if (h[0] === 'standings') { COVER.hide(); LINE.hide(); CMP.hide(); LEAD.hide(); CLUB.hide(); STAND.show(); return true; }
-  if (h[0] === 'lineups') { COVER.hide(); STAND.hide(); CMP.hide(); LEAD.hide(); CLUB.hide(); await LINE.show(); return true; }
+  if (h[0] === 'lineups') { COVER.hide(); STAND.hide(); CMP.hide(); LEAD.hide(); CLUB.hide(); await LINE.show(h[1]); return true; }
   if (h[0] === 'compare') { COVER.hide(); STAND.hide(); LINE.hide(); LEAD.hide(); CLUB.hide(); await CMP.show(); return true; }
   if (h[0] === 'leaders') { COVER.hide(); STAND.hide(); LINE.hide(); CMP.hide(); CLUB.hide(); await LEAD.show(); return true; }
   STAND.hide(); LINE.hide(); CMP.hide(); LEAD.hide();
