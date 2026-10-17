@@ -1,6 +1,7 @@
 """Pull a whole Euroleague season for the app: every club's crest, roster and photos, plus per-game shots
 with court coordinates and box scores for games already played. Cached under cache/<season>/ so each rerun
-only fetches games (and players) that are new.
+only fetches games (and players) that are new, plus the games of the last 72 hours again so late box-score
+corrections land.
 
 usage: python fetch_season.py E2026
 """
@@ -9,6 +10,7 @@ import json
 import os
 import sys
 import time
+from datetime import datetime, timezone
 import requests
 from PIL import Image
 
@@ -38,13 +40,44 @@ def get(url, params=None, as_json=True):
     raise RuntimeError(f"{r.status_code} {url}")
 
 
-def cached(name, fetch):
+# The league corrects box scores and play-by-play after the buzzer, so a game's files are fetched again while the game
+# is recent: at most every REFRESH_EVERY seconds, for REFRESH_WINDOW seconds after tip-off. Older games stay cached.
+REFRESH_WINDOW = 72 * 3600
+REFRESH_EVERY = 6 * 3600
+FETCHED = os.path.join(CACHE, "fetched_at.json")   # file name -> unix time it was last fetched (mtimes do not survive the CI cache)
+fetched_at = json.load(open(FETCHED)) if os.path.exists(FETCHED) else {}
+
+
+def cached(name, fetch, refresh=False):
+    """Read name from the cache, or fetch and store it. With refresh, a copy older than REFRESH_EVERY is fetched again;
+    if that fetch fails the cached copy is kept, so a feed outage never costs a game we already have."""
     path = os.path.join(CACHE, name)
-    if os.path.exists(path):
+    if os.path.exists(path) and not (refresh and time.time() - fetched_at.get(name, 0) >= REFRESH_EVERY):
         return json.load(open(path))
-    data = fetch()
+    try:
+        data = fetch()
+    except Exception as e:
+        if not os.path.exists(path):
+            raise
+        print(f"   refresh of {name} failed, keeping the cached copy: {e}")
+        return json.load(open(path))
+    if refresh and os.path.exists(path) and json.load(open(path)) != data:
+        print(f"   {name} changed in the feed since it was cached (late correction)")
     json.dump(data, open(path, "w"))
+    fetched_at[name] = time.time()
+    json.dump(fetched_at, open(FETCHED, "w"))
     return data
+
+
+def recent(g):
+    """True while a game is inside the correction window, counted from its scheduled tip-off."""
+    try:
+        t = datetime.fromisoformat(g["date"].replace("Z", "+00:00"))
+    except (KeyError, TypeError, ValueError, AttributeError):
+        return False
+    if t.tzinfo is None:
+        t = t.replace(tzinfo=timezone.utc)
+    return 0 <= (datetime.now(timezone.utc) - t).total_seconds() <= REFRESH_WINDOW
 
 
 SOURCES = os.path.join(PHOTOS, "sources.json")   # image file -> feed URL it was built from
@@ -138,7 +171,8 @@ for club in index:
     shots, box = [], []
     for g in played:
         gc = g["code"]
-        rows = cached(f"points_{gc}.json", lambda: get(f"{LIVE}/Points", {"gamecode": gc, "seasoncode": SEASON})["Rows"])
+        fresh = recent(g)
+        rows = cached(f"points_{gc}.json", lambda: get(f"{LIVE}/Points", {"gamecode": gc, "seasoncode": SEASON})["Rows"], fresh)
         home, away = g["home"]["code"], g["away"]["code"]
         for r in rows:
             act = r["ID_ACTION"].strip()
@@ -147,8 +181,8 @@ for club in index:
             shots.append({"game": gc, "pid": r["ID_PLAYER"].strip(), "x": r["COORD_X"], "y": r["COORD_Y"], "made": act.endswith("M"),
                           "pts": 3 if act.startswith("3") else 2, "zone": r["ZONE"].strip(), "q": r["MINUTE"], "clock": r["CONSOLE"],
                           "fastbreak": r["FASTBREAK"] == "1", "second_chance": r["SECOND_CHANCE"] == "1"})
-        cached(f"pbp_{gc}.json", lambda: get(f"{LIVE}/PlayByPlay", {"gamecode": gc, "seasoncode": SEASON}))   # events: assists, fouls, blocks, substitutions, clock
-        j = cached(f"box_{gc}.json", lambda: get(f"{LIVE}/Boxscore", {"gamecode": gc, "seasoncode": SEASON}))
+        cached(f"pbp_{gc}.json", lambda: get(f"{LIVE}/PlayByPlay", {"gamecode": gc, "seasoncode": SEASON}), fresh)   # events: assists, fouls, blocks, substitutions, clock
+        j = cached(f"box_{gc}.json", lambda: get(f"{LIVE}/Boxscore", {"gamecode": gc, "seasoncode": SEASON}), fresh)
         for side in j.get("Stats", []):
             for p in side.get("PlayersStats", []):
                 if p.get("Team", "").strip() != code:
