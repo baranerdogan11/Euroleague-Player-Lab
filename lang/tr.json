@@ -587,5 +587,15 @@
  "Free throws": "Serbest atış",
  "Offensive rebounds": "Hücum ribaundu",
  "Win probability": "Kazanma olasılığı",
- "Tied": "Eşit"
+ "Tied": "Eşit",
+ "Follow": "Takip et",
+ "Following": "Takipte",
+ "Following {name}": "{name} takip ediliyor",
+ "No longer following {name}": "{name} artık takip edilmiyor",
+ "Follow this player: he comes first on the opening page": "Bu oyuncuyu takip et: açılış sayfasında ilk o görünür",
+ "Stop following this player": "Bu oyuncuyu takipten çık",
+ "Follow this club: its games come first on the opening page": "Bu kulübü takip et: maçları açılış sayfasında ilk sırada görünür",
+ "Stop following this club": "Bu kulübü takipten çık",
+ "Your players": "Oyuncuların",
+ "No game": "Maçı yok"
 }

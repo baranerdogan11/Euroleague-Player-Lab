@@ -1607,6 +1607,39 @@ html[data-look="club"] #games .cv-game{border-radius:0;border-bottom-color:var(-
   .gs-bar{display:grid;grid-template-columns:1fr 1fr;gap:8px}.gs-bar .ln-sel{min-width:0;padding:0 8px 0 10px}.gs-bar .ln-sel select{min-width:0;width:100%}.gs-bar .ln-sel label{display:none}
   #games .cv-games{grid-template-columns:repeat(auto-fill,minmax(240px,1fr));grid-auto-flow:row;grid-auto-columns:auto;overflow:visible;padding-bottom:0}
 }
+/* following: a star button on the player and club heroes; on the cover the followed players' lines, then their games and clubs first, marked in orange */
+.pnav #follow{display:inline-flex;align-items:center;gap:6px}
+.pnav #follow svg,.cb-follow svg{width:15px;height:15px;flex:none}
+.pnav #follow.on svg,.cb-follow.on svg{color:var(--gc,#f26f21)}
+html[data-look="club"] .pnav #follow{border-radius:0}
+.cb-follow{display:inline-flex;align-items:center;gap:8px;margin-top:16px;height:38px;padding:0 14px;background:transparent;color:inherit;border:1px solid currentColor;border-radius:0;font-family:var(--sans);font-weight:700;font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:background .15s}
+.cb-follow:hover{background:rgba(255,255,255,.16)}.cb-hero.dark-ink .cb-follow:hover,html[data-look="club"] .cb-hero[style*="--club-ink:#0b0d10"] .cb-follow:hover{background:rgba(11,13,16,.08)}
+.cb-follow.on{background:#fff;color:#0b0d10;border-color:#fff}
+.cb-follow:focus-visible{outline:2px solid currentColor;outline-offset:2px}
+.cv-fol{margin:0 0 18px}
+.cv-fol h3{display:flex;align-items:center;gap:8px;margin:0 0 10px;font-family:var(--cond);font-weight:var(--cond-w,400);font-size:20px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink)}
+.cv-fol h3::before{content:"";width:4px;height:16px;background:var(--gc,#f26f21)}
+.cv-pls{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.cv-pl{display:grid;grid-template-columns:44px minmax(0,1fr);column-gap:12px;row-gap:3px;align-items:center;padding:10px 14px;border:1px solid var(--line);border-left:3px solid var(--gc,#f26f21);background:var(--panel);color:var(--ink2);text-decoration:none;min-width:0}
+.cv-pl:hover{border-color:var(--line2);border-left-color:var(--gc,#f26f21)}
+.cv-pl img{grid-row:1/3;width:44px;height:44px;border-radius:50%;object-fit:cover;object-position:top;background:var(--panel2)}
+.cv-pl .who{display:flex;align-items:baseline;gap:8px;min-width:0}
+.cv-pl .who b{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink);font-weight:700;font-size:15px}
+.cv-pl .who small{flex:none;color:var(--muted);font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+.cv-pl .ln{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px;color:var(--muted)}
+.cv-pl .ln b{color:var(--ink);font-weight:700;font-variant-numeric:tabular-nums}.cv-pl .ln i{font-style:normal;font-size:11.5px;font-weight:600;letter-spacing:.06em}
+.cv-pl.na{border-left-color:var(--line2)}
+.cv-game.fl{border-top:3px solid var(--gc,#f26f21)}
+.cv-last .cv-game .tm.me b{text-decoration:underline;text-decoration-color:var(--gc,#f26f21);text-decoration-thickness:2px;text-underline-offset:4px}
+.cv-clubs a.fl{border-color:var(--gc,#f26f21)}
+.cv-clubs .fl-star{position:absolute;top:6px;right:6px;display:flex;color:var(--gc,#f26f21)}.cv-clubs .fl-star svg{width:14px;height:14px}
+@media (max-width:760px){
+  .cv-pls{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:minmax(232px,78%);overflow-x:auto;scroll-snap-type:x mandatory;overscroll-behavior-x:contain;padding-bottom:6px;scrollbar-width:none}
+  .cv-pls::-webkit-scrollbar{display:none}.cv-pl{scroll-snap-align:start}
+  .cv-pl img{grid-row:1/4}.cv-pl .who{display:contents}.cv-pl .who b,.cv-pl .who small{grid-column:2}.cv-pl .who small{font-size:11px;margin-top:-3px}.cv-pl .ln{white-space:normal;font-size:13.5px}
+  .cb-follow{margin-top:12px}
+  .pnav #follow span{display:none}.pnav #follow svg{width:18px;height:18px}
+}
 /* ---- end game pages ---- */
 /* ---- Game Center look · the rest of the app (header search, player, club and cover pages): square corners, orange heading markers, table headers in the club colour, square switches ---- */
 html[data-look="club"] .top #q{border-radius:0}
@@ -1653,6 +1686,7 @@ html[data-look="club"] .cv-nums li,html[data-look="club"] #role>div{border-radiu
     <section class="cv-sec cv-last" id="cv-last" hidden>
       <h2 class="no-t" id="cv-last-h"></h2>
       <p class="cv-last-sub no-t" id="cv-last-sub"></p>
+      <div class="cv-fol no-t" id="cv-fol" hidden></div>
       <div class="cv-games" id="cv-games"></div>
     </section>
     <section class="cv-sec">
@@ -1705,7 +1739,7 @@ html[data-look="club"] .cv-nums li,html[data-look="club"] #role>div{border-radiu
     <div class="ph"><div class="num" id="num"></div><img id="photo" alt="" width="360" height="480" decoding="async"></div>
     <div class="bio" id="bio"></div>
     <div class="lt">
-      <div class="tagrow"><div class="tag"><img id="club-logo" alt="" width="20" height="20"><span id="club-name" lang="en"></span><span id="pos"></span></div><div class="pnav"><button type="button" id="prev" aria-label="Previous player" title="Previous player">&lsaquo;</button><button type="button" id="next" aria-label="Next player" title="Next player">&rsaquo;</button><button type="button" id="share" title="Copy a link to this player">Copy link</button><button type="button" id="embed" title="Copy an iframe that shows this player's shot chart on your own site">Embed</button></div></div>
+      <div class="tagrow"><div class="tag"><img id="club-logo" alt="" width="20" height="20"><span id="club-name" lang="en"></span><span id="pos"></span></div><div class="pnav"><button type="button" id="prev" aria-label="Previous player" title="Previous player">&lsaquo;</button><button type="button" id="next" aria-label="Next player" title="Next player">&rsaquo;</button><button type="button" id="follow" class="no-t" aria-pressed="false"></button><button type="button" id="share" title="Copy a link to this player">Copy link</button><button type="button" id="embed" title="Copy an iframe that shows this player's shot chart on your own site">Embed</button></div></div>
       <h1 id="name" lang="en"><span id="nm"></span></h1>
       <div class="facts" id="facts"></div>
     </div>
@@ -1920,6 +1954,21 @@ const trNumTree = root => { if (root.nodeType === 3) return trNumNode(root); if 
 new MutationObserver(ms => { if (LANG !== 'tr') return; for (const m of ms) { if (m.type === 'characterData') trNumNode(m.target); else m.addedNodes.forEach(trNumTree); } }).observe(document.body, {childList: true, subtree: true, characterData: true});
 const CLUBS = Object.fromEntries(META.clubs.map(c => [c.code, c]));
 const shortName = code => (CLUBS[code] && CLUBS[code].short) || code;
+// ---- following: players and clubs starred in this browser only (localStorage, no account, nothing sent anywhere); the cover puts them first.
+// A player is kept with his club, name and photo so the cover can show him before the roster file has loaded
+const FOLLOW = (() => {
+  const KEY = 'pl-follow'; let S = {p: [], c: []};
+  try { const v = JSON.parse(localStorage.getItem(KEY) || 'null'); if (v && Array.isArray(v.p) && Array.isArray(v.c)) S = v; } catch (e) {}
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
+  return {
+    players: () => S.p, clubs: () => S.c,
+    has: pid => S.p.some(x => x.pid === pid), hasClub: c => S.c.includes(c),
+    toggle(p){ const i = S.p.findIndex(x => x.pid === p.pid); if (i >= 0) S.p.splice(i, 1); else S.p.push(p); save(); return i < 0; },
+    toggleClub(c){ const i = S.c.indexOf(c); if (i >= 0) S.c.splice(i, 1); else S.c.push(c); save(); return i < 0; },
+    touch(p){ const x = S.p.find(y => y.pid === p.pid); if (x && (x.club !== p.club || x.photo !== p.photo || x.name !== p.name)) { Object.assign(x, p); save(); } }   // a transfer moves him to his new club
+  };
+})();
+const STAR = on => `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.6l2.55 5.2 5.75.83-4.15 4.05.98 5.72L12 16.7l-5.13 2.7.98-5.72L3.7 9.63l5.75-.83z" fill="${on ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>`;
 const EN = s => `<span lang="en">${s}</span>`;   // a club or player name inside Turkish text keeps Latin capitals (OLYMPIACOS)
 const PLACEHOLDER = "data:image/svg+xml;utf8," + encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 360 480'><defs><linearGradient id='g' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='#343841'/><stop offset='1' stop-color='#131519'/></linearGradient></defs><circle cx='180' cy='150' r='80' fill='url(#g)'/><path d='M40 480 C40 330 110 280 180 280 C250 280 320 330 320 480Z' fill='url(#g)'/></svg>`);
 const state = {team: null, data: null, player: 0, result: 'all', view: 'dots', game: 'all', rate: 'pg', ast: 'all', cmp: null, timers: [], accent: '#f26f21', base: '#1f2b47', hit: '#f26f21'};
@@ -2071,6 +2120,7 @@ function renderTicker(){
 }
 function renderPlayer(){
   const p = player(), tm = team(), n = nameOf(p.name), d = ds(), tot = d.tot, gp = tot.gp || 1, played = tot.gp > 0, pc = d.pct || {};
+  followBtn();
   $('#photo').src = p.photo || PLACEHOLDER; $('#photo').alt = `${n.first} ${n.sur}`; $('#num').textContent = p.dorsal || '';
   $('#pos').textContent = `${p.dorsal ? '· #' + p.dorsal + ' ' : ''}· ${t(p.position || '')}`; $('#nm').innerHTML = `${n.first}<span>${n.sur}</span>`;
   // Club Edition hero: the surname wears the accent only when it reads against the club base (3:1 for display text); red-on-red clubs fall back to the band's text colour
@@ -2639,6 +2689,20 @@ $('#log tbody').addEventListener('click', e => { if (e.target.closest('a')) retu
 $('#log tbody').addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { const tr = e.target.closest('tr[data-g]'); if (tr) { e.preventDefault(); pickGame(tr.dataset.g); } } });
 const stepPlayer = d => { if (!team()) return; const ps = team().players, i = (state.player + d + ps.length) % ps.length; location.hash = `${state.team}/${ps[i].pid}`; };
 $('#prev').addEventListener('click', () => stepPlayer(-1)); $('#next').addEventListener('click', () => stepPlayer(1));
+function followBtn(){
+  const b = $('#follow'); if (!state.data) return;
+  const p = player(), on = FOLLOW.has(p.pid);
+  if (on) FOLLOW.touch({pid: p.pid, club: state.team, name: p.name, photo: p.photo || null});
+  b.classList.toggle('on', on); b.setAttribute('aria-pressed', on);
+  b.title = t(on ? 'Stop following this player' : 'Follow this player: he comes first on the opening page');
+  b.setAttribute('aria-label', t(on ? 'Following' : 'Follow'));
+  b.innerHTML = `${STAR(on)}<span>${t(on ? 'Following' : 'Follow')}</span>`;
+}
+$('#follow').addEventListener('click', () => {
+  const p = player(), n = nameOf(p.name), on = FOLLOW.toggle({pid: p.pid, club: state.team, name: p.name, photo: p.photo || null});
+  followBtn(); toast(t(on ? 'Following {name}' : 'No longer following {name}', {name: `${n.first} ${n.sur}`}));
+  COVER.render();
+});
 $('#share').addEventListener('click', async () => {
   if (!team()) return;
   const url = new URL(`p/${player().pid}.html`, location.href).href, b = $('#share');   // the share stub carries the player's Open Graph card and forwards to this page
@@ -2736,7 +2800,7 @@ const COVER = (() => {
   $('#cv-season').textContent = META.label;
   const st = META.status || {};
   // each club card carries its own colourway (--cb base, --ca accent) for the strip at its edge; the country is shown by the Club Edition look only
-  $('#cv-clubs').innerHTML = META.clubs.map(c => `<a href="#${c.code}" title="${c.name}" style="--cb:${c.base || '#1f2b47'};--ca:${c.accent || '#f26f21'}"><span class="medal"><img src="${c.logo || ''}" alt="" width="34" height="34" loading="lazy" decoding="async"></span><span class="txt"><span class="nm" lang="en">${c.short || c.code}</span><span class="co">${t(c.country || '')}</span></span></a>`).join('');
+  const clubs = () => { const F = FOLLOW.clubs(); $('#cv-clubs').innerHTML = [...META.clubs].sort((a, b) => Number(F.includes(b.code)) - Number(F.includes(a.code))).map(c => `<a href="#${c.code}" title="${c.name}"${F.includes(c.code) ? ' class="fl"' : ''} style="--cb:${c.base || '#1f2b47'};--ca:${c.accent || '#f26f21'}"><span class="medal"><img src="${c.logo || ''}" alt="" width="34" height="34" loading="lazy" decoding="async"></span><span class="txt"><span class="nm" lang="en">${c.short || c.code}</span><span class="co">${t(c.country || '')}</span></span>${F.includes(c.code) ? `<i class="fl-star" aria-label="${t('Following')}">${STAR(true)}</i>` : ''}</a>`).join(''); };
   const rounds = META.leaders && META.leaders.rounds;
   const last = (() => { try { return JSON.parse(localStorage.getItem('pl-last')); } catch (e) { return null; } })();
   const go = $('#cv-go');
@@ -2744,7 +2808,7 @@ const COVER = (() => {
     const n = v => (v || 0).toLocaleString(LOCALE());
     $('#cv-round').textContent = rounds ? ` · ${t('Regular season')} · ${t('through round {r}', {r: rounds})}` : '';   // in the eyebrow, re-rendered with the language
     $('#cv-nums').innerHTML = [[META.clubs.length, 'Clubs'], [META.n_players, 'Players'], [st.games, 'Games']].map(([v, k]) => `<li><b>${n(v)}</b><span>${t(k)}</span></li>`).join('');
-    lastNight();
+    clubs(); lastNight();
     if (last && last.hash && CLUBS[last.hash.split('/')[0]]) go.innerHTML = `${t('Continue')}<small>${esc(last.name)}</small>`; else go.textContent = t('Open the app');
   }
   // the latest game day, one card per game opening its game page: the score and the night's best line by PIR
@@ -2755,8 +2819,29 @@ const COVER = (() => {
     $('#cv-last-h').textContent = L.date === iso(now) ? t('Tonight') : L.date === iso(new Date(now.getTime() - 864e5)) ? t('Last night') : t('Latest results');
     const rounds = [...new Set(L.games.map(g => g.round))];
     $('#cv-last-sub').textContent = `${rounds.map(r => t('Round {n}', {n: r})).join(', ')} · ${new Date(L.date + 'T12:00:00').toLocaleDateString(LOCALE(), {weekday: 'long', day: 'numeric', month: 'long'})} · ${plural(L.games.length, '{n} game', '{n} games')}`;
-    $('#cv-games').innerHTML = L.games.map(g => gameCard(g.code, g.home, g.away, g.hs, g.as, g.top && [g.top[1], g.top[3], g.top[6], g.top[8]])).join('');
+    const P = FOLLOW.players(), F = new Set([...FOLLOW.clubs(), ...P.map(p => p.club)]), mine = g => F.has(g.home) ? g.home : F.has(g.away) ? g.away : null;
+    $('#cv-games').innerHTML = [...L.games].sort((a, b) => Number(!!mine(b)) - Number(!!mine(a))).map(g => gameCard(g.code, g.home, g.away, g.hs, g.as, g.top && [g.top[1], g.top[3], g.top[6], g.top[8]], mine(g)).replace('class="cv-game"', `class="cv-game${mine(g) ? ' fl' : ''}"`)).join('');
     sec.hidden = false;
+    following(L, P);
+  }
+  // the followed players, each with his line from the latest game day (read from that game's file), or a dash when his club did not play
+  const files = {};
+  const gameFile = code => files[code] || (files[code] = fetch(`${META.path}games/${code}.json?v=${encodeURIComponent(META.built || '')}`).then(r => r.ok ? r.json() : null).catch(() => { delete files[code]; return null; }));
+  function following(L, P){
+    const box = $('#cv-fol');
+    if (!P.length) { box.hidden = true; box.innerHTML = ''; return; }
+    const B = {min: 4, pts: 5, reb: 14, ast: 15, pir: 22};
+    const card = (p, g, b) => { const n = nameOf(p.name), played = b && b[B.min] > 0;
+      const ln = !g ? `<span class="ln na">${t('No game')}</span>` : !b ? `<span class="ln na">…</span>` : played ? `<span class="ln">${[['pts', 'PTS'], ['reb', 'REB'], ['ast', 'AST'], ['pir', 'PIR']].map(([k, l]) => `<b>${b[B[k]]}</b> <i>${t(l)}</i>`).join(' · ')}</span>` : `<span class="ln na">${t('Did not play')}</span>`;
+      return `<a class="cv-pl${played ? '' : ' na'}" href="#${p.club}/${p.pid}${played ? '/g' + g.code : ''}"><img src="${p.photo || PLACEHOLDER}" alt="" width="44" height="44" loading="lazy"><span class="who"><b lang="en">${n.first ? n.first[0] + '. ' : ''}${n.sur}</b><small lang="en">${shortName(p.club)}</small></span>${ln}</a>`; };
+    const draw = lines => {
+      const rows = P.map(p => { const g = L.games.find(x => x.home === p.club || x.away === p.club), d = g && lines[g.code], b = d && ((d.box && d.box[p.club]) || []).find(x => x[0] === p.pid);
+        return {p, g, b: d ? (b || []) : null, k: b && b[B.min] > 0 ? b[B.pir] : g ? -1e3 : -2e3}; }).sort((a, b) => b.k - a.k);
+      box.innerHTML = `<h3>${t('Your players')}</h3><div class="cv-pls">${rows.map(r => card(r.p, r.g, r.b)).join('')}</div>`;
+    };
+    const codes = [...new Set(P.map(p => (L.games.find(x => x.home === p.club || x.away === p.club) || {}).code).filter(c => c != null))], lines = {};
+    box.hidden = false; draw(lines);
+    codes.forEach(c => gameFile(c).then(d => { if (d) { lines[c] = d; draw(lines); } }));
   }
   render();
   go.addEventListener('click', () => { location.hash = last && last.hash && CLUBS[last.hash.split('/')[0]] ? last.hash : first.code; });
@@ -3086,7 +3171,7 @@ const CLUB = (() => {
     const nextTxt = up ? `${t('R')}${up.round} ${up.home === realCode() ? t('vs') + ' ' + EN(shortName(up.away)) : '@ ' + EN(shortName(up.home))} · <span class="dt">${fmtDate(up.date)}</span>` : '';
     return `<div class="cb-hero band cut-br">
       <div class="cb-crest"><span class="medal"><img src="${c.logo || ''}" alt="" width="72" height="72"></span></div>
-      <div class="cb-id"><p class="cb-eyebrow">${t('Club')} · ${t(cap(c.city || ''))}${c.country ? ' · ' + t(c.country) : ''}</p><h1 class="cb-name" lang="en">${c.name || code}</h1><p class="cb-line"><a href="#standings">${line}</a></p></div>
+      <div class="cb-id"><p class="cb-eyebrow">${t('Club')} · ${t(cap(c.city || ''))}${c.country ? ' · ' + t(c.country) : ''}</p><h1 class="cb-name" lang="en">${c.name || code}</h1><p class="cb-line"><a href="#standings">${line}</a></p>${(on => `<button type="button" class="cb-follow${on ? ' on' : ''}" data-follow-club="${code}" aria-pressed="${on}" title="${t(on ? 'Stop following this club' : 'Follow this club: its games come first on the opening page')}">${STAR(on)}<span>${t(on ? 'Following' : 'Follow')}</span></button>`)(FOLLOW.hasClub(code))}</div>
       <div class="cb-side">${up ? `<div class="cb-next"><span class="lab">${t('Next')}</span>${medal(up.home === realCode() ? up.away : up.home, 24)}<span>${nextTxt}</span></div>` : ''}${last ? (l => `<a class="cb-next" href="#game/${last.code}" title="${t('Open the game')}"><span class="lab">${t('Last result')}</span>${medal(l.home ? last.away : last.home, 24)}<span>${t('R')}${last.round} ${l.home ? t('vs') : '@'} ${l.opp}</span><b class="res ${l.res === t('W') ? 'w' : 'l'}">${l.res} ${l.score}</b></a>`)(gameLabel(last)) : ''}</div>
     </div>`;
   }
@@ -3144,7 +3229,7 @@ const CLUB = (() => {
     el.innerHTML = hero(code) + `<div class="in cb-in">${ratings(code)}${roster(code)}${lineups(code)}${chart(code)}${fixtures(code)}</div>`;
     document.title = `${(CLUBS[code] || {}).name || code} · Player Lab`;
     if (typeof scrollEnds === 'function') scrollEnds();
-    if (!bound) { bound = true; el.addEventListener('click', e => { const b = e.target.closest('button[data-sort]'); if (!b) return; sortKey = b.dataset.sort; render(); }); }
+    if (!bound) { bound = true; el.addEventListener('click', e => { const f = e.target.closest('button[data-follow-club]'); if (f) { const c = f.dataset.followClub, on = FOLLOW.toggleClub(c); render(); COVER.render(); toast(t(on ? 'Following {name}' : 'No longer following {name}', {name: (CLUBS[c] || {}).name || c})); return; } const b = e.target.closest('button[data-sort]'); if (!b) return; sortKey = b.dataset.sort; render(); }); }
   }
   return {
     async show(code){
