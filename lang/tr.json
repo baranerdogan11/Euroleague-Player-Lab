@@ -587,5 +587,11 @@
  "Free throws": "Serbest atış",
  "Offensive rebounds": "Hücum ribaundu",
  "Win probability": "Kazanma olasılığı",
- "Tied": "Eşit"
+ "Tied": "Eşit",
+ "Advanced": "İleri düzey",
+ "O-RAPM": "H-RAPM",
+ "D-RAPM": "S-RAPM",
+ "PTS vs xFG": "xFG FARKI",
+ "Points above xFG": "xFG'nin üzerindeki sayı",
+ "Usage rate": "Kullanım oranı"
 }
