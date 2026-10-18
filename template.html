@@ -2243,7 +2243,7 @@ function renderDiet(zs, total){
   if (!total || total < MIN_ATT || !ref) { cap.hidden = true; el.hidden = true; return; }
   cap.hidden = false; el.hidden = false;
   const keys = [['rim', t('Rim'), 1], ['paint', t('Paint'), .7], ['mid', t('Mid'), null], ['c3', t('Corner 3'), 'b1'], ['a3', t('Above-break 3'), 'b2']];
-  const colour = c => c === null ? 'rgba(138,145,160,.55)' : c === 'b1' ? 'rgba(79,142,247,.95)' : c === 'b2' ? 'rgba(79,142,247,.55)' : hexA(state.hit, c);
+  const colour = c => c === null ? 'rgba(138,145,160,.55)' : c === 'b1' ? COLD(.95) : c === 'b2' ? COLD(.55) : hexA(HOT, c);
   const bar = shares => `<div class="stack">${keys.map(([k, l, c]) => `<i style="width:${(100 * shares[k]).toFixed(1)}%;background:${colour(c)}" title="${l} ${(100 * shares[k]).toFixed(0)}%"></i>`).join('')}</div>`;
   const mine = Object.fromEntries(keys.map(([k]) => [k, zs[k].a / total])), pos = Object.fromEntries(keys.map(([k]) => [k, ref.zones[k].share]));
   const posN = t(d.pos_group ? d.pos_group + 's' : 'players');
@@ -2402,6 +2402,9 @@ function renderProfile(p, d){
   $('#curve').innerHTML = s;
   $('#curve-legend').innerHTML = `<span><i style="width:18px;height:3px;background:var(--club2);display:inline-block;vertical-align:middle;margin-right:6px"></i>${t('shrunk estimate by attempt')}</span><span><i style="width:18px;height:10px;background:var(--club2);opacity:.2;display:inline-block;vertical-align:middle;margin-right:6px"></i>± 1 ${t('sd')}</span>`;
 }
+// above and below the league (zone fills, zone table cells, shot diet): the same orange and blue for every club, the pair
+// colour-blind readers tell apart; a club's own accent can be blue (Anadolu Efes) and would match the cold side
+const HOT = '#f26f21', COLD = a => `rgba(79,142,247,${a})`;
 function zoneStats(shots){
   const z = {}; Object.keys(ZONES).forEach(k => z[k] = {m: 0, a: 0, x: 0, xa: 0, am: 0, ak: 0});
   shots.forEach(s => { const k = zoneOf(s[1], s[2], s[4]), v = z[k]; v.a++; v.m += s[3]; if (s[9] != null) { v.x += s[9]; v.xa++; } if (s[3] && s[11] != null) { v.ak++; v.am += s[11]; } });
@@ -2416,7 +2419,7 @@ function renderChart(animate){
   const zs = zoneStats(tableShots), total = tableShots.length || 1;
   const lgz = k => LG && LG.zones[k] ? LG.zones[k].fg : null;
   const zoneRow = (k, l, v, cls = '') => { const share = v.a / total, lg = lgz(k), p = v.a ? v.m / v.a : null, small = v.a > 0 && v.a < MIN_ATT, diff = p != null && lg != null ? p - lg : null;
-    const bg = diff == null || small ? 'transparent' : diff >= 0 ? hexA(state.hit, Math.min(.55, .08 + diff * 2.2)) : `rgba(79,142,247,${Math.min(.55, .08 - diff * 2.2).toFixed(2)})`;
+    const bg = diff == null || small ? 'transparent' : diff >= 0 ? hexA(HOT, Math.min(.55, .08 + diff * 2.2)) : COLD(Math.min(.55, .08 - diff * 2.2).toFixed(2));
     const title = v.a ? `${t('{m} of {a}', {m: v.m, a: v.a})} · ${ival(v.m, v.a)}${small ? ' · ' + t('small sample') : ''}${lg != null ? ` · ${t('league')} ${(100 * lg).toFixed(1)}%` : ''}` : '';
     return `<tr class="${cls}${small ? ' small' : ''}" data-tip="${title}"><td>${l}</td><td>${v.a ? `${v.m} / ${v.a}` : '–'}</td><td class="k"><span class="cell" style="background:${bg}">${pct(v.m, v.a)}</span></td><td class="lg">${lg != null ? (100 * lg).toFixed(1) + '%' : '–'}</td><td class="lg">${v.xa ? (100 * v.x / v.xa).toFixed(1) + '%' : '–'}</td><td class="lg">${v.ak ? (100 * v.am / v.ak).toFixed(0) + '%' : '–'}</td><td>${v.a ? (share * 100).toFixed(0) + '%' : '–'}<span class="zone-bar" style="width:${Math.round(share * 40)}px"></span></td></tr>`; };
   const threes = {m: zs.c3.m + zs.a3.m, a: zs.c3.a + zs.a3.a, x: zs.c3.x + zs.a3.x, xa: zs.c3.xa + zs.a3.xa, am: zs.c3.am + zs.a3.am, ak: zs.c3.ak + zs.a3.ak};
@@ -2438,7 +2441,7 @@ function renderChart(animate){
   if (is3d) { Shot3D.play(shots, s => gameLabel(games[s[0]])); return; }
   Shot3D.stop();
   if (state.view === 'zones') {
-    const col = (k, m, a) => { if (!a || a < MIN_ATT) return 'rgba(120,128,144,.22)'; const lg = lgz(k) ?? 0.45; const tm = Math.max(-1, Math.min(1, (m / a - lg) / 0.15)); return tm >= 0 ? hexA(state.hit, 0.15 + 0.6 * tm) : `rgba(79,142,247,${(0.15 + 0.55 * -tm).toFixed(2)})`; };
+    const col = (k, m, a) => { if (!a || a < MIN_ATT) return 'rgba(120,128,144,.22)'; const lg = lgz(k) ?? 0.45; const tm = Math.max(-1, Math.min(1, (m / a - lg) / 0.15)); return tm >= 0 ? hexA(HOT, 0.15 + 0.6 * tm) : COLD((0.15 + 0.55 * -tm).toFixed(2)); };
     const lab = (k, x, y, small) => { const v = zs[k], few = v.a < MIN_ATT; return `<text class="zl" x="${x}" y="${y}" style="${small ? 'font-size:34px' : ''}${few ? ';fill:#c6cbd4' : ''}">${few ? `${v.m}/${v.a}` : pct(v.m, v.a)}</text><text class="zs" x="${x}" y="${y + (small ? 30 : 40)}" style="${small ? 'font-size:24px' : ''}">${few ? '' : `${v.m}/${v.a}`}</text>`; };
     zl.innerHTML = `<rect class="zone" x="${X(-750)}" y="${Y(1242.5)}" width="1500" height="1400" fill="${col('a3', zs.a3.m, zs.a3.a)}"/>
       <rect class="zone" x="${X(-750)}" y="${Y(141.5)}" width="90" height="299" fill="${col('c3', zs.c3.m, zs.c3.a)}"/><rect class="zone" x="${X(660)}" y="${Y(141.5)}" width="90" height="299" fill="${col('c3', zs.c3.m, zs.c3.a)}"/>
