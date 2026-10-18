@@ -20,7 +20,6 @@ usage: python winprob.py          fit on TRAIN, validate on this season's games 
 import json
 import math
 import os
-import sys
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 TRAIN = ["E2025"]                 # seasons with the full play-by-play in warehouse/ (older seasons keep only shots)

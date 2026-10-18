@@ -4,8 +4,11 @@ on:
   schedule:
     - cron: "*/5 17-23 * * *"   # game evenings: every 5 minutes, runs only when a game has finished since the last build
     - cron: "*/5 0-1 * * *"
-    - cron: "30 2 * * *"        # 02:30 UTC nightly: always runs (rosters, photos, late corrections)
-  workflow_dispatch:            # run by hand from the Actions tab, or from an external scheduler; runs only if a game has finished unless force is set
+    - cron: "30 2 * * *"        # nightly (rosters, photos, late corrections): GitHub often fires these hours late, so
+    - cron: "17 3 * * *"        # several slots are scheduled; the first one that fires after 02:30 UTC does the
+    - cron: "47 3 * * *"        # nightly run and the rest find it already done (see "Nightly due?" below). A dispatch
+    - cron: "17 4 * * *"        # from the outside scheduler after 02:30 UTC counts the same way.
+  workflow_dispatch:            # run by hand from the Actions tab, or from an external scheduler; runs only if a game has finished or the nightly is due, unless force is set
     inputs:
       force:
         description: Run even if no game has finished since the last build
@@ -13,7 +16,7 @@ on:
         default: false
 
 permissions:
-  contents: write
+  contents: read             # only the update job, which pushes the data commit, gets write access
 
 concurrency:
   group: update-data
@@ -31,24 +34,34 @@ jobs:
       run: ${{ steps.new.outputs.run }}
     steps:
       - uses: actions/checkout@v4
-      - name: Has a game finished since the last build?
+      - name: Has a game finished since the last build, or is the nightly due?
         id: new
         run: |
           python - <<'EOF'
           import json, os, urllib.request
+          from datetime import datetime, timezone
           req = urllib.request.Request(f"https://feeds.incrowdsports.com/provider/euroleague-feeds/v2/competitions/E/seasons/{os.environ['SEASON']}/games?limit=500", headers={"User-Agent": "Mozilla/5.0"})
           feed = json.load(urllib.request.urlopen(req, timeout=60))["data"]
           final = sum(1 for g in feed if g.get("status") == "result")
           p = f"teams/{os.environ['SEASON']}/status.json"
-          built = json.load(open(p))["games"] if os.path.exists(p) else -1
-          run = final > built
-          print(f"final games in the feed: {final}; in the last build: {built}; run: {run}")
+          status = json.load(open(p)) if os.path.exists(p) else {}
+          built = status.get("games", -1)
+          # the nightly is due once per UTC day after 02:30, until a full run has finished (checked_at is written by
+          # every full run that publishes, so a failed nightly is retried by the next run)
+          now = datetime.now(timezone.utc)
+          slot = now.replace(hour=2, minute=30, second=0, microsecond=0)
+          last = datetime.fromisoformat(status["checked_at"].replace("Z", "+00:00")) if status.get("checked_at") else None
+          nightly = now >= slot and (last is None or last < slot)
+          run = final > built or nightly
+          print(f"final games in the feed: {final}; in the last build: {built}; last full run: {last}; nightly due: {nightly}; run: {run}")
           open(os.environ["GITHUB_OUTPUT"], "a").write(f"run={'true' if run else 'false'}\n")
           EOF
 
   update:
     needs: check
-    if: needs.check.outputs.run == 'true' || github.event.inputs.force == 'true' || github.event.schedule == '30 2 * * *'
+    if: needs.check.outputs.run == 'true' || github.event.inputs.force == 'true'
+    permissions:
+      contents: write
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     outputs:
@@ -71,15 +84,8 @@ jobs:
           "$CHROME" --version
           echo "CHROME=$CHROME" >> "$GITHUB_ENV"
 
-      - name: Gate and warehouse self-tests
-        run: |
-          python tests/test_checks.py
-          python tests/test_warehouse.py
-          python tests/test_model.py
-          python tests/test_profile.py
-          python tests/test_service.py
-          python tests/test_monitor.py
-          python tests/test_rapm.py
+      - name: Python self-tests (every tests/test_*.py)
+        run: python tests/run_all.py
 
       - name: Restore feed cache
         uses: actions/cache@v4

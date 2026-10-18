@@ -7,7 +7,6 @@ usage: python model/score.py E2026
 """
 import os
 import sys
-import duckdb
 import joblib
 import numpy as np
 import pandas as pd

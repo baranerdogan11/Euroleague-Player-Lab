@@ -2,7 +2,7 @@
 
 usage: python tests/test_profile.py
 """
-import json, os, subprocess, sys
+import json, os, sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 pr = json.load(open(os.path.join(ROOT, "model", "shooting_priors.json")))
 checks = {
