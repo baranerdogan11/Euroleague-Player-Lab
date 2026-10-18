@@ -235,10 +235,6 @@ h1 span span{display:block;color:var(--club2)}
 .role b{display:block;font-family:var(--cond);font-weight:900;font-style:italic;font-size:28px;line-height:1;font-variant-numeric:tabular-nums}
 .role span{display:block;font-family:var(--cond);font-weight:700;font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-top:6px}
 .role div.small b{color:var(--muted)}
-.form{display:flex;align-items:center;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--ink2);margin:0 0 12px;padding:10px 12px;background:var(--panel);border:1px solid var(--line)}
-.form b{font-family:var(--cond);font-size:16px;font-weight:800;font-style:italic;color:var(--ink)}
-.form small{color:var(--muted)}
-.form svg{flex:none}
 .diet .row{display:grid;grid-template-columns:96px 1fr;gap:10px;align-items:center;font-size:12px;color:var(--ink2);margin:6px 0}
 .diet .stack{display:flex;height:14px;overflow:hidden;background:var(--panel2)}
 .diet .stack i{display:block;height:100%}
@@ -589,8 +585,6 @@ html[data-look="club"] .panel .in{padding:0 20px 20px}
 html[data-look="club"] .panel .sub{font-size:14px;color:var(--muted)}
 html[data-look="club"] .btn{border-radius:999px;clip-path:none;font-family:var(--sans);font-weight:700;font-size:13px;letter-spacing:.04em;text-transform:none;padding:0 18px;min-height:40px}
 html[data-look="club"] .toolbar .btn{padding:8px 16px;clip-path:none}
-html[data-look="club"] .form{background:var(--bg);border:1px solid var(--line);border-radius:8px;font-size:14px}
-html[data-look="club"] .form b{font-weight:var(--cond-w);font-style:normal;font-size:20px}
 html[data-look="club"] .trend{background:var(--bg);border-radius:8px}
 html[data-look="club"] .opener{background:var(--panel);border-radius:8px;overflow:hidden}
 html[data-look="club"] .opener .head b{font-weight:var(--cond-w);font-style:normal;font-size:28px}
@@ -1647,7 +1641,7 @@ html[data-look="club"] .pnav #follow{border-radius:0}
 /* ---- end game pages ---- */
 /* ---- Game Center look · the rest of the app (header search, player, club and cover pages): square corners, orange heading markers, table headers in the club colour, square switches ---- */
 html[data-look="club"] .top #q{border-radius:0}
-html[data-look="club"] :is(.hero,.bio,.tag,.ticker,.tile,#log-panel,.trend,#shots-sec,.court-wrap,#prof-panel,.gauge,.form,.up,#cmp-panel,.panel,#club,.cb-next){border-radius:0}
+html[data-look="club"] :is(.hero,.bio,.tag,.ticker,.tile,#log-panel,.trend,#shots-sec,.court-wrap,#prof-panel,.gauge,.up,#cmp-panel,.panel,#club,.cb-next){border-radius:0}
 html[data-look="club"] .wrap .panel div:not(.medal):not(.disc){border-radius:0}
 html[data-look="club"] :is(#prev,#next,#share,#embed,.btn){border-radius:0}
 html[data-look="club"] .seg{border-radius:0;padding:0;gap:0}
@@ -1803,7 +1797,6 @@ html[data-look="club"] .cv-nums li,html[data-look="club"] #role>div{border-radiu
       <section class="panel">
         <h2>Season stats</h2>
         <div class="in">
-          <div class="form" id="form" hidden></div>
           <div class="lb-none stats-none" id="stats-none" hidden><b>No Euroleague minutes yet</b><span id="stats-none-sub"></span></div>
           <div class="splits" id="splits"></div>
           <div id="xfg"></div>
@@ -2142,7 +2135,7 @@ function renderPlayer(){
   const nx = tm.upcoming && tm.upcoming[0], nxTxt = nx ? `${t('Round {n}', {n: nx.round})} ${nx.home === realCode() ? t('vs') + ' ' + shortName(nx.away) : '@ ' + shortName(nx.home)} · ${fmtDate(nx.date)}` : null;
   $('#stats-none').hidden = played; $('#stats-none-sub').textContent = played ? '' : `${tm.games_played ? plural(tm.games_played, "No minutes in the club's {n} game so far", "No minutes in the club's {n} games so far") : t('The club has not played yet')}${nxTxt ? ` · ${t('next')}: ${nxTxt}` : ''} · ${t('his bio and career are above.')}`;
   ['#splits', '#xfg', '#zone-cap'].forEach(id => { $(id).hidden = !played; }); $('#zones').closest('.scroll').hidden = !played; $('.toolbar').hidden = !played;
-  renderTiles(); renderRole(); renderForm(); requestAnimationFrame(scrollEnds); $('#f-ast').hidden = !d.shots.some(s => s[11] != null); if ($('#f-ast').hidden) { state.ast = 'all'; $('#f-ast').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x.dataset.v === 'all')); }
+  renderTiles(); renderRole(); requestAnimationFrame(scrollEnds); $('#f-ast').hidden = !d.shots.some(s => s[11] != null); if ($('#f-ast').hidden) { state.ast = 'all'; $('#f-ast').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x.dataset.v === 'all')); }
   const xf = d.xfg;
   $('#xfg').innerHTML = xf ? `<div class="xfg-row"><div><b>${(100 * xf.xfg).toFixed(1)}%</b><span>${t('Expected FG% for a league-average shooter on his shots')}</span></div><div><b>${((xf.pts / xf.att) || 0).toFixed(2)} <i>${t('vs')}</i> ${(xf.xpts / xf.att).toFixed(2)}</b><span>${t('Points per attempt, his vs a league-average shooter')}</span></div><div class="${xf.pts - xf.xpts >= 0 ? 'up' : 'down'}"><b>${xf.pts - xf.xpts >= 0 ? '+' : ''}${f1(xf.pts - xf.xpts)}</b><span>${t('Points above expectation, {n} attempts', {n: xf.att})}</span></div></div>` : '';
   const fga = tot.fga2 + tot.fga3, ts = (fga + 0.44 * tot.fta) ? tot.pts / (2 * (fga + 0.44 * tot.fta)) : 0;
@@ -2194,17 +2187,6 @@ function renderRole(){
   el.innerHTML = items.map(([k, l, v, u, tip]) => { const few = k === 'ts' && (tot.fga2 + tot.fga3 + 0.44 * tot.fta) < MIN_ATT; return `<div class="${few ? 'small' : ''}" style="--p:${pp[k] ?? 0}%" data-tip="${tip}${pp[k] != null ? ` · ${t('{ord} percentile among {n} {pos}', {ord: ord(pp[k]), n: d.pos_n, pos: lowPos(posN)})}` : ''}"><b>${v == null ? '–' : ((k === 'plusminus' || k === 'rapm') && v > 0 ? '+' : '') + v}${v == null ? '' : u}</b><span>${l}</span>${pp[k] != null && pp[k] >= 50 ? `<small class="rk">${t('top {p}%', {p: Math.max(1, Math.round(100 - pp[k]))})}</small>` : ''}</div>`; }).join('');
   $('#role-legend').textContent = row ? `${t('Role')} · ${t('this game only')} · ${row[1]} ${t('minutes')}` : d.pct_pos ? `${t('Role')} · ${t('underline: rank among {n} {pos} (3+ games, 10+ min), longer is better', {n: d.pos_n, pos: lowPos(posN)})}` : '';
   $('#role-foot').hidden = true;
-}
-function renderForm(){
-  const d = ds(), el = $('#form'), log = d.log;
-  if (log.length < 6) { el.hidden = true; return; }
-  el.hidden = false;
-  const agg = rows => { const s = rows.reduce((a, r) => ({min: a.min + r[1], pts: a.pts + r[2], fga: a.fga + r[9] + r[11], fta: a.fta + r[13]}), {min: 0, pts: 0, fga: 0, fta: 0}); return {p36: s.min ? 36 * s.pts / s.min : 0, ts: tsOf(s.pts, s.fga, s.fta)}; };
-  const last = agg(log.slice(-5)), season = agg(log), pts = log.slice(-12).map(r => r[2]);
-  const w = 120, h = 26, mx = Math.max(...pts, 1), sx = i => 2 + i / (pts.length - 1) * (w - 4), sy = v => h - 2 - v / mx * (h - 4);
-  const spark = `<svg viewBox="0 0 ${w} ${h}" width="${w}" height="${h}"><path d="M${pts.map((v, i) => `${sx(i).toFixed(1)} ${sy(v).toFixed(1)}`).join(' L')}" fill="none" stroke="var(--club2)" stroke-width="2" stroke-linejoin="round"/><circle cx="${sx(pts.length - 1).toFixed(1)}" cy="${sy(pts[pts.length - 1]).toFixed(1)}" r="3" fill="var(--club2)"/></svg>`;
-  const arrow = v => v > 0.5 ? '▲' : v < -0.5 ? '▼' : '▶';
-  el.innerHTML = `<span><small>${t('Last 5 games')}</small> <b>${last.p36.toFixed(1)}</b> ${t('pts')} / 36 <small>(${t('season')} ${season.p36.toFixed(1)}) ${arrow(last.p36 - season.p36)}</small></span><span><b>${last.ts != null ? (100 * last.ts).toFixed(1) + '%' : '–'}</b> TS <small>(${season.ts != null ? (100 * season.ts).toFixed(1) + '%' : '–'})</small></span>${spark}<small>${t('points, last {n} games', {n: pts.length})}</small>`;
 }
 // minutes and role game by game: bars for minutes (filled when he started), usage as a line, missed games as gaps, and a
 // last-five-against-season read on minutes flagged only when the change beats his own game-to-game spread
