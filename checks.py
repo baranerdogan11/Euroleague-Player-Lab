@@ -7,7 +7,6 @@ attempts; every referenced photo and crest exists. Writes data/<season>/status.j
 usage: python checks.py E2026
 """
 import datetime as dt
-import glob
 import json
 import os
 import sys

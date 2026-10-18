@@ -18,9 +18,8 @@ import uuid
 from typing import List, Optional
 
 import joblib
-import numpy as np
 import pandas as pd
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field, field_validator
 

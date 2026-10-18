@@ -31,7 +31,7 @@ K_SHRINK = 150.0       # attempts at which a shooter's own record gets half the 
 PRIOR_DECAY = 0.6      # a shooter's record carried into a new season keeps this share of its weight (rosters and roles change)
 SEED = 7
 
-from features import NUMERIC, BINARY, CATEG, FEATURES, featurize  # noqa: E402
+from features import CATEG, FEATURES, featurize  # noqa: E402
 
 
 def load_shots(season):

@@ -1,0 +1,9 @@
+# Python lint, run by test.yml on every PR. Start small: pyflakes (unused imports and names, undefined names) and
+# syntax errors. Bugbear (B) currently reports 48 findings, mostly loop variables used inside lambdas; add it once
+# those are reviewed.
+target-version = "py311"
+line-length = 120
+extend-exclude = [".venv", "node_modules", "cache", "data"]
+
+[lint]
+select = ["F", "E9"]

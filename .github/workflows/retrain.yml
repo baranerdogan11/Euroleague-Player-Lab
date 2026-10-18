@@ -13,7 +13,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read             # only the train job, which pushes the retrained model, gets write access
 
 concurrency:
   group: retrain-${{ github.ref }}
@@ -95,6 +95,8 @@ jobs:
   train:
     needs: [plan, fetch]
     if: ${{ !failure() && !cancelled() }}
+    permissions:
+      contents: write
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     steps:

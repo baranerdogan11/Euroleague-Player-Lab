@@ -35,11 +35,15 @@ in order.
 A GitHub Actions workflow (`.github/workflows/update.yml`) checks the games feed every 5 minutes on game evenings
 (17:00 to 02:00 UTC) and runs the pipeline as soon as a game has been marked final since the last build, so a player's
 page updates within about ten minutes of the final buzzer; a game still in progress is never fetched, because only
-games the feed marks `result` count as played. It also runs every night at 02:30 UTC regardless, after the last game
-of the day, and can be started by hand from the Actions tab. Each run:
+games the feed marks `result` count as played. It also does one full run every night after 02:30 UTC regardless, after
+the last game of the day. GitHub often fires scheduled runs hours late, so several nightly slots are scheduled (02:30,
+03:17, 03:47 and 04:17 UTC) and the first run after 02:30 UTC that finds no full run since then does the nightly; any
+dispatch from the outside scheduler after 02:30 UTC counts too, so one dispatch at 02:30 makes it punctual. A failed
+nightly is retried by the next run. The workflow can also be started by hand from the Actions tab. Each run:
 
 1. restores the feed cache, so only new games are downloaded
-2. runs the gate's own tests (`tests/test_checks.py`), which prove the checks catch what they should
+2. runs every Python self-test (`tests/run_all.py`, which picks up each `tests/test_*.py`), including the gate's own
+   tests, which prove the checks catch what they should
 3. fetches new games, roster changes (re-pulled every night, with start and end dates) and photos (`fetch_season.py`)
 4. runs the raw-feed gate (`checks.py`)
 5. builds the warehouse (`warehouse.py`): six Parquet tables under `warehouse/E2026/`, the silver layer, then the
@@ -64,8 +68,8 @@ of the day, and can be started by hand from the Actions tab. Each run:
 10. writes the monitoring snapshot (`model/monitor.py`), commits everything and deploys that commit to GitHub Pages
     (`.github/workflows/pages.yml`)
 
-Code changes go through `.github/workflows/test.yml`: on every pull request and every push to main it runs the
-self-tests, the warehouse assertions, the site smoke test on the committed page and a full rebuild from the
+Code changes go through `.github/workflows/test.yml`: on every pull request and every push to main it runs Ruff over
+the Python (`ruff check .`, rules in `ruff.toml`, pinned in `requirements-dev.txt`), the self-tests (`tests/run_all.py`), the warehouse assertions, the site smoke test on the committed page and a full rebuild from the
 warehouse (drift check and smoke test included). A push to main deploys to Pages only after all of that passes, so
 an untested commit never goes live. Pages must be set to deploy from GitHub Actions (Settings, Pages, Source).
 

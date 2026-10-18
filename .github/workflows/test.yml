@@ -34,7 +34,7 @@ jobs:
           python-version: "3.11"
           cache: pip
 
-      - run: pip install -r requirements.txt
+      - run: pip install -r requirements.txt -r requirements-dev.txt
 
       - name: Chrome for the site test
         run: |
@@ -43,16 +43,11 @@ jobs:
           "$CHROME" --version
           echo "CHROME=$CHROME" >> "$GITHUB_ENV"
 
-      - name: Gate, warehouse, model, profile, service and monitor self-tests
-        run: |
-          python tests/test_checks.py
-          python tests/test_warehouse.py
-          python tests/test_model.py
-          python tests/test_profile.py
-          python tests/test_service.py
-          python tests/test_monitor.py
-          python tests/test_rapm.py
-          python tests/test_winprob.py
+      - name: Python lint (Ruff)
+        run: ruff check .
+
+      - name: Python self-tests (every tests/test_*.py)
+        run: python tests/run_all.py
 
       - name: Warehouse assertions on the committed warehouse
         run: python warehouse_tests.py $SEASON

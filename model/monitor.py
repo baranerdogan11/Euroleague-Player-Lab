@@ -117,7 +117,7 @@ try:
     for attempt in range(2):
         try:
             body, first_ms = health(90); break
-        except Exception as e:
+        except Exception:
             if attempt == 1: raise
     body, warm_ms = health(30)
     api.update({"reachable": True, "latency_ms": warm_ms, "cold_start_ms": first_ms if first_ms > 5000 else None, "model_version": body.get("model_version"), "model_sha256": body.get("model_sha256")})

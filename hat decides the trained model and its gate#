@@ -1,1 +1,0 @@
-    paths: [model/training.json, model/xfg.py, model/features.py, tests/test_model.py, .github/workflows/retrain.yml]   
