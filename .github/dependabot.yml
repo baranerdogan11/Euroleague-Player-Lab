@@ -1,4 +1,5 @@
-# Weekly dependency updates. Each ecosystem's bumps arrive as one grouped PR, and test.yml gates them like any other change.
+# Weekly dependency updates. Minor and patch bumps for each ecosystem arrive as one grouped PR; a major version arrives
+# as its own PR, so one breaking upgrade cannot hold the safe ones back. test.yml gates them like any other change.
 version: 2
 updates:
   - package-ecosystem: pip
@@ -7,20 +8,29 @@ updates:
       interval: weekly
       day: monday
       timezone: Europe/Istanbul
-    open-pull-requests-limit: 3
+    open-pull-requests-limit: 5
     groups:
       python:
         patterns: ["*"]
+        update-types: [minor, patch]
+    ignore:
+      # the trained xFG model is a pickled scikit-learn object, so scikit-learn and joblib move only together with a
+      # retrain (retrain.yml), by hand
+      - dependency-name: scikit-learn
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
+      - dependency-name: joblib
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
   - package-ecosystem: npm
     directory: "/"
     schedule:
       interval: weekly
       day: monday
       timezone: Europe/Istanbul
-    open-pull-requests-limit: 3
+    open-pull-requests-limit: 5
     groups:
       node:
         patterns: ["*"]
+        update-types: [minor, patch]
   - package-ecosystem: github-actions
     directory: "/"
     schedule:
@@ -30,3 +40,4 @@ updates:
     groups:
       actions:
         patterns: ["*"]
+        update-types: [minor, patch]
