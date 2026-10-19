@@ -68,9 +68,9 @@
   },
   {
    "name": "xfg",
-   "version": "2026-10-16",
+   "version": "2026-10-19",
    "sha256": "595a07c6039cdcd69a45e34510868aba106c21e272aa0d4574415b72f1ca76c9",
-   "registered_at": "2026-10-16T10:35:09Z",
+   "registered_at": "2026-10-19T08:21:36Z",
    "trained_on": "E2025",
    "training_seasons": [
     "E2022",
