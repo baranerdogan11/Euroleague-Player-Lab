@@ -80,11 +80,13 @@ WARNINGS = [
 if "--no-lineups" in sys.argv:   # older substitution logs do not always reconstruct five on the floor; nothing built from them is kept
     TESTS = [t for t in TESTS if not t[0].startswith(("stints:", "oncourt:"))]
     WARNINGS = [t for t in WARNINGS if not t[0].startswith(("stints:", "oncourt:"))]
-warn = 0
+warned = []   # each warning that fired, by name with its row count, so status.json says what to look at, not only how many
 for name, q in WARNINGS:
     n = con.execute(q).fetchone()[0] or 0
     print(("PASS " if n == 0 else "WARN ") + name + ("" if n == 0 else f"  ({n} rows)"))
-    warn += n != 0
+    if n:
+        warned.append({"check": name, "rows": n})
+warn = len(warned)
 bad = 0
 for name, q in TESTS:
     n = con.execute(q).fetchone()[0] or 0
@@ -94,7 +96,7 @@ stats = {t: con.execute(f"select count(*) from {t}").fetchone()[0] for t in ["cl
 played = con.execute("select count(*) from games where played").fetchone()[0]
 import datetime, json
 json.dump({"season": SEASON, "checked_at": datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"), "clubs": stats["clubs"], "players": stats["players"],
-           "games": played, "shots": stats["shots"], "box_lines": stats["box"], "tests": len(TESTS), "failures": bad, "warnings": warn, "ok": bad == 0},
+           "games": played, "shots": stats["shots"], "box_lines": stats["box"], "tests": len(TESTS), "failures": bad, "warnings": warn, "warning_list": warned, "ok": bad == 0},
           open(os.path.join(W, "status.json"), "w"), indent=1)
 print("rows:", stats)
 print("RESULT:", "OK" if not bad else f"{bad} test(s) failed")

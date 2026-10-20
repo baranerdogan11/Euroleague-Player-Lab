@@ -15,6 +15,7 @@ checks = {
     "reference calibration covers the training season": len(m["calibration"]["reference_rounds"]) >= 30,
     "reference log loss beats the constant baseline": all(x["logloss"] < x["logloss_constant"] for x in m["calibration"]["reference_rounds"]),
     "api section reports unreachable": m["api"]["reachable"] is False,
+    "pipeline names its warnings": isinstance(m["pipeline"].get("warnings"), list),
     "production model identified": m["model"].get("stage") == "production" and len(m["model"].get("sha256", "")) == 12,
 }
 ok = True
