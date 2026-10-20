@@ -627,5 +627,21 @@
  "{w} beat {l}": "{w}, {l} karşısında galip",
  "{w} beat {l} in overtime": "{w}, uzatmada {l} karşısında galip",
  "{w} were down to {p}% win probability before closing it out {s}.": "{w}, kazanma olasılığı %{p} seviyesine kadar düştükten sonra maçı {s} aldı.",
- "← Defensive rating, fewer is better": "← Savunma reytingi, azı makbul"
+ "← Defensive rating, fewer is better": "← Savunma reytingi, azı makbul",
+ "{w} come back from {n} down against {l}": "{w}, {l} karşısında {n} sayı geriden geldi",
+ "{w} edge {l}": "{w}, {l} karşısında kıl payı kazandı",
+ "{w} rout {l} by {n}": "{w}, {l} karşısında {n} farkla kazandı",
+ "{w} cruise past {l}": "{w}, {l} karşısında rahat kazandı",
+ "{w} lead wire to wire against {l}": "{w}, {l} karşısında hiç geriye düşmedi",
+ "{w} win at {l}": "{w}, deplasmanda {l} karşısında kazandı",
+ "The lead changed hands {n} times before {w} won it {s}.": "Liderlik {n} kez el değiştirdi; {w} maçı {s} kazandı.",
+ "{l} led by {n} at one point, but {w} won it {s}.": "{l} bir ara {n} sayı öndeydi, ama {w} maçı {s} kazandı.",
+ "{w} led by as many as {n} and won it {s}.": "{w} farkı {n} sayıya kadar açtı ve maçı {s} kazandı.",
+ "{l} never led; {w} won it {s}.": "{l} hiç öne geçemedi; {w} maçı {s} kazandı.",
+ "{w} won it {s}.": "{w} maçı {s} kazandı.",
+ "Previous game": "Önceki maç",
+ "Next game": "Sonraki maç",
+ "carousel": "kaydırmalı liste",
+ "Games of round {n}": "{n}. haftanın maçları",
+ "{w} hold off {l}": "{w}, {l} karşısında geri dönüşe izin vermedi"
 }
