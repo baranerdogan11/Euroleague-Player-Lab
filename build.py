@@ -750,7 +750,22 @@ def lineups_json():
     out = {"season": SEASON, "built": datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC"), "games": {c: t["g"] for c, t in team.items()}, "names": names, "lineups": lineups, "onoff": onoff,
            "n_all": con.execute("select count(*) from (select club, players from stints group by 1, 2)").fetchone()[0], "bygame": bygame}
     json.dump(out, open(os.path.join(OUT, "lineups.json"), "w"), separators=(",", ":"), ensure_ascii=False)
+    club_lineups(out)
     return {"n": len(lineups), "n_all": out["n_all"], "players": sum(len(v) for v in onoff.values()), "bygame": n_bygame}
+
+
+def club_lineups(out):
+    """One small file per club (teams/<season>/lineups/<CLUB>.json) for the club page, which shows only that club's fives and
+    on/off: the full lineups.json grows every round and stays for the #lineups page alone. Same keys, cut to the one club."""
+    ldir = os.path.join(OUT, "lineups")
+    os.makedirs(ldir, exist_ok=True)
+    for c in sorted(set(out["games"]) | set(out["onoff"])):
+        ls = [l for l in out["lineups"] if l["c"] == c]
+        oo = out["onoff"].get(c, [])
+        pids = {p for l in ls for p in l["p"]} | {p["pid"] for p in oo}
+        club = {"season": out["season"], "built": out["built"], "games": {c: out["games"].get(c, 0)}, "names": {k: v for k, v in out["names"].items() if k in pids},
+                "lineups": ls, "onoff": {c: oo}}
+        json.dump(club, open(os.path.join(ldir, c + ".json"), "w"), separators=(",", ":"), ensure_ascii=False)
 
 
 BYGAME = {}
