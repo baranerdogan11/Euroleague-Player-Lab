@@ -56,6 +56,11 @@ if r1.returncode == 0:
     n_shots, n_box = duckdb.query(f"select (select count(*) from read_parquet('{W}/shots.parquet')), (select count(*) from read_parquet('{W}/box.parquet'))").fetchone()
     print(f"fixture parsed: {n_box} box lines, {n_shots} shots")
     ok = ok and n_box == 24 and n_shots > 100
+if r2.returncode == 0:
+    st = json.load(open(os.path.join(W, "status.json")))
+    named = st.get("warning_list")
+    print(f"status.json names {len(named or [])} warning(s) for a count of {st.get('warnings')}")
+    ok = ok and isinstance(named, list) and len(named) == st["warnings"] and all(w.get("check") and w.get("rows", 0) > 0 for w in named)
 shutil.rmtree(CACHE, ignore_errors=True); shutil.rmtree(W, ignore_errors=True)
 print("ALL PASS" if ok else "FAILED")
 sys.exit(0 if ok else 1)

@@ -131,7 +131,8 @@ prod = next((m for m in registry if m.get("stage") == "production"), None)
 model_info = {"version": card.get("version"), "trained_on": card.get("trained_on"), "training_seasons": card.get("training_seasons"), "n_shots": card.get("n_shots"), "metrics_test": card.get("metrics_test", {}).get(card.get("chosen")),
               "baseline_zone": card.get("metrics_test", {}).get("zone_fg"), "sha256": (prod or {}).get("sha256", "")[:12], "stage": (prod or {}).get("stage"), "registry_entries": len(registry)}
 
-monitor = {"season": SEASON, "generated_at": now.strftime("%Y-%m-%d %H:%M UTC"), "pipeline": {"last": record, "history": history[-60:], "tests": status.get("tests")},
+monitor = {"season": SEASON, "generated_at": now.strftime("%Y-%m-%d %H:%M UTC"), "pipeline": {"last": record, "history": history[-60:], "tests": status.get("tests"),
+                                                                                      "warnings": status.get("warning_list", [])},
            "freshness": freshness, "calibration": {"live_rounds": live_rounds, "live_deciles": live_deciles, "live_summary": live_summary, "reference_rounds": ref_rounds,
                                                     "reference_deciles": ref_deciles, "reference_season": card.get("trained_on"), "constant_baseline": 0.474},
            "shooter_coverage": shooter_cov, "api": api, "model": model_info}

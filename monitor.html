@@ -75,6 +75,7 @@ tbody tr:hover td{background:rgba(255,255,255,.03)}
 </header>
 <div class="wrap">
   <div class="grid" id="tiles"></div>
+  <div class="panel" id="warns" style="margin-top:14px" hidden></div>
 
   <section>
     <h2>Model calibration in production</h2>
@@ -108,15 +109,18 @@ fetch('teams/E2026/monitor.json?t=' + Date.now()).then(r => r.json()).then(M => 
   $('#gen').textContent = 'Generated ' + M.generated_at;
   const P = M.pipeline.last, F = M.freshness, L = M.calibration.live_summary, A = M.api, MO = M.model;
   const tile = (k, v, s, cls = '') => `<div class="tile ${cls}"><span class="dot"></span><span class="k">${k}</span><b>${v}</b><span class="s">${s}</span></div>`;
+  const WN = M.pipeline.warnings || [];
   const stale = F.days_since_last_game != null && F.days_since_last_game > 7 && F.next_game_date && new Date(F.next_game_date) < new Date();
   $('#tiles').innerHTML = [
-    tile('Pipeline', P.ok ? 'OK' : 'FAILED', `${P.at.replace('T', ' ').slice(0, 16)} UTC · ${M.pipeline.tests || 0} assertions`, P.ok ? 'ok' : 'bad'),
+    tile('Pipeline', P.ok ? 'OK' : 'FAILED', `${P.at.replace('T', ' ').slice(0, 16)} UTC · ${M.pipeline.tests || 0} assertions${WN.length ? ` · ${WN.length} warning${WN.length > 1 ? 's' : ''}` : ''}`, P.ok ? (WN.length ? 'warn' : 'ok') : 'bad'),
     tile('Data freshness', F.played + ' / ' + F.scheduled, F.last_played_date ? `last game ${F.last_played_date} · ${F.days_since_last_game} days ago` : `season starts ${F.next_game_date}`, stale ? 'warn' : 'ok'),
     tile('Live log loss', L ? L.logloss.toFixed(3) : '–', L ? `${L.shots.toLocaleString()} shots · constant ${L.logloss_constant.toFixed(3)} · trained ${MO.metrics_test.logloss}` : 'no scored shots yet', L ? (L.logloss < L.logloss_constant ? 'ok' : 'bad') : ''),
     tile('League points vs expectation', L && L.pae_ctx_per100 != null ? (L.pae_ctx_per100 >= 0 ? '+' : '') + L.pae_ctx_per100.toFixed(1) : '–', 'per 100 attempts, all shooters, season to date · should sit near 0; a drift means every player reads above or below expectation at once', L && L.pae_ctx_per100 != null ? (Math.abs(L.pae_ctx_per100) < 2 ? 'ok' : 'bad') : ''),
     tile('Serving API', A.reachable ? 'UP' : 'DOWN', A.reachable ? `${A.latency_ms} ms warm${A.cold_start_ms ? ` · woke in ${(A.cold_start_ms / 1000).toFixed(0)} s` : ''} · model ${A.model_version} (${A.model_sha256})` : `${A.error || 'unreachable'} · the free instance sleeps when idle and did not wake within the probe; the site does not depend on it`, A.reachable ? 'ok' : 'bad'),
     tile('Production model', MO.version || '–', `${MO.stage || ''} · ${MO.sha256} · trained on ${trainedLabel(MO)} (${(MO.n_shots || 0).toLocaleString()} shots)`, 'ok'),
   ].join('');
+  // the warehouse warnings from the last run, by name: reported, never blocking
+  if (WN.length) { $('#warns').hidden = false; $('#warns').innerHTML = `<h2 style="font-size:16px">Warnings from the last run</h2><table><tbody>${WN.map(w => `<tr><td>${w.check}</td><td>${w.rows} row${w.rows > 1 ? 's' : ''}</td></tr>`).join('')}</tbody></table>`; }
 
   // ---- calibration by round
   const live = M.calibration.live_rounds, ref = M.calibration.reference_rounds, W = 560, H = 240, Lm = 44, R = 12, T = 12, B = 28;
