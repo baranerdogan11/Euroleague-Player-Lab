@@ -1044,8 +1044,24 @@ html[data-look] .cv-th a{color:var(--cvblue)}
 .cv-crest{width:var(--s,22px);height:var(--s,22px);border-radius:50%;object-fit:contain;background:#fff;padding:2px;flex:none;box-shadow:0 0 0 1px var(--cvsep);display:inline-block;vertical-align:middle}
 /* the board: six columns on a laptop, two on a phone */
 .cv-bento{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));grid-auto-rows:minmax(150px,auto);gap:12px}
-.cv-hero{grid-column:span 3;grid-row:span 2;padding:22px 24px;display:grid;align-content:end;gap:0;color:#fff;background:linear-gradient(160deg,color-mix(in srgb,var(--cb) 88%,#fff) 0%,var(--cb) 55%,color-mix(in srgb,var(--cb) 70%,#000) 100%)}
+@property --cb{syntax:'<color>';inherits:true;initial-value:#1f2b47}
+.cv-hero{grid-column:span 3;grid-row:span 2;padding:0;display:grid;color:#fff;transition:transform .45s var(--cvspring),box-shadow .45s var(--cvspring),--cb .6s var(--cvspring);background:linear-gradient(160deg,color-mix(in srgb,var(--cb) 88%,#fff) 0%,var(--cb) 55%,color-mix(in srgb,var(--cb) 70%,#000) 100%)}
+.cv-hero-a{display:grid;align-content:end;padding:22px 24px;border-radius:inherit;outline-offset:-4px}
 .cv-hero .cv-th{color:rgba(255,255,255,.8);position:relative}
+html[data-look] .cv .cv-hero h2{color:#fff}
+/* the steps through the round: a glass pill top left, the count between two arrows; a step slides the story in from its side */
+.cv-hnav{position:absolute;top:14px;left:16px;display:flex;align-items:center;gap:2px;padding:3px;border-radius:999px;background:rgba(255,255,255,.16);backdrop-filter:blur(12px) saturate(160%);-webkit-backdrop-filter:blur(12px) saturate(160%);z-index:1}
+.cv-hnav button{width:34px;height:34px;border:0;border-radius:50%;background:transparent;color:#fff;display:grid;place-items:center;cursor:pointer;padding:0;transition:background .2s,transform .35s var(--cvspring)}
+.cv-hnav button:hover{background:rgba(255,255,255,.2)}
+.cv-hnav button:active{transform:scale(.88);transition-duration:.1s}
+.cv-hnav button:focus-visible{outline:2px solid #fff;outline-offset:1px}
+.cv-hnav span{min-width:46px;text-align:center;font-size:12.5px;font-weight:600;font-variant-numeric:tabular-nums;color:rgba(255,255,255,.92)}
+@media (prefers-reduced-transparency:reduce){.cv-hnav{background:rgba(0,0,0,.35);backdrop-filter:none;-webkit-backdrop-filter:none}}
+.cv-hero-a.in-r > *,.cv-hero-a.in-l > *{animation:cv-in .5s var(--cvspring) both}
+.cv-hero-a.in-l{--dx:-18px}.cv-hero-a.in-r{--dx:18px}
+.cv-hero-a.in-r > img,.cv-hero-a.in-l > img{animation-duration:.6s}
+@keyframes cv-in{from{opacity:0;translate:var(--dx) 0}}
+@media (prefers-reduced-motion:reduce){.cv-hero-a > *{animation:none!important}}
 .cv-hero img{position:absolute;right:-6%;bottom:0;height:88%;width:auto;max-width:none;filter:drop-shadow(0 20px 30px rgba(0,0,0,.35));pointer-events:none}
 .cv-hero h2{font-size:clamp(26px,2.7vw,38px);line-height:1;letter-spacing:-.035em;color:#fff;max-width:60%;text-wrap:balance;position:relative}
 .cv-hero p{margin:12px 0 0;font-size:14.5px;line-height:1.47;max-width:58%;color:rgba(255,255,255,.92);position:relative;letter-spacing:-.01em}
@@ -1141,7 +1157,7 @@ html[data-look] .cv-foot a{color:var(--cvink2)}
   .cv-bar{padding:0 14px;height:50px;gap:10px}.cv-bar .cv-id small{display:none}.cv-bar .lang{margin-left:auto}
   .cv-in{padding:16px 14px 36px;gap:10px}.cv-head{grid-template-columns:1fr;gap:12px}.cv-cta{justify-content:stretch}.cv-search{flex:1 1 100%}.cv-go{flex:1 1 100%;justify-content:center}
   .cv-bento{gap:10px}.cv-card{padding:14px 16px}
-  .cv-hero{min-height:440px;padding:18px 18px}.cv-hero img{height:42%;top:0;bottom:auto;right:-6%}.cv-hero p{display:none}.cv-hero h2{max-width:none}.cv-big{flex-wrap:nowrap;gap:18px}.cv-big b{font-size:30px}
+  .cv-hero{min-height:500px;will-change:transform}.cv-hero-a{padding:18px 18px}.cv-hnav{top:12px;left:12px}.cv-hero img{height:min(46%,250px);top:14px;bottom:auto;right:10px;-webkit-mask-image:linear-gradient(#000 78%,transparent);mask-image:linear-gradient(#000 78%,transparent);filter:none}.cv-hero p{max-width:none;font-size:14px;margin-top:8px}.cv-hero h2{max-width:none}.cv-big{flex-wrap:nowrap;gap:18px}.cv-big b{font-size:30px}
   .cv-tbl td:nth-child(4),.cv-tbl th:nth-child(4){display:none}
   .cv-res{grid-template-columns:1fr 1fr;gap:2px 14px}.cv-res small{grid-column:1/-1}html[data-look] .cv-res a.cv-game{border-top:0}.cv-res .cv-game .tm b .full{display:none}.cv-res .cv-game .tm b .abbr{display:inline}
   .cv-clubs{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -2842,15 +2858,52 @@ const COVER = (() => {
   // each club card carries its own colourway (--cb base, --ca accent) for its ring; followed clubs come first with the star
   const clubs = () => { const F = FOLLOW.clubs(); $('#cv-clubs').innerHTML = [...META.clubs].sort((a, b) => Number(F.includes(b.code)) - Number(F.includes(a.code))).map(c => `<a href="#${c.code}" title="${c.name}"${F.includes(c.code) ? ' class="fl"' : ''} style="--cb:${c.base || '#1f2b47'};--ca:${c.accent || '#f26f21'}"><span class="medal"><img src="${c.logo || ''}" alt="" width="20" height="20" loading="lazy" decoding="async"></span><span class="txt"><span class="nm" lang="en">${c.short || c.code}</span><span class="co">${t(c.country || '')}</span></span>${F.includes(c.code) ? `<i class="fl-star" aria-label="${t('Following')}">${STAR(true)}</i>` : ''}</a>`).join(''); };
 
-  // the game of the round: the closest finish of the latest round; overtime and the lowest win probability come from its file
+  // the game of the round: the closest finish of the latest round. The tile steps through every game of the round (arrows,
+  // the arrow keys, a swipe), in the order of the results tile, each with a headline and two lines built from its shape:
+  // overtime, the winner's lowest win chance, each side's biggest lead and the lead changes (g[11..15], from build.py)
   const feature = ROUND.length ? [...ROUND].sort((a, b) => Math.abs(a[5] - a[6]) - Math.abs(b[5] - b[6]) || b[0] - a[0])[0] : null;
-  let featured = null;   // its file once fetched
-  function hero(g){
-    const w = winner(g), l = loser(g), d = featured, ot = !!(d && d.q && d.q.length > 4), k = CLUBS[w] || {};
-    const low = d && d.wp && d.wp.v && d.wp.v.length ? Math.round(Math.min(...d.wp.v.map(v => g[5] > g[6] ? v : 1000 - v)) / 10) : null;   // wp.v is the home win chance in thousandths
-    const head = t(ot ? '{w} beat {l} in overtime' : '{w} beat {l}', {w: shortName(w), l: shortName(l)});
-    const lede = t('{p}: {pts} points and {pir} PIR, the line of the game.', {p: full(g[7] || ''), pts: g[8], pir: g[9]}) + (low != null ? ' ' + t('{w} were down to {p}% win probability before closing it out {s}.', {w: shortName(w), p: low, s: score(g)}) : '');
-    return `<a class="cv-card cv-hero" href="#game/${g[0]}" style="--cb:${k.base || '#1f2b47'}"><img src="${g[10] || PLACEHOLDER}" alt="" loading="lazy"><span class="cv-th"><span>${t('Game of the round')}</span></span><span class="cv-chip">${score(g)}${ot ? ` · ${t('OT')}` : ''}</span><h2>${head}</h2><p>${lede}</p><span class="cv-big"><span><b>${g[8]}</b><i>${t('Points')}</i></span><span><b>${g[9]}</b><i>PIR</i></span>${low != null ? `<span><b>${low}%</b><i>${t('Lowest win prob.')}</i></span>` : ''}</span></a>`;
+  const RUN = [...ROUND].sort((a, b) => a[2] < b[2] ? -1 : a[2] > b[2] ? 1 : a[0] - b[0]);
+  let heroCode = feature && feature[0];   // the game on show, kept across redraws
+  function story(g){
+    const w = winner(g), l = loser(g), v = {w: shortName(w), l: shortName(l), s: score(g).replace('–', '\u2060–\u2060')}, m = Math.abs(g[5] - g[6]);
+    const [ot, low, upW, upL, flips] = g.slice(11, 16), home = w === g[3];
+    const head = ot ? t('{w} beat {l} in overtime', v)
+      : upL >= 10 ? t('{w} come back from {n} down against {l}', {...v, n: upL})
+      : m <= 3 ? t('{w} edge {l}', v)
+      : m >= 20 ? t('{w} rout {l} by {n}', {...v, n: m})
+      : m >= 15 ? t('{w} cruise past {l}', v)
+      : upW - m >= 12 ? t('{w} hold off {l}', v)
+      : upL === 0 ? t('{w} lead wire to wire against {l}', v)
+      : !home ? t('{w} win at {l}', v) : t('{w} beat {l}', v);
+    // the second line: the first fact the headline has not told already
+    const said = ot ? 'ot' : upL >= 10 ? 'back' : m >= 15 ? 'big' : upL === 0 ? 'wire' : '';
+    const tail = low != null && low <= 25 && upL > 0 ? t('{w} were down to {p}% win probability before closing it out {s}.', {...v, p: low})
+      : flips >= 8 ? t('The lead changed hands {n} times before {w} won it {s}.', {...v, n: flips})
+      : upL >= 10 && said !== 'back' ? t('{l} led by {n} at one point, but {w} won it {s}.', {...v, n: upL})
+      : upW >= 15 && (said !== 'big' || upW > m) ? t('{w} led by as many as {n} and won it {s}.', {...v, n: upW})
+      : upL === 0 && said !== 'wire' ? t('{l} never led; {w} won it {s}.', v)
+      : t('{w} won it {s}.', v);
+    return {head, lede: (g[7] ? t('{p}: {pts} points and {pir} PIR, the line of the game.', {p: full(g[7]), pts: g[8], pir: g[9]}) + ' ' : '') + tail, low, ot};
+  }
+  const heroLink = (g, dx) => { const x = story(g);
+    return `<a class="cv-hero-a${dx ? (dx > 0 ? ' in-r' : ' in-l') : ''}" href="#game/${g[0]}"><img src="${g[10] || PLACEHOLDER}" alt="" loading="lazy"><span class="cv-th"><span>${g === feature ? t('Game of the round') : t('Round {n}', {n: R})}</span></span><span class="cv-chip">${score(g)}${x.ot ? ` · ${t('OT')}` : ''}</span><h2>${x.head}</h2><p>${x.lede}</p><span class="cv-big">${g[7] ? `<span><b>${g[8]}</b><i>${t('Points')}</i></span><span><b>${g[9]}</b><i>PIR</i></span>` : ''}${x.low != null ? `<span><b>${x.low}%</b><i>${t('Lowest win prob.')}</i></span>` : ''}</span></a>`; };
+  const heroAt = () => Math.max(0, RUN.findIndex(g => g[0] === heroCode));
+  const arrow = d => `<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="${d < 0 ? 'M10 3 5 8l5 5' : 'm6 3 5 5-5 5'}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  function hero(){
+    const g = RUN[heroAt()], k = CLUBS[winner(g)] || {};
+    return `<div class="cv-card cv-hero tap" id="cv-hero" role="group" aria-roledescription="${t('carousel')}" aria-label="${t('Games of round {n}', {n: R})}" style="--cb:${k.base || '#1f2b47'}">${heroLink(g)}`
+      + (RUN.length > 1 ? `<div class="cv-hnav"><button type="button" data-d="-1" aria-label="${t('Previous game')}">${arrow(-1)}</button><span aria-live="polite">${heroAt() + 1} / ${RUN.length}</span><button type="button" data-d="1" aria-label="${t('Next game')}">${arrow(1)}</button></div>` : '') + `</div>`;
+  }
+  // one step: only the link is redrawn, so the arrow keeps focus; the club colour glides (--cb is a registered colour)
+  function step(d){
+    const box = $('#cv-hero'); if (!box || RUN.length < 2) return;
+    const i = (heroAt() + d + RUN.length) % RUN.length, g = RUN[i], had = document.activeElement && document.activeElement.classList.contains('cv-hero-a');
+    heroCode = g[0];
+    box.querySelector('.cv-hero-a').outerHTML = heroLink(g, d);
+    box.style.setProperty('--cb', (CLUBS[winner(g)] || {}).base || '#1f2b47');
+    box.querySelector('.cv-hnav span').textContent = `${i + 1} / ${RUN.length}`;
+    if (had) box.querySelector('.cv-hero-a').focus();
+    [RUN[(i + 1) % RUN.length], RUN[(i - 1 + RUN.length) % RUN.length]].forEach(n => { if (n[10]) new Image().src = n[10]; });   // the neighbours' photos, ready for the next step
   }
   const standings = () => { const S = (META.standings || []).slice(0, 10); if (!S.length) return '';
     return `<div class="cv-card cv-stand">${th(t('Standings'), `<a href="#standings">${t('Full table')}</a>`)}<table class="cv-tbl"><thead><tr><th></th><th class="l">${t('Club')}</th><th>${t('W')}–${t('L')}</th><th>+/−</th><th>${t('Form')}</th></tr></thead><tbody>${S.map(r => `<tr><td class="n">${r.pos}</td><td class="l">${crest(r.code, 22)}<span lang="en">${shortName(r.code)}</span></td><td>${r.w}–${r.l}</td><td>${r.diff > 0 ? '+' : ''}${r.diff}</td><td><span class="cv-form">${r.form.map(x => `<i class="${x ? 'w' : 'l'}"></i>`).join('')}</span></td></tr>`).join('')}</tbody></table></div>`; };
@@ -2898,14 +2951,13 @@ const COVER = (() => {
     const sec = $('#cv-last'), box = $('#cv-bento');
     if (!ROUND.length) { sec.hidden = true; box.innerHTML = ''; return; }
     const pts = ROUND.reduce((n, g) => n + g[5] + g[6], 0) / ROUND.length / 2, hw = ROUND.filter(g => g[5] > g[6]).length;
-    box.innerHTML = hero(feature) + standings() + results() + lines()
+    box.innerHTML = hero() + standings() + results() + lines()
       + num('', t('Points a team'), f1(pts), t('this round'))
       + num('', t('Home wins'), `${hw}`, t('of {n} games', {n: ROUND.length}))
       + ratings() + zones() + leaders() + next()
       + (st.games ? num('', t('Season'), (st.games || 0).toLocaleString(LOCALE()), t('{n} shots', {n: (st.shots || 0).toLocaleString(LOCALE())})) : '')
       + (Z && LG.shots ? num('', t('Three-point rate'), `${Math.round(100 * Z.three.att / LG.shots)}%`, t('of all shots')) : '');
     sec.hidden = false;
-    if (feature && !featured) gameFile(feature[0]).then(d => { if (d) { featured = d; if (document.body.classList.contains('cv-on')) render(); } });
   }
   function render(){
     const dates = [...new Set(ROUND.map(g => g[2]))].sort();
@@ -2933,8 +2985,14 @@ const COVER = (() => {
   }
   render();
   go.addEventListener('click', () => { location.hash = last && last.hash && CLUBS[last.hash.split('/')[0]] ? last.hash : first.code; });
+  el.addEventListener('click', e => { const b = e.target.closest('.cv-hnav button'); if (b) step(+b.dataset.d); });
+  el.addEventListener('keydown', e => { if ((e.key === 'ArrowLeft' || e.key === 'ArrowRight') && e.target.closest('#cv-hero') && !e.altKey && !e.metaKey && !e.ctrlKey) { e.preventDefault(); step(e.key === 'ArrowLeft' ? -1 : 1); } });
+  // a sideways swipe on the tile steps too; a mostly vertical one is left to the page scroll
+  let sw = null;
+  el.addEventListener('touchstart', e => { sw = e.target.closest('#cv-hero') && e.touches.length === 1 ? {x: e.touches[0].clientX, y: e.touches[0].clientY} : null; }, {passive: true});
+  el.addEventListener('touchend', e => { if (!sw) return; const dx = e.changedTouches[0].clientX - sw.x, dy = e.changedTouches[0].clientY - sw.y; sw = null; if (Math.abs(dx) > 40 && Math.abs(dx) > 1.5 * Math.abs(dy)) { if (e.cancelable) e.preventDefault(); step(dx < 0 ? 1 : -1); } });
   // press feedback lives on pointer-down, not on release
-  el.addEventListener('pointerdown', e => { const b = e.target.closest('a.cv-card, .cv-go'); if (!b) return; b.classList.add('down'); const up = () => { b.classList.remove('down'); removeEventListener('pointerup', up); removeEventListener('pointercancel', up); }; addEventListener('pointerup', up); addEventListener('pointercancel', up); });
+  el.addEventListener('pointerdown', e => { if (e.target.closest('.cv-hnav')) return; const b = e.target.closest('a.cv-card, .cv-card.tap, .cv-go'); if (!b) return; b.classList.add('down'); const up = () => { b.classList.remove('down'); removeEventListener('pointerup', up); removeEventListener('pointercancel', up); }; addEventListener('pointerup', up); addEventListener('pointercancel', up); });
   return {
     render,
     show(){ applyPalette({base: '#1f2b47', accent: '#f26f21'}); document.body.classList.add('cv-on'); el.hidden = false; document.title = 'Euroleague Player Lab'; scrollTo(0, 0); },
