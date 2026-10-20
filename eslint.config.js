@@ -25,7 +25,7 @@ export default [
     // the browser tests: Node code whose page.evaluate callbacks run in the page, against the page's own globals
     files: ['tests/e2e/**/*.js'],
     ...js.configs.recommended,
-    languageOptions: {ecmaVersion: 2022, sourceType: 'module', globals: {...globals.node, ...globals.browser, META: 'readonly', LANG: 'readonly', team: 'readonly', checkFresh: 'readonly'}},
+    languageOptions: {ecmaVersion: 2022, sourceType: 'module', globals: {...globals.node, ...globals.browser, META: 'readonly', LANG: 'readonly', team: 'readonly', checkFresh: 'readonly', ROSTER: 'readonly', findPlayers: 'readonly'}},
     rules: {...js.configs.recommended.rules, ...rules},
   },
   {

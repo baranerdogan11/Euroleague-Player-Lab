@@ -2742,8 +2742,9 @@ const DD = {
   cmp: Dropdown($('#cmp'), (op, head) => { if (!op.value) return op.text; const r = ROSTER.byPid[op.value]; if (!r) return op.text; const c = CLUBS[r.club], n = nameOf(r.name); return head ? EN(`${n.first} ${n.sur}`) : `${c && c.logo ? `<img src="${c.logo}" alt="">` : ''}<span class="no">${r.dorsal || '–'}</span><span lang="en">${n.first} ${n.sur}</span><small lang="en">${shortName(r.club)}</small>`; }),
   statGame: Dropdown($('#stat-game'), (op, head) => { if (op.value === 'all' || !team()) return op.text; const g = ds().games[+op.value]; if (!g) return op.text; const l = gameLabel(g); return head ? `${l.txt} · ${l.res} ${l.score}` : `<span>${l.txt}</span><small class="${l.win ? 'w' : 'l'}">${l.res} ${l.score}</small>`; })
 };
-// ---- player search across every club: name, club and code, accents folded
-const fold = s => (s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+// ---- player search across every club: name, club and code, accents folded; the feed spells names in ASCII, so the Turkish
+// dotless ı (no accent for NFD to strip) folds to i as well: Şanlı finds SANLI
+const fold = s => (s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/ı/g, 'i');
 let INDEX = [];
 const indexRoster = () => { INDEX = ROSTER.list.map(r => { const n = nameOf(r.name), c = CLUBS[r.club] || {}; return {r, n, sur: fold(n.sur), words: fold(`${n.first} ${n.sur} ${c.short || ''} ${c.name || ''} ${r.club}`).split(/[\s\-'.]+/).filter(Boolean)}; }); };
 function findPlayers(q){ const toks = fold(q).trim().split(/[\s\-'.]+/).filter(Boolean); if (!toks.length) return []; return INDEX.filter(x => toks.every(t => x.words.some(w => w.startsWith(t)))).sort((a, b) => (a.sur.startsWith(toks[0]) ? 0 : 1) - (b.sur.startsWith(toks[0]) ? 0 : 1) || a.n.sur.localeCompare(b.n.sur)).slice(0, 8); }
