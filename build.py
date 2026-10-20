@@ -861,7 +861,10 @@ def games_json():
     # [game, round, date, home, away, home score, away score, best line's name, points, PIR, photo]
     best = lambda code: (lambda b: [b[1], b[3], b[6], b[8]] if b else [None] * 4)(tops[code][0] if tops[code] else None)
     every = [[g["game"], g["round"], g["date"], g["home"], g["away"], g["home_score"], g["away_score"], *best(g["game"])] for g in reversed(played)]
-    return {"n": len(played), "lines": n_lines, "every": every, "last": {"date": last_date, "games": [{"code": g["game"], "round": g["round"], "home": g["home"], "away": g["away"], "hs": g["home_score"], "as": g["away_score"], "top": tops[g["game"]][0] if tops[g["game"]] else None} for g in day]}}
+    # the next round for the cover's Next tile: the unplayed games of the lowest round still to come, in date order
+    todo = rows("select game, round, cast(date as varchar) as date, home, away from games where not played order by round, date, game")
+    nxt = [[g["game"], g["round"], g["date"], g["home"], g["away"]] for g in todo if g["round"] == todo[0]["round"]] if todo else []
+    return {"n": len(played), "lines": n_lines, "every": every, "next": nxt, "last": {"date": last_date, "games": [{"code": g["game"], "round": g["round"], "home": g["home"], "away": g["away"], "hs": g["home_score"], "as": g["away_score"], "top": tops[g["game"]][0] if tops[g["game"]] else None} for g in day]}}
 
 
 def leaders_json():
@@ -955,6 +958,7 @@ meta = {"season": SEASON, "label": label(SEASON), "min_sd": MIN_SD, "model": {"v
 GAMES = games_json()             # the game pages' files; the latest game day rides in the page for the cover strip
 meta["last_night"] = GAMES and GAMES["last"]
 meta["games"] = GAMES and GAMES["every"]
+meta["next_round"] = GAMES and GAMES["next"]
 json.dump(meta, open(os.path.join(OUT, "index.json"), "w"), ensure_ascii=False)
 # app icons drawn from the house mark (a dark square, the orange ball, court lines), written once
 def draw_icons():

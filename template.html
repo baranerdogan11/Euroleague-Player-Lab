@@ -994,107 +994,159 @@ html[data-look="club"] .st-tab tr.me td:first-child{color:var(--gc);font-weight:
   html[data-look="club"] .ln-game .sc{font-size:24px}
 }
 /* ---- end Club Edition standings and lineups ---- */
-.cv{position:relative;min-height:calc(100vh - 6px);overflow:hidden;display:flex;flex-direction:column;justify-content:center}
-.cv-court{position:absolute;right:-16%;top:50%;transform:translateY(-50%);width:min(980px,86vw);opacity:.07;pointer-events:none;z-index:0}
-.cv-court svg{width:100%;height:auto;display:block}
-.cv-court .l{fill:none;stroke:#fff;stroke-width:9}
-.cv-glow{position:absolute;left:-10%;top:-20%;width:70%;height:120%;background:radial-gradient(60% 50% at 40% 50%,rgba(242,111,33,.14),transparent 70%);pointer-events:none;z-index:0}
-.cv-in{position:relative;z-index:1;width:100%;max-width:1180px;margin:0 auto;padding:56px 24px 64px}
-.cv-eyebrow{margin:0;display:inline-flex;align-items:center;gap:12px;font-family:var(--cond);font-weight:700;font-size:13px;letter-spacing:.26em;text-transform:uppercase;color:var(--muted)}
-.cv-eyebrow i{width:26px;height:6px;background:var(--club2);transform:skewX(-14deg);display:inline-block}
-.cv-h1{font-family:var(--cond);font-weight:900;font-style:italic;font-size:clamp(64px,12vw,152px);line-height:.84;margin:16px 0 0;text-transform:uppercase;letter-spacing:-.015em}
-.cv-h1 span{display:block;color:var(--club2)}
-.cv-lede{max-width:56ch;margin:22px 0 0;font-size:17px;line-height:1.55;color:var(--ink2)}
-.cv-cta{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin:30px 0 0}
-.cv-go{background:var(--club2);color:var(--on);border:0;font-family:var(--cond);font-weight:800;font-size:19px;letter-spacing:.16em;text-transform:uppercase;padding:16px 34px 16px 30px;cursor:pointer;clip-path:polygon(12px 0,100% 0,calc(100% - 12px) 100%,0 100%);transition:filter .15s,transform .15s}
-.cv-go:hover{filter:brightness(1.12);transform:translateX(2px)}
-.cv-go small{display:block;font-size:11px;letter-spacing:.2em;font-weight:700;opacity:.8;margin-top:2px}
-.cv-search{flex:1 1 300px;max-width:440px;border-right:0;padding:0;height:52px}
-.cv-search input{font-size:19px;padding:8px 0 6px}
-.cv-search kbd{right:6px}
-.cv-search .dd-list{left:0;right:0;top:calc(100% + 4px)}
-.cv-nums{list-style:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin:44px 0 0;padding:0;border:1px solid var(--line);background:var(--bg2)}
-.cv-nums li{padding:16px 16px 14px;border-right:1px solid var(--line)}
-.cv-nums li:last-child{border-right:0}
-.cv-nums b{display:block;font-family:var(--cond);font-weight:900;font-style:italic;font-size:40px;line-height:.95;font-variant-numeric:tabular-nums}
-.cv-nums span{display:block;font-family:var(--cond);font-weight:700;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-top:7px}
-.cv-sec{margin:48px 0 0}
-.cv-sec h2{margin:0 0 14px;font-family:var(--cond);font-weight:900;font-style:italic;font-size:22px;letter-spacing:.02em;text-transform:uppercase;display:flex;align-items:center;gap:12px;color:var(--ink)}
-.cv-sec h2::before{content:"";width:6px;height:18px;background:var(--club2);transform:skewX(-14deg);flex:none}
-.cv-clubs{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
-.cv-clubs a{display:flex;flex-direction:column;align-items:center;gap:8px;padding:14px 6px 11px;background:var(--bg2);text-decoration:none;color:var(--ink2);transition:background .15s,color .15s}
-.cv-clubs a:hover{background:var(--panel2);color:var(--ink)}
-.cv-clubs .medal,.cv-clubs .txt{display:contents}
-.cv-clubs img{width:34px;height:34px;object-fit:contain;filter:drop-shadow(0 0 2.5px rgba(255,255,255,.45))}
-.cv-clubs .nm{font-family:var(--cond);font-weight:700;font-size:11px;letter-spacing:.1em;text-transform:uppercase;text-align:center;line-height:1.2}
-.cv-clubs .co{display:none}
-.cv-hero-in{position:relative;z-index:1;width:100%;max-width:1180px;margin:0 auto;padding:56px 24px 0}
-.cv-h1c{display:none}
-.cv-round{display:none}
-.cv-feats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
-.cv-feats a{display:block;background:var(--bg2);padding:16px 16px 18px;color:inherit;text-decoration:none}   /* each card opens its section; the names stay plain, no underline */
-.cv-feats a:hover b,.cv-feats a:focus-visible b{color:var(--club2)}
-#shots-sec,#prof-panel{scroll-margin-top:72px}   /* the opening cards scroll here; the heading clears the sticky header */
-.cv-feats b{display:block;font-family:var(--cond);font-weight:800;font-size:17px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink)}
-.cv-feats p{margin:7px 0 0;font-size:13px;line-height:1.5;color:var(--muted)}
-.cv-foot{margin:40px 0 0;font-family:var(--cond);letter-spacing:.14em;text-transform:uppercase;font-size:12px;color:var(--muted);display:flex;gap:10px 22px;flex-wrap:wrap;align-items:center}
-.cv-foot a{color:var(--club2);text-decoration:none}
+/* ---- Opening page: a bento board in the Apple idiom. System type with size-specific tracking, cards on platform grey (black in dark
+   mode) with depth from shadow rather than lines, 20px corners, press feedback on pointer-down and critically damped springs. The
+   tokens are the cover's own (--cv*), so the club palette never leaks in; the rest of the app keeps the Game Center look. ---- */
+.cv{--sysf:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Inter,"Segoe UI",Roboto,Arial,sans-serif;
+  --cvbg:#f5f5f7;--cvcard:#fff;--cvfill:#e8e8ed;--cvfill2:#d2d2d7;--cvink:#1d1d1f;--cvink2:#6e6e73;--cvink3:#86868b;--cvsep:rgba(0,0,0,.08);--cvblue:#0071e3;--cvgreen:#1f9d55;--cvred:#e0343a;
+  --cvsh:0 1px 2px rgba(0,0,0,.04),0 8px 24px rgba(0,0,0,.06);--cvsh2:0 2px 4px rgba(0,0,0,.05),0 16px 40px rgba(0,0,0,.1);--cvr:20px;--cvspring:cubic-bezier(.2,.8,.2,1);
+  font-family:var(--sysf);background:var(--cvbg);color:var(--cvink);min-height:100vh;font-size:15px;line-height:1.5;letter-spacing:0;-webkit-font-smoothing:antialiased}
+html[data-theme="dark"] .cv{--cvbg:#000;--cvcard:#1c1c1e;--cvfill:#2c2c2e;--cvfill2:#3a3a3c;--cvink:#f5f5f7;--cvink2:#a1a1a6;--cvink3:#86868b;--cvsep:rgba(255,255,255,.1);--cvblue:#2997ff;--cvgreen:#30d158;--cvred:#ff453a;--cvsh:0 1px 2px rgba(0,0,0,.4),0 12px 32px rgba(0,0,0,.5);--cvsh2:0 2px 4px rgba(0,0,0,.5),0 18px 44px rgba(0,0,0,.6)}
+html[data-look] .cv a{color:inherit;text-decoration:none}
+html[data-look] .cv h1,html[data-look] .cv h2,html[data-look] .cv h3{font-family:var(--sysf);font-weight:700;text-transform:none;color:var(--cvink);margin:0}
+.cv b,.cv strong{font-weight:600}
+/* the bar: a translucent material the page scrolls under, with the house mark, the pages and the two toggles */
+.cv-bar{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:18px;padding:0 24px;height:54px;background:color-mix(in srgb,var(--cvcard) 72%,transparent);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);border-bottom:1px solid var(--cvsep)}
+@media (prefers-reduced-transparency:reduce){.cv-bar{background:var(--cvcard);backdrop-filter:none;-webkit-backdrop-filter:none}}
+.cv-bar .cv-id{font-weight:700;font-size:17px;letter-spacing:-.02em;display:flex;align-items:baseline;gap:8px;white-space:nowrap}
+.cv-bar .cv-id small{font-weight:500;font-size:12px;color:var(--cvink2);letter-spacing:0}
+.cv-nav{display:flex;gap:4px;margin-left:auto}
+.cv-nav a{font-size:13px;font-weight:500;color:var(--cvink2);padding:6px 10px;border-radius:999px;transition:color .2s,background .3s var(--cvspring)}
+.cv-nav a:hover{color:var(--cvink);background:var(--cvfill)}
+html[data-look] .cv-bar :is(.lang,.theme){position:static;order:0;margin:0;height:34px;border:1px solid var(--cvsep);border-radius:999px;background:transparent;clip-path:none;overflow:hidden;display:inline-flex;align-items:center;box-shadow:none;padding:2px}
+html[data-look] .cv-bar :is(.lang,.theme) button{flex-direction:row;width:auto;min-width:0;height:28px;min-height:0;padding:0 10px;background:transparent;color:var(--cvink2);opacity:1;font-family:var(--sysf);font-weight:600;font-size:12px;letter-spacing:0;border:0;border-radius:999px;display:inline-flex;align-items:center;gap:6px;cursor:pointer}
+html[data-look] .cv-bar :is(.lang,.theme) button[aria-pressed="true"]{background:var(--cvink);color:var(--cvbg);display:inline-flex;cursor:default}
+html[data-look] .cv-bar :is(.lang,.theme) button::after{display:none}
+html[data-look] .cv-bar :is(.lang,.theme) svg{width:16px;height:11px;opacity:1;filter:none;display:block}
+html[data-look] .cv-bar .theme svg{width:15px;height:15px}
+.cv-in{width:100%;max-width:1180px;margin:0 auto;padding:26px 24px 48px;display:grid;gap:14px;grid-template-columns:minmax(0,1fr)}
+/* the head: the round, the title, then the search and the way in */
+.cv-head{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:14px 24px;padding:6px 0 8px}
+.cv-eyebrow{margin:0;font-size:13px;font-weight:600;color:var(--cvink2)}
+.cv-h1{font-size:clamp(34px,4.6vw,56px);line-height:1.02;letter-spacing:-.035em;margin:4px 0 0}
+.cv-h1 em{font-style:normal;color:var(--cvink2)}
+.cv-cta{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+.cv-search{flex:0 1 300px;min-width:200px;height:44px;position:relative}
+.cv-search input{width:100%;background:var(--cvcard);border-color:var(--cvsep);color:var(--cvink);font-family:var(--sysf);box-shadow:var(--cvsh)}
+.cv-search .dd-list{left:0;right:0;top:calc(100% + 6px);border-radius:14px;border-top-width:1px;font-family:var(--sysf)}
+.cv-go{border:0;background:var(--cvblue);color:#fff;border-radius:999px;height:44px;padding:0 22px;font-family:var(--sysf);font-weight:600;font-size:15px;letter-spacing:-.01em;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:transform .35s var(--cvspring),filter .2s;white-space:nowrap}
+.cv-go small{font-weight:500;font-size:12px;opacity:.85;max-width:180px;overflow:hidden;text-overflow:ellipsis}
+.cv-go:hover{filter:brightness(1.08)}
+.cv-go:active,.cv-go.down{transform:scale(.96);transition-duration:.1s}
+/* the cards */
+.cv-card{background:var(--cvcard);border-radius:var(--cvr);padding:16px 18px;box-shadow:var(--cvsh);min-width:0;position:relative;overflow:hidden;display:block;transition:transform .45s var(--cvspring),box-shadow .45s var(--cvspring)}
+a.cv-card:hover,.cv-card.tap:hover{transform:translateY(-2px);box-shadow:var(--cvsh2)}
+a.cv-card:active,a.cv-card.down,.cv-card.tap:active{transform:scale(.985);transition-duration:.12s}
+.cv-th{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:13px;font-weight:600;color:var(--cvink2);margin-bottom:10px}
+.cv-th i{font-style:normal;font-weight:500;white-space:nowrap}
+html[data-look] .cv-th a{color:var(--cvblue)}
+.cv-th a::after{content:" ›";font-weight:600}
+.cv-crest{width:var(--s,22px);height:var(--s,22px);border-radius:50%;object-fit:contain;background:#fff;padding:2px;flex:none;box-shadow:0 0 0 1px var(--cvsep);display:inline-block;vertical-align:middle}
+/* the board: six columns on a laptop, two on a phone */
+.cv-bento{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));grid-auto-rows:minmax(150px,auto);gap:12px}
+.cv-hero{grid-column:span 3;grid-row:span 2;padding:22px 24px;display:grid;align-content:end;gap:0;color:#fff;background:linear-gradient(160deg,color-mix(in srgb,var(--cb) 88%,#fff) 0%,var(--cb) 55%,color-mix(in srgb,var(--cb) 70%,#000) 100%)}
+.cv-hero .cv-th{color:rgba(255,255,255,.8);position:relative}
+.cv-hero img{position:absolute;right:-6%;bottom:0;height:88%;width:auto;max-width:none;filter:drop-shadow(0 20px 30px rgba(0,0,0,.35));pointer-events:none}
+.cv-hero h2{font-size:clamp(26px,2.7vw,38px);line-height:1;letter-spacing:-.035em;color:#fff;max-width:60%;text-wrap:balance;position:relative}
+.cv-hero p{margin:12px 0 0;font-size:14.5px;line-height:1.47;max-width:58%;color:rgba(255,255,255,.92);position:relative;letter-spacing:-.01em}
+.cv-chip{display:inline-flex;justify-self:start;align-self:start;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;background:rgba(255,255,255,.18);font-size:12px;font-weight:600;position:relative;margin-bottom:8px;backdrop-filter:blur(8px)}
+.cv-big{display:flex;gap:22px;margin-top:18px;position:relative}
+.cv-big span{display:block}
+.cv-big b{display:block;font-size:38px;font-weight:700;line-height:1;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.cv-big i{font-style:normal;font-size:12px;font-weight:500;color:rgba(255,255,255,.8);margin-top:4px;display:block}
+.cv-stand{grid-column:span 3;grid-row:span 2}
+.cv-resc{grid-column:span 2;grid-row:span 2}
+.cv-lines{grid-column:span 2}
+.cv-num{grid-column:span 1;display:grid;align-content:space-between}
+.cv-num b{display:block;font-size:44px;font-weight:700;line-height:1;letter-spacing:-.035em;font-variant-numeric:tabular-nums}
+.cv-num span{display:block;font-size:13px;color:var(--cvink2);margin-top:6px;font-weight:500}
+.cv-map{grid-column:span 2;grid-row:span 2}
+.cv-zone{grid-column:span 2;grid-row:span 2}
+.cv-lead{grid-column:span 2}
+.cv-next{grid-column:span 4}
+.cv-clubs-card{grid-column:1/-1}
+/* the standings table */
+.cv-tbl{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}
+.cv-tbl th{font-size:11.5px;font-weight:600;color:var(--cvink3);text-align:right;padding:2px 8px 8px;white-space:nowrap}
+.cv-tbl th.l,.cv-tbl td.l{text-align:left}
+.cv-tbl td{padding:6px 8px;border-top:1px solid var(--cvsep);text-align:right;white-space:nowrap;color:var(--cvink)}
+.cv-tbl td.l{display:flex;align-items:center;gap:9px;font-weight:600}
+.cv-tbl td.n{color:var(--cvink3);font-weight:500;width:28px}
+.cv-form{display:inline-flex;gap:3px;vertical-align:middle}
+.cv-form i{width:7px;height:7px;border-radius:50%;background:var(--cvgreen);display:inline-block}
+.cv-form i.l{background:var(--cvfill2)}
+/* the results: two lines a game, the winner in ink */
+.cv-res{display:grid;gap:2px}
+.cv-res small{display:block;font-size:12px;font-weight:600;color:var(--cvink3);padding:10px 0 4px}
+.cv-res small:first-child{padding-top:0}
+html[data-look] .cv-res a.cv-game{display:grid;gap:0;padding:6px 0;border:0;border-top:1px solid var(--cvsep);border-radius:0;background:none;color:inherit;transition:none}
+html[data-look] .cv-res a.cv-game.fl{box-shadow:inset 3px 0 0 var(--gc,#f26f21);padding-left:8px}
+.cv-res small+a.cv-game{border-top:0}
+.cv-res .cv-game .tm{display:grid;grid-template-columns:22px minmax(0,1fr) 34px;gap:8px;align-items:center;padding:3px 0;color:var(--cvink2);font-size:14px;font-weight:500}
+.cv-res .cv-game .tm b{font-family:var(--sysf);font-weight:500;font-size:14px;letter-spacing:0;text-transform:none;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.cv-res .cv-game .tm em{font-family:var(--sysf);font-weight:600;font-size:14px;text-align:right;font-variant-numeric:tabular-nums;color:var(--cvink3)}
+.cv-res .cv-game .tm.win,.cv-res .cv-game .tm.win b,.cv-res .cv-game .tm.win em{color:var(--cvink);font-weight:600}
+.cv-res .cv-game .tm b .abbr{display:none}
+/* ranked lists */
+.cv-list{display:grid}
+html[data-look] .cv-list>*{display:grid;grid-template-columns:22px minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--cvsep);font-size:14px;color:inherit}
+.cv-list>*:first-child{border-top:0;padding-top:0}
+.cv-list .i{color:var(--cvink3);font-weight:500;font-variant-numeric:tabular-nums}
+.cv-list .who{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cv-list .who b{font-weight:600}
+.cv-list .who small{color:var(--cvink3);font-weight:500;margin-left:6px;font-size:12px}
+.cv-list em{font-style:normal;font-weight:600;font-variant-numeric:tabular-nums;font-size:16px;letter-spacing:-.01em;white-space:nowrap}
+.cv-list em small{font-size:11px;margin-left:3px;font-weight:500;color:var(--cvink3)}
+/* the next round, as pills */
+.cv-pills{display:grid;grid-template-columns:repeat(auto-fill,minmax(136px,1fr));gap:8px}
+html[data-look] .cv-pills a{display:grid;gap:5px;padding:10px 12px;border-radius:14px;background:var(--cvfill);font-size:13px;color:inherit;transition:background .3s var(--cvspring)}
+.cv-pills a:hover{background:var(--cvfill2)}
+.cv-pills a b{display:flex;align-items:center;gap:7px;font-weight:600;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cv-pills a small{color:var(--cvink3);font-weight:600;font-size:11.5px}
+/* the two charts */
+.cv-map svg,.cv-zone svg{width:100%;height:auto;display:block}
+.cv-map .ax{fill:var(--cvink3);font-size:11px;font-family:var(--sysf);font-weight:500}
+.cv-map .q{fill:var(--cvink3);font-family:var(--sysf);font-size:11px;font-weight:600}
+.cv-map .gl{stroke:var(--cvsep)}
+.cv-zone text{font-family:var(--sysf);font-weight:700;font-size:84px;fill:#fff;text-anchor:middle;letter-spacing:-.02em;paint-order:stroke;stroke:rgba(0,0,0,.28);stroke-width:6px}
+.cv-zone text.s{font-size:48px;font-weight:600}
+.cv-zone .z{stroke:var(--cvcard);stroke-width:4}
+/* the clubs, as chips; a followed club carries the star */
+.cv-clubs{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+html[data-look] .cv-clubs a{position:relative;display:flex;align-items:center;gap:10px;padding:8px 12px 8px 8px;border-radius:999px;background:var(--cvfill);color:var(--cvink);min-width:0;transition:background .3s var(--cvspring),transform .35s var(--cvspring)}
+.cv-clubs a:hover{background:var(--cvfill2)}
+.cv-clubs a:active{transform:scale(.97);transition-duration:.1s}
+.cv-clubs .medal{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:#fff;border:2px solid var(--ca);overflow:hidden;flex:none;box-shadow:0 0 0 1px var(--cvsep)}
+.cv-clubs .medal img{width:20px;height:20px;object-fit:contain;display:block;filter:none}
+.cv-clubs .txt{display:flex;flex-direction:column;min-width:0}
+.cv-clubs .nm{font-weight:600;font-size:13.5px;letter-spacing:-.01em;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-transform:none}
+.cv-clubs .co{font-size:11px;font-weight:500;color:var(--cvink3);text-transform:none;letter-spacing:0;line-height:1.2}
+.cv-clubs a.fl{box-shadow:inset 0 0 0 1.5px var(--gc,#f26f21)}
+.cv-clubs .fl-star{position:absolute;top:50%;right:10px;transform:translateY(-50%);display:flex;color:var(--gc,#f26f21)}.cv-clubs .fl-star svg{width:13px;height:13px}
+/* the followed players ride above the board in the same card idiom */
+.cv .cv-fol{margin:0}
+.cv .cv-fol h3{font-size:13px;font-weight:600;color:var(--cvink2);letter-spacing:0;text-transform:none;margin:0 0 10px}
+.cv .cv-fol h3::before{display:none}
+.cv .cv-pls{gap:8px}
+html[data-look] .cv .cv-pl{border:0;border-radius:14px;background:var(--cvfill);color:var(--cvink2);box-shadow:inset 3px 0 0 var(--gc,#f26f21)}
+.cv .cv-pl .who b,.cv .cv-pl .ln b{color:var(--cvink)}
+.cv .cv-pl .who small,.cv .cv-pl .ln{color:var(--cvink3);text-transform:none;letter-spacing:0}
+html[data-look] .cv .cv-pl.na{box-shadow:inset 3px 0 0 var(--cvfill2)}
+.cv-foot{margin:8px 0 0;font-family:var(--sysf);font-weight:500;font-size:12.5px;letter-spacing:0;text-transform:none;color:var(--cvink3);display:flex;gap:10px 18px;flex-wrap:wrap;align-items:center}
+html[data-look] .cv-foot a{color:var(--cvink2)}
 .cv-foot a:hover{text-decoration:underline}
-.cv :is(.lang,.theme){position:absolute;top:24px;right:24px;margin:0;border:1px solid var(--line);background:var(--panel);clip-path:polygon(8px 0,100% 0,100% 100%,0 100%);height:46px;z-index:2}
-.cv :is(.lang,.theme) button{width:54px;height:44px}
-@media (max-width:1000px){.cv-court{right:-28%;width:760px;opacity:.05}.cv-clubs{grid-template-columns:repeat(5,minmax(0,1fr))}.cv-feats{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media (max-width:760px){.cv{min-height:0}.cv-in{padding:36px 14px 48px}.cv-hero-in{padding:36px 14px 0}.cv-court{display:none}.cv-lede{font-size:15.5px}.cv-nums{grid-template-columns:repeat(3,minmax(0,1fr))}.cv-nums b{font-size:32px}.cv-clubs{grid-template-columns:repeat(4,minmax(0,1fr))}.cv-go{width:100%;text-align:center}}
-/* ---- Club Edition cover: a house-colour band with the thesis, then club cards on paper, each wearing its own colourway ---- */
-html[data-look="club"] .cv{min-height:0;display:block;overflow:visible;background:var(--bg)}
-html[data-look="club"] .cv-glow,html[data-look="club"] .cv-court,html[data-look="club"] .cv-h1,html[data-look="club"] .cv-eyebrow i{display:none}
-html[data-look="club"] .cv-hero{position:relative;min-height:60vh;display:flex;align-items:center;background:transparent;clip-path:none}
-html[data-look="club"] .cv-hero::before{content:"";position:absolute;inset:0;background:var(--club);clip-path:polygon(0 0,100% 0,100% calc(100% - 56px),calc(100% - 56px) 100%,0 100%);z-index:0}
-html[data-look="club"] .cv-hero-in{position:relative;z-index:3}
-html[data-look="club"] .cv-search{position:relative;z-index:6}
-html[data-look="club"] .cv-search .dd-list{z-index:7}
-html[data-look="club"] .cv-hero-in{padding:72px 24px 104px}
-html[data-look="club"] .cv-eyebrow{font-family:var(--sans);font-weight:600;font-size:13px;letter-spacing:.14em;color:var(--club-ink);opacity:.82}
-html[data-look="club"] .cv-round{display:inline}
-html[data-look="club"] .cv-h1c{display:block;margin:18px 0 0;font-family:var(--cond);font-weight:var(--cond-w);font-style:normal;font-size:clamp(48px,7vw,96px);line-height:.96;letter-spacing:.02em;text-transform:uppercase;color:var(--club-ink);max-width:17ch;text-wrap:balance}
-html[data-look="club"] .cv-eyebrow{display:block;line-height:1.5}
-html[data-look="club"] .cv-h1c em{font-style:normal;color:var(--club2);display:block}
-html[data-look="club"] .cv-lede{max-width:60ch;margin:26px 0 0;font-size:19px;line-height:1.5;color:var(--club-ink)}
-html[data-look="club"] .cv-cta{margin:34px 0 0;gap:14px}
-html[data-look="club"] .cv-go{clip-path:none;border-radius:8px;font-family:var(--sans);font-weight:var(--sans-b);font-size:17px;letter-spacing:.01em;text-transform:none;min-height:48px;padding:12px 26px;transform:none}
-html[data-look="club"] .cv-go:hover{filter:brightness(1.06)}
-html[data-look="club"] .cv-go small{font-family:var(--sans);font-weight:400;font-size:12px;letter-spacing:0;text-transform:none;opacity:.85}
-html[data-look="club"] .cv-search{height:48px;max-width:420px}
-html[data-look="club"] .cv-search input{font-size:17px}
-html[data-look="club"] .cv :is(.lang,.theme){top:22px;right:24px;height:44px;border-radius:999px;clip-path:none;background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.35);overflow:hidden}
-html[data-look="club"] .cv :is(.lang,.theme) button{width:52px;height:42px;color:var(--club-ink)}
-html[data-look="club"] .cv-in{padding:0 24px 56px}
-html[data-look="club"] .cv-nums{margin:-40px 0 0;position:relative;z-index:2;gap:12px;border:0;background:none}
-html[data-look="club"] .cv-nums li{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px 18px 14px}
-html[data-look="club"] .cv-nums b{font-weight:var(--cond-w);font-style:normal;font-size:40px;color:var(--ink);letter-spacing:.02em}
-html[data-look="club"] .cv-nums span{font-family:var(--sans);font-weight:600;font-size:13px;letter-spacing:.08em;color:var(--muted);margin-top:4px}
-html[data-look="club"] .cv-sec{margin:44px 0 0}
-html[data-look="club"] .cv-sec h2{font-weight:var(--cond-w);font-style:normal;font-size:30px;letter-spacing:.03em;gap:12px;margin:0 0 16px}
-html[data-look="club"] .cv-sec h2::before{width:6px;height:24px;background:var(--club2);transform:none;border-radius:2px}
-html[data-look="club"] .cv-clubs{grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;background:none;border:0}
-html[data-look="club"] .cv-clubs a{position:relative;overflow:hidden;flex-direction:row;align-items:center;gap:12px;padding:12px 14px 12px 22px;background:var(--panel);border:1px solid var(--line);border-radius:8px;color:var(--ink2);transition:border-color .15s}
-html[data-look="club"] .cv-clubs a::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--cb)}
-html[data-look="club"] .cv-clubs a::after{content:"";position:absolute;left:6px;top:0;bottom:0;width:2px;background:var(--ca)}
-html[data-look="club"] .cv-clubs a:hover{background:var(--panel);border-color:var(--line2);color:var(--ink)}
-html[data-look="club"] .cv-clubs .medal{display:inline-grid;flex:none;--club2:var(--ca)}
-html[data-look="club"] .cv-clubs img{width:28px;height:28px;filter:none}
-html[data-look="club"] .cv-clubs .nm{font-weight:var(--cond-w);font-size:24px;letter-spacing:.03em;text-align:left;line-height:1;color:var(--ink);display:block}
-html[data-look="club"] .cv-clubs .co{display:block;font-family:var(--sans);font-weight:600;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:3px}
-html[data-look="club"] .cv-clubs .txt{display:flex;flex-direction:column;align-items:flex-start;min-width:0}
-html[data-look="club"] .cv-feats{gap:12px;background:none;border:0}
-html[data-look="club"] .cv-feats a{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:20px 20px 22px;transition:border-color .15s}
-html[data-look="club"] .cv-feats a:hover,html[data-look="club"] .cv-feats a:focus-visible{border-color:var(--club2)}
-html[data-look="club"] .cv-feats b{font-weight:var(--cond-w);font-size:24px;letter-spacing:.03em;line-height:1.05}
-html[data-look="club"] .cv-feats p{margin:10px 0 0;font-size:15px;line-height:1.5;color:var(--ink2)}
-html[data-look="club"] .cv-foot{font-family:var(--sans);font-weight:600;font-size:13px;letter-spacing:.06em;color:var(--muted)}
-html[data-look="club"] .cv-foot a{color:var(--cold)}
-@media (max-width:1000px){html[data-look="club"] .cv-clubs{grid-template-columns:repeat(3,minmax(0,1fr))}html[data-look="club"] .cv-feats{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media (max-width:760px){html[data-look="club"] .cv-hero{min-height:0}html[data-look="club"] .cv-hero-in{padding:76px 16px 72px}html[data-look="club"] .cv-h1c{font-size:52px;max-width:none}html[data-look="club"] .cv-lede{font-size:17px}html[data-look="club"] .cv-cta{flex-direction:column;align-items:stretch}html[data-look="club"] .cv-go{order:0}html[data-look="club"] .cv-search{order:1;max-width:none}html[data-look="club"] .cv-in{padding:0 16px 48px}html[data-look="club"] .cv-nums{margin-top:-28px;gap:8px}html[data-look="club"] .cv-nums li{padding:12px 12px 10px}html[data-look="club"] .cv-nums b{font-size:30px}html[data-look="club"] .cv-clubs{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}html[data-look="club"] .cv-clubs a{padding:10px 10px 10px 18px;gap:10px}html[data-look="club"] .cv-clubs .nm{font-size:20px}html[data-look="club"] .cv-feats{grid-template-columns:1fr;gap:8px}html[data-look="club"] .cv-sec h2{font-size:26px}}
-/* ---- end Club Edition cover ---- */
+@media (prefers-reduced-motion:reduce){.cv *{transition:none!important}}
+@media (max-width:1000px){.cv-bento{grid-template-columns:repeat(2,minmax(0,1fr))}.cv-hero,.cv-stand,.cv-resc,.cv-lines,.cv-map,.cv-zone,.cv-next,.cv-lead{grid-column:span 2}.cv-num{grid-column:span 1}.cv-nav{display:none}}
+@media (max-width:760px){
+  .cv-bar{padding:0 14px;height:50px;gap:10px}.cv-bar .cv-id small{display:none}.cv-bar .lang{margin-left:auto}
+  .cv-in{padding:16px 14px 36px;gap:10px}.cv-head{grid-template-columns:1fr;gap:12px}.cv-cta{justify-content:stretch}.cv-search{flex:1 1 100%}.cv-go{flex:1 1 100%;justify-content:center}
+  .cv-bento{gap:10px}.cv-card{padding:14px 16px}
+  .cv-hero{min-height:440px;padding:18px 18px}.cv-hero img{height:42%;top:0;bottom:auto;right:-6%}.cv-hero p{display:none}.cv-hero h2{max-width:none}.cv-big{flex-wrap:nowrap;gap:18px}.cv-big b{font-size:30px}
+  .cv-tbl td:nth-child(4),.cv-tbl th:nth-child(4){display:none}
+  .cv-res{grid-template-columns:1fr 1fr;gap:2px 14px}.cv-res small{grid-column:1/-1}html[data-look] .cv-res a.cv-game{border-top:0}.cv-res .cv-game .tm b .full{display:none}.cv-res .cv-game .tm b .abbr{display:inline}
+  .cv-clubs{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+/* ---- end opening page ---- */
 /* page transition: a broadcast wipe in the destination club's colours covers the swap between the opening page and a club, or between clubs */
 .wipe{position:fixed;inset:0;z-index:100;pointer-events:none;overflow:hidden;display:none}
 .wipe.on{display:block}
@@ -1554,7 +1606,6 @@ html[data-look="club"] .gm-h3 .medal{width:30px;height:30px;border-width:2px}htm
 .gm-fives .chips{display:inline-flex;margin-left:8px}
 #game .gm-fives .chip{border-radius:0}
 /* the cover strip: the latest game day, one card per game; a row on a laptop, a swipeable rail on a phone */
-.cv-last-sub{margin:-6px 0 14px;color:var(--muted);font-size:15px}
 .cv-games{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
 .cv-game{display:grid;gap:6px;padding:12px 14px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink2);text-decoration:none;border-bottom:3px solid var(--club2);min-width:0}
 .cv-game:hover{border-color:var(--line2);border-bottom-color:var(--club2)}
@@ -1655,50 +1706,37 @@ html[data-look="club"] .cb-tab th button:focus-visible{outline-color:var(--club-
 html[data-look="club"] #club .st-tile{border-bottom-color:var(--gc)}
 html[data-look="club"] .cb-chip{border-radius:0}
 html[data-look="club"] .cv-sec h2::before{width:6px;height:24px;background:var(--gc);border-radius:0}
-html[data-look="club"] :is(.cv-go,.cv-app,.cv-game,#cq,.cv-sec li,.cv-sec a){border-radius:0}
+html[data-look="club"] #games .cv-game{border-radius:0}
 html[data-look="club"] .cv-game{border-bottom-color:var(--gc)}
-html[data-look="club"] .cv-nums li,html[data-look="club"] #role>div{border-radius:0}
+html[data-look="club"] #role>div{border-radius:0}
 /* ---- end Game Center look · the rest of the app ---- */
 </style>
 <div class="bar"></div>
 <main class="cv" id="cover" hidden>
-  <div class="cv-glow"></div>
-  <div class="cv-court"><svg viewBox="0 0 1500 1400" aria-hidden="true"><g class="l"><rect x="6" y="6" width="1488" height="1388"/><rect x="505" y="820" width="490" height="574"/><circle cx="750" cy="820" r="180"/><path d="M90 1394 L90 1119 A675 675 0 0 1 1410 1119 L1410 1394"/><circle cx="750" cy="1260" r="22.5"/><path d="M570 1394 A180 180 0 0 0 930 1394"/></g></svg></div>
-  <div class="cv-hero band cut-br"><div class="cv-hero-in">
+  <div class="cv-bar">
+    <a class="cv-id no-t" href="#">Player Lab<small>Euroleague <span id="cv-season"></span></small></a>
+    <nav class="cv-nav"><a href="#standings">Standings</a><a href="#games" class="no-t" data-t="Games@page">Games</a><a href="#leaders">Leaders</a><a href="#compare">Compare</a><a href="#lineups">Lineups</a></nav>
     <div class="lang cv-lang" role="group" aria-label="Language">
     <button type="button" data-lang="tr" aria-pressed="false" aria-label="Türkçe" title="Türkçe"><svg viewBox="0 0 22 15" aria-hidden="true"><rect width="22" height="15" fill="#e30a17"/><circle cx="8" cy="7.5" r="4" fill="#fff"/><circle cx="9.1" cy="7.5" r="3.25" fill="#e30a17"/><polygon fill="#fff" points="11.5,7.5 12.7,7.1 12.7,5.8 13.5,6.8 14.8,6.4 14,7.5 14.8,8.6 13.5,8.2 12.7,9.2 12.7,7.9"/></svg><span aria-hidden="true">TR</span></button>
     <button type="button" data-lang="en" aria-pressed="false" aria-label="English" title="English"><svg viewBox="0 0 22 15" aria-hidden="true"><rect width="22" height="15" fill="#b22234"/><path stroke="#fff" stroke-width="1.154" d="M0 1.73H22M0 4.04H22M0 6.35H22M0 8.65H22M0 10.96H22M0 13.27H22"/><rect width="8.8" height="8.08" fill="#3c3b6e"/><path stroke="#fff" stroke-width=".75" stroke-linecap="round" stroke-dasharray=".1 1.6" d="M1 1.2H8.3M1.8 2.6H8.3M1 4H8.3M1.8 5.4H8.3M1 6.8H8.3"/></svg><span aria-hidden="true">EN</span></button>
-  </div>
-  <div class="theme cv-theme" role="group" aria-label="Theme" data-tarialabel="Theme"><button type="button" aria-pressed="false" aria-label="Dark mode" data-tarialabel="Dark mode" title="Dark mode" data-ttitle="Dark mode"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5a8.5 8.5 0 1 0 10.7 10.7z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/></svg><span data-t="Dark">Dark</span></button></div>
-    <p class="cv-eyebrow no-t"><i></i>Euroleague <span id="cv-season"></span><span class="cv-round" id="cv-round"></span></p>
-    <h1 class="cv-h1" aria-label="Player Lab">Player<span>Lab</span></h1>
-    <h1 class="cv-h1c"><span>Pick a club. Pick a player.</span> <em>See everything he does.</em></h1>
-    <p class="cv-lede">Every shot, every player, every club. Shot charts in two dimensions and three, shooting profiles that separate the shots a player takes from what he adds to them, and season stats rebuilt within minutes of every final.</p>
-    <div class="cv-cta">
-      <button class="cv-go" id="cv-go" type="button">Open the app</button>
-      <div class="search cv-search"><input type="search" id="cq" placeholder="Find a player" aria-label="Find a player across all clubs" autocomplete="off" spellcheck="false" role="combobox" aria-expanded="false" aria-controls="cq-list" aria-autocomplete="list"><kbd>/</kbd><ul class="dd-list" id="cq-list" role="listbox" aria-label="Players" hidden></ul></div>
     </div>
-  </div></div>
+    <div class="theme cv-theme" role="group" aria-label="Theme" data-tarialabel="Theme"><button type="button" aria-pressed="false" aria-label="Dark mode" data-tarialabel="Dark mode" title="Dark mode" data-ttitle="Dark mode"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5a8.5 8.5 0 1 0 10.7 10.7z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/></svg><span data-t="Dark">Dark</span></button></div>
+  </div>
   <div class="cv-in">
-    <ul class="cv-nums" id="cv-nums"></ul>
-    <section class="cv-sec cv-last" id="cv-last" hidden>
-      <h2 class="no-t" id="cv-last-h"></h2>
-      <p class="cv-last-sub no-t" id="cv-last-sub"></p>
-      <div class="cv-fol no-t" id="cv-fol" hidden></div>
-      <div class="cv-games" id="cv-games"></div>
-    </section>
-    <section class="cv-sec">
-      <h2>Pick a club</h2>
-      <div class="cv-clubs" id="cv-clubs"></div>
-    </section>
-    <section class="cv-sec">
-      <h2>What is inside</h2>
-      <div class="cv-feats">
-        <a class="cv-app" href="#" data-sec="shots"><b>Shot chart</b><p>Every attempt on the floor, grouped by zone against the league, or replayed in 3D with the ball in flight.</p></a>
-        <a class="cv-app" href="#" data-sec="profile"><b>Shooting profile</b><p>What his shots are worth to an average shooter, and the points he adds on top of them.</p></a>
-        <a href="#leaders"><b>League leaders</b><p>Points, rebounds, assists and three-point percentage across all twenty clubs.</p></a>
-        <a href="#compare"><b>Compare</b><p>Any player against any other at his position, per 40 minutes and per possession, with the position median beside them.</p></a>
+    <header class="cv-head">
+      <div><p class="cv-eyebrow no-t" id="cv-round"></p><h1 class="cv-h1 no-t" id="cv-h1"></h1></div>
+      <div class="cv-cta">
+        <div class="search cv-search"><input type="search" id="cq" placeholder="Find a player" aria-label="Find a player across all clubs" autocomplete="off" spellcheck="false" role="combobox" aria-expanded="false" aria-controls="cq-list" aria-autocomplete="list"><kbd>/</kbd><ul class="dd-list" id="cq-list" role="listbox" aria-label="Players" hidden></ul></div>
+        <button class="cv-go" id="cv-go" type="button">Open the app</button>
       </div>
+    </header>
+    <div class="cv-card cv-fol no-t" id="cv-fol" hidden></div>
+    <section class="cv-last no-t" id="cv-last" hidden>
+      <div class="cv-bento" id="cv-bento"></div>
+    </section>
+    <section class="cv-card cv-clubs-card">
+      <div class="cv-th"><span>Pick a club</span></div>
+      <div class="cv-clubs" id="cv-clubs"></div>
     </section>
     <p class="cv-foot"><a href="monitor.html">System status</a><a href="feed.xml" title="Updates feed (RSS)">Updates feed</a><span>Data: Euroleague official feeds</span></p>
   </div>
@@ -2783,66 +2821,120 @@ function gameCard(code, home, away, hs, as, tp, me, head){
   return `<a class="cv-game" href="#game/${code}" aria-label="${shortName(home)} ${hs}, ${shortName(away)} ${as}">${head ? `<span class="rd">${head}</span>` : ''}${row(home, hs, hs > as)}${row(away, as, as > hs)}${n ? `<span class="best"><img src="${tp[3] || PLACEHOLDER}" alt="" width="32" height="32" loading="lazy"><span><b lang="en">${n.first ? n.first[0] + '. ' : ''}${n.sur}</b> ${tp[1]} ${t('pts')} · ${tp[2]} PIR</span></span>` : ''}</a>`;
 }
 
-// ---- opening page: rendered once, shown whenever the URL carries no club
+// ---- opening page: a bento board of the latest round and the season, drawn from META, shown whenever the URL carries no club.
+// Tiles: the game of the round (the closest finish; its file is fetched for overtime and the lowest win probability), the top
+// ten, every result of the round, the best lines, two round numbers, offence against defence for all twenty clubs, the league's
+// FG% by court zone, the scoring leaders, the next round and two season numbers. Each tile is a door to its page.
 const COVER = (() => {
-  const el = $('#cover'), first = META.clubs[0];
+  const el = $('#cover'), first = META.clubs[0], go = $('#cv-go');
   $('#cv-season').textContent = META.label;
-  const st = META.status || {};
-  // each club card carries its own colourway (--cb base, --ca accent) for the strip at its edge; the country is shown by the Club Edition look only
-  const clubs = () => { const F = FOLLOW.clubs(); $('#cv-clubs').innerHTML = [...META.clubs].sort((a, b) => Number(F.includes(b.code)) - Number(F.includes(a.code))).map(c => `<a href="#${c.code}" title="${c.name}"${F.includes(c.code) ? ' class="fl"' : ''} style="--cb:${c.base || '#1f2b47'};--ca:${c.accent || '#f26f21'}"><span class="medal"><img src="${c.logo || ''}" alt="" width="34" height="34" loading="lazy" decoding="async"></span><span class="txt"><span class="nm" lang="en">${c.short || c.code}</span><span class="co">${t(c.country || '')}</span></span>${F.includes(c.code) ? `<i class="fl-star" aria-label="${t('Following')}">${STAR(true)}</i>` : ''}</a>`).join(''); };
-  const rounds = META.leaders && META.leaders.rounds;
+  const st = META.status || {}, LG = META.league || {}, Z = LG.zones;
   const last = (() => { try { return JSON.parse(localStorage.getItem('pl-last')); } catch (e) { return null; } })();
-  const go = $('#cv-go');
-  function render(){
-    const n = v => (v || 0).toLocaleString(LOCALE());
-    $('#cv-round').textContent = rounds ? ` · ${t('Regular season')}` : '';   // in the eyebrow, re-rendered with the language
-    $('#cv-nums').innerHTML = [[META.clubs.length, 'Clubs'], [META.n_players, 'Players'], [st.games, 'Games']].map(([v, k]) => `<li><b>${n(v)}</b><span>${t(k)}</span></li>`).join('');
-    clubs(); lastNight();
-    if (last && last.hash && CLUBS[last.hash.split('/')[0]]) go.innerHTML = `${t('Continue')}<small>${esc(last.name)}</small>`; else go.textContent = t('Open the app');
-  }
-  // the latest game day, one card per game opening its game page: the score and the night's best line by PIR
-  function lastNight(){
-    const L = META.last_night, sec = $('#cv-last');
-    if (!L || !L.games || !L.games.length) { sec.hidden = true; return; }
-    const iso = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`, now = new Date();
-    $('#cv-last-h').textContent = L.date === iso(now) ? t('Tonight') : L.date === iso(new Date(now.getTime() - 864e5)) ? t('Last night') : t('Latest results');
-    const rounds = [...new Set(L.games.map(g => g.round))];
-    $('#cv-last-sub').textContent = `${rounds.map(r => t('Round {n}', {n: r})).join(', ')} · ${new Date(L.date + 'T12:00:00').toLocaleDateString(LOCALE(), {weekday: 'long', day: 'numeric', month: 'long'})} · ${plural(L.games.length, '{n} game', '{n} games')}`;
-    const P = FOLLOW.players(), F = new Set([...FOLLOW.clubs(), ...P.map(p => p.club)]), mine = g => F.has(g.home) ? g.home : F.has(g.away) ? g.away : null;
-    $('#cv-games').innerHTML = [...L.games].sort((a, b) => Number(!!mine(b)) - Number(!!mine(a))).map(g => gameCard(g.code, g.home, g.away, g.hs, g.as, g.top && [g.top[1], g.top[3], g.top[6], g.top[8]], mine(g)).replace('class="cv-game"', `class="cv-game${mine(g) ? ' fl' : ''}"`)).join('');
-    sec.hidden = false;
-    following(L, P);
-  }
-  // the followed players, each with his line from the latest game day (read from that game's file), or a dash when his club did not play
+  // META.games rows are compact, newest first: [code, round, date, home, away, hs, as, best name, pts, PIR, photo]
+  const ALL = META.games || [], R = ALL.length ? Math.max(...ALL.map(g => g[1])) : 0, ROUND = ALL.filter(g => g[1] === R);
+  const crest = (c, s = 22) => { const k = CLUBS[c] || {}; return `<img class="cv-crest" src="${k.logo || ''}" alt="" width="${s}" height="${s}" loading="lazy" style="--s:${s}px">`; };
+  const day = (iso, o) => new Date(iso + 'T12:00:00').toLocaleDateString(LOCALE(), o);
+  const full = raw => { const n = nameOf(raw); return `${n.first} ${n.sur}`.trim(); };
+  const winner = g => g[5] > g[6] ? g[3] : g[4], loser = g => g[5] > g[6] ? g[4] : g[3], score = g => `${Math.max(g[5], g[6])}–${Math.min(g[5], g[6])}`;
+  const th = (label, link) => `<div class="cv-th"><span>${label}</span>${link ? `<i>${link}</i>` : ''}</div>`;
   const files = {};
   const gameFile = code => files[code] || (files[code] = fetch(`${META.path}games/${code}.json?v=${encodeURIComponent(META.built || '')}`).then(r => r.ok ? r.json() : null).catch(() => { delete files[code]; return null; }));
-  function following(L, P){
-    const box = $('#cv-fol');
-    if (!P.length) { box.hidden = true; box.innerHTML = ''; return; }
-    const B = {min: 4, pts: 5, reb: 14, ast: 15, pir: 22};
+  // each club card carries its own colourway (--cb base, --ca accent) for its ring; followed clubs come first with the star
+  const clubs = () => { const F = FOLLOW.clubs(); $('#cv-clubs').innerHTML = [...META.clubs].sort((a, b) => Number(F.includes(b.code)) - Number(F.includes(a.code))).map(c => `<a href="#${c.code}" title="${c.name}"${F.includes(c.code) ? ' class="fl"' : ''} style="--cb:${c.base || '#1f2b47'};--ca:${c.accent || '#f26f21'}"><span class="medal"><img src="${c.logo || ''}" alt="" width="20" height="20" loading="lazy" decoding="async"></span><span class="txt"><span class="nm" lang="en">${c.short || c.code}</span><span class="co">${t(c.country || '')}</span></span>${F.includes(c.code) ? `<i class="fl-star" aria-label="${t('Following')}">${STAR(true)}</i>` : ''}</a>`).join(''); };
+
+  // the game of the round: the closest finish of the latest round; overtime and the lowest win probability come from its file
+  const feature = ROUND.length ? [...ROUND].sort((a, b) => Math.abs(a[5] - a[6]) - Math.abs(b[5] - b[6]) || b[0] - a[0])[0] : null;
+  let featured = null;   // its file once fetched
+  function hero(g){
+    const w = winner(g), l = loser(g), d = featured, ot = !!(d && d.q && d.q.length > 4), k = CLUBS[w] || {};
+    const low = d && d.wp && d.wp.v && d.wp.v.length ? Math.round(Math.min(...d.wp.v.map(v => g[5] > g[6] ? v : 1000 - v)) / 10) : null;   // wp.v is the home win chance in thousandths
+    const head = t(ot ? '{w} beat {l} in overtime' : '{w} beat {l}', {w: shortName(w), l: shortName(l)});
+    const lede = t('{p}: {pts} points and {pir} PIR, the line of the game.', {p: full(g[7] || ''), pts: g[8], pir: g[9]}) + (low != null ? ' ' + t('{w} were down to {p}% win probability before closing it out {s}.', {w: shortName(w), p: low, s: score(g)}) : '');
+    return `<a class="cv-card cv-hero" href="#game/${g[0]}" style="--cb:${k.base || '#1f2b47'}"><img src="${g[10] || PLACEHOLDER}" alt="" loading="lazy"><span class="cv-th"><span>${t('Game of the round')}</span></span><span class="cv-chip">${score(g)}${ot ? ` · ${t('OT')}` : ''}</span><h2>${head}</h2><p>${lede}</p><span class="cv-big"><span><b>${g[8]}</b><i>${t('Points')}</i></span><span><b>${g[9]}</b><i>PIR</i></span>${low != null ? `<span><b>${low}%</b><i>${t('Lowest win prob.')}</i></span>` : ''}</span></a>`;
+  }
+  const standings = () => { const S = (META.standings || []).slice(0, 10); if (!S.length) return '';
+    return `<div class="cv-card cv-stand">${th(t('Standings'), `<a href="#standings">${t('Full table')}</a>`)}<table class="cv-tbl"><thead><tr><th></th><th class="l">${t('Club')}</th><th>${t('W')}–${t('L')}</th><th>+/−</th><th>${t('Form')}</th></tr></thead><tbody>${S.map(r => `<tr><td class="n">${r.pos}</td><td class="l">${crest(r.code, 22)}<span lang="en">${shortName(r.code)}</span></td><td>${r.w}–${r.l}</td><td>${r.diff > 0 ? '+' : ''}${r.diff}</td><td><span class="cv-form">${r.form.map(x => `<i class="${x ? 'w' : 'l'}"></i>`).join('')}</span></td></tr>`).join('')}</tbody></table></div>`; };
+  // every result of the round, grouped by day; a followed club's game carries the orange edge
+  function results(){
+    const P = FOLLOW.players(), F = new Set([...FOLLOW.clubs(), ...P.map(p => p.club)]), mine = g => F.has(g[3]) || F.has(g[4]);
+    const dates = [...new Set(ROUND.map(g => g[2]))].sort();
+    const tm = (c, pts, win) => `<span class="tm${win ? ' win' : ''}">${crest(c, 20)}<b lang="en"><span class="full">${shortName(c)}</span><span class="abbr">${c}</span></b><em>${pts}</em></span>`;
+    return `<div class="cv-card cv-resc">${th(t('Results · round {n}', {n: R}), `<a href="#games">${t('Games@page')}</a>`)}<div class="cv-res" id="cv-games">${dates.map(d => `<small>${day(d, {weekday: 'long', day: 'numeric', month: 'short'})}</small>` + ROUND.filter(g => g[2] === d).sort((a, b) => a[0] - b[0]).map(g => `<a class="cv-game${mine(g) ? ' fl' : ''}" href="#game/${g[0]}" aria-label="${shortName(g[3])} ${g[5]}, ${shortName(g[4])} ${g[6]}">${tm(g[3], g[5], g[5] > g[6])}${tm(g[4], g[6], g[6] > g[5])}</a>`).join('')).join('')}</div></div>`;
+  }
+  // the best lines of the round, each opening its game
+  const lines = () => { const L = [...ROUND].filter(g => g[7]).sort((a, b) => b[9] - a[9] || b[8] - a[8]).slice(0, 5); if (!L.length) return '';
+    return `<div class="cv-card cv-lines">${th(t('Lines of the round'))}<div class="cv-list">${L.map((g, i) => `<a href="#game/${g[0]}"><span class="i">${i + 1}</span><span class="who"><b lang="en">${full(g[7])}</b><small lang="en">${shortName(g[3])} – ${shortName(g[4])}</small></span><em>${g[9]}<small>PIR</small></em></a>`).join('')}</div></div>`; };
+  const num = (cls, label, big, sub) => `<div class="cv-card cv-num ${cls}">${th(label)}<div><b>${big}</b><span>${sub}</span></div></div>`;
+  // offence against defence: every club by its ratings, better defence upwards; labels step aside when crests crowd
+  function ratings(){
+    const rs = Object.entries(META.ratings || {}).filter(([c]) => CLUBS[c]); if (rs.length < 4) return '';
+    const W = 520, H = 360, M = {l: 40, r: 14, t: 18, b: 32}, xs = rs.map(([, r]) => r.ortg), ys = rs.map(([, r]) => r.drtg);
+    const [x0, x1] = [Math.min(...xs) - 2, Math.max(...xs) + 2], [y0, y1] = [Math.min(...ys) - 2, Math.max(...ys) + 2];
+    const sx = v => M.l + (v - x0) / (x1 - x0) * (W - M.l - M.r), sy = v => M.t + (v - y0) / (y1 - y0) * (H - M.t - M.b);
+    const mx = xs.reduce((a, b) => a + b) / xs.length, my = ys.reduce((a, b) => a + b) / ys.length;
+    const P = rs.map(([c, r]) => ({c, x: sx(r.ortg), y: sy(r.drtg)})).sort((a, b) => a.x - b.x);
+    return `<div class="cv-card cv-map">${th(t('Offence against defence'), `<a href="#standings">${t('Standings')}</a>`)}<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${t('Offence against defence')}"><line class="gl" x1="${sx(mx)}" x2="${sx(mx)}" y1="${M.t}" y2="${H - M.b}" stroke-dasharray="3 4"/><line class="gl" x1="${M.l}" x2="${W - M.r}" y1="${sy(my)}" y2="${sy(my)}" stroke-dasharray="3 4"/>`
+      + `<text class="q" x="${W - M.r - 2}" y="${M.t + 10}" text-anchor="end">${t('Good at both')}</text><text class="q" x="${M.l + 2}" y="${H - M.b - 6}">${t('Struggling')}</text><text class="q" x="${M.l + 2}" y="${M.t + 10}">${t('Defence first')}</text><text class="q" x="${W - M.r - 2}" y="${H - M.b - 6}" text-anchor="end">${t('Offence first')}</text>`
+      + `<text class="ax" x="${(M.l + W - M.r) / 2}" y="${H - 8}" text-anchor="middle">${t('Offensive rating, points per 100 possessions →')}</text><text class="ax" transform="translate(11 ${(M.t + H - M.b) / 2}) rotate(-90)" text-anchor="middle">${t('← Defensive rating, fewer is better')}</text>`
+      + P.map(p => `<a href="#${p.c}"><g transform="translate(${p.x} ${p.y})"><title>${CLUBS[p.c].name}</title><circle r="12" fill="#fff" stroke="${CLUBS[p.c].base || '#1f2b47'}" stroke-width="2"/><image href="${CLUBS[p.c].logo || ''}" x="-8" y="-8" width="16" height="16"/></g></a>`).join('') + `</svg></div>`;
+  }
+  // the league's FG% by zone on the court (shot coordinates in cm, basket at the origin, the baseline 157.5 behind it)
+  function zones(){
+    if (!Z || !Z.rim) return '';
+    const X = v => v + 750, Y = v => 1260 - v, col = v => `color-mix(in srgb, #f26f21 ${Math.round(20 + Math.max(0, v - .3) * 100)}%, var(--cvfill))`, pc = v => `${Math.round(v * 100)}%`;
+    const arc3 = `M${X(-660)} ${Y(-157.5)} L${X(-660)} ${Y(141.5)} A675 675 0 0 1 ${X(660)} ${Y(141.5)} L${X(660)} ${Y(-157.5)} Z`;
+    return `<div class="cv-card cv-zone">${th(t('Where the league scores'), `<i>${t('FG% by zone')}</i>`)}<svg viewBox="0 0 1500 1420" role="img" aria-label="${t('Where the league scores')}"><clipPath id="cv-court"><rect x="0" y="0" width="1500" height="1420" rx="60"/></clipPath><g clip-path="url(#cv-court)"><rect x="0" y="0" width="1500" height="1420" fill="var(--cvfill)"/>`
+      + `<path class="z" d="M0 ${Y(1242.5)} H1500 V${Y(-157.5)} H0 Z" fill="${col(Z.a3.fg)}"/><rect class="z" x="0" y="${Y(141.5)}" width="${X(-660)}" height="${Y(-157.5) - Y(141.5)}" fill="${col(Z.c3.fg)}"/><rect class="z" x="${X(660)}" y="${Y(141.5)}" width="${1500 - X(660)}" height="${Y(-157.5) - Y(141.5)}" fill="${col(Z.c3.fg)}"/>`
+      + `<path class="z" d="${arc3}" fill="${col(Z.mid.fg)}"/><rect class="z" x="${X(-245)}" y="${Y(422.5)}" width="490" height="580" rx="24" fill="${col(Z.paint.fg)}"/><circle class="z" cx="${X(0)}" cy="${Y(0)}" r="150" fill="${col(Z.rim.fg)}"/>`
+      + `<text x="${X(0)}" y="${Y(-24)}">${pc(Z.rim.fg)}</text><text x="${X(0)}" y="${Y(300)}">${pc(Z.paint.fg)}</text><text x="${X(0)}" y="${Y(560)}">${pc(Z.mid.fg)}</text><text x="${X(0)}" y="${Y(900)}">${pc(Z.a3.fg)}</text><text class="s" x="${X(-705)}" y="${Y(0)}">${pc(Z.c3.fg)}</text><text class="s" x="${X(705)}" y="${Y(0)}">${pc(Z.c3.fg)}</text>`
+      + `<text class="s" x="${X(0)}" y="${Y(1080)}">${t('{a} threes · {b} at the rim', {a: Z.three.att.toLocaleString(LOCALE()), b: Z.rim.att.toLocaleString(LOCALE())})}</text></g></svg></div>`;
+  }
+  // the scoring leaders: names and clubs from the roster, which lands after the first paint (the board is redrawn then)
+  const leaders = () => { const L = (META.leaders && META.leaders.pts || []).slice(0, 5); if (!L.length) return '';
+    return `<div class="cv-card cv-lead">${th(t('Scoring leaders'), `<a href="#leaders">${t('Leaders')}</a>`)}<div class="cv-list">${L.map((p, i) => { const r = ROSTER.byPid[p[0]]; return `<a href="${r ? `#${r.club}/${p[0]}` : '#leaders'}"><span class="i">${i + 1}</span><span class="who"><b lang="en">${r ? full(r.name) : '…'}</b>${r ? `<small lang="en">${shortName(r.club)}</small>` : ''}</span><em>${f1(p[1] / p[2])}</em></a>`; }).join('')}</div></div>`; };
+  const next = () => { const N = META.next_round || []; if (!N.length) return '';
+    return `<div class="cv-card cv-next">${th(t('Next · round {n}', {n: N[0][1]}), `<i>${plural(N.length, '{n} game', '{n} games')}</i>`)}<div class="cv-pills">${N.map(g => `<a href="#${g[3]}"><small>${day(g[2], {weekday: 'short', day: 'numeric', month: 'short'})}</small><b>${crest(g[3], 18)}<span lang="en">${shortName(g[3])}</span></b><b>${crest(g[4], 18)}<span lang="en">${shortName(g[4])}</span></b></a>`).join('')}</div></div>`; };
+  function board(){
+    const sec = $('#cv-last'), box = $('#cv-bento');
+    if (!ROUND.length) { sec.hidden = true; box.innerHTML = ''; return; }
+    const pts = ROUND.reduce((n, g) => n + g[5] + g[6], 0) / ROUND.length / 2, hw = ROUND.filter(g => g[5] > g[6]).length;
+    box.innerHTML = hero(feature) + standings() + results() + lines()
+      + num('', t('Points a team'), f1(pts), t('this round'))
+      + num('', t('Home wins'), `${hw}`, t('of {n} games', {n: ROUND.length}))
+      + ratings() + zones() + leaders() + next()
+      + (st.games ? num('', t('Season'), (st.games || 0).toLocaleString(LOCALE()), t('{n} shots', {n: (st.shots || 0).toLocaleString(LOCALE())})) : '')
+      + (Z && LG.shots ? num('', t('Three-point rate'), `${Math.round(100 * Z.three.att / LG.shots)}%`, t('of all shots')) : '');
+    sec.hidden = false;
+    if (feature && !featured) gameFile(feature[0]).then(d => { if (d) { featured = d; if (document.body.classList.contains('cv-on')) render(); } });
+  }
+  function render(){
+    const dates = [...new Set(ROUND.map(g => g[2]))].sort();
+    $('#cv-round').textContent = ROUND.length ? `${t('Round {n}', {n: R})} · ${dates.map(d => day(d, {day: 'numeric'})).join(' & ')} ${day(dates[dates.length - 1], {month: 'long'})} · ${t('Regular season')}` : t('Regular season');
+    $('#cv-h1').innerHTML = t('The league, <em>at a glance</em>');
+    clubs(); board(); following();
+    if (last && last.hash && CLUBS[last.hash.split('/')[0]]) go.innerHTML = `${t('Continue')}<small>${esc(last.name)}</small>`; else go.textContent = t('Open the app');
+  }
+  // the followed players, each with his line from the latest round (read from that game's file), or a dash when his club did not play
+  function following(){
+    const box = $('#cv-fol'), P = FOLLOW.players();
+    if (!P.length || !ROUND.length) { box.hidden = true; box.innerHTML = ''; return; }
+    const B = {min: 4, pts: 5, reb: 14, ast: 15, pir: 22}, gameOf = p => ROUND.find(x => x[3] === p.club || x[4] === p.club);
     const card = (p, g, b) => { const n = nameOf(p.name), played = b && b[B.min] > 0;
       const ln = !g ? `<span class="ln na">${t('No game')}</span>` : !b ? `<span class="ln na">…</span>` : played ? `<span class="ln">${[['pts', 'PTS'], ['reb', 'REB'], ['ast', 'AST'], ['pir', 'PIR']].map(([k, l]) => `<b>${b[B[k]]}</b> <i>${t(l)}</i>`).join(' · ')}</span>` : `<span class="ln na">${t('Did not play')}</span>`;
-      return `<a class="cv-pl${played ? '' : ' na'}" href="#${p.club}/${p.pid}${played ? '/g' + g.code : ''}"><img src="${p.photo || PLACEHOLDER}" alt="" width="44" height="44" loading="lazy"><span class="who"><b lang="en">${n.first ? n.first[0] + '. ' : ''}${n.sur}</b><small lang="en">${shortName(p.club)}</small></span>${ln}</a>`; };
+      return `<a class="cv-pl${played ? '' : ' na'}" href="#${p.club}/${p.pid}${played ? '/g' + g[0] : ''}"><img src="${p.photo || PLACEHOLDER}" alt="" width="44" height="44" loading="lazy"><span class="who"><b lang="en">${n.first ? n.first[0] + '. ' : ''}${n.sur}</b><small lang="en">${shortName(p.club)}</small></span>${ln}</a>`; };
     const draw = lines => {
-      const rows = P.map(p => { const g = L.games.find(x => x.home === p.club || x.away === p.club), d = g && lines[g.code], b = d && ((d.box && d.box[p.club]) || []).find(x => x[0] === p.pid);
+      const rows = P.map(p => { const g = gameOf(p), d = g && lines[g[0]], b = d && ((d.box && d.box[p.club]) || []).find(x => x[0] === p.pid);
         return {p, g, b: d ? (b || []) : null, k: b && b[B.min] > 0 ? b[B.pir] : g ? -1e3 : -2e3}; }).sort((a, b) => b.k - a.k);
       box.innerHTML = `<h3>${t('Your players')}</h3><div class="cv-pls">${rows.map(r => card(r.p, r.g, r.b)).join('')}</div>`;
     };
-    const codes = [...new Set(P.map(p => (L.games.find(x => x.home === p.club || x.away === p.club) || {}).code).filter(c => c != null))], lines = {};
+    const codes = [...new Set(P.map(p => (gameOf(p) || [])[0]).filter(c => c != null))], lines = {};
     box.hidden = false; draw(lines);
     codes.forEach(c => gameFile(c).then(d => { if (d) { lines[c] = d; draw(lines); } }));
   }
   render();
   go.addEventListener('click', () => { location.hash = last && last.hash && CLUBS[last.hash.split('/')[0]] ? last.hash : first.code; });
-  // the Shot chart and Shooting profile cards open a player page (the last one viewed, otherwise the league's leading scorer),
-  // then scroll to their section once the page is up
-  const star = () => { const p = META.leaders && META.leaders.pts && META.leaders.pts[0], r = p && ROSTER.byPid[p[0]]; return r ? `${r.club}/${p[0]}` : first.code; };
-  el.querySelectorAll('.cv-app').forEach(a => a.addEventListener('click', e => {
-    e.preventDefault(); location.hash = last && last.hash && last.hash.includes('/') && CLUBS[last.hash.split('/')[0]] ? last.hash : star();
-    const sec = a.dataset.sec === 'profile' ? '#prof-panel' : '#shots-sec', t0 = Date.now();
-    const tick = () => { const n = $(sec); if (n && !n.hidden && n.offsetParent && !WIPE.up && !routing) n.scrollIntoView({block: 'start'}); else if (Date.now() - t0 < 4000) setTimeout(tick, 120); };
-    setTimeout(tick, 120);
-  }));
+  // press feedback lives on pointer-down, not on release
+  el.addEventListener('pointerdown', e => { const b = e.target.closest('a.cv-card, .cv-go'); if (!b) return; b.classList.add('down'); const up = () => { b.classList.remove('down'); removeEventListener('pointerup', up); removeEventListener('pointercancel', up); }; addEventListener('pointerup', up); addEventListener('pointercancel', up); });
   return {
     render,
     show(){ applyPalette({base: '#1f2b47', accent: '#f26f21'}); document.body.classList.add('cv-on'); el.hidden = false; document.title = 'Euroleague Player Lab'; scrollTo(0, 0); },
@@ -3532,6 +3624,7 @@ if ('serviceWorker' in navigator && location.protocol === 'https:') addEventList
   // the roster after the first page is up: search, compare and the leaderboard names switch on when it lands
   try { ROSTER.list = await (await fetch(`${META.path}roster.json?v=${encodeURIComponent(META.built || '')}`)).json(); } catch (e) { ROSTER.list = []; }
   ROSTER.byPid = Object.fromEntries(ROSTER.list.map(r => [r.pid, r])); ROSTER.loaded = true; indexRoster();
+  if (document.body.classList.contains('cv-on')) COVER.render();   // the scoring leaders tile shows names once the roster is in
   if (state.data) { renderCompareOptions(); }
   checkFresh(); setInterval(checkFresh, 15 * 60e3);
   const dbg = +new URLSearchParams(location.search).get('debug3d');
