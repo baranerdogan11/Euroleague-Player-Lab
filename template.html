@@ -3156,11 +3156,12 @@ const GAMES = (() => {
     hide(){ document.body.classList.remove('gs-on'); el.hidden = true; }
   };
 })();
-// ---- club page (#CODE): the club hub in its own colourway; data from the club JSON already loaded by loadTeam, META and lineups.json
+// ---- club page (#CODE): the club hub in its own colourway; data from the club JSON already loaded by loadTeam, META and the club's lineups/<CODE>.json
 const CLUB = (() => {
-  const el = $('#club'); let lu = null, luLoading = null, sortKey = 'no', bound = false;
+  const el = $('#club'); let lu = null, sortKey = 'no', bound = false; const luBy = {};
   const ord = n => LANG === 'tr' ? `${n}.` : n + (n % 100 >= 11 && n % 100 <= 13 ? 'th' : ['th', 'st', 'nd', 'rd'][n % 10] || 'th');
-  const loadLineups = () => luLoading || (luLoading = fetch(`${META.path}lineups.json?v=${encodeURIComponent(META.built || '')}`).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); }).then(d => { lu = d; return d; }).catch(() => null));
+  // the club's own slice of the lineups (teams/<season>/lineups/<CODE>.json), not the whole league's file
+  const loadLineups = code => luBy[code] || (luBy[code] = fetch(`${META.path}lineups/${code}.json?v=${encodeURIComponent(META.built || '')}`).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); }).catch(() => { delete luBy[code]; return null; }));
   const medal = (code, size = 26) => { const c = CLUBS[code]; return c && c.logo ? `<span class="medal" style="border-color:${c.accent || '#f26f21'}"><img src="${c.logo}" alt="" width="${size}" height="${size}" loading="lazy"></span>` : ''; };
   const pg = (v, gp) => gp ? f1(v / gp) : '–';
   const clubGames = () => { const seen = {}; for (const p of team().players) for (const g of ((p.cur && p.cur.games) || [])) seen[g.code] = g; return Object.values(seen).sort((a, b) => a.round - b.round); };
@@ -3234,9 +3235,10 @@ const CLUB = (() => {
     async show(code){
       document.body.classList.add('cb-on'); el.hidden = false;
       const c = CLUBS[code] || {}; document.title = `${c.name || code} · Player Lab`;
+      if (lu && !(code in lu.onoff)) lu = null;   // another club's slice
       render(); scrollTo(0, 0);
       DD.team.refresh(); DD.player.refresh();
-      if (!lu) { await loadLineups(); if (document.body.classList.contains('cb-on') && state.team === code) render(); }
+      if (!lu) { const d = await loadLineups(code); if (d && document.body.classList.contains('cb-on') && state.team === code) { lu = d; render(); } }
     },
     hide(){ document.body.classList.remove('cb-on'); el.hidden = true; },
     render
