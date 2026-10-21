@@ -144,6 +144,7 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font
 .dd-list li img{width:22px;height:22px;object-fit:contain;flex:none}
 .dd-list li .no{width:30px;height:22px;display:grid;place-items:center;background:var(--panel2);color:var(--ink);font-size:13px;font-style:italic;font-weight:800;flex:none;transform:skewX(-10deg)}
 .dd-list li[aria-selected="true"] .no{background:var(--club2);color:var(--on)}
+.dd-list li.club .no{visibility:hidden}   /* a club row lines its name up with the players' names, with no number chip */
 .dd-list li small{margin-left:auto;font-weight:600;color:var(--muted);letter-spacing:.08em;font-size:12px}
 .dd-list li .w{color:var(--good)}.dd-list li .l{color:var(--bad)}
 .toolbar .dd,.band-foot .dd{flex:none;min-width:220px;background:var(--panel);border:1px solid var(--line)}
@@ -2801,13 +2802,16 @@ const DD = {
 const fold = s => (s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/ı/g, 'i');
 let INDEX = [];
 const indexRoster = () => { INDEX = ROSTER.list.map(r => { const n = nameOf(r.name), c = CLUBS[r.club] || {}; return {r, n, sur: fold(n.sur), words: fold(`${n.first} ${n.sur} ${c.short || ''} ${c.name || ''} ${r.club}`).split(/[\s\-'.]+/).filter(Boolean)}; }); };
+// clubs by name, short name, code and the nicknames people type (English and Turkish spellings), so Fener, Efes or Barça open the club
+const CLUB_ALIAS = {IST: 'efes', ULK: 'fener fb', BES: 'bjk', MAD: 'real', BAR: 'barca barsa barselona', OLY: 'oly olimpiakos osfp', PAN: 'pao panatinaikos', RED: 'red star kizilyildiz zvezda', PAR: 'partizan', TEL: 'maccabi', HTA: 'hapoel', MIL: 'olimpia ea7 armani milano', MUN: 'bayern munih', ZAL: 'zalgiris', BAS: 'baskonia vitoria', ASV: 'asvel lyon villeurbanne', VIR: 'virtus bolonya', PAM: 'valencia', PRS: 'paris', DUB: 'dubai'};
+function findClubs(q){ const toks = fold(q).trim().split(/[\s\-'.]+/).filter(Boolean); if (!toks.length) return []; return Object.entries(CLUBS).filter(([code, c]) => { const w = fold(`${c.name || ''} ${c.short || ''} ${code} ${CLUB_ALIAS[code] || ''}`).split(/[\s\-'.]+/).filter(Boolean); return toks.every(t => w.some(x => x.startsWith(t))); }).slice(0, 2).map(([code]) => ({club: code})); }
 function findPlayers(q){ const toks = fold(q).trim().split(/[\s\-'.]+/).filter(Boolean); if (!toks.length) return []; return INDEX.filter(x => toks.every(t => x.words.some(w => w.startsWith(t)))).sort((a, b) => (a.sur.startsWith(toks[0]) ? 0 : 1) - (b.sur.startsWith(toks[0]) ? 0 : 1) || a.n.sur.localeCompare(b.n.sur)).slice(0, 8); }
 function bindSearch(q, list){
   let hits = [], hi = -1;
   const close = () => { list.hidden = true; q.setAttribute('aria-expanded', 'false'); q.removeAttribute('aria-activedescendant'); hi = -1; };
   const mark = () => { [...list.children].forEach((li, i) => { li.classList.toggle('hi', i === hi); li.setAttribute('aria-selected', i === hi); }); if (hi >= 0) q.setAttribute('aria-activedescendant', `q-opt-${hi}`); else q.removeAttribute('aria-activedescendant'); };
-  const go = x => { location.hash = `${x.r.club}/${x.r.pid}`; q.value = ''; close(); q.blur(); $('.top').classList.remove('q-on'); };
-  const show = () => { if (!q.value.trim()) { close(); return; } hits = findPlayers(q.value); list.innerHTML = hits.length ? hits.map((x, i) => { const c = CLUBS[x.r.club] || {}; return `<li role="option" id="q-opt-${i}" data-i="${i}" aria-selected="false">${c.logo ? `<img src="${c.logo}" alt="">` : ''}<span class="no">${x.r.dorsal || '–'}</span><span lang="en">${x.n.first} ${x.n.sur}</span><small lang="en">${shortName(x.r.club)}</small></li>`; }).join('') : `<li class="none">${t('No player matches')}</li>`; list.hidden = false; fitList(list); q.setAttribute('aria-expanded', 'true'); hi = hits.length ? 0 : -1; mark(); };
+  const go = x => { location.hash = x.club ? x.club : `${x.r.club}/${x.r.pid}`; q.value = ''; close(); q.blur(); $('.top').classList.remove('q-on'); };
+  const show = () => { if (!q.value.trim()) { close(); return; } hits = [...findClubs(q.value), ...findPlayers(q.value)]; list.innerHTML = hits.length ? hits.map((x, i) => { if (x.club) { const c = CLUBS[x.club] || {}; return `<li role="option" id="q-opt-${i}" data-i="${i}" aria-selected="false" class="club">${c.logo ? `<img src="${c.logo}" alt="">` : ''}<span class="no"></span><span lang="en">${c.name || x.club}</span><small>${t('Club')}</small></li>`; } const c = CLUBS[x.r.club] || {}; return `<li role="option" id="q-opt-${i}" data-i="${i}" aria-selected="false">${c.logo ? `<img src="${c.logo}" alt="">` : ''}<span class="no">${x.r.dorsal || '–'}</span><span lang="en">${x.n.first} ${x.n.sur}</span><small lang="en">${shortName(x.r.club)}</small></li>`; }).join('') : `<li class="none">${t('No player matches')}</li>`; list.hidden = false; fitList(list); q.setAttribute('aria-expanded', 'true'); hi = hits.length ? 0 : -1; mark(); };
   q.addEventListener('input', show); q.addEventListener('focus', show);
   if (q.id === 'q') {
     $('#q-btn').addEventListener('click', () => { $('.top').classList.add('q-on'); $('#q-x').hidden = false; q.focus(); });   // phones: the field opens over the bar from the icon

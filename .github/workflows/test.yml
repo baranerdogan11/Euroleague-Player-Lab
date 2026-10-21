@@ -85,7 +85,14 @@ jobs:
           "$CHROME" --version
           echo "CHROME=$CHROME" >> "$GITHUB_ENV"
 
+      # the screenshot tests (tests/e2e/visual.spec.js) draw in Playwright's own Chromium, pinned by the
+      # @playwright/test version, so the pictures do not move when the runner's Chrome updates
+      - name: Chromium for the screenshot tests
+        run: npx playwright install --with-deps chromium
+
       - name: Browser tests (Playwright) on the committed site
+        env:
+          PL_VISUAL: "1"
         run: npm run test:e2e
 
       - name: Screenshots and report

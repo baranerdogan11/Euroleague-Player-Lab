@@ -20,3 +20,22 @@ for (const lang of ['en', 'tr']) {
     expect(problems, 'the page reported errors').toEqual([]);
   });
 }
+
+// Clubs come first in the results, by name or by the nickname people actually type, and open the club page
+for (const lang of ['en', 'tr']) {
+  test(`search finds clubs by nickname · ${lang}`, async ({page}) => {
+    const problems = await prepare(page, {lang});
+    await page.goto('./');
+    await settled(page);
+    await page.waitForFunction(() => ROSTER.loaded);
+    for (const [typed, code] of [['Fener', 'ULK'], ['Efes', 'IST'], ['Barça', 'BAR'], ['Kızılyıldız', 'RED'], ['real madrid', 'MAD'], ['pao', 'PAN']]) {
+      expect(await page.evaluate(q => findClubs(q).map(x => x.club), typed), `searching "${typed}"`).toEqual([code]);
+    }
+    await page.fill('#cq', 'Fener');
+    await expect(page.locator('#cq-list li').first()).toHaveClass(/club/);
+    await expect(page.locator('#cq-list li').nth(1)).not.toHaveClass(/club/);   // its players follow
+    await page.locator('#cq-list li').first().click();
+    await expect(page).toHaveURL(/#ULK$/);
+    expect(problems, 'the page reported errors').toEqual([]);
+  });
+}
