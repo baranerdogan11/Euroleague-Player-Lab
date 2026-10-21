@@ -1,6 +1,6 @@
 // Screenshot tests: the cover and the phone bar are compared picture by picture with baselines, so a layout break
 // (a collapsed tile, overlapping text, a label cut off) fails CI even when the page throws no error.
-// - Data is frozen (tests/e2e/visual/data, made by freeze.py): the HTML's META line and the files these pages fetch are
+// - Data is frozen (tests/e2e/visual/frozen, made by freeze.py): the HTML's META line and the files these pages fetch are
 //   served from there, and the clock is fixed, so nightly data commits do not change the pictures. Photos are masked.
 // - Pictures depend on the browser and the machine's fonts, so the baselines are made in CI, on Playwright's own
 //   Chromium: these tests run only where PL_VISUAL=1 (the CI browser job). To refresh the baselines after an intended
@@ -11,7 +11,7 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {PHONE, DESKTOP, prepare, settled, go} from './site.js';
 
-const DATA = path.join(path.dirname(fileURLToPath(import.meta.url)), 'visual', 'data');
+const DATA = path.join(path.dirname(fileURLToPath(import.meta.url)), 'visual', 'frozen');
 const META = fs.readFileSync(path.join(DATA, 'meta.json'), 'utf8');
 const SEASON = JSON.parse(META).season;
 const CLUB = 'ULK', PLAYER = 'P007200';

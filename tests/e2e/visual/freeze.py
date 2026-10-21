@@ -9,7 +9,7 @@ import re
 import shutil
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
+OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "frozen")
 CLUB = "ULK"
 
 html = open(os.path.join(ROOT, "index.html"), encoding="utf-8").read()
