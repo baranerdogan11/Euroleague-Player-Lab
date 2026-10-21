@@ -806,7 +806,7 @@ def games_json():
             wp_events.setdefault(r["game"], []).append(r)
     wp_strength = winprob.strengths(played)
     keys = ("minutes", "pts", "fgm2", "fga2", "fgm3", "fga3", "ftm", "fta", "oreb", "dreb", "reb", "ast", "stl", "tov", "blk", "blka", "pf", "fd", "pir", "plusminus")
-    tops, n_lines = {}, 0
+    tops, story, n_lines = {}, {}, 0
     for g in played:
         code, sides = g["game"], (g["home"], g["away"])
         score = {g["home"]: g["home_score"], g["away"]: g["away_score"]}
@@ -846,6 +846,17 @@ def games_json():
                 wp = winprob.curve(WP["coef"], wp_events[code], dict(g, strength=wp_strength[code]))
             else:
                 print(f"game {code}: play-by-play margin does not end on the final score; win probability left out")
+        # the shape of the game for the cover's headlines: overtime, the winner's lowest win chance (%), the biggest lead each
+        # side held (winner, loser) and how often the lead changed hands; None where the play-by-play does not end on the final
+        story[code] = [int(len(q) > 4), None, None, None, None]
+        if wp:
+            story[code][1] = round(min(v if g["home_score"] > g["away_score"] else 1000 - v for v in wp["v"]) / 10)
+        S = winprob.states(wp_events[code], g["home"], g["away"]) if wp_events.get(code) else None
+        if S and S[-1][3] == g["home_score"] - g["away_score"]:
+            sign = 1 if g["home_score"] > g["away_score"] else -1
+            ms = [s[3] * sign for s in S]
+            leads = [m for m in ms if m]
+            story[code][2:] = [max([0, *ms]), max([0, *(-m for m in ms)]), sum(1 for a, b in zip(leads, leads[1:]) if (a > 0) != (b > 0))]
         # three standout lines: PIR, the league's own efficiency figure, then points
         top = sorted((b for b in lines if b["minutes"]), key=lambda b: (-b["pir"], -b["pts"], b["name"]))[:3]
         tops[code] = [["P" + b["player"], b["name"], b["club"], b["pts"], b["reb"], b["ast"], b["pir"], page_club.get(b["player"]), photo(b["player"])] for b in top]
@@ -858,10 +869,14 @@ def games_json():
     last_date = played[-1]["date"]
     day = [g for g in played if g["date"] == last_date]
     # every played game for the cover's Games section, newest first, kept compact because it rides in the page:
-    # [game, round, date, home, away, home score, away score, best line's name, points, PIR, photo]
+    # [game, round, date, home, away, home score, away score, best line's name, points, PIR, photo,
+    #  overtime, winner's lowest win chance %, winner's biggest lead, loser's biggest lead, lead changes]
     best = lambda code: (lambda b: [b[1], b[3], b[6], b[8]] if b else [None] * 4)(tops[code][0] if tops[code] else None)
-    every = [[g["game"], g["round"], g["date"], g["home"], g["away"], g["home_score"], g["away_score"], *best(g["game"])] for g in reversed(played)]
-    return {"n": len(played), "lines": n_lines, "every": every, "last": {"date": last_date, "games": [{"code": g["game"], "round": g["round"], "home": g["home"], "away": g["away"], "hs": g["home_score"], "as": g["away_score"], "top": tops[g["game"]][0] if tops[g["game"]] else None} for g in day]}}
+    every = [[g["game"], g["round"], g["date"], g["home"], g["away"], g["home_score"], g["away_score"], *best(g["game"]), *story[g["game"]]] for g in reversed(played)]
+    # the next round for the cover's Next tile: the unplayed games of the lowest round still to come, in date order
+    todo = rows("select game, round, cast(date as varchar) as date, home, away from games where not played order by round, date, game")
+    nxt = [[g["game"], g["round"], g["date"], g["home"], g["away"]] for g in todo if g["round"] == todo[0]["round"]] if todo else []
+    return {"n": len(played), "lines": n_lines, "every": every, "next": nxt, "last": {"date": last_date, "games": [{"code": g["game"], "round": g["round"], "home": g["home"], "away": g["away"], "hs": g["home_score"], "as": g["away_score"], "top": tops[g["game"]][0] if tops[g["game"]] else None} for g in day]}}
 
 
 def leaders_json():
@@ -955,6 +970,7 @@ meta = {"season": SEASON, "label": label(SEASON), "min_sd": MIN_SD, "model": {"v
 GAMES = games_json()             # the game pages' files; the latest game day rides in the page for the cover strip
 meta["last_night"] = GAMES and GAMES["last"]
 meta["games"] = GAMES and GAMES["every"]
+meta["next_round"] = GAMES and GAMES["next"]
 json.dump(meta, open(os.path.join(OUT, "index.json"), "w"), ensure_ascii=False)
 # app icons drawn from the house mark (a dark square, the orange ball, court lines), written once
 def draw_icons():
