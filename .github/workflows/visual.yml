@@ -1,0 +1,49 @@
+name: Redraw screenshot baselines
+
+# The screenshot tests (tests/e2e/visual.spec.js) compare pages with baseline pictures made in CI. After an intended
+# design change, push a commit to the branch whose message contains [update visuals]: this redraws the baselines on
+# the same runner and Chromium the checks use and commits them to the branch. A push made with GITHUB_TOKEN starts no
+# other workflow, so the branch's next push runs the checks against the new pictures.
+
+on:
+  push:
+    branches-ignore: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: visual-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  redraw:
+    if: contains(github.event.head_commit.message, '[update visuals]')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+          cache: npm
+
+      - run: npm ci
+
+      - run: npx playwright install --with-deps chromium
+
+      - name: Redraw the baselines
+        env:
+          PL_VISUAL: "1"
+          CI: "1"
+        run: npx playwright test -c tests/e2e/playwright.config.js visual.spec.js --update-snapshots
+
+      - name: Commit them to the branch
+        run: |
+          git add tests/e2e/visual.spec.js-snapshots
+          if git diff --cached --quiet; then echo "baselines unchanged"; exit 0; fi
+          git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" commit -m "Redraw screenshot baselines"
+          git push
