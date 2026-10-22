@@ -34,6 +34,8 @@ jobs:
       run: ${{ steps.new.outputs.run }}
     steps:
       - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.ref }}   # the branch tip, not the commit the run was queued at (see the update job)
       - name: Has a game finished since the last build, or is the nightly due?
         id: new
         run: |
@@ -68,7 +70,12 @@ jobs:
       pushed: ${{ steps.publish.outputs.pushed }}
       sha: ${{ steps.publish.outputs.sha }}
     steps:
+      # A run queued behind another one (concurrency group above) would otherwise check out the commit main was at
+      # when it was triggered, rebuild on top of it and have its push rejected because the run ahead of it already
+      # pushed. Checking out the branch tip makes it start from that run's data commit.
       - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.ref }}
 
       - uses: actions/setup-python@v7
         with:
