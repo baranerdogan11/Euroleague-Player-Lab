@@ -98,3 +98,5 @@ Also in this folder, under the same SIL Open Font License, Version 1.1 (text abo
 
 bebas-400.woff2  Bebas Neue, Copyright 2010 by Dharma Type (https://github.com/dharmatype/Bebas-Neue), latin subset served from this origin.
 atk-var.woff2    Atkinson Hyperlegible Next (variable, weights 400 to 700), Copyright 2020 Braille Institute of America, Inc. (https://github.com/googlefonts/atkinson-hyperlegible-next), latin subset served from this origin.
+anton-400.woff2, anton-400-ext.woff2  Anton, Copyright 2020 The Anton Project Authors (https://github.com/googlefonts/AntonFont), latin and latin-ext subsets served from this origin.
+jost-var.woff2, jost-var-ext.woff2    Jost (variable, weights 400 to 700), Copyright 2020 The Jost Project Authors (https://github.com/indestructible-type/Jost), latin and latin-ext subsets served from this origin.
