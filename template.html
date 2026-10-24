@@ -997,7 +997,8 @@ html[data-look="club"] .st-tab tr.me td:first-child{color:var(--gc);font-weight:
 /* ---- end Club Edition standings and lineups ---- */
 /* ---- Opening page: a bento board in the Apple idiom. System type with size-specific tracking, cards on platform grey (black in dark
    mode) with depth from shadow rather than lines, 20px corners, press feedback on pointer-down and critically damped springs. The
-   tokens are the cover's own (--cv*), so the club palette never leaks in; the rest of the app keeps the Game Center look. ---- */
+   tokens are the cover's own (--cv*), so the club palette never leaks in; the rest of the app keeps the Game Center look.
+   The Final Four Poster block at the end of this style re-tokens it as a screenprint (paper, navy, red, Anton, square). ---- */
 .cv{--sysf:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Inter,"Segoe UI",Roboto,Arial,sans-serif;
   --cvbg:#f5f5f7;--cvcard:#fff;--cvfill:#e8e8ed;--cvfill2:#d2d2d7;--cvink:#1d1d1f;--cvink2:#6e6e73;--cvink3:#86868b;--cvsep:rgba(0,0,0,.08);--cvblue:#0071e3;--cvgreen:#1f9d55;--cvred:#e0343a;
   --cvsh:0 1px 2px rgba(0,0,0,.04),0 8px 24px rgba(0,0,0,.06);--cvsh2:0 2px 4px rgba(0,0,0,.05),0 16px 40px rgba(0,0,0,.1);--cvr:20px;--cvspring:cubic-bezier(.2,.8,.2,1);
@@ -1727,8 +1728,129 @@ html[data-look="club"] #games .cv-game{border-radius:0}
 html[data-look="club"] .cv-game{border-bottom-color:var(--gc)}
 html[data-look="club"] #role>div{border-radius:0}
 /* ---- end Game Center look · the rest of the app ---- */
+/* ---- Final Four Poster: the whole site printed like a two-colour screenprint. Paper stock, navy ink and one red, Anton for
+   every headline and number, Jost for text, square corners, hard rules instead of soft shadows, and every player photo pulled
+   through a duotone (svg filters #pl-duo and #pl-duo-p after the style block). Club colours stay where they say whose page it
+   is: the header band, the hero, table heads. Layered last, so it re-tokens the Club Edition and the opening page above. ---- */
+@font-face{font-family:'Anton';font-style:normal;font-weight:400;font-display:swap;src:url(fonts/anton-400.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Anton';font-style:normal;font-weight:400;font-display:swap;src:url(fonts/anton-400-ext.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+1E00-1E9F,U+20A0-20AB,U+20AD-20C4,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:'Jost';font-style:normal;font-weight:400 700;font-display:swap;src:url(fonts/jost-var.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Jost';font-style:normal;font-weight:400 700;font-display:swap;src:url(fonts/jost-var-ext.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+1E00-1E9F,U+20A0-20AB,U+20AD-20C4,U+2113,U+2C60-2C7F,U+A720-A7FF}
+html[data-look="club"]{
+  --paper:#f4ead3;--paper2:#ebdfc4;--navy:#1a1a3a;--red:#ff3a38;--red-ink:#d42320;
+  --bg:var(--paper);--bg2:var(--paper2);--panel:var(--paper);--panel2:var(--paper2);--line:rgba(26,26,58,.2);--line2:rgba(26,26,58,.45);
+  --ink:var(--navy);--ink2:#2c2c4e;--muted:#5f5b70;--zebra:#efe4cb;--hover:rgba(26,26,58,.05);--hover2:rgba(26,26,58,.08);--sel:rgba(255,58,56,.08);
+  --gc:var(--red);--cold:#2a4fc4;--good:#1b7f4b;--bad:var(--red-ink);
+  --cond:"Anton","Arial Narrow",Impact,sans-serif;--cond-w:400;--sans:"Jost","Futura","Century Gothic",system-ui,sans-serif;--sans-b:600;
+}
+html[data-look="club"][data-theme="dark"]{
+  --paper:#1a1a3a;--paper2:#222248;--navy:#f4ead3;--red:#ff4d4a;--red-ink:#ff6a66;
+  --bg:#141430;--bg2:#1a1a3a;--panel:#1a1a3a;--panel2:#24244c;--line:rgba(244,234,211,.16);--line2:rgba(244,234,211,.36);
+  --ink:#f4ead3;--ink2:#ddd3bd;--muted:#a49fb3;--zebra:#1f1f42;--hover:rgba(244,234,211,.05);--hover2:rgba(244,234,211,.08);--sel:rgba(255,77,74,.12);
+  --gc:var(--red);--cold:#8fa8ff;--good:#4cc98a;--bad:var(--red-ink);
+}
+/* the paper: a faint print grain over the stock */
+html[data-look="club"] body{background-color:var(--bg);background-image:radial-gradient(rgba(26,26,58,.05) .6px,transparent .9px);background-size:4px 4px}
+html[data-look="club"][data-theme="dark"] body{background-image:radial-gradient(rgba(244,234,211,.035) .6px,transparent .9px)}
+html[data-look="club"] .bar{background:var(--red);height:6px}
+/* square corners and hard edges everywhere; crests and the form dots stay round */
+html[data-look="club"] body :not(.medal,.cv-crest,.cv-form i,.sel.team img,.crest img,svg,svg *){border-radius:0!important}
+html[data-look="club"] .panel,html[data-look="club"] .tile{box-shadow:none}
+html[data-look="club"] .panel{border:2px solid var(--ink)}
+html[data-look="club"] h1,html[data-look="club"] h2,html[data-look="club"] h3,html[data-look="club"] h4{letter-spacing:.01em}
+html[data-look="club"] .top .id{background:var(--paper);color:var(--navy);font-size:26px;letter-spacing:.03em;text-transform:uppercase}
+html[data-look="club"] .top .id span,html[data-look="club"] .top .id span b{color:var(--navy)}
+html[data-look="club"] ::selection{background:var(--red);color:#fff}
+/* photos: navy shadows, paper highlights; the player hero prints in the club's own colour, shadows deep and highlights a pale tint (#pl-duo-c, set by applyPalette) */
+html[data-look="club"] img[src*="photos/"]{filter:url(#pl-duo-p)}
+html[data-look="club"] .hero .ph img{filter:url(#pl-duo-c)}
+
+/* ---- the opening page as a poster ---- */
+.cv{--sysf:"Jost","Futura","Century Gothic",system-ui,sans-serif;--disp:"Anton","Arial Narrow",Impact,sans-serif;
+  --cvbg:transparent;--cvcard:var(--paper,#f4ead3);--cvfill:var(--paper2,#ebdfc4);--cvfill2:rgba(26,26,58,.18);--cvink:var(--navy,#1a1a3a);--cvink2:#3d3a58;--cvink3:#6b6679;
+  --cvsep:rgba(26,26,58,.2);--cvblue:var(--red-ink,#d42320);--cvgreen:#1b7f4b;--cvred:var(--red,#ff3a38);--cvsh:none;--cvsh2:none;--cvr:0;--cvspring:cubic-bezier(.2,.8,.2,1)}
+html[data-theme="dark"] .cv{--cvbg:transparent;--cvcard:#1a1a3a;--cvfill:#24244c;--cvfill2:rgba(244,234,211,.2);--cvink:#f4ead3;--cvink2:#cfc6b1;--cvink3:#a49fb3;--cvsep:rgba(244,234,211,.16);--cvblue:#ff6a66;--cvgreen:#4cc98a;--cvsh:none;--cvsh2:none}
+.cv-bar{background:var(--cvcard);backdrop-filter:none;-webkit-backdrop-filter:none;border-bottom:3px solid var(--cvink);height:56px}
+.cv-bar .cv-id{font-family:var(--disp);font-weight:400;font-size:24px;letter-spacing:.02em;text-transform:uppercase}
+.cv-bar .cv-id small{font-family:var(--sysf);font-weight:600;font-size:11px;letter-spacing:.18em;text-transform:uppercase}
+.cv-nav a{font-weight:600;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--cvink);border-radius:0}
+.cv-nav a:hover{background:var(--cvink);color:var(--cvcard)}
+html[data-look] .cv-bar :is(.lang,.theme){border:2px solid var(--cvink)}
+html[data-look] .cv-bar :is(.lang,.theme) button{font-family:var(--sysf);letter-spacing:.08em}
+html[data-look] .cv-bar :is(.lang,.theme) button[aria-pressed="true"]{background:var(--cvink);color:var(--cvcard)}
+.cv-eyebrow{font-size:12px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--cvblue)}
+html[data-look] .cv .cv-h1{font-family:var(--disp);font-weight:400;font-size:clamp(52px,8vw,112px);line-height:.9;letter-spacing:0;text-transform:uppercase;margin-top:8px}
+.cv-h1 em{color:var(--cvred)}
+.cv-search input{border:2px solid var(--cvink);box-shadow:none;background:var(--cvcard)}
+.cv-go{background:var(--cvred);color:#fff;font-weight:600;letter-spacing:.14em;text-transform:uppercase;font-size:13px}
+.cv-go:hover{filter:none;background:var(--cvink);color:var(--cvcard)}
+/* the tiles: paper blocks with a navy rule, the label a red slug */
+.cv-card{border:2px solid var(--cvink);box-shadow:none}
+a.cv-card:hover,.cv-card.tap:hover{transform:translate(-3px,-3px);box-shadow:6px 6px 0 var(--cvred)}
+.cv-th{font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--cvink)}
+.cv-th>span{background:var(--cvink);color:var(--cvcard);padding:3px 8px}
+html[data-look] .cv-th a{color:var(--cvblue);letter-spacing:.14em}
+.cv-num b{font-family:var(--disp);font-weight:400;font-size:72px;line-height:.9;letter-spacing:0;color:var(--cvred)}
+.cv-num span{font-weight:600;letter-spacing:.12em;text-transform:uppercase;font-size:11px}
+.cv-tbl th{letter-spacing:.14em;text-transform:uppercase;font-size:10.5px;color:var(--cvink2)}
+.cv-tbl td{border-top-color:var(--cvsep)}
+.cv-tbl tr:nth-child(-n+4) td.n{color:var(--cvred);font-family:var(--disp);font-size:17px}
+.cv-form i{background:var(--cvink)}.cv-form i.l{background:transparent;box-shadow:inset 0 0 0 1.5px var(--cvink3)}
+.cv-res .cv-game .tm em,.cv-list em{font-family:var(--disp);font-weight:400;font-size:19px;letter-spacing:.01em}
+.cv-res .cv-game .tm.win em{color:var(--cvred)}
+.cv-res small{letter-spacing:.16em;text-transform:uppercase;font-size:10.5px}
+.cv-list em small{font-family:var(--sysf)}
+html[data-look] .cv-pills a{background:transparent;border:1.5px solid var(--cvink)}
+.cv-pills a:hover{background:var(--cvink);color:var(--cvcard)}.cv-pills a:hover small{color:inherit}
+html[data-look] .cv-clubs a{background:transparent;border:1.5px solid var(--cvink)}
+.cv-clubs a:hover{background:var(--cvfill)}
+.cv-zone text{font-family:var(--disp);font-weight:400;stroke:none;fill:var(--cvink)}
+.cv-zone .z{stroke:var(--cvcard)}
+/* the game of the round: a red screenprint, the player in navy and red, the headline in Anton */
+.cv-hero{background:var(--cvred);color:#fff}
+.cv-hero::after{content:"";position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(rgba(26,26,58,.22) 1px,transparent 1.4px);background-size:5px 5px;mix-blend-mode:multiply}
+.cv-hero img{filter:url(#pl-duo)!important;right:-4%;height:96%}
+html[data-look] .cv .cv-hero h2{font-family:var(--disp);font-weight:400;font-size:clamp(34px,3.8vw,54px);line-height:.95;letter-spacing:.005em;text-transform:uppercase;color:#fff;max-width:62%}
+.cv-hero .cv-th{color:#fff}.cv-hero .cv-th>span{background:#1a1a3a;color:#fff}
+.cv-hero p{color:#fff;font-weight:500;max-width:56%}
+.cv-chip{background:#1a1a3a;color:#fff;backdrop-filter:none;font-family:var(--disp);font-weight:400;font-size:16px;letter-spacing:.04em;padding:2px 10px}
+.cv-big b{font-family:var(--disp);font-weight:400;font-size:52px;letter-spacing:0;color:#1a1a3a}
+.cv-big i{color:#fff;letter-spacing:.14em;text-transform:uppercase;font-size:10.5px;font-weight:600}
+.cv-hnav{background:#1a1a3a;backdrop-filter:none;-webkit-backdrop-filter:none}
+.cv-hnav button:hover{background:var(--cvred)}
+html[data-theme="dark"] .cv-hero{background:#d92f2c}
+/* players of the round: duotone portraits across the board */
+.cv-lines{grid-column:1/-1}
+.cv-bento{grid-auto-rows:minmax(130px,auto)}
+.cv-resc,.cv-zone,.cv-map{grid-column:span 2;grid-row:span 2}
+.cv-lead{grid-column:span 2;grid-row:span 1}
+.cv-next{grid-column:1/-1}
+.cv-zone,.cv-map{display:grid;grid-template-rows:auto 1fr;align-items:center}
+.cv-pcs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
+html[data-look] .cv-pcs a{display:grid;grid-template-rows:auto auto;border:2px solid var(--cvink);color:inherit;min-width:0;transition:transform .35s var(--cvspring),box-shadow .35s var(--cvspring)}
+.cv-pcs a:hover{transform:translate(-3px,-3px);box-shadow:6px 6px 0 var(--cvink)}
+.cv-pcs .ph{position:relative;aspect-ratio:4/5;background:var(--cvred);overflow:hidden;isolation:isolate}
+.cv-pcs .ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;filter:url(#pl-duo)!important}
+.cv-pcs .ph b{position:absolute;left:8px;top:2px;z-index:1;font-family:var(--disp);font-weight:400;font-size:48px;line-height:1;color:var(--cvcard)}
+.cv-pcs .ph b small{font-family:var(--sysf);font-weight:600;font-size:10px;letter-spacing:.16em;margin-left:4px;vertical-align:top;position:relative;top:10px}
+.cv-pcs .nm{display:block;padding:8px 10px 9px;border-top:2px solid var(--cvink);min-width:0}
+.cv-pcs .nm b{display:block;font-family:var(--disp);font-weight:400;font-size:18px;line-height:1.05;letter-spacing:.01em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cv-pcs .nm small{display:block;font-size:12px;color:var(--cvink3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (max-width:760px){
+  .cv-bar{height:52px}.cv-bar .cv-id{font-size:20px}
+  html[data-look] .cv .cv-h1{font-size:56px}
+  .cv-hero img{height:250px;top:12px;right:10px}
+  .cv-hero-a{padding-top:252px}
+  html[data-look] .cv .cv-hero h2{max-width:none;font-size:34px}
+  .cv-big b{font-size:44px}.cv-hero p{max-width:none}
+  .cv-pcs{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:42%;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:6px}
+  .cv-pcs a{scroll-snap-align:start}
+  .cv-num b{font-size:56px}
+}
+/* ---- end Final Four Poster ---- */
 </style>
 <div class="bar"></div>
+<svg class="duo-defs" width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute"><filter id="pl-duo" color-interpolation-filters="sRGB"><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncR type="table" tableValues="0.102 1"/><feFuncG type="table" tableValues="0.102 0.227"/><feFuncB type="table" tableValues="0.227 0.22"/></feComponentTransfer></filter><filter id="pl-duo-c" color-interpolation-filters="sRGB"><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncR type="table" tableValues="0.102 0.957"/><feFuncG type="table" tableValues="0.102 0.918"/><feFuncB type="table" tableValues="0.227 0.827"/></feComponentTransfer></filter><filter id="pl-duo-p" color-interpolation-filters="sRGB"><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncR type="table" tableValues="0.102 0.957"/><feFuncG type="table" tableValues="0.102 0.918"/><feFuncB type="table" tableValues="0.227 0.827"/></feComponentTransfer></filter></svg>
 <main class="cv" id="cover" hidden>
   <div class="cv-bar">
     <a class="cv-id no-t" href="#">Player Lab<small>Euroleague <span id="cv-season"></span></small></a>
@@ -2065,6 +2187,8 @@ function applyPalette(c){
   const lb = lum(base); r.setProperty('--club-ink', (lb + .05) / (lum('#0b0d10') + .05) >= 1.05 / (lb + .05) ? '#0b0d10' : '#ffffff');   // text on the club base colour (Club Edition header, hero, active tabs)
   r.setProperty('--wedge', lum(base) < 0.026 ? mix(base, '#ffffff', .86) : base);   // near-black bases (Besiktas, Asvel, Paris, Partizan, Virtus, Baskonia) get a lifted wedge so the hero keeps its shape
   const [hh, sat] = hue(accent); const club = document.documentElement.dataset.look === 'club'; const dark = club && document.documentElement.dataset.theme === 'dark'; r.setProperty('--bad', sat > .35 && (hh < 22 || hh > 338) ? (club ? (dark ? '#f5a524' : '#b45309') : '#ffa040') : (club ? (dark ? '#ff5a63' : '#d6313e') : '#ff6b6b'));   // red-accent clubs: losses in amber so they never read as the club colour
+  { const lo = hexRgb(mix(base, '#000000', .45)), hi = hexRgb(mix(base, '#f4ead3', .22)), fn = document.querySelectorAll('#pl-duo-c feComponentTransfer > *');   // the hero photo's duotone in this club's colour
+    fn.forEach((f, i) => f.setAttribute('tableValues', `${(lo[i] / 255).toFixed(3)} ${(hi[i] / 255).toFixed(3)}`)); }
   r.setProperty('--floor', mix(base, '#0c1016', .16)); r.setProperty('--paint', mix(base, '#0c1016', .28));
   // the court keeps its own hit colour: the club accent unless it is grey or near-white (Asvel, Besiktas), when made shots would vanish against the misses
   const hit = sat < .2 || la > .8 ? '#f26f21' : accent; r.setProperty('--hit', hit);
@@ -2843,8 +2967,8 @@ function gameCard(code, home, away, hs, as, tp, me, head){
 
 // ---- opening page: a bento board of the latest round and the season, drawn from META, shown whenever the URL carries no club.
 // Tiles: the game of the round (the closest finish; its file is fetched for overtime and the lowest win probability), the top
-// ten, every result of the round, the best lines, two round numbers, offence against defence for all twenty clubs, the league's
-// FG% by court zone, the scoring leaders, the next round and two season numbers. Each tile is a door to its page.
+// ten, the best lines as five portraits, every result of the round, the league's FG% by court zone, offence against defence for all
+// twenty clubs, the scoring leaders, two round numbers, two season numbers and the next round. Each tile is a door to its page.
 const COVER = (() => {
   const el = $('#cover'), first = META.clubs[0], go = $('#cv-go');
   $('#cv-season').textContent = META.label;
@@ -2920,7 +3044,7 @@ const COVER = (() => {
   }
   // the best lines of the round, each opening its game
   const lines = () => { const L = [...ROUND].filter(g => g[7]).sort((a, b) => b[9] - a[9] || b[8] - a[8]).slice(0, 5); if (!L.length) return '';
-    return `<div class="cv-card cv-lines">${th(t('Lines of the round'))}<div class="cv-list">${L.map((g, i) => `<a href="#game/${g[0]}"><span class="i">${i + 1}</span><span class="who"><b lang="en">${full(g[7])}</b><small lang="en">${shortName(g[3])} – ${shortName(g[4])}</small></span><em>${g[9]}<small>PIR</small></em></a>`).join('')}</div></div>`; };
+    return `<div class="cv-card cv-lines">${th(t('Lines of the round'))}<div class="cv-pcs">${L.map(g => `<a href="#game/${g[0]}"><span class="ph"><img src="${g[10] || PLACEHOLDER}" alt="" loading="lazy"><b>${g[9]}<small>PIR</small></b></span><span class="nm"><b lang="en">${full(g[7])}</b><small lang="en">${g[8]} ${t('PTS')} · ${shortName(g[3])} – ${shortName(g[4])}</small></span></a>`).join('')}</div></div>`; };
   const num = (cls, label, big, sub) => `<div class="cv-card cv-num ${cls}">${th(label)}<div><b>${big}</b><span>${sub}</span></div></div>`;
   // offence against defence: every club by its ratings, better defence upwards; labels step aside when crests crowd
   function ratings(){
@@ -2938,7 +3062,7 @@ const COVER = (() => {
   // the league's FG% by zone on the court (shot coordinates in cm, basket at the origin, the baseline 157.5 behind it)
   function zones(){
     if (!Z || !Z.rim) return '';
-    const X = v => v + 750, Y = v => 1260 - v, col = v => `color-mix(in srgb, #f26f21 ${Math.round(20 + Math.max(0, v - .3) * 100)}%, var(--cvfill))`, pc = v => `${Math.round(v * 100)}%`;
+    const X = v => v + 750, Y = v => 1260 - v, col = v => `color-mix(in srgb, var(--cvred) ${Math.round(20 + Math.max(0, v - .3) * 100)}%, var(--cvfill))`, pc = v => `${Math.round(v * 100)}%`;
     const arc3 = `M${X(-660)} ${Y(-157.5)} L${X(-660)} ${Y(141.5)} A675 675 0 0 1 ${X(660)} ${Y(141.5)} L${X(660)} ${Y(-157.5)} Z`;
     return `<div class="cv-card cv-zone">${th(t('Where the league scores'), `<i>${t('FG% by zone')}</i>`)}<svg viewBox="0 0 1500 1420" role="img" aria-label="${t('Where the league scores')}"><clipPath id="cv-court"><rect x="0" y="0" width="1500" height="1420" rx="60"/></clipPath><g clip-path="url(#cv-court)"><rect x="0" y="0" width="1500" height="1420" fill="var(--cvfill)"/>`
       + `<path class="z" d="M0 ${Y(1242.5)} H1500 V${Y(-157.5)} H0 Z" fill="${col(Z.a3.fg)}"/><rect class="z" x="0" y="${Y(141.5)}" width="${X(-660)}" height="${Y(-157.5) - Y(141.5)}" fill="${col(Z.c3.fg)}"/><rect class="z" x="${X(660)}" y="${Y(141.5)}" width="${1500 - X(660)}" height="${Y(-157.5) - Y(141.5)}" fill="${col(Z.c3.fg)}"/>`
@@ -2955,12 +3079,11 @@ const COVER = (() => {
     const sec = $('#cv-last'), box = $('#cv-bento');
     if (!ROUND.length) { sec.hidden = true; box.innerHTML = ''; return; }
     const pts = ROUND.reduce((n, g) => n + g[5] + g[6], 0) / ROUND.length / 2, hw = ROUND.filter(g => g[5] > g[6]).length;
-    box.innerHTML = hero() + standings() + results() + lines()
+    box.innerHTML = hero() + standings() + lines() + results() + zones() + ratings() + leaders()
       + num('', t('Points a team'), f1(pts), t('this round'))
       + num('', t('Home wins'), `${hw}`, t('of {n} games', {n: ROUND.length}))
-      + ratings() + zones() + leaders() + next()
       + (st.games ? num('', t('Season'), (st.games || 0).toLocaleString(LOCALE()), t('{n} shots', {n: (st.shots || 0).toLocaleString(LOCALE())})) : '')
-      + (Z && LG.shots ? num('', t('Three-point rate'), `${Math.round(100 * Z.three.att / LG.shots)}%`, t('of all shots')) : '');
+      + (Z && LG.shots ? num('', t('Three-point rate'), `${Math.round(100 * Z.three.att / LG.shots)}%`, t('of all shots')) : '') + next();
     sec.hidden = false;
   }
   function render(){
