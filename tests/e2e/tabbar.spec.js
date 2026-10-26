@@ -6,6 +6,21 @@ import {PHONE, prepare, settled, go} from './site.js';
 for (const lang of ['en', 'tr']) {
   test.describe(`phone · ${lang}`, () => {
     test.use(PHONE);
+    test('the bar sits on the opening page too, with no tab lit and nothing hidden under it', async ({page}) => {
+      const problems = await prepare(page, {lang});
+      await page.goto('./');
+      await settled(page);
+      await page.waitForFunction(() => document.body.classList.contains('cv-on'));
+      await expect(page.locator('#tabbar')).toBeVisible();
+      const lit = await page.evaluate(() => [...document.querySelectorAll('#tabbar > *')].filter(el => !['none', 'normal'].includes(getComputedStyle(el, '::before').content)).map(el => el.id));
+      expect(lit, 'no tab is lit on the cover').toEqual([]);
+      await page.evaluate(() => scrollTo(0, document.documentElement.scrollHeight));
+      const gap = await page.evaluate(() => document.querySelector('#tabbar').getBoundingClientRect().top - document.querySelector('.cv-foot').getBoundingClientRect().bottom);
+      expect(gap, 'the cover footer clears the bar').toBeGreaterThanOrEqual(0);
+      await page.click('#tb-standings');
+      await page.waitForFunction(() => document.body.classList.contains('st-on'));
+      expect(problems, 'the page reported errors').toEqual([]);
+    });
     test('five tabs whose labels fit', async ({page}) => {
       const problems = await prepare(page, {lang});
       await page.goto('./');
