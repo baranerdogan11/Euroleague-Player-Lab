@@ -1088,8 +1088,15 @@ html[data-look] .cv .cv-hero h2{color:#fff}
 .cv-tbl th{font-size:11.5px;font-weight:600;color:var(--cvink3);text-align:right;padding:2px 8px 8px;white-space:nowrap}
 .cv-tbl th.l,.cv-tbl td.l{text-align:left}
 .cv-tbl td{padding:6px 8px;border-top:1px solid var(--cvsep);text-align:right;white-space:nowrap;color:var(--cvink)}
-.cv-tbl td.l{display:flex;align-items:center;gap:9px;font-weight:600}
+.cv-tbl td.l{font-weight:600}
 .cv-tbl td.n{color:var(--cvink3);font-weight:500;width:28px}
+/* each standings row opens its club: the club name is the link, stretched over the whole row */
+.cv-tbl tbody tr{position:relative}
+html[data-look] .cv-tbl a.cv-tl{display:flex;align-items:center;gap:9px;color:inherit;text-decoration:none}
+.cv-tbl a.cv-tl::after{content:"";position:absolute;inset:0}
+.cv-tbl tbody tr:hover td{background:var(--cvfill)}
+.cv-tbl tbody tr:hover a.cv-tl span{text-decoration:underline;text-underline-offset:3px}
+.cv-tbl a.cv-tl:focus-visible{outline:none}.cv-tbl tbody tr:has(a.cv-tl:focus-visible){outline:2px solid var(--cvink);outline-offset:-2px}
 .cv-form{display:inline-flex;gap:3px;vertical-align:middle}
 .cv-form i{width:7px;height:7px;border-radius:50%;background:var(--cvgreen);display:inline-block}
 .cv-form i.l{background:var(--cvfill2)}
@@ -3033,7 +3040,7 @@ const COVER = (() => {
     [RUN[(i + 1) % RUN.length], RUN[(i - 1 + RUN.length) % RUN.length]].forEach(n => { if (n[10]) new Image().src = n[10]; });   // the neighbours' photos, ready for the next step
   }
   const standings = () => { const S = (META.standings || []).slice(0, 10); if (!S.length) return '';
-    return `<div class="cv-card cv-stand">${th(t('Standings'), `<a href="#standings">${t('Full table')}</a>`)}<table class="cv-tbl"><thead><tr><th></th><th class="l">${t('Club')}</th><th>${t('W')}–${t('L')}</th><th>+/−</th><th>${t('Form')}</th></tr></thead><tbody>${S.map(r => `<tr><td class="n">${r.pos}</td><td class="l">${crest(r.code, 22)}<span lang="en">${shortName(r.code)}</span></td><td>${r.w}–${r.l}</td><td>${r.diff > 0 ? '+' : ''}${r.diff}</td><td><span class="cv-form">${r.form.map(x => `<i class="${x ? 'w' : 'l'}"></i>`).join('')}</span></td></tr>`).join('')}</tbody></table></div>`; };
+    return `<div class="cv-card cv-stand">${th(t('Standings'), `<a href="#standings">${t('Full table')}</a>`)}<table class="cv-tbl"><thead><tr><th></th><th class="l">${t('Club')}</th><th>${t('W')}–${t('L')}</th><th>+/−</th><th>${t('Form')}</th></tr></thead><tbody>${S.map(r => `<tr><td class="n">${r.pos}</td><td class="l"><a class="cv-tl" href="#${r.code}" title="${(CLUBS[r.code] || {}).name || r.code}">${crest(r.code, 22)}<span lang="en">${shortName(r.code)}</span></a></td><td>${r.w}–${r.l}</td><td>${r.diff > 0 ? '+' : ''}${r.diff}</td><td><span class="cv-form">${r.form.map(x => `<i class="${x ? 'w' : 'l'}"></i>`).join('')}</span></td></tr>`).join('')}</tbody></table></div>`; };
   // every result of the round, grouped by day; a followed club's game carries the orange edge
   function results(){
     const P = FOLLOW.players(), F = new Set([...FOLLOW.clubs(), ...P.map(p => p.club)]), mine = g => F.has(g[3]) || F.has(g[4]);
