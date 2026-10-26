@@ -1289,10 +1289,9 @@ html[data-look] .cv-foot a{color:var(--cvink2)}
   html[data-look="club"] .tabbar>*{flex:1 1 0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:56px;border:0;background:none;color:var(--muted);font:600 10px/1 var(--sans);letter-spacing:.02em;white-space:nowrap;text-transform:uppercase;text-decoration:none;position:relative;cursor:pointer;padding:0}
   html[data-look="club"] .tabbar svg{width:22px;height:22px;display:block}
   html[data-look="club"] .tabbar>*:focus-visible{outline:2px solid var(--cold);outline-offset:-2px}
-  html[data-look="club"] body.st-on #tb-standings,html[data-look="club"] body.cmp-on #tb-compare,html[data-look="club"] body.ld-on #tb-leaders,html[data-look="club"] body.gs-on #tb-games,html[data-look="club"] body:not(.st-on):not(.ln-on):not(.cmp-on):not(.ld-on):not(.gm-on):not(.gs-on) #tb-player{color:var(--club)}
-  html[data-look="club"] body.st-on #tb-standings::before,html[data-look="club"] body.cmp-on #tb-compare::before,html[data-look="club"] body.ld-on #tb-leaders::before,html[data-look="club"] body.gs-on #tb-games::before,html[data-look="club"] body:not(.st-on):not(.ln-on):not(.cmp-on):not(.ld-on):not(.gm-on):not(.gs-on) #tb-player::before{content:"";position:absolute;left:12px;right:12px;top:0;height:3px;background:var(--club2)}
-  html[data-look="club"] body.cv-on .tabbar{display:none}
-  html[data-look="club"] body:not(.cv-on){padding-bottom:calc(60px + env(safe-area-inset-bottom))}
+  html[data-look="club"] body.st-on #tb-standings,html[data-look="club"] body.cmp-on #tb-compare,html[data-look="club"] body.ld-on #tb-leaders,html[data-look="club"] body.gs-on #tb-games,html[data-look="club"] body:not(.cv-on):not(.st-on):not(.ln-on):not(.cmp-on):not(.ld-on):not(.gm-on):not(.gs-on) #tb-player{color:var(--club)}
+  html[data-look="club"] body.st-on #tb-standings::before,html[data-look="club"] body.cmp-on #tb-compare::before,html[data-look="club"] body.ld-on #tb-leaders::before,html[data-look="club"] body.gs-on #tb-games::before,html[data-look="club"] body:not(.cv-on):not(.st-on):not(.ln-on):not(.cmp-on):not(.ld-on):not(.gm-on):not(.gs-on) #tb-player::before{content:"";position:absolute;left:12px;right:12px;top:0;height:3px;background:var(--club2)}
+  html[data-look="club"] body{padding-bottom:calc(60px + env(safe-area-inset-bottom))}
   html[data-look="club"] body:not(.cv-on) .wrap{padding-bottom:24px}
 }
 .scroll-hint{display:none}
@@ -1907,7 +1906,7 @@ html[data-look] .cv-pcs a{display:grid;grid-template-rows:auto auto;border:2px s
 </header>
 <div class="progress" id="progress"></div>
 <div class="wipe" id="wipe" aria-hidden="true"><b></b><i></i></div>
-<!-- Club Edition phones: the bottom bar with the five pages (agent 6); hidden on the cover, on wide screens and under the Broadcast look -->
+<!-- Club Edition phones: the bottom bar with the five pages (agent 6), on the cover too (no tab lit there); hidden on wide screens and under the Broadcast look -->
 <nav class="tabbar" id="tabbar" aria-label="Pages">
   <button type="button" id="tb-player"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4 20c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>Player</span></button>
   <a id="tb-compare" href="#compare"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h13M14 4l4 4-4 4M20 16H7M10 12l-4 4 4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Compare</span></a>
