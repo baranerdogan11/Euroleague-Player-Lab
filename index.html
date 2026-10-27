@@ -1090,10 +1090,9 @@ html[data-look] .cv .cv-hero h2{color:#fff}
 .cv-tbl td{padding:6px 8px;border-top:1px solid var(--cvsep);text-align:right;white-space:nowrap;color:var(--cvink)}
 .cv-tbl td.l{font-weight:600}
 .cv-tbl td.n{color:var(--cvink3);font-weight:500;width:28px}
-/* each standings row opens its club: the club name is the link, stretched over the whole row */
-.cv-tbl tbody tr{position:relative}
+/* each standings row opens its club: the club name is the link, and a tap elsewhere on the row follows it (a click handler, as Safari does not let a row hold a stretched link) */
+.cv-tbl tbody tr{cursor:pointer}
 html[data-look] .cv-tbl a.cv-tl{display:flex;align-items:center;gap:9px;color:inherit;text-decoration:none}
-.cv-tbl a.cv-tl::after{content:"";position:absolute;inset:0}
 .cv-tbl tbody tr:hover td{background:var(--cvfill)}
 .cv-tbl tbody tr:hover a.cv-tl span{text-decoration:underline;text-underline-offset:3px}
 .cv-tbl a.cv-tl:focus-visible{outline:none}.cv-tbl tbody tr:has(a.cv-tl:focus-visible){outline:2px solid var(--cvink);outline-offset:-2px}
@@ -3118,7 +3117,8 @@ const COVER = (() => {
   }
   render();
   go.addEventListener('click', () => { location.hash = last && last.hash && CLUBS[last.hash.split('/')[0]] ? last.hash : first.code; });
-  el.addEventListener('click', e => { const b = e.target.closest('.cv-hnav button'); if (b) step(+b.dataset.d); });
+  el.addEventListener('click', e => { const b = e.target.closest('.cv-hnav button'); if (b) step(+b.dataset.d);
+    const r = !e.target.closest('a') && e.target.closest('.cv-stand tbody tr'); if (r) r.querySelector('a.cv-tl').click(); });
   el.addEventListener('keydown', e => { if ((e.key === 'ArrowLeft' || e.key === 'ArrowRight') && e.target.closest('#cv-hero') && !e.altKey && !e.metaKey && !e.ctrlKey) { e.preventDefault(); step(e.key === 'ArrowLeft' ? -1 : 1); } });
   // a sideways swipe on the tile steps too; a mostly vertical one is left to the page scroll
   let sw = null;
