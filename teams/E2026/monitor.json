@@ -1,17 +1,17 @@
 {
  "season": "E2026",
- "generated_at": "2026-10-30 22:07 UTC",
+ "generated_at": "2026-10-31 03:37 UTC",
  "pipeline": {
   "last": {
-   "date": "2026-10-30",
-   "at": "2026-10-30T22:07:21Z",
+   "date": "2026-10-31",
+   "at": "2026-10-31T03:37:00Z",
    "ok": true,
    "games": 90,
    "shots": 11820,
    "players": 343,
    "failures": 0,
    "ci": true,
-   "run_id": "41135717362"
+   "run_id": "41164981707"
   },
   "history": [
    {
@@ -409,6 +409,17 @@
     "failures": 0,
     "ci": true,
     "run_id": "41135717362"
+   },
+   {
+    "date": "2026-10-31",
+    "at": "2026-10-31T03:37:00Z",
+    "ok": true,
+    "games": 90,
+    "shots": 11820,
+    "players": 343,
+    "failures": 0,
+    "ci": true,
+    "run_id": "41164981707"
    }
   ],
   "tests": 30,
@@ -433,7 +444,7 @@
   "last_played_date": "2026-10-30",
   "next_game_date": "2026-11-04",
   "last_round": 9,
-  "days_since_last_game": 0,
+  "days_since_last_game": 1,
   "rounds": [
    {
     "round": 1,
@@ -1225,8 +1236,8 @@
  "api": {
   "url": "https://euroleague-xfg.onrender.com",
   "reachable": true,
-  "latency_ms": 169,
-  "cold_start_ms": 61377,
+  "latency_ms": 181,
+  "cold_start_ms": 52416,
   "model_version": "2026-10-16",
   "model_sha256": "595a07c6039c"
  },
