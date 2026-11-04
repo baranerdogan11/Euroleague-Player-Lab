@@ -3,6 +3,7 @@
 usage: python warehouse_tests.py E2026
        python warehouse_tests.py E2022 --no-lineups   # past seasons kept only for xFG training: the lineup layer is not used or kept
 """
+import json
 import os
 import sys
 import duckdb
@@ -20,6 +21,14 @@ p = os.path.join(W, "stints.parquet")      # lineup layer (lineups.py)
 con.execute(f"create view stints as select * from read_parquet('{p}')" if os.path.exists(p) else "create view stints as select null::int game, null::varchar club, null::int stint, null::varchar[] players, null::int sec, null::int pts, null::int opp_pts where false")
 p = os.path.join(W, "oncourt.parquet")
 con.execute(f"create view oncourt as select * from read_parquet('{p}')" if os.path.exists(p) else "create view oncourt as select null::int game, null::varchar player, null::varchar club, null::int sec, null::double box_min where false")
+
+# games lineups.py left out because their play-by-play disagrees with the box score by more than three minutes
+p = os.path.join(W, "lineups_skipped.json")
+SKIPPED = [g["game"] for g in json.load(open(p))] if os.path.exists(p) else []
+con.execute("create table lineups_skipped (game integer)")
+for g in SKIPPED:
+    con.execute("insert into lineups_skipped values (?)", [g])
+MAX_SKIPPED = 2                                                       # one broken feed is the feed; many at once is our reconstruction
 
 N_CLUBS = {"E2022": 18, "E2023": 18, "E2024": 18}.get(SEASON, 20)   # past seasons kept for xFG training had 18 clubs
 N_RS = 2 * (N_CLUBS - 1)                                             # double round robin
@@ -69,23 +78,26 @@ TESTS = [
         where x.p != case when x.club = g.home then g.home_score else g.away_score end"""),
     ("stints: both clubs cover the whole game (40 minutes plus overtimes, within 5 seconds)", "select count(*) from (select game, club, sum(sec) s from stints group by 1, 2) x where s < 2395 or least((s - 2400) % 300, 300 - (s - 2400) % 300) > 5"),
     ("oncourt: reconstructed minutes agree with the box score within three minutes", "select count(*) from oncourt where abs(sec / 60.0 - box_min) > 3.0"),
+    (f"lineups: at most {MAX_SKIPPED} games left out for broken play-by-play", f"select greatest(count(*) - {MAX_SKIPPED}, 0) from lineups_skipped"),
 ]
 # warnings: reported and counted, never fail the run
 WARNINGS = [
     ("roster_stints: no club has more than 22 active players (youth registrations are legitimate)", "select count(*) from (select club, count(*) n from roster_stints where active group by club having n > 22)"),
     # the play-by-play and the box score are two feeds; a substitution clocked a minute off in one of them is a feed error, not ours
     ("oncourt: reconstructed minutes agree with the box score within a minute", "select count(*) from oncourt where abs(sec / 60.0 - box_min) > 1.0"),
+    # the game's box score and shots still publish; it rejoins the lineups once the feed is corrected and re-fetched
+    ("lineups: no game left out because its play-by-play disagrees with the box score", "select count(*) from lineups_skipped"),
     ("shots: shot value consistent with distance (3s from 6.4 m out, 2s inside 7 m)", "select count(*) from shots where (pts = 3 and sqrt(x*x + y*y) < 640) or (pts = 2 and sqrt(x*x + y*y) > 700)"),
 ]
 if "--no-lineups" in sys.argv:   # older substitution logs do not always reconstruct five on the floor; nothing built from them is kept
-    TESTS = [t for t in TESTS if not t[0].startswith(("stints:", "oncourt:"))]
-    WARNINGS = [t for t in WARNINGS if not t[0].startswith(("stints:", "oncourt:"))]
+    TESTS = [t for t in TESTS if not t[0].startswith(("stints:", "oncourt:", "lineups:"))]
+    WARNINGS = [t for t in WARNINGS if not t[0].startswith(("stints:", "oncourt:", "lineups:"))]
 warned = []   # each warning that fired, by name with its row count, so status.json says what to look at, not only how many
 for name, q in WARNINGS:
     n = con.execute(q).fetchone()[0] or 0
     print(("PASS " if n == 0 else "WARN ") + name + ("" if n == 0 else f"  ({n} rows)"))
     if n:
-        warned.append({"check": name, "rows": n})
+        warned.append({"check": name, "rows": n} | ({"games": SKIPPED} if name.startswith("lineups:") else {}))
 warn = len(warned)
 bad = 0
 for name, q in TESTS:
@@ -94,7 +106,7 @@ for name, q in TESTS:
     bad += n != 0
 stats = {t: con.execute(f"select count(*) from {t}").fetchone()[0] for t in ["clubs", "players", "roster_stints", "games", "box", "shots"]}
 played = con.execute("select count(*) from games where played").fetchone()[0]
-import datetime, json
+import datetime
 json.dump({"season": SEASON, "checked_at": datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"), "clubs": stats["clubs"], "players": stats["players"],
            "games": played, "shots": stats["shots"], "box_lines": stats["box"], "tests": len(TESTS), "failures": bad, "warnings": warn, "warning_list": warned, "ok": bad == 0},
           open(os.path.join(W, "status.json"), "w"), indent=1)

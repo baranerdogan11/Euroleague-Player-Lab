@@ -11,6 +11,11 @@ Reads the warehouse (box, games, events) and writes two Parquet tables:
 Validation: every club has exactly five on the floor at every event, and each player's reconstructed seconds
 agree with the box score to within a minute (a scorer's clock and a stat sheet never agree to the second).
 
+A game whose reconstruction is more than three minutes off the box score for any player is left out of both tables
+and listed in lineups_skipped.json: its play-by-play is broken (the feed has sent garbled clocks such as "24.?" right
+after a final buzzer), so its lineups would be wrong. Its box score and shots still publish, and the game rejoins the
+lineup layer by itself once the feed is corrected and the game is re-fetched (final games stay on refresh for 72 hours).
+
 usage: python lineups.py E2026
 """
 import json
@@ -35,7 +40,8 @@ for r in rows("select game, club, player from box where starter"):
 box_min = {(r["game"], r["player"]): (r["club"], r["minutes"] or 0.0) for r in rows("select game, player, club, minutes from box")}
 games = {g["game"]: (g["home"], g["away"]) for g in rows("select game, home, away from games where played")}
 
-stints, oncourt, problems = [], [], []
+SKIP_MIN = 3.0                                     # minutes off the box score that mark a game's play-by-play as broken
+stints, oncourt, problems, skipped = [], [], [], []
 by_game = {}
 for e in rows("select * from events order by game, seq"):
     by_game.setdefault(e["game"], []).append(e)
@@ -64,6 +70,7 @@ for gc, evs in by_game.items():
     if gc not in games:
         continue
     evs = chronological(evs)
+    first_stint, first_on = len(stints), len(oncourt)
     home, away = games[gc]
     on = {c: set(starters.get((gc, c), set())) for c in (home, away)}
     if any(len(v) != 5 for v in on.values()):
@@ -136,6 +143,13 @@ for gc, evs in by_game.items():
     for (g, p), (c, m) in box_min.items():
         if g == gc:
             oncourt.append({"game": gc, "player": p, "club": c, "sec": secs.get(p, 0), "box_min": m})
+    off = [o for o in oncourt[first_on:] if abs(o["sec"] / 60 - o["box_min"]) > SKIP_MIN]
+    if off:
+        skipped.append({"game": gc, "players": [{"player": o["player"], "club": o["club"], "reconstructed_min": round(o["sec"] / 60, 1), "box_min": round(o["box_min"], 2)} for o in off]})
+        for o in off:
+            problems.append(f"game {gc} {o['player']}: reconstructed {o['sec'] / 60:.1f} min, box {o['box_min']:.2f}")
+        problems.append(f"game {gc}: left out of the lineup layer ({len(off)} player(s) more than {SKIP_MIN:.0f} minutes off the box score)")
+        del stints[first_stint:], oncourt[first_on:]
 
 bad = [o for o in oncourt if abs(o["sec"] / 60 - o["box_min"]) > 1.0]
 for o in bad[:10]:
@@ -159,7 +173,9 @@ n_on = to_parquet("oncourt", oncourt, [("game", "INTEGER"), ("player", "VARCHAR"
 manifest_path = os.path.join(W, "manifest.json")
 manifest = json.load(open(manifest_path)) if os.path.exists(manifest_path) else {"season": SEASON, "tables": {}}
 manifest["tables"].update({"stints": n_st, "oncourt": n_on})
+json.dump(skipped, open(os.path.join(W, "lineups_skipped.json"), "w"), indent=1)
 json.dump(manifest, open(manifest_path, "w"), indent=1)
 for p in problems[:20]:
     print("WARN", p)
-print(f"{SEASON}: {len(by_game)} games, {n_st} stints, {n_on} player-games; {len(bad)} player-games off the box score by more than a minute")
+print(f"{SEASON}: {len(by_game)} games, {n_st} stints, {n_on} player-games; {len(bad)} player-games off the box score by more than a minute; "
+      f"{len(skipped)} game(s) left out: {', '.join(str(g['game']) for g in skipped) or 'none'}")
