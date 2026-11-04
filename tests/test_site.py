@@ -38,6 +38,9 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SEASON = sys.argv[1] if len(sys.argv) > 1 else os.environ.get("SEASON", "E2026")
+# games lineups.py left out because their play-by-play is broken: their Fives tab says so instead of listing fives
+_skip = os.path.join(ROOT, "warehouse", SEASON, "lineups_skipped.json")
+NO_FIVES = [g["game"] for g in json.load(open(_skip))] if os.path.exists(_skip) else []
 CHROME_NAMES = ["google-chrome", "google-chrome-stable", "chromium", "chromium-browser",
                 "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome", "/Applications/Chromium.app/Contents/MacOS/Chromium"]
 
@@ -308,7 +311,8 @@ def main():
                               return em.length === 2 && tot.length === 2 && em[0] === tot[0] && em[1] === tot[1] ? '' : `header ${em} against box totals ${tot}`; })()""")
             if bad:
                 fails.append(f"{where}: the game page's box totals disagree with its score: {bad}")
-            for tab, probe in (("shots", "document.querySelectorAll('#gm-court circle').length >= 20"), ("fives", "document.querySelectorAll('#game .gm-fives tbody tr').length >= 3 && !!document.querySelector('#game .ln-strip')")):
+            for tab, probe in (("shots", "document.querySelectorAll('#gm-court circle').length >= 20"), ("fives", "(document.querySelectorAll('#game .gm-fives tbody tr').length >= 3 && !!document.querySelector('#game .ln-strip'))"
+                                                                                                         f" || ({json.dumps([str(g) for g in NO_FIVES])}.includes(location.hash.split('/')[1]) && /No lineups for this game|Bu maç için beşli yok/.test(document.querySelector('#game').textContent))")):
                 cdp.eval(f"document.querySelector('#game button[data-tab={tab}]').click()")
                 cdp.wait(probe, f"the game page's {tab} tab ({where})")
             wide = cdp.eval("document.documentElement.scrollWidth - document.documentElement.clientWidth")
