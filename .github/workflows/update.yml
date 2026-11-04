@@ -167,3 +167,43 @@ jobs:
     uses: ./.github/workflows/pages.yml
     with:
       ref: ${{ needs.update.outputs.sha }}
+
+  alert:
+    # Two failed runs in a row open one issue (GitHub emails the repo owner); the next run whose update job succeeds
+    # closes it. One failure alone is usually a feed hiccup that the next run fixes, so it stays quiet.
+    needs: [check, update, deploy]
+    if: always() && github.ref == 'refs/heads/main'
+    permissions:
+      actions: read
+      issues: write
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      TITLE: Data updates are failing
+      FAILED: ${{ contains(needs.*.result, 'failure') }}
+      PUBLISHED: ${{ needs.update.result == 'success' }}   # a skipped update (no new game) proves nothing either way
+      RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+    steps:
+      - name: Open or close the failure issue
+        run: |
+          open=$(gh issue list --state open --search "in:title \"$TITLE\"" --json number,title \
+            --jq "map(select(.title == env.TITLE)) | .[0].number // empty")
+          if [ "$FAILED" = "true" ]; then
+            # the most recent finished run before this one (runs are queued one at a time, see concurrency above)
+            prev=$(gh run list --workflow update.yml --branch main --status completed --limit 20 \
+              --json databaseId,conclusion \
+              --jq "map(select(.databaseId != ${{ github.run_id }} and .conclusion != \"cancelled\" and .conclusion != \"skipped\")) | .[0].conclusion // empty")
+            echo "this run failed; previous finished run: ${prev:-none}; open issue: ${open:-none}"
+            if [ "$prev" = "failure" ] && [ -z "$open" ]; then
+              gh issue create --title "$TITLE" --body "Two update runs in a row have failed, so the site is still showing the last good build.
+
+          Latest failed run: $RUN_URL
+
+          This issue closes itself when a run succeeds."
+            fi
+          elif [ "$PUBLISHED" = "true" ] && [ -n "$open" ]; then
+            echo "this run succeeded; closing #$open"
+            gh issue close "$open" --comment "Updates are working again: $RUN_URL"
+          fi
