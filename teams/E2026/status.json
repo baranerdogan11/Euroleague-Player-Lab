@@ -1,12 +1,12 @@
 {
  "season": "E2026",
- "checked_at": "2026-11-04T04:18:28Z",
+ "checked_at": "2026-11-04T23:02:18Z",
  "clubs": 20,
- "players": 337,
- "games": 90,
- "shots": 11820,
- "box_lines": 2153,
- "tests": 30,
+ "players": 340,
+ "games": 91,
+ "shots": 11958,
+ "box_lines": 2177,
+ "tests": 31,
  "failures": 0,
  "warnings": 3,
  "warning_list": [
@@ -16,7 +16,7 @@
   },
   {
    "check": "oncourt: reconstructed minutes agree with the box score within a minute",
-   "rows": 1
+   "rows": 2
   },
   {
    "check": "shots: shot value consistent with distance (3s from 6.4 m out, 2s inside 7 m)",
