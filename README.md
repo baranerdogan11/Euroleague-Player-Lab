@@ -92,7 +92,8 @@ CHROME=/path/to/chrome npm run test:e2e   # or: npx playwright install chromium
 
 The assertions write `teams/E2026/status.json` (games, shots, box lines, tests, failures, warnings, time) and the page footer
 shows the check date, the game count and the verdict. A failed run leaves the previous good build live and uploads the status report as a
-workflow artifact. Roster stints mean a player who changes club mid-season keeps his full season under his
+workflow artifact. Two failed runs in a row open a GitHub issue titled "Data updates are failing" (GitHub emails
+the repo owner), and the next run that publishes closes it. Roster stints mean a player who changes club mid-season keeps his full season under his
 current club.
 
 ## Expected field goal model (xFG)
