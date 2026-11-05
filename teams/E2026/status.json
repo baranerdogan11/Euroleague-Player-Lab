@@ -1,11 +1,11 @@
 {
  "season": "E2026",
- "checked_at": "2026-11-05T21:36:27Z",
+ "checked_at": "2026-11-05T21:41:41Z",
  "clubs": 20,
  "players": 340,
- "games": 95,
- "shots": 12499,
- "box_lines": 2272,
+ "games": 96,
+ "shots": 12633,
+ "box_lines": 2296,
  "tests": 31,
  "failures": 0,
  "warnings": 4,
@@ -16,7 +16,7 @@
   },
   {
    "check": "oncourt: reconstructed minutes agree with the box score within a minute",
-   "rows": 18
+   "rows": 25
   },
   {
    "check": "lineups: no game left out because its play-by-play disagrees with the box score",
