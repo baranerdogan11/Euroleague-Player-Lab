@@ -46,10 +46,26 @@ by_game = {}
 for e in rows("select * from events order by game, seq"):
     by_game.setdefault(e["game"], []).append(e)
 
+def minute_window(period, minute):
+    """Seconds remaining in the period at the start and end of the event's game minute (the feed's minute counts from 1 at
+    tip-off), or None when the minute does not fall inside the period."""
+    if minute is None:
+        return None
+    start = (period - 1) * 10 if period <= 4 else 40 + (period - 5) * 5
+    k = minute - start                            # minute of the period, 1-based
+    length = PERIOD_SEC(period)
+    if not 1 <= k <= length // 60:
+        return None
+    return length - k * 60, length - (k - 1) * 60
+
+
 def chronological(evs):
     """The feed's sequence numbers are not the order of play: a corrected or late-entered play keeps the clock it happened
-    at but gets the next number. Order by period and clock instead, with the sequence breaking ties; an event without a
-    clock (period markers, timeouts) takes the clock of the event entered before it."""
+    at but gets the next number. Order by period and clock instead, with the sequence breaking ties. An event without a
+    readable clock (period markers, timeouts, garbled clocks such as "24.?") takes the clock of the event entered before
+    it in the same period, or the start of its period when it is the first one; either way it is kept inside the game
+    minute the feed gives it. Substitutions between periods are often entered before the previous period's end marker, so
+    borrowing the last clock across periods would put them at the end of the new period."""
     out, last = [], None
     for e in evs:
         if e["playtype"] == "BP":
@@ -59,8 +75,11 @@ def chronological(evs):
         elif e["clock_sec"] is not None:
             cs = e["clock_sec"]
         else:
-            cs = last if last is not None else PERIOD_SEC(e["period"])
-        last = cs if e["playtype"] not in ("EP", "EG") else None
+            cs = last[1] if last is not None and last[0] == e["period"] else PERIOD_SEC(e["period"])
+            win = minute_window(e["period"], e.get("minute"))
+            if win:
+                cs = min(max(cs, win[0]), win[1])
+        last = (e["period"], cs) if e["playtype"] not in ("EP", "EG") else None
         out.append((e["period"], -cs, e["seq"], e))
     out.sort(key=lambda x: x[:3])
     return [x[3] for x in out]
