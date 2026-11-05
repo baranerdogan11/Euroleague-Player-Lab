@@ -1,1 +1,43 @@
-[]
+[
+ {
+  "game": 95,
+  "players": [
+   {
+    "player": "009754",
+    "club": "IST",
+    "reconstructed_min": 15.6,
+    "box_min": 23.22
+   },
+   {
+    "player": "012609",
+    "club": "IST",
+    "reconstructed_min": 23.6,
+    "box_min": 31.92
+   },
+   {
+    "player": "014178",
+    "club": "PRS",
+    "reconstructed_min": 18.0,
+    "box_min": 22.35
+   },
+   {
+    "player": "015143",
+    "club": "PRS",
+    "reconstructed_min": 17.7,
+    "box_min": 22.48
+   },
+   {
+    "player": "010431",
+    "club": "PRS",
+    "reconstructed_min": 22.0,
+    "box_min": 17.65
+   },
+   {
+    "player": "015160",
+    "club": "PRS",
+    "reconstructed_min": 21.4,
+    "box_min": 15.85
+   }
+  ]
+ }
+]

@@ -1,14 +1,14 @@
 {
  "season": "E2026",
- "checked_at": "2026-11-05T04:36:47Z",
+ "checked_at": "2026-11-05T19:31:57Z",
  "clubs": 20,
  "players": 340,
- "games": 91,
- "shots": 11958,
- "box_lines": 2177,
+ "games": 92,
+ "shots": 12097,
+ "box_lines": 2201,
  "tests": 31,
  "failures": 0,
- "warnings": 3,
+ "warnings": 4,
  "warning_list": [
   {
    "check": "roster_stints: no club has more than 22 active players (youth registrations are legitimate)",
@@ -17,6 +17,13 @@
   {
    "check": "oncourt: reconstructed minutes agree with the box score within a minute",
    "rows": 2
+  },
+  {
+   "check": "lineups: no game left out because its play-by-play disagrees with the box score",
+   "rows": 1,
+   "games": [
+    95
+   ]
   },
   {
    "check": "shots: shot value consistent with distance (3s from 6.4 m out, 2s inside 7 m)",
