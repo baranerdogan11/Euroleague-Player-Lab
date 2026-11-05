@@ -1,5 +1,46 @@
 [
  {
+  "game": 92,
+  "players": [
+   {
+    "player": "013506",
+    "club": "ULK",
+    "reconstructed_min": 14.2,
+    "box_min": 20.43
+   },
+   {
+    "player": "013367",
+    "club": "ULK",
+    "reconstructed_min": 24.6,
+    "box_min": 16.38
+   },
+   {
+    "player": "015405",
+    "club": "ULK",
+    "reconstructed_min": 20.9,
+    "box_min": 13.73
+   },
+   {
+    "player": "008173",
+    "club": "BAS",
+    "reconstructed_min": 19.9,
+    "box_min": 16.8
+   },
+   {
+    "player": "014736",
+    "club": "BAS",
+    "reconstructed_min": 14.3,
+    "box_min": 18.32
+   },
+   {
+    "player": "011284",
+    "club": "BAS",
+    "reconstructed_min": 17.2,
+    "box_min": 24.67
+   }
+  ]
+ },
+ {
   "game": 95,
   "players": [
    {

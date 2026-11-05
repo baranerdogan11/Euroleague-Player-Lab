@@ -1,11 +1,11 @@
 {
  "season": "E2026",
- "checked_at": "2026-11-05T19:31:57Z",
+ "checked_at": "2026-11-05T19:56:46Z",
  "clubs": 20,
  "players": 340,
- "games": 92,
- "shots": 12097,
- "box_lines": 2201,
+ "games": 93,
+ "shots": 12237,
+ "box_lines": 2224,
  "tests": 31,
  "failures": 0,
  "warnings": 4,
@@ -20,8 +20,9 @@
   },
   {
    "check": "lineups: no game left out because its play-by-play disagrees with the box score",
-   "rows": 1,
+   "rows": 2,
    "games": [
+    92,
     95
    ]
   },
