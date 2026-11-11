@@ -1,8 +1,6 @@
 {
- "checked": "2026-11-11 04:02 UTC",
- "against": "2026-11-10 05:31 UTC",
+ "checked": "2026-11-11 21:42 UTC",
+ "against": "2026-11-11 04:02 UTC",
  "failures": [],
- "warnings": [
-  "1 player line(s) gone: SY, BANDJA (PAR)"
- ]
+ "warnings": []
 }
