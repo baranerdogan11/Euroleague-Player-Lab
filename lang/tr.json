@@ -420,6 +420,8 @@
  "Points scored and allowed per 100 possessions, and possessions a game, with the club's rank in the league.": "100 hücumda atılan ve yenilen sayı ile maç başına hücum sayısı, kulübün ligdeki sırasıyla.",
  "{r} of {m}": "{m} takım içinde {r}",
  "lower is better": "düşük olan daha iyi",
+ "Table": "Tablo",
+ "Every club ranked": "Tüm kulüpler sıralı",
  "possessions a game": "maç başına hücum",
  "Roster": "Kadro",
  "Per game this season; sort by a column, open a name for his page.": "Bu sezon maç başına; sıralamak için bir sütuna, oyuncu sayfası için isme dokun.",
