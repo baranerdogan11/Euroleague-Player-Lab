@@ -32,17 +32,38 @@ jobs:
         with:
           ref: ${{ inputs.ref }}
 
+      # Deploys can finish out of order: on 2026-11-11 a code push's deploy, queued behind its tests, finished after a
+      # data update's deploy and put the site back to the build before the newest game. When main has since moved to a
+      # data commit (the bot's commits always deploy themselves and contain everything before them), this older commit
+      # is left out. A newer code commit does not count: its own deploy waits on its tests and may never happen.
+      - name: Is a newer data build already on its way?
+        id: stale
+        env:
+          REF: ${{ inputs.ref }}
+        run: |
+          git fetch --quiet --depth=100 origin main
+          tip=$(git rev-parse FETCH_HEAD)
+          if [ "$tip" != "$(git rev-parse HEAD)" ] && [ "$(git log -1 --format=%an FETCH_HEAD)" = "euroleague-player-lab-bot" ] \
+             && git merge-base --is-ancestor HEAD FETCH_HEAD; then
+            echo "main is at the data commit $tip, which contains $REF and deploys itself; leaving this deploy out"
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Stage the site (the repository without dotfiles, as the branch deploy served it)
+        if: steps.stale.outputs.skip != 'true'
         run: |
           mkdir -p "$RUNNER_TEMP/site"
           rsync -a --exclude='.*' ./ "$RUNNER_TEMP/site/"
           du -sh "$RUNNER_TEMP/site"
 
       - uses: actions/configure-pages@v6
+        if: steps.stale.outputs.skip != 'true'
 
       - uses: actions/upload-pages-artifact@v5
+        if: steps.stale.outputs.skip != 'true'
         with:
           path: ${{ runner.temp }}/site
 
       - id: deployment
         uses: actions/deploy-pages@v5
+        if: steps.stale.outputs.skip != 'true'
