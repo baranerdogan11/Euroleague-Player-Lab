@@ -41,6 +41,10 @@ SEASON = sys.argv[1] if len(sys.argv) > 1 else os.environ.get("SEASON", "E2026")
 # games lineups.py left out because their play-by-play is broken: their Fives tab says so instead of listing fives
 _skip = os.path.join(ROOT, "warehouse", SEASON, "lineups_skipped.json")
 NO_FIVES = [g["game"] for g in json.load(open(_skip))] if os.path.exists(_skip) else []
+# games whose play-by-play does not end on the final score: build.py leaves their win probability out (wp null) and the
+# Summary shows no chart
+_gdir = os.path.join(ROOT, "teams", SEASON, "games")
+NO_WP = sorted(f[:-5] for f in os.listdir(_gdir) if f.endswith(".json") and not json.load(open(os.path.join(_gdir, f))).get("wp")) if os.path.isdir(_gdir) else []
 CHROME_NAMES = ["google-chrome", "google-chrome-stable", "chromium", "chromium-browser",
                 "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome", "/Applications/Chromium.app/Contents/MacOS/Chromium"]
 
@@ -300,8 +304,9 @@ def main():
             cdp.wait("document.body.classList.contains('gm-on') && !document.querySelector('.wipe.on') && document.querySelector('#fail').hidden"
                      " && document.querySelectorAll('#game .gm-ldr-c').length === 4 && document.querySelectorAll('#game .gm-cmp .row').length >= 10 && !!document.querySelector('#game .gm-tm')", f"a game page's summary ({where})")
             # the win probability chart on the Summary, and it ends on the club that won
-            cdp.wait("!!document.querySelector('#gm-wp svg path.ln')", f"a game page's win probability chart ({where})")
-            bad = cdp.eval("""(() => { const em = [...document.querySelectorAll('#game .gm-tm em')].map(e => +e.textContent), w = document.querySelector('#gm-wp').closest('.gm-wp') && document.querySelector('#gm-wp path.ln').getAttribute('d').trim().split(/[ML]/).filter(Boolean).pop().split(' ').map(Number);
+            cdp.wait("!!document.querySelector('#gm-wp svg path.ln')"
+                     f" || ({json.dumps(NO_WP)}.includes(location.hash.split('/')[1]) && !document.querySelector('#gm-wp'))", f"a game page's win probability chart ({where})")
+            bad = cdp.eval("""(() => { const em = [...document.querySelectorAll('#game .gm-tm em')].map(e => +e.textContent), w = document.querySelector('#gm-wp path.ln') && document.querySelector('#gm-wp path.ln').getAttribute('d').trim().split(/[ML]/).filter(Boolean).pop().split(' ').map(Number);
                 return w && (w[1] === 0) !== (em[0] > em[1]) ? JSON.stringify({score: em, end: w}) : ''; })()""")
             if bad:
                 fails.append(f"{where}: the win probability chart ends on the wrong club: {bad}")

@@ -1,7 +1,11 @@
 // The game of the round tile steps through every game of the latest round: the arrows, the arrow keys and a swipe each
 // move one game, the count follows, every game gets its own headline, and on a phone the player stays inside the tile.
+// On the night a round opens it may hold a single game: then there is nothing to step through, so the tile shows no arrows
+// and a key or a swipe leaves it on that game without an error.
 import {test, expect} from '@playwright/test';
 import {DESKTOP, PHONE, prepare, settled} from './site.js';
+
+const roundSize = page => page.evaluate(() => { const G = META.games, R = Math.max(...G.map(g => g[1])); return G.filter(g => g[1] === R).length; });
 
 test.describe('desktop', () => {
   test.use(DESKTOP);
@@ -10,8 +14,18 @@ test.describe('desktop', () => {
     await page.goto('./');
     await settled(page);
     const hero = page.locator('#cv-hero'), count = hero.locator('.cv-hnav span');
-    const n = await page.evaluate(() => { const G = META.games, R = Math.max(...G.map(g => g[1])); return G.filter(g => g[1] === R).length; });
-    expect(n).toBeGreaterThan(1);
+    const n = await roundSize(page);
+    expect(n).toBeGreaterThan(0);
+    if (n === 1) {
+      await expect(hero.locator('.cv-hnav'), 'a one-game round has no arrows').toHaveCount(0);
+      const href = await hero.locator('.cv-hero-a').getAttribute('href');
+      expect(href).toMatch(/^#game\/\d+$/);
+      await hero.locator('.cv-hero-a').focus();
+      await page.keyboard.press('ArrowRight');
+      expect(await hero.locator('.cv-hero-a').getAttribute('href'), 'a key stays on the only game').toBe(href);
+      expect(problems, 'the page reported errors').toEqual([]);
+      return;
+    }
     const start = await count.textContent(), heads = new Set();
     for (let i = 0; i < n; i++) {
       heads.add(await hero.locator('h2').textContent());
@@ -37,15 +51,24 @@ test.describe('phone', () => {
     await settled(page);
     const hero = page.locator('#cv-hero'), count = hero.locator('.cv-hnav span');
     await hero.scrollIntoViewIfNeeded();
-    const start = await count.textContent(), box = await hero.boundingBox();
-    const img = await hero.locator('img').boundingBox(), nav = await hero.locator('.cv-hnav').boundingBox();
+    const one = await roundSize(page) === 1, box = await hero.boundingBox();
+    const img = await hero.locator('img').boundingBox();
     expect(img.y, 'the photo starts inside the tile').toBeGreaterThanOrEqual(box.y);
     expect(img.x + img.width, 'the photo ends inside the tile').toBeLessThanOrEqual(box.x + box.width);
-    expect(img.x, 'the photo clears the arrows').toBeGreaterThan(nav.x + nav.width);
     const y = box.y + 60, touch = (type, x) => page.dispatchEvent('#cv-hero', type, {touches: type === 'touchend' ? [] : [{identifier: 1, clientX: x, clientY: y}], changedTouches: [{identifier: 1, clientX: x, clientY: y}]});
-    await touch('touchstart', box.x + box.width - 40);
-    await touch('touchend', box.x + 40);
-    await expect(count).not.toHaveText(start);
+    if (one) {
+      await expect(hero.locator('.cv-hnav'), 'a one-game round has no arrows').toHaveCount(0);
+      const href = await hero.locator('.cv-hero-a').getAttribute('href');
+      await touch('touchstart', box.x + box.width - 40);
+      await touch('touchend', box.x + 40);
+      expect(await hero.locator('.cv-hero-a').getAttribute('href'), 'a swipe stays on the only game').toBe(href);
+    } else {
+      const start = await count.textContent(), nav = await hero.locator('.cv-hnav').boundingBox();
+      expect(img.x, 'the photo clears the arrows').toBeGreaterThan(nav.x + nav.width);
+      await touch('touchstart', box.x + box.width - 40);
+      await touch('touchend', box.x + 40);
+      await expect(count).not.toHaveText(start);
+    }
     expect(problems, 'the page reported errors').toEqual([]);
   });
 });
