@@ -1443,6 +1443,23 @@ html[data-look="club"] #ld-wrap{border:1px solid var(--line)}
 html[data-look="club"] .ld-tab td.on{background:color-mix(in srgb,var(--gc) 8%,var(--panel))}
 html[data-look="club"] .ld-tab tbody tr:nth-child(-n+3) td.rk{color:var(--gc)}
 html[data-look="club"] .ld-tab tr.me td{background:color-mix(in srgb,var(--gc) 12%,var(--panel))}
+html[data-look="club"] #st-view{display:flex;border:0;border-bottom:1px solid var(--line);border-radius:0;background:none;padding:0;gap:4px;margin:0 0 16px}
+html[data-look="club"] #st-view button{position:relative;border:0;border-radius:0;background:none;padding:12px 14px;font-family:var(--cond);font-weight:var(--cond-w);font-size:17px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0}
+html[data-look="club"] #st-view button:hover,html[data-look="club"] #st-view button[aria-pressed="true"]{background:none;color:var(--ink)}
+html[data-look="club"] #st-view button::after{content:"";position:absolute;left:10px;right:10px;bottom:0;height:3px;background:var(--gc);transform:scaleX(0);transition:transform .3s cubic-bezier(.22,1,.36,1)}
+html[data-look="club"] #st-view button[aria-pressed="true"]::after{transform:none}
+@media (prefers-reduced-motion:reduce){html[data-look="club"] #st-view button::after{transition:none}}
+.st-rt th:nth-child(n+3),.st-rt td:nth-child(n+3){text-align:right}
+.st-rt th button{all:unset;cursor:pointer;color:inherit;font:inherit;letter-spacing:inherit;text-transform:inherit;padding:4px 0}
+.st-rt th button:focus-visible{outline:2px solid var(--gc);outline-offset:2px}
+html[data-look="club"] .st-rt th.on{color:var(--club-ink)}
+html[data-look="club"] .st-rt th.on button{border-bottom:3px solid var(--gc)}
+html[data-look="club"] .st-rt td.on{color:var(--ink);font-weight:700}
+html[data-look="club"] .st-rt tbody tr:nth-child(even) td.on,html[data-look="club"] .st-rt td.on{background:color-mix(in srgb,var(--gc) 8%,var(--panel))}
+html[data-look="club"] .st-rt tr.me td.on{background:color-mix(in srgb,var(--gc) 16%,var(--panel))}
+html[data-look="club"] .cb-tiles .note a{color:inherit;text-decoration:underline;text-decoration-color:var(--gc);text-underline-offset:3px;text-decoration-thickness:2px}
+html[data-look="club"] .cb-tiles .note a:hover{color:var(--ink)}
+@media (max-width:760px){html[data-look="club"] #st-view button{padding:12px 10px;font-size:15px}html[data-look="club"] .st-rt th:nth-child(3),html[data-look="club"] .st-rt td:nth-child(3){display:none}html[data-look="club"] .st-rt th:nth-child(n+4),html[data-look="club"] .st-rt td:nth-child(n+4){display:table-cell;padding:0 3px;font-size:13.5px;letter-spacing:0}html[data-look="club"] #st-rt .st-rt th{font-size:11px;letter-spacing:.03em;padding:0 4px 8px}html[data-look="club"] #st-rt .st-rt td.club{white-space:normal;line-height:1.2;font-size:13.5px}html[data-look="club"] .st-rt th:first-child,html[data-look="club"] .st-rt td:first-child{width:24px;min-width:24px;padding:0 2px 0 8px;font-size:14px}html[data-look="club"] .st-rt th:nth-child(2),html[data-look="club"] .st-rt td.club{left:24px;min-width:0;max-width:none;padding-right:4px;box-shadow:none}html[data-look="club"] .st-rt td.club .medal{display:none}html[data-look="club"] .st-rt{width:100%}}
 @media (max-width:760px){html[data-look="club"] #ld-group button{padding:12px 10px;font-size:15px}html[data-look="club"] #ld-mode{width:100%;display:flex}html[data-look="club"] #ld-mode button{flex:1}}
 /* ---- end Club Edition · Leaders page ---- */
 @media (min-width:761px) and (max-width:900px){html[data-look="club"] .top .st-lnk{padding:0 10px}html[data-look="club"] .top .st-lnk span{font-size:14.5px}html[data-look="club"] .top .search{flex:0 1 150px;min-width:104px}html[data-look="club"] .top :is(.lang,.theme) button{width:40px}html[data-look="club"] .top .id{padding:0 14px 0 12px}}
@@ -2024,8 +2041,10 @@ html[data-look] .cv-pcs a{display:grid;grid-template-rows:auto auto;border:2px s
     <div class="in">
       <p class="sub" id="st-sub"></p>
       <div class="st-tiles" id="st-tiles" hidden></div>
-      <p class="scroll-hint">Scroll for more columns</p>
-      <div class="scroll"><table class="st-tab"><thead><tr><th scope="col">#</th><th scope="col">Club</th><th scope="col">W</th><th scope="col">L</th><th scope="col">+/-</th><th scope="col">Last 5</th><th scope="col">PF</th><th scope="col">PA</th><th scope="col">Home</th><th scope="col">Away</th><th scope="col">Streak</th></tr></thead><tbody id="st-body"></tbody></table></div>
+      <div class="seg" id="st-view" role="tablist"><button type="button" data-v="table" aria-pressed="true">Table</button><button type="button" data-v="ratings" aria-pressed="false">Ratings</button></div>
+      <div id="st-rt" hidden><div class="scroll"><table class="st-tab st-rt"><thead id="st-rt-head"></thead><tbody id="st-rt-body"></tbody></table></div></div>
+      <div id="st-table"><p class="scroll-hint">Scroll for more columns</p>
+      <div class="scroll"><table class="st-tab"><thead><tr><th scope="col">#</th><th scope="col">Club</th><th scope="col">W</th><th scope="col">L</th><th scope="col">+/-</th><th scope="col">Last 5</th><th scope="col">PF</th><th scope="col">PA</th><th scope="col">Home</th><th scope="col">Away</th><th scope="col">Streak</th></tr></thead><tbody id="st-body"></tbody></table></div></div>
       <p class="st-foot" id="st-foot"></p>
     </div>
   </section>
@@ -3133,6 +3152,19 @@ const COVER = (() => {
   };
 })();
 
+// ---- team ratings from META.ratings (build.py club_ratings): the club page tiles and the standings Ratings view share one
+// value, one format and one rank rule, so a club's number and place read the same on both. Net is rounded before ranking so
+// two clubs that both show +6.6 share a place.
+const TEAMRT = (() => {
+  const KEYS = ['ortg', 'drtg', 'net', 'pace'], LOW = {drtg: true};   // a lower defensive rating ranks higher
+  const all = () => META.ratings || {};
+  const codes = () => Object.keys(all()).filter(k => all()[k].g);
+  const val = (code, key) => { const r = all()[code]; return key === 'net' ? rnd(r.ortg - r.drtg) : r[key]; };
+  const rank = (code, key) => { const me = val(code, key); return 1 + codes().filter(k => LOW[key] ? val(k, key) < me : val(k, key) > me).length; };
+  const fmt = (code, key) => { const v = val(code, key); return (key === 'net' && v > 0 ? '+' : '') + f1(v); };
+  return {KEYS, LOW, codes, val, rank, fmt, link: key => `#standings/ratings/${key}`};
+})();
+
 // ---- standings: record and table from META.standings, the viewed club highlighted, a club row opens its page
 const STAND = (() => {
   const el = $('#standings');
@@ -3150,7 +3182,26 @@ const STAND = (() => {
       + (nr && nextRound ? `<div class="st-tile"><span class="lab">${t('Next round')}</span><span class="val"><span>${t('R')}${nextRound.round}</span></span><span class="note">${fmtDate(nextRound.date)}</span></div>` : nr ? `<div class="st-tile"><span class="lab">${t('Next round')}</span><span class="val"><span>${t('R')}${nr}</span></span><span class="note">&nbsp;</span></div>` : '');
     box.hidden = false;
   }
+  let view = 'table', sortKey = 'net';
+  const RT_LAB = {ortg: 'ORtg', drtg: 'DRtg', net: 'Net', pace: 'Pace'}, RT_TIP = {ortg: 'Offensive rating', drtg: 'Defensive rating', net: 'Net rating', pace: 'Pace'};
+  function ratingsTable(){
+    const cs = TEAMRT.codes(), key = sortKey;
+    cs.sort((a, b) => (TEAMRT.LOW[key] ? TEAMRT.val(a, key) - TEAMRT.val(b, key) : TEAMRT.val(b, key) - TEAMRT.val(a, key)) || TEAMRT.val(b, 'net') - TEAMRT.val(a, 'net') || (a < b ? -1 : 1));
+    $('#st-rt-head').innerHTML = `<tr><th scope="col">#</th><th scope="col">${t('Club')}</th><th scope="col">${t('G')}</th>${TEAMRT.KEYS.map(k => `<th scope="col" data-k="${k}" class="${k === key ? 'on' : ''}" aria-sort="${k === key ? (TEAMRT.LOW[k] ? 'ascending' : 'descending') : 'none'}" title="${t(RT_TIP[k])}"><button type="button" data-sort="${k}">${t(RT_LAB[k])}</button></th>`).join('')}</tr>`;
+    $('#st-rt-body').innerHTML = cs.map(code => { const c = CLUBS[code] || {}, me = state.team === code;
+      return `<tr class="${me ? 'me' : ''}" data-club="${code}" style="--cb:${c.base || '#8a919f'};--ca:${c.accent || '#f26f21'}"><td>${TEAMRT.rank(code, key)}</td><td class="club"><a href="#${code}"><span class="medal"><img src="${c.logo || ''}" alt="" width="24" height="24" loading="lazy"></span><span class="full" lang="en">${c.name || code}</span><span class="short" lang="en">${c.short || code}</span></a></td><td>${META.ratings[code].g}</td>${TEAMRT.KEYS.map(k => `<td data-k="${k}" class="${k === key ? 'on' : ''}${k === 'net' ? (TEAMRT.val(code, k) > 0 ? ' up' : TEAMRT.val(code, k) < 0 ? ' down' : '') : ''}">${TEAMRT.fmt(code, k)}</td>`).join('')}</tr>`; }).join('');
+  }
+  function setView(v, key, push){
+    view = v === 'ratings' ? 'ratings' : 'table'; if (TEAMRT.KEYS.includes(key)) sortKey = key;
+    if (push) { const h = view === 'ratings' ? TEAMRT.link(sortKey) : '#standings'; if (location.hash !== h) history.replaceState(null, '', h); }
+    render();
+  }
+  $('#st-view').addEventListener('click', e => { const b = e.target.closest('button[data-v]'); if (b) setView(b.dataset.v, null, true); });
+  $('#st-rt').addEventListener('click', e => { const b = e.target.closest('button[data-sort]'); if (b) setView('ratings', b.dataset.sort, true); });
   function render(){
+    for (const b of $('#st-view').children) b.setAttribute('aria-pressed', b.dataset.v === view);
+    $('#st-table').hidden = view !== 'table'; $('#st-rt').hidden = view !== 'ratings';
+    if (view === 'ratings') { ratingsTable(); requestAnimationFrame(scrollEnds); }
     const S = META.standings || [], played = S.reduce((a, r) => a + r.gp, 0) / 2, rounds = META.leaders && META.leaders.rounds;
     $('#st-sub').textContent = `${t('Euroleague {label} regular season', {label: META.label})} · ${plural(played, '{n} game played', '{n} games played')}${rounds ? ` · ${t('through R{n}', {n: rounds})}` : ''}`;
     tiles(S, rounds);
@@ -3163,7 +3214,7 @@ const STAND = (() => {
   }
   return {
     render,
-    show(){ applyPalette(HOUSE); document.body.classList.add('st-on'); noTeam(!state.team); el.hidden = false; render(); document.title = `${t('Standings')} · Player Lab`; },   // straight from the cover there is no club yet, so the two empty pickers stay out of the bar
+    show(v, key){ applyPalette(HOUSE); document.body.classList.add('st-on'); noTeam(!state.team); el.hidden = false; view = v === 'ratings' ? 'ratings' : 'table'; if (TEAMRT.KEYS.includes(key)) sortKey = key; render(); document.title = `${t('Standings')} · Player Lab`; },   // straight from the cover there is no club yet, so the two empty pickers stay out of the bar
     hide(){ document.body.classList.remove('st-on'); el.hidden = true; }
   };
 })();
@@ -3460,13 +3511,11 @@ const CLUB = (() => {
   }
   function ratings(code){
     const R = META.ratings || {}, me = R[code]; if (!me || !me.g) return '';
-    const codes = Object.keys(R).filter(k => R[k].g), m = codes.length;
-    const rank = (key, asc) => 1 + codes.filter(k => asc ? R[k][key] < me[key] : R[k][key] > me[key]).length;
-    const net = k => R[k].ortg - R[k].drtg, netRank = 1 + codes.filter(k => net(k) > net(code)).length;
-    const tile = (lab, val, r, note) => `<div class="st-tile"><span class="lab">${lab}</span><span class="val"><em>${val}</em></span><span class="note">${t('{r} of {m}', {r: ord(r), m})}${note ? ' · ' + note : ''}</span></div>`;
+    const m = TEAMRT.codes().length;
+    const tile = (key, lab, note) => `<div class="st-tile" data-k="${key}"><span class="lab">${lab}</span><span class="val"><em>${TEAMRT.fmt(code, key)}</em></span><span class="note"><a href="${TEAMRT.link(key)}" title="${t('Every club ranked')}">${t('{r} of {m}', {r: ord(TEAMRT.rank(code, key)), m})}</a>${note ? ' · ' + note : ''}</span></div>`;
     return `<h2>${t('Ratings')}</h2><p class="cb-sub">${t('Points scored and allowed per 100 possessions, and possessions a game, with the club\'s rank in the league.')}</p><div class="st-tiles cb-tiles">`
-      + tile(t('Offensive rating'), me.ortg.toFixed(1), rank('ortg', false)) + tile(t('Defensive rating'), me.drtg.toFixed(1), rank('drtg', true), t('lower is better'))
-      + tile(t('Net rating'), (net(code) > 0 ? '+' : '') + net(code).toFixed(1), netRank) + tile(t('Pace'), me.pace.toFixed(1), rank('pace', false), t('possessions a game')) + `</div>`;
+      + tile('ortg', t('Offensive rating')) + tile('drtg', t('Defensive rating'), t('lower is better'))
+      + tile('net', t('Net rating')) + tile('pace', t('Pace'), t('possessions a game')) + `</div>`;
   }
   function roster(code){
     const ps = team().players.map((p, i) => ({p, i, tot: (p.cur && p.cur.tot) || {}})), key = sortKey;
@@ -3735,7 +3784,7 @@ async function go(){
   if (h[0] !== 'games') GAMES.hide();
   if (h[0] === 'game') { COVER.hide(); STAND.hide(); LINE.hide(); CMP.hide(); LEAD.hide(); CLUB.hide(); await GAME.show(h[1], h[2]); return true; }
   if (h[0] === 'games') { COVER.hide(); STAND.hide(); LINE.hide(); CMP.hide(); LEAD.hide(); CLUB.hide(); GAMES.show(); return true; }
-  if (h[0] === 'standings') { COVER.hide(); LINE.hide(); CMP.hide(); LEAD.hide(); CLUB.hide(); STAND.show(); return true; }
+  if (h[0] === 'standings') { COVER.hide(); LINE.hide(); CMP.hide(); LEAD.hide(); CLUB.hide(); STAND.show(h[1], h[2]); return true; }
   if (h[0] === 'lineups') { COVER.hide(); STAND.hide(); CMP.hide(); LEAD.hide(); CLUB.hide(); await LINE.show(h[1]); return true; }
   if (h[0] === 'compare') { COVER.hide(); STAND.hide(); LINE.hide(); LEAD.hide(); CLUB.hide(); await CMP.show(); return true; }
   if (h[0] === 'leaders') { COVER.hide(); STAND.hide(); LINE.hide(); CMP.hide(); CLUB.hide(); await LEAD.show(); return true; }
