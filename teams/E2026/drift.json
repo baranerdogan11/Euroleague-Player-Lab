@@ -1,18 +1,6 @@
 {
- "checked": "2026-11-12 03:47 UTC",
- "against": "2026-11-11 22:51 UTC",
+ "checked": "2026-11-12 21:02 UTC",
+ "against": "2026-11-12 03:47 UTC",
  "failures": [],
- "warnings": [
-  "LAWSON, A.J. (BAS): min corrected 261.5 -> 260.5 (0 new game(s))",
-  "LAWSON, A.J. (BAS): pax corrected -8.4 -> -8.96 (0 new game(s))",
-  "STEWART, DJ (BAS): min corrected 260.0 -> 259.0 (0 new game(s))",
-  "STEWART, DJ (BAS): pax corrected -10.27 -> -10.51 (0 new game(s))",
-  "DUARTE, CHRIS (BAS): min corrected 156.6 -> 157.6 (0 new game(s))",
-  "KURUCS, RODIONS (BAS): min corrected 161.3 -> 160.3 (0 new game(s))",
-  "FARIED, KENNETH (BAS): min corrected 239.8 -> 241.8 (0 new game(s))",
-  "JONES, CARLIK (PAR): pax corrected -14.02 -> -14.23 (0 new game(s))",
-  "FRANKS, ROBERT (PAR): min corrected 71.0 -> 72.0 (0 new game(s))",
-  "LAKIC, ARIJAN (PAR): min corrected 149.7 -> 148.7 (0 new game(s))",
-  "JEKIRI, TONYE (PAR): pax corrected 20.82 -> 20.65 (0 new game(s))"
- ]
+ "warnings": []
 }
