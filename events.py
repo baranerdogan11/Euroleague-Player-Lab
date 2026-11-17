@@ -14,6 +14,7 @@ import json
 import os
 import sys
 import duckdb
+from parquet_io import add_to_manifest, write_parquet
 
 SEASON = sys.argv[1] if len(sys.argv) > 1 else "E2026"
 ROOT = os.path.dirname(os.path.abspath(__file__))
@@ -93,25 +94,12 @@ con = duckdb.connect()
 
 
 def to_parquet(name, rows, schema):
-    tmp = os.path.join(OUT, f"{name}.jsonl")
-    with open(tmp, "w") as f:
-        for r in rows:
-            f.write(json.dumps({k: r.get(k) for k, _ in schema}) + "\n")
-    cols = ", ".join(f"'{k}': '{t}'" for k, t in schema)
-    con.execute(f"copy (select * from read_json('{tmp}', format='newline_delimited', columns={{{cols}}})) to '{os.path.join(OUT, name + '.parquet')}' (format parquet, compression zstd)")
-    os.remove(tmp)
-    return len(rows)
+    return write_parquet(con, OUT, name, rows, schema)
 
 
 os.makedirs(OUT, exist_ok=True)
 n_ev = to_parquet("events", events, [("game", "INTEGER"), ("seq", "INTEGER"), ("period", "INTEGER"), ("club", "VARCHAR"), ("player", "VARCHAR"), ("playtype", "VARCHAR"), ("minute", "INTEGER"),
                                      ("clock", "VARCHAR"), ("clock_sec", "INTEGER"), ("score_home", "INTEGER"), ("score_away", "INTEGER"), ("info", "VARCHAR")])
 n_ctx = to_parquet("shot_context", context, [("game", "INTEGER"), ("seq", "INTEGER"), ("assisted", "INTEGER"), ("fouled", "INTEGER"), ("blocked", "INTEGER"), ("poss_sec", "INTEGER"), ("poss_start", "VARCHAR")])
-manifest_path = os.path.join(OUT, "manifest.json")
-manifest = json.load(open(manifest_path)) if os.path.exists(manifest_path) else {"season": SEASON, "tables": {}}
-manifest["tables"].update({"events": n_ev, "shot_context": n_ctx})
-json.dump(manifest, open(manifest_path, "w"), indent=1)
+add_to_manifest(OUT, SEASON, {"events": n_ev, "shot_context": n_ctx})
 print(f"{SEASON}: {len(by_game)} games with play-by-play, {n_ev} events, {n_ctx} shots with context")
-# the lineup layer (who was on the floor, from these events) follows directly, so the pipeline needs no extra step
-import subprocess
-subprocess.run([sys.executable, os.path.join(ROOT, "lineups.py"), SEASON], check=True)

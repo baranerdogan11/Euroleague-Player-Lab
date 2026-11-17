@@ -22,6 +22,7 @@ import json
 import os
 import sys
 import duckdb
+from parquet_io import add_to_manifest, write_parquet
 
 SEASON = sys.argv[1] if len(sys.argv) > 1 else "E2026"
 ROOT = os.path.dirname(os.path.abspath(__file__))
@@ -176,24 +177,14 @@ for o in bad[:10]:
 
 
 def to_parquet(name, rs, schema):
-    tmp = os.path.join(W, f"{name}.jsonl")
-    with open(tmp, "w") as f:
-        for r in rs:
-            f.write(json.dumps({k: r.get(k) for k, _ in schema}) + "\n")
-    cols = ", ".join(f"'{k}': '{t}'" for k, t in schema)
-    con.execute(f"copy (select * from read_json('{tmp}', format='newline_delimited', columns={{{cols}}})) to '{os.path.join(W, name + '.parquet')}' (format parquet, compression zstd)")
-    os.remove(tmp)
-    return len(rs)
+    return write_parquet(con, W, name, rs, schema)
 
 
 n_st = to_parquet("stints", stints, [("game", "INTEGER"), ("club", "VARCHAR"), ("stint", "INTEGER"), ("players", "VARCHAR[]"), ("sec", "INTEGER"), ("pts", "INTEGER"), ("opp_pts", "INTEGER"),
                                      ("fga", "INTEGER"), ("oreb", "INTEGER"), ("tov", "INTEGER"), ("fta", "INTEGER"), ("opp_fga", "INTEGER"), ("opp_oreb", "INTEGER"), ("opp_tov", "INTEGER"), ("opp_fta", "INTEGER")])
 n_on = to_parquet("oncourt", oncourt, [("game", "INTEGER"), ("player", "VARCHAR"), ("club", "VARCHAR"), ("sec", "INTEGER"), ("box_min", "DOUBLE")])
-manifest_path = os.path.join(W, "manifest.json")
-manifest = json.load(open(manifest_path)) if os.path.exists(manifest_path) else {"season": SEASON, "tables": {}}
-manifest["tables"].update({"stints": n_st, "oncourt": n_on})
+add_to_manifest(W, SEASON, {"stints": n_st, "oncourt": n_on})
 json.dump(skipped, open(os.path.join(W, "lineups_skipped.json"), "w"), indent=1)
-json.dump(manifest, open(manifest_path, "w"), indent=1)
 for p in problems[:20]:
     print("WARN", p)
 print(f"{SEASON}: {len(by_game)} games, {n_st} stints, {n_on} player-games; {len(bad)} player-games off the box score by more than a minute; "
