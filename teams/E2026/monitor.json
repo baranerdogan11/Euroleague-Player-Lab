@@ -1,17 +1,17 @@
 {
  "season": "E2026",
- "generated_at": "2026-11-16 04:11 UTC",
+ "generated_at": "2026-11-17 01:35 UTC",
  "pipeline": {
   "last": {
-   "date": "2026-11-16",
-   "at": "2026-11-16T04:11:32Z",
+   "date": "2026-11-17",
+   "at": "2026-11-17T01:35:52Z",
    "ok": true,
    "games": 110,
    "shots": 14468,
    "players": 341,
    "failures": 0,
-   "ci": true,
-   "run_id": "43802343145"
+   "ci": false,
+   "run_id": null
   },
   "history": [
    {
@@ -596,9 +596,20 @@
     "failures": 0,
     "ci": true,
     "run_id": "43802343145"
+   },
+   {
+    "date": "2026-11-17",
+    "at": "2026-11-17T01:35:52Z",
+    "ok": true,
+    "games": 110,
+    "shots": 14468,
+    "players": 341,
+    "failures": 0,
+    "ci": false,
+    "run_id": null
    }
   ],
-  "tests": 31,
+  "tests": 35,
   "warnings": [
    {
     "check": "roster_stints: no club has more than 22 active players (youth registrations are legitimate)",
@@ -620,7 +631,7 @@
   "last_played_date": "2026-11-13",
   "next_game_date": "2026-11-17",
   "last_round": 11,
-  "days_since_last_game": 3,
+  "days_since_last_game": 4,
   "rounds": [
    {
     "round": 1,
@@ -1430,12 +1441,9 @@
   "known_shooter_share": 0.766
  },
  "api": {
-  "url": "https://euroleague-xfg.onrender.com",
-  "reachable": true,
-  "latency_ms": 150,
-  "cold_start_ms": 51397,
-  "model_version": "2026-10-16",
-  "model_sha256": "595a07c6039c"
+  "url": "http://127.0.0.1:9",
+  "reachable": false,
+  "error": "URLError"
  },
  "model": {
   "version": "2026-10-16",
