@@ -794,6 +794,25 @@ def club_lineups(out):
 BYGAME = {}
 
 
+def round_state(played, todo):
+    """The latest round with a final: its unplayed games, the Next tile's games and whether the round is still open. The round is
+    over, and its game of the round can be named, once every game is final; a game moved past the next round's first date (or
+    more than a week past the round's last final when no later round is scheduled) counts as postponed and does not hold the
+    round open. The Next tile lists the open round's remaining games, otherwise the following round's. Rows are
+    [game, round, date, home, away]; played and todo are dicts with those keys, dates as ISO strings."""
+    row = lambda g: [g["game"], g["round"], g["date"], g["home"], g["away"]]
+    cur = max(g["round"] for g in played)
+    rest = [g for g in todo if g["round"] == cur]
+    later = [g for g in todo if g["round"] > cur]
+    first = later and min(g["round"] for g in later)
+    cutoff = min((g["date"] for g in later if g["round"] == first), default=None)
+    if cutoff is None:
+        cutoff = str(datetime.date.fromisoformat(max(g["date"] for g in played if g["round"] == cur)) + datetime.timedelta(days=7))
+    waiting = [g for g in rest if g["date"] <= cutoff]
+    nxt = [row(g) for g in waiting] if waiting else [row(g) for g in later if g["round"] == first]
+    return [row(g) for g in rest], nxt, bool(waiting)
+
+
 def games_json():
     """One file per played game for the game pages (teams/<season>/games/<game>.json, fetched when a game is opened): the
     score by quarter from the play-by-play, both box scores straight from the box table (the same lines the player pages
@@ -896,10 +915,9 @@ def games_json():
     #  overtime, winner's lowest win chance %, winner's biggest lead, loser's biggest lead, lead changes]
     best = lambda code: (lambda b: [b[1], b[3], b[6], b[8]] if b else [None] * 4)(tops[code][0] if tops[code] else None)
     every = [[g["game"], g["round"], g["date"], g["home"], g["away"], g["home_score"], g["away_score"], *best(g["game"]), *story[g["game"]]] for g in reversed(played)]
-    # the next round for the cover's Next tile: the unplayed games of the lowest round still to come, in date order
     todo = rows("select game, round, cast(date as varchar) as date, home, away from games where not played order by round, date, game")
-    nxt = [[g["game"], g["round"], g["date"], g["home"], g["away"]] for g in todo if g["round"] == todo[0]["round"]] if todo else []
-    return {"n": len(played), "lines": n_lines, "every": every, "next": nxt, "last": {"date": last_date, "games": [{"code": g["game"], "round": g["round"], "home": g["home"], "away": g["away"], "hs": g["home_score"], "as": g["away_score"], "top": tops[g["game"]][0] if tops[g["game"]] else None} for g in day]}}
+    rest, nxt, still = round_state(played, todo)
+    return {"n": len(played), "lines": n_lines, "every": every, "next": nxt, "rest": rest, "open": still, "last": {"date": last_date, "games": [{"code": g["game"], "round": g["round"], "home": g["home"], "away": g["away"], "hs": g["home_score"], "as": g["away_score"], "top": tops[g["game"]][0] if tops[g["game"]] else None} for g in day]}}
 
 
 def leaders_json():
@@ -992,6 +1010,8 @@ GAMES = games_json()             # the game pages' files; the latest game day ri
 meta["last_night"] = GAMES and GAMES["last"]
 meta["games"] = GAMES and GAMES["every"]
 meta["next_round"] = GAMES and GAMES["next"]
+meta["round_rest"] = GAMES and GAMES["rest"]   # the latest round's unplayed games, postponed ones too
+meta["round_open"] = bool(GAMES and GAMES["open"])   # true while that round still has games to play
 json.dump(meta, open(os.path.join(OUT, "index.json"), "w"), ensure_ascii=False)
 # app icons drawn from the house mark (a dark square, the orange ball, court lines), written once
 def draw_icons():
