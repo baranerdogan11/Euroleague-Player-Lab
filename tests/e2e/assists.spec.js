@@ -44,6 +44,17 @@ test.describe('desktop', () => {
       await go(page, `#${club}/${first.a}`, () => !document.querySelector('#ap').hidden);
       await expect(page.locator(`#ap .ap-col:first-child .ap-r[data-pid="${first.b}"] b`)).toHaveText(first.n);
     }
+    // the network wears each club's colours: two clubs never draw their arrows in the same colour, and each reads on the paper
+    const ink = {};
+    for (const club of ['MAD', 'PAN', 'ULK']) {
+      await go(page, `#${club}`, () => document.querySelectorAll('#an .an-e path').length > 1);
+      ink[club] = await page.evaluate(() => { const p = document.querySelector('#an .an-e path'), n = document.querySelector('#an .an-n rect');
+        return {arrow: getComputedStyle(p).stroke, node: getComputedStyle(n).fill, bg: getComputedStyle(document.body).backgroundColor}; });
+    }
+    expect(new Set(Object.values(ink).map(v => v.arrow)).size, 'arrows in each club\'s own colour').toBe(3);
+    const rgb = s => s.match(/\d+/g).slice(0, 3).map(Number), L = c => { const [r, g, b] = c.map(v => { v /= 255; return v <= .03928 ? v / 12.92 : ((v + .055) / 1.055) ** 2.4; }); return .2126 * r + .7152 * g + .0722 * b; };
+    const cr = (a, b) => { const x = L(rgb(a)), y = L(rgb(b)); return (Math.max(x, y) + .05) / (Math.min(x, y) + .05); };
+    for (const [club, v] of Object.entries(ink)) for (const k of ['arrow', 'node']) expect(cr(v[k], v.bg), `${club} ${k} reads on the page`).toBeGreaterThanOrEqual(2.9);
     expect(problems, 'the page reported errors').toEqual([]);
   });
 });
