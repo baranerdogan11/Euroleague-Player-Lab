@@ -4,7 +4,7 @@ double-overtime game puts both overtimes in period 5, the lineup layer counts fi
 leaves the game out (all four multi-overtime games of 2025-26 were left out this way).
 
 One synthetic game in the feed's format, AAA v BBB, the ten starters on the floor for all 50 minutes of a
-double-overtime game. events.py (which runs lineups.py itself) must give the overtimes periods 5 and 6 and keep the game
+double-overtime game. events.py then lineups.py must give the overtimes periods 5 and 6 and keep the game
 in the lineup layer with 50 minutes for every starter.
 
 usage: python tests/test_overtime.py
@@ -45,9 +45,11 @@ for name, rs in (("box", box), ("games", [{"game": 1, "home": "AAA", "away": "BB
     con.execute(f"copy (select * from read_json_auto('{tmp}')) to '{os.path.join(W, name + '.parquet')}' (format parquet)")
     os.remove(tmp)
 
-r = subprocess.run([sys.executable, os.path.join(ROOT, "events.py"), SEASON], capture_output=True, text=True)
-print(r.stdout.strip() or r.stderr.strip())
-ok = r.returncode == 0
+ok = True
+for script in ("events.py", "lineups.py"):
+    r = subprocess.run([sys.executable, os.path.join(ROOT, script), SEASON], capture_output=True, text=True)
+    print(r.stdout.strip() or r.stderr.strip())
+    ok = ok and r.returncode == 0
 if ok:
     periods = dict(con.execute(f"select seq, period from read_parquet('{W}/events.parquet') where seq > 12").fetchall())
     on = con.execute(f"select count(*), min(sec), max(sec) from read_parquet('{W}/oncourt.parquet')").fetchone()

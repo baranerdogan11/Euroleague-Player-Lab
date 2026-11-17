@@ -117,6 +117,9 @@ jobs:
       - name: Play-by-play events and shot context
         run: python events.py $SEASON
 
+      - name: Lineups (who was on the floor, from the substitution events)
+        run: python lineups.py $SEASON
+
       - name: Warehouse assertions
         run: python warehouse_tests.py $SEASON
 

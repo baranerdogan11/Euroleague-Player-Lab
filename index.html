@@ -2459,9 +2459,8 @@ function cmpWho(side, p, club, c){
   root.style.setProperty(`--cb${i}`, k.base || '#1f2b47'); root.style.setProperty(`--ca${i}`, k.accent || '#f26f21'); root.style.setProperty(`--ci${i}`, cmpInk(k.base || '#1f2b47'));
 }
 function cmpMeOptions(){
-  // the left side can swap to any teammate at the same position without leaving the page
-  const d = ds(), sel = $('#cmp-me'), ps = team().players;
-  const opts = ps.map((p, i) => [p, i]).filter(([p, i]) => i === state.player || (cache[state.team] && p.pos_group === d.pos_group) || !p.pos_group);
+  // the left side can swap to any teammate without leaving the page
+  const sel = $('#cmp-me'), ps = team().players;
   sel.innerHTML = ps.map((p, i) => `<option value="${i}">#${p.dorsal || '–'} ${nameOf(p.name).first} ${nameOf(p.name).sur}</option>`).join('');
   sel.value = state.player;
   if (DD.cmpMe) DD.cmpMe.refresh();

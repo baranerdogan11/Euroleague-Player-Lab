@@ -48,7 +48,7 @@ nightly is retried by the next run. The workflow can also be started by hand fro
 4. runs the raw-feed gate (`checks.py`)
 5. builds the warehouse (`warehouse.py`): six Parquet tables under `warehouse/E2026/`, the silver layer, then the
    play-by-play layer (`events.py`): every event of every game and, per shot, whether it was assisted, an and-one,
-   blocked, and how many seconds into the possession it came; then the lineup layer (`lineups.py`, launched by `events.py`): who was on the
+   blocked, and how many seconds into the possession it came; then the lineup layer (`lineups.py`): who was on the
    floor for every second of every game, from the starters and the substitution events; see [`warehouse/SCHEMA.md`](warehouse/SCHEMA.md)
 6. runs 30 SQL assertions over the warehouse (`warehouse_tests.py`): key uniqueness, referential integrity,
    schedule completeness, per player per game reconciliation of plotted attempts and makes with the box score, and

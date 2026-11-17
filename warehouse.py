@@ -12,6 +12,7 @@ import json
 import os
 import sys
 import duckdb
+from parquet_io import write_parquet
 
 SEASON = sys.argv[1] if len(sys.argv) > 1 else "E2026"
 ROOT = os.path.dirname(os.path.abspath(__file__))
@@ -123,15 +124,7 @@ con = duckdb.connect()
 
 
 def to_parquet(name, rows, schema):
-    """schema: list of (column, duckdb type); rows: list of dicts."""
-    tmp = os.path.join(OUT, f"{name}.jsonl")
-    with open(tmp, "w") as f:
-        for r in rows:
-            f.write(json.dumps({k: r.get(k) for k, _ in schema}) + "\n")
-    cols = ", ".join(f"'{k}': '{t}'" for k, t in schema)
-    con.execute(f"copy (select * from read_json('{tmp}', format='newline_delimited', columns={{{cols}}})) to '{os.path.join(OUT, name + '.parquet')}' (format parquet, compression zstd)")
-    os.remove(tmp)
-    return len(rows)
+    return write_parquet(con, OUT, name, rows, schema)
 
 counts = {
     "clubs": to_parquet("clubs", clubs, [("club", "VARCHAR"), ("name", "VARCHAR"), ("short", "VARCHAR"), ("country", "VARCHAR"), ("city", "VARCHAR")]),
