@@ -35,7 +35,7 @@ N_CLUBS = {"E2022": 18, "E2023": 18, "E2024": 18}.get(SEASON, 20)   # past seaso
 if len(clubs) != N_CLUBS:
     fail(f"expected {N_CLUBS} clubs, found {len(clubs)}")
 
-games_seen, total_players, total_games, total_shots, reconciled, photo_missing = {}, 0, 0, 0, 0, 0
+games_seen, total_players, total_shots, reconciled, photo_missing = {}, 0, 0, 0, 0
 for c in clubs:
     code = c["code"]
     path = os.path.join(DATA, f"{code}.json")
@@ -62,7 +62,6 @@ for c in clubs:
         if not p.get("photo"):
             photo_missing += 1
     for g in d["games"]:
-        total_games += 1
         if g["date"] > TODAY:
             fail(f"{code}: game {g['code']} dated in the future ({g['date']})")
         if (g["hs"] or 0) + (g["as"] or 0) <= 0:

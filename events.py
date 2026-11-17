@@ -35,13 +35,21 @@ def clock_sec(s):
         return None
 
 
+def period_of(per, playtype, minute):
+    """The feed files every overtime under ExtraTime; its game minute tells them apart (41-45 the first, 46-50 the second,
+    and so on), except that an end-of-period marker carries the next minute (the first overtime ends at minute 46)."""
+    if per < 5 or minute is None:
+        return per
+    return 5 + max(0, (minute - (42 if playtype in ("EP", "EG") else 41)) // 5)
+
+
 events = []
 for path in sorted(glob.glob(os.path.join(CACHE, "pbp_*.json"))):
     gc = int(os.path.basename(path)[4:-5])
     d = json.load(open(path))
     for key, per in PERIODS:
         for e in d.get(key) or []:
-            events.append({"game": gc, "seq": e["NUMBEROFPLAY"], "period": per, "club": (e.get("CODETEAM") or "").strip() or None, "player": norm_pid(e.get("PLAYER_ID")),
+            events.append({"game": gc, "seq": e["NUMBEROFPLAY"], "period": period_of(per, (e.get("PLAYTYPE") or "").strip(), e.get("MINUTE")), "club": (e.get("CODETEAM") or "").strip() or None, "player": norm_pid(e.get("PLAYER_ID")),
                            "playtype": (e.get("PLAYTYPE") or "").strip(), "minute": e.get("MINUTE"), "clock": e.get("MARKERTIME") or None, "clock_sec": clock_sec(e.get("MARKERTIME")),
                            "score_home": e.get("POINTS_A"), "score_away": e.get("POINTS_B"), "info": e.get("PLAYINFO") or None})
 

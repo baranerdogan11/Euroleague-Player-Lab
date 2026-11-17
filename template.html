@@ -275,10 +275,6 @@ html[data-look="club"] .cmp-nm b{display:block;font-weight:var(--cond-w)}
 html[data-look="club"] .cmp-side.l .cmp-nm b{color:var(--ca1)}
 html[data-look="club"] .cmp-side.r .cmp-nm b{color:var(--ca2)}
 html[data-look="club"] .cmp-line{font-size:16px;opacity:.92}
-html[data-look="club"] .cmp-facts{display:flex;gap:26px;padding-top:12px;border-top:1px solid rgba(255,255,255,.22);font-size:14px}
-html[data-look="club"] .cmp-side.r .cmp-facts{justify-content:flex-end}
-html[data-look="club"] .cmp-facts span{display:block;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;opacity:.75}
-html[data-look="club"] .cmp-facts b{font-family:var(--cond);font-weight:var(--cond-w);font-size:22px}
 html[data-look="club"] body.cmp-on .cmp-pick,html[data-look="club"] body.cmp-on .cmp-row{display:flex;align-items:center;gap:10px;margin-top:4px}
 html[data-look="club"] body.cmp-on .cmp-picks{display:grid;grid-template-columns:max-content minmax(200px,320px);gap:12px 10px;align-items:center;margin-top:4px}   /* club and player pickers: one label column, the pills aligned */
 html[data-look="club"] body.cmp-on .cmp-picks .cmp-pick{display:contents}
@@ -335,7 +331,6 @@ html[data-look="club"] .cmp-empty{background:var(--panel);border:1px solid var(-
   html[data-look="club"] .cmp-side{padding:20px 16px 18px;min-height:0}
   html[data-look="club"] .cmp-side.r .cmp-who,html[data-look="club"] .cmp-side.r .cmp-row,html[data-look="club"] .cmp-side.r .cmp-picks{justify-self:stretch;text-align:left}
   html[data-look="club"] .cmp-side.r .cmp-club{flex-direction:row}
-  html[data-look="club"] .cmp-side.r .cmp-facts{justify-content:flex-start}
   html[data-look="club"] .cmp-nm{font-size:44px}
   html[data-look="club"] .cmp-hero>.cmp-side.l{grid-area:1/1}html[data-look="club"] .cmp-hero>.cmp-side.r{grid-area:2/1}   /* both placed by hand, so the badge sharing row 2 opens no second column */
   html[data-look="club"] .cmp-vs{width:44px;height:44px;font-size:20px;position:relative;left:auto;top:auto;grid-row:2;grid-column:1;justify-self:center;align-self:start;transform:translateY(-50%)}   /* stacked sides: the badge sits on the seam, whatever the left side holds */
@@ -357,8 +352,6 @@ html[data-look="club"] .cmp-side::after{content:"";position:absolute;inset:0;z-i
 html[data-look="club"] .cmp-club{font-family:var(--cond);font-weight:var(--cond-w);font-size:16px;letter-spacing:.12em}
 html[data-look="club"] .cmp-club .medal{border-radius:50%}
 html[data-look="club"] .cmp-line{font-family:var(--sans);font-weight:600;font-size:14px;letter-spacing:.06em;text-transform:uppercase;opacity:.8}
-html[data-look="club"] .cmp-facts{border-top-color:rgba(255,255,255,.18)}
-html[data-look="club"] .cmp-facts span{font-weight:700;letter-spacing:.12em}
 html[data-look="club"] body.cmp-on .cmp-lab{font-weight:700;letter-spacing:.12em;opacity:.72}
 html[data-look="club"] body.cmp-on .cmp-side .dd{border-radius:0;background:rgba(0,0,0,.28);border-color:rgba(255,255,255,.28)}
 html[data-look="club"] body.cmp-on .cmp-side .dd .dd-btn{font-family:var(--cond);font-weight:var(--cond-w);font-size:16px;letter-spacing:.06em;text-transform:uppercase}
@@ -422,7 +415,7 @@ html[data-look="club"] .cmp-open{border-radius:0;font-family:var(--cond);font-we
 .shot{transform-box:fill-box;transform-origin:center;animation:pop .32s cubic-bezier(.2,1.4,.4,1) both}
 @keyframes pop{from{opacity:0;transform:scale(.2)}to{opacity:1;transform:scale(1)}}
 @media (prefers-reduced-motion:reduce){.shot{animation:none}:is(.lang,.theme) button,:is(.lang,.theme) svg{transition:none}.ticker{overflow-x:auto;scrollbar-width:thin}.ticker .run{animation:none}.tile::after,.split .bar i.fill,.gauge .t i,.zone-bar,.progress,.toast{transition:none}.sk{animation:none}
-  .lb-list.go-l,.lb-list.go-r,.lb-title b.swap{animation:none}.lb-row a::after,.lb-arrow,.lb-dots button,.lb-row a,.lb summary::after{transition:none}}
+}
 .court3d{position:relative;width:100%;aspect-ratio:4/3;background:var(--floor);overflow:hidden}
 .court3d canvas{display:block;width:100%;height:100%;touch-action:pan-y}
 .court3d.orbit canvas{touch-action:none}
@@ -504,11 +497,10 @@ tbody tr:hover td{background:rgba(255,255,255,.03)}
 .prof-chart .end{fill:var(--club2)}
 /* game log */
 .log{margin-top:18px}
-.log summary,.lb summary{cursor:pointer;list-style:none}
-.log summary::-webkit-details-marker,.lb summary::-webkit-details-marker{display:none}
-.log summary::after,.lb summary::after{content:"";margin-left:auto;width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;border-top:9px solid var(--ink2);transition:transform .2s}
-.log[open] summary::after,.lb[open] summary::after{transform:rotate(180deg)}
-.lb summary:hover::after{border-top-color:var(--club2)}
+.log summary{cursor:pointer;list-style:none}
+.log summary::-webkit-details-marker{display:none}
+.log summary::after{content:"";margin-left:auto;width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;border-top:9px solid var(--ink2);transition:transform .2s}
+.log[open] summary::after{transform:rotate(180deg)}
 .log .scroll{overflow-x:auto;scrollbar-width:thin;scrollbar-color:var(--line2) transparent}
 .log .none{color:var(--muted);margin:0}
 td.w{color:var(--good)} td.l{color:var(--bad)}
@@ -722,7 +714,6 @@ html[data-look="club"] .foot a{color:var(--cold)}
 .ttab tr.dnp td{color:var(--muted);font-family:var(--sans);font-size:12.5px;font-weight:500}
 .ttab tfoot td{border-bottom:0;padding-top:10px;font-family:var(--sans);font-size:12px;font-weight:500;color:var(--muted);white-space:nowrap}
 .ttab tfoot td:first-child{color:var(--muted)}
-.ttab .sm{color:var(--muted)}
 .ttab .up,.trend .up{color:var(--good)}.ttab .down,.trend .down{color:var(--bad)}
 .ttab i{font-style:normal}
 .ttab .short{display:none}
@@ -736,9 +727,6 @@ td .st{display:inline-block;color:var(--club2);font-style:normal;font-family:var
 #cmp-panel{margin-top:18px}
 .stats-none{padding:34px 20px;margin:4px 0 8px}
 .lnk{background:none;border:0;padding:0;color:var(--club2);font:inherit;cursor:pointer;text-decoration:underline}
-@keyframes lb-in-l{from{opacity:0;transform:translateX(-22px)}to{opacity:1;transform:translateX(0)}}
-@keyframes lb-in-r{from{opacity:0;transform:translateX(22px)}to{opacity:1;transform:translateX(0)}}
-@media (min-width:1100px){.lb-name small{display:inline}}
 /* opening page: shown only when the URL carries no club, so every deep link goes straight to the app */
 body.cv-on .top,body.cv-on .wrap{display:none}
 /* standings page: the header stays, the club content gives way to the table */
@@ -1226,7 +1214,7 @@ html[data-look] .cv-foot a{color:var(--cvink2)}
   .hero .ph img{height:220px}.hero .ph .num{font-size:130px;bottom:-10px}h1{font-size:50px;margin:10px 0 6px}.hero .lt{padding:12px 16px 10px}
   .pnav button{height:40px;min-width:44px;font-size:14px}.pnav #prev,.pnav #next{font-size:26px;padding:0 10px 4px}
   .tile span{font-size:11px;letter-spacing:.1em}.role b{font-size:24px}
-  .band-foot{gap:8px}.band-foot .seg button{padding:12px 14px;font-size:12px}.band-foot .lnk{padding:10px 0;display:block}.foot a,.bio .lnk,.lb-foot .lnk{display:inline-block;padding:10px 0}.band-foot .sep{display:none}.band-ctl{width:100%;gap:8px}.band-foot .dd{flex:1 1 auto;min-width:0}.band-foot .dd .dd-btn{padding:13px 30px 13px 10px}
+  .band-foot{gap:8px}.band-foot .seg button{padding:12px 14px;font-size:12px}.band-foot .lnk{padding:10px 0;display:block}.foot a,.bio .lnk{display:inline-block;padding:10px 0}.band-foot .sep{display:none}.band-ctl{width:100%;gap:8px}.band-foot .dd{flex:1 1 auto;min-width:0}.band-foot .dd .dd-btn{padding:13px 30px 13px 10px}
   .seg button{padding:10px 12px;font-size:13px;letter-spacing:.1em}
   .toolbar{gap:8px}.toolbar .seg{display:flex;width:100%}.toolbar .seg button{flex:1 1 0;text-align:center;padding:11px 4px}
   .toolbar .dd{flex:1 1 60%;min-width:0}.toolbar .dd .dd-btn{padding:11px 32px 11px 12px}.toolbar .btn{flex:1 1 30%;margin-left:0;padding:11px 10px;text-align:center}
@@ -1240,7 +1228,6 @@ html[data-look] .cv-foot a{color:var(--cvink2)}
   .zone-bar{display:none}
   .panel .sub{font-size:12.5px}.gauge b{font-size:40px}.gauge .u,.gauge .pct{font-size:11.5px}
   .cmp-row .dd .dd-btn{padding:11px 32px 11px 12px}
-  .lb-val u{font-size:11px}.lb-foot{font-size:11.5px}
   .foot{font-size:11px;letter-spacing:.1em;gap:6px}
   .panel h2,.panel summary{font-size:22px;padding:12px 14px 8px}
   .ttab td,.ttab th{padding:6px 5px}.ttab td:first-child{font-size:12.5px}.ttab .full{display:none}.ttab .short{display:inline}.ttab .tb .tr{width:62px}.ttab .tb.u .tr{width:44px}.ttab .tb{gap:6px}.ttab .tb b{font-size:14px}.ttab td.ln,.ttab th:nth-child(4){display:none}.ttab tfoot td{white-space:normal}
@@ -1308,13 +1295,13 @@ html[data-look="club"] .cb-crest .medal{width:96px;height:96px;border-width:3px}
 html[data-look="club"] .cb-line{margin:10px 0 0;font-size:18px}html[data-look="club"] .cb-line a{color:inherit;text-decoration:none;border-bottom:2px solid var(--club2)}
 .cb-side{display:grid;grid-template-columns:auto auto minmax(0,1fr) auto;gap:10px 0;min-width:300px}
 .cb-next{grid-column:1/-1;display:grid;grid-template-columns:subgrid;align-items:center;column-gap:12px;background:rgba(255,255,255,.12);border-radius:8px;padding:10px 14px;font-size:15px}
-html[data-look="club"] .cb-hero[style*="--club-ink:#0b0d10"] .cb-next,.cb-hero.dark-ink .cb-next{background:rgba(11,13,16,.08)}
+html[data-look="club"] .cb-hero[style*="--club-ink:#0b0d10"] .cb-next{background:rgba(11,13,16,.08)}
 .cb-next .lab{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;opacity:.85}
 .cb-next>span:nth-child(3):last-child{grid-column:3/-1}.cb-next .dt{white-space:nowrap}
 html[data-look="club"] .cb-next .medal{width:32px;height:32px;border-width:2px;background:#fff}html[data-look="club"] .cb-next .medal img{width:22px;height:22px}
 /* the last result row is one link to the game page: hero ink, no underline, a white W/L chip that reads on any club colour */
 html[data-look="club"] a.cb-next,a.cb-next{color:inherit;text-decoration:none;transition:background .15s}
-a.cb-next:hover{background:rgba(255,255,255,.22)}html[data-look="club"] .cb-hero[style*="--club-ink:#0b0d10"] a.cb-next:hover,.cb-hero.dark-ink a.cb-next:hover{background:rgba(11,13,16,.16)}
+a.cb-next:hover{background:rgba(255,255,255,.22)}html[data-look="club"] .cb-hero[style*="--club-ink:#0b0d10"] a.cb-next:hover{background:rgba(11,13,16,.16)}
 a.cb-next:focus-visible{outline:2px solid currentColor;outline-offset:2px}
 .cb-next .res{font-family:var(--cond);font-weight:700;font-size:15px;letter-spacing:.04em;line-height:1;padding:5px 8px;background:#fff;white-space:nowrap}
 .cb-next .res.w{color:#12804c}.cb-next .res.l{color:#c42733}
@@ -1702,7 +1689,7 @@ html[data-look="club"] #games .cv-game{border-radius:0;border-bottom-color:var(-
 .pnav #follow.on svg,.cb-follow.on svg{color:var(--gc,#f26f21)}
 html[data-look="club"] .pnav #follow{border-radius:0}
 .cb-follow{display:inline-flex;align-items:center;gap:8px;margin-top:16px;height:38px;padding:0 14px;background:transparent;color:inherit;border:1px solid currentColor;border-radius:0;font-family:var(--sans);font-weight:700;font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:background .15s}
-.cb-follow:hover{background:rgba(255,255,255,.16)}.cb-hero.dark-ink .cb-follow:hover,html[data-look="club"] .cb-hero[style*="--club-ink:#0b0d10"] .cb-follow:hover{background:rgba(11,13,16,.08)}
+.cb-follow:hover{background:rgba(255,255,255,.16)}html[data-look="club"] .cb-hero[style*="--club-ink:#0b0d10"] .cb-follow:hover{background:rgba(11,13,16,.08)}
 .cb-follow.on{background:#fff;color:#0b0d10;border-color:#fff}
 .cb-follow:focus-visible{outline:2px solid currentColor;outline-offset:2px}
 .cv-fol{margin:0 0 18px}
@@ -1745,7 +1732,6 @@ html[data-look="club"] .cb-tab th.on button{color:var(--club-ink);border-bottom-
 html[data-look="club"] .cb-tab th button:focus-visible{outline-color:var(--club-ink)}
 html[data-look="club"] #club .st-tile{border-bottom-color:var(--gc)}
 html[data-look="club"] .cb-chip{border-radius:0}
-html[data-look="club"] .cv-sec h2::before{width:6px;height:24px;background:var(--gc);border-radius:0}
 html[data-look="club"] #games .cv-game{border-radius:0}
 html[data-look="club"] .cv-game{border-bottom-color:var(--gc)}
 html[data-look="club"] #role>div{border-radius:0}
@@ -1951,7 +1937,6 @@ html[data-look] .cv-pcs a{display:grid;grid-template-rows:auto auto;border:2px s
   <details class="log panel" id="log-panel" open>
     <summary>Game log</summary>
     <div class="in">
-      <p class="sub" id="ha" hidden></p>
       <div class="trend" id="trend" hidden></div>
       <div class="scroll"><table id="log"><thead><tr><th>Rd</th><th>Date</th><th>Opponent</th><th>Result</th><th>Min</th><th>Pts</th><th>Reb</th><th>Ast</th><th>Stl</th><th>Blk</th><th>Tov</th><th>2P</th><th>3P</th><th>FT</th><th>PIR</th><th>+/-</th><th data-tip="Possessions in the game">Pace</th><th data-tip="Opponent points allowed per 100 possessions, season to date">Opp DRtg</th></tr></thead><tbody></tbody></table></div>
       <p class="none" id="log-none" hidden>No games played yet.</p>
@@ -2318,7 +2303,7 @@ function renderTicker(){
   if (!matchMedia('(prefers-reduced-motion: reduce)').matches && run.scrollWidth > run.parentElement.clientWidth - $('#ticker-lab').offsetWidth) { run.innerHTML = items.join('') + items.join(''); run.classList.remove('static'); run.style.animationDuration = Math.max(24, items.length * 4) + 's'; }
 }
 function renderPlayer(){
-  const p = player(), tm = team(), n = nameOf(p.name), d = ds(), tot = d.tot, gp = tot.gp || 1, played = tot.gp > 0, pc = d.pct || {};
+  const p = player(), tm = team(), n = nameOf(p.name), d = ds(), tot = d.tot, gp = tot.gp || 1, played = tot.gp > 0;
   followBtn();
   $('#photo').src = p.photo || PLACEHOLDER; $('#photo').alt = `${n.first} ${n.sur}`; $('#num').textContent = p.dorsal || '';
   $('#pos').textContent = `${p.dorsal ? '· #' + p.dorsal + ' ' : ''}· ${t(p.position || '')}`; $('#nm').innerHTML = `${n.first}<span>${n.sur}</span>`;
@@ -2344,7 +2329,7 @@ function renderPlayer(){
   const fga = tot.fga2 + tot.fga3, ts = (fga + 0.44 * tot.fta) ? tot.pts / (2 * (fga + 0.44 * tot.fta)) : 0;
   const rows = [['2P', tot.fgm2, tot.fga2, tot.fga2 ? tot.fgm2 / tot.fga2 : 0], ['3P', tot.fgm3, tot.fga3, tot.fga3 ? tot.fgm3 / tot.fga3 : 0], ['FG', tot.fgm2 + tot.fgm3, fga, fga ? (tot.fgm2 + tot.fgm3) / fga : 0], ['FT', tot.ftm, tot.fta, tot.ftm / (tot.fta || 1)], ['TS', null, null, ts, fga + 0.44 * tot.fta]];
   const lgs = LG ? {'2P': LG.splits.fg2, '3P': LG.splits.fg3, 'FG': LG.splits.fg, 'FT': LG.splits.ft, 'TS': LG.splits.ts} : {};
-  $('#splits').innerHTML = rows.map(([k, m, at, v, sp]) => { const w = m !== null && at ? wilson(m, at) : null, small = (m !== null && at > 0 && at < MIN_ATT) || (sp != null && sp > 0 && sp < MIN_ATT), lg = lgs[k]; return `<div class="split${small ? ' small' : ''}" data-tip="${m !== null && at ? `${t('{m} of {a}', {m, a: at})} · ${ival(m, at)}${small ? ' · ' + t('small sample') : ''}` : sp != null ? `${t('{pts} points on {n} shooting possessions', {pts: tot.pts, n: sp.toFixed(1)})}${small ? ' · ' + t('small sample') : ''} · ${t('points per shooting possession, halved; free throws count 0.44 of a possession, so a perfect night can pass 100%')}` : ''}${lg != null ? ` · ${t('league')} ${(100 * lg).toFixed(1)}%` : ''}"><span class="k">${t(k + '%')}</span><div class="bar"><i class="fill" style="width:${played ? Math.min(100, v * 100) : 0}%"></i></div><div class="v"><b>${played ? (v * 100).toFixed(1) : '–'}</b>${m !== null && played ? `${m}/${at}` : ''}</div></div>`; }).join('');
+  $('#splits').innerHTML = rows.map(([k, m, at, v, sp]) => { const small = (m !== null && at > 0 && at < MIN_ATT) || (sp != null && sp > 0 && sp < MIN_ATT), lg = lgs[k]; return `<div class="split${small ? ' small' : ''}" data-tip="${m !== null && at ? `${t('{m} of {a}', {m, a: at})} · ${ival(m, at)}${small ? ' · ' + t('small sample') : ''}` : sp != null ? `${t('{pts} points on {n} shooting possessions', {pts: tot.pts, n: sp.toFixed(1)})}${small ? ' · ' + t('small sample') : ''} · ${t('points per shooting possession, halved; free throws count 0.44 of a possession, so a perfect night can pass 100%')}` : ''}${lg != null ? ` · ${t('league')} ${(100 * lg).toFixed(1)}%` : ''}"><span class="k">${t(k + '%')}</span><div class="bar"><i class="fill" style="width:${played ? Math.min(100, v * 100) : 0}%"></i></div><div class="v"><b>${played ? (v * 100).toFixed(1) : '–'}</b>${m !== null && played ? `${m}/${at}` : ''}</div></div>`; }).join('');
   const lg = $('#log tbody');
   const RT = META.ratings || {};
   // club games he missed sit in the log too: DNP (in the box, no minutes) or not in the squad
@@ -2352,10 +2337,6 @@ function renderPlayer(){
   lg.innerHTML = seq.map(({r, a, g}) => { const l = gameLabel(g), opp = l.home ? g.away : g.home, rt = RT[opp];
     if (a) return `<tr class="dnp"><td>${g.round}</td><td>${fmtDate(g.date)}</td><td>${l.home ? t('vs') : '@'} ${l.opp}</td><td class="${l.res === t('W') ? 'w' : 'l'}">${l.res} ${l.score}</td><td colspan="14">${a.kind === 'DNP' ? t('Did not play') : t('Not in the squad')}</td></tr>`;
     return `<tr data-g="${r[0]}" tabindex="0" title="${t('Show this game across the page')}" class="${String(state.game) === String(r[0]) ? 'on' : ''}"><td>${g.round}</td><td>${fmtDate(g.date)}</td><td>${l.home ? t('vs') : '@'} ${l.opp}</td><td class="${l.res === t('W') ? 'w' : 'l'}"><a class="gm-lnk" href="#game/${g.code}" title="${t('Open the game')}">${l.res} ${l.score}</a></td><td>${r[16] ? `<i class="st" data-tip="${t('Started')}">${t('S')}</i>` : ''}${r[1]}</td><td class="k">${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td><td>${r[5]}</td><td>${r[6]}</td><td>${r[7]}</td><td>${r[8]}/${r[9]}</td><td>${r[10]}/${r[11]}</td><td>${r[12]}/${r[13]}</td><td>${r[14]}</td><td>${r[15] ?? ''}</td><td>${g.poss != null ? g.poss.toFixed(0) : '–'}</td><td>${rt ? rt.drtg.toFixed(1) : '–'}</td></tr>`; }).join('');
-  const ha = {H: {g: 0, pts: 0, fga: 0, fta: 0}, A: {g: 0, pts: 0, fga: 0, fta: 0}};
-  d.log.forEach(r => { const g = d.games[r[0]], side = gameLabel(g).home ? ha.H : ha.A; side.g++; side.pts += r[2]; side.fga += r[9] + r[11]; side.fta += r[13]; });
-  const haTxt = s => s.g ? `${(s.pts / s.g).toFixed(1)} ${t('pts')}, ${tsOf(s.pts, s.fga, s.fta) != null ? (100 * tsOf(s.pts, s.fga, s.fta)).toFixed(1) + '% TS' : ''} ${plural(s.g, 'in {n} game', 'in {n} games')}` : t('no games');
-  $('#ha').hidden = true;
   renderTrend();
   renderCompareOptions();
   $('#log-none').hidden = d.log.length > 0; $('#log-panel .scroll').hidden = d.log.length === 0;
@@ -2391,18 +2372,11 @@ function renderRole(){
   $('#role-legend').textContent = row ? `${t('Role')} · ${t('this game only')} · ${row[1]} ${t('minutes')}` : d.pct_pos ? `${t('Role')} · ${t('underline: rank among {n} {pos} (3+ games, 10+ min), longer is better', {n: d.pos_n, pos: lowPos(posN)})}` : '';
   $('#role-foot').hidden = true;
 }
-// minutes and role game by game: bars for minutes (filled when he started), usage as a line, missed games as gaps, and a
-// last-five-against-season read on minutes flagged only when the change beats his own game-to-game spread
+// minutes and role game by game: bars for minutes (filled when he started), usage as a line, missed games as gaps
 function renderTrend(){
   const d = ds(), el = $('#trend'), log = d.log;
   if (log.length < 3) { el.hidden = true; return; }
   el.hidden = false;
-  const mins = log.map(r => r[1]), n = mins.length, season = mins.reduce((a, b) => a + b, 0) / n;
-  const lastN = Math.min(5, n), last = mins.slice(-lastN).reduce((a, b) => a + b, 0) / lastN;
-  const own = n >= 5 ? Math.sqrt(mins.reduce((a, v) => a + (v - season) ** 2, 0) / (n - 1)) : null, sd = own ?? META.min_sd ?? 5.5;
-  const diff = last - season, flag = n > lastN && Math.abs(diff) > sd;
-  const starts = log.filter(r => r[16]).length, lastStarts = log.slice(-lastN).filter(r => r[16]).length;
-  const usgs = (d.role_g || []).map(g => g && g.usg).filter(v => v != null), usgAvg = usgs.length ? usgs.reduce((a, b) => a + b, 0) / usgs.length : null;
   // one row per club game in date order, played or missed; bars are minutes of 40 and usage of 40%
   const seq = [...log.map((r, i) => ({date: d.games[r[0]].date, g: d.games[r[0]], r, usg: (d.role_g || [])[i] ? d.role_g[i].usg : null})),
     ...(d.absent || []).map(a => ({date: a.date, g: a, kind: a.kind}))].sort((p, q) => p.date < q.date ? -1 : p.date > q.date ? 1 : 0);
@@ -2531,7 +2505,6 @@ async function renderCompare(){
   if (!onPage) { page.hidden = true; return; }
   // the page: hero, paired bars from the centre, the position median as a tick, the two shot diets, actions
   cmpWho('r', other, r.club, other.cur);
-  const ro = Object.fromEntries(rows.map(x => [x.label, x]));
   // bars measure size from zero: a negative value draws a faded bar of its magnitude, so -0.3 never looks bigger than -0.1
   const barRow = x => { const vals = [x.a, x.b, x.m].filter(v => v != null); if (!vals.length) return ''; const span = Math.max(...vals.map(Math.abs)) * 1.08 || 1, w = v => v == null ? 0 : Math.abs(v) / span * 100 / 2, neg = v => v != null && v < 0 ? ' neg' : '';   // each half is 50% of the row, so a value spans up to half
     return `<div class="cmp-m"><div class="v l">${x.win === true ? '<i aria-label="' + t('better') + '"></i>' : ''}${x.fmt(x.a)}</div><div class="bars"><span class="lab">${t(x.label)}</span><span class="mid"></span><span class="bl${neg(x.a)}" style="width:${w(x.a).toFixed(2)}%"></span><span class="br${neg(x.b)}" style="width:${w(x.b).toFixed(2)}%"></span>${x.m != null ? `<span class="ml" style="right:${(50 + w(x.m)).toFixed(2)}%"></span><span class="mr" style="left:${(50 + w(x.m)).toFixed(2)}%"></span>` : ''}</div><div class="v r">${x.fmt(x.b)}${x.win === false ? '<i aria-label="' + t('better') + '"></i>' : ''}</div></div>`; };
@@ -2842,7 +2815,6 @@ function Dropdown(sel, item){
 
 // ---- wiring
 $('#tag-season').textContent = META.label;
-const fmtBuilt = s => { const m = (s || '').match(/(\d{4})-(\d{2})-(\d{2}) (\d{2}:\d{2})/); return m ? `${new Date(Date.UTC(+m[1], +m[2] - 1, +m[3])).toLocaleDateString(LOCALE(), {day: 'numeric', month: 'short', timeZone: 'UTC'})} ${m[4]} UTC` : s; };
 // the build stamp: when the page was last rebuilt, how many games it holds and whether the checks passed
 const ST = META.status || {};
 i18nScan(); applyLang();
@@ -3396,7 +3368,7 @@ const LEAD = (() => {
     return loading;
   }
   function rows(){
-    const q = fold(st.q), col = COLS[st.sort];
+    const q = fold(st.q);
     return D.rows.filter(r => (st.pos === 'all' || r.pos === st.pos) && (st.club === 'all' || r.c === st.club) && r.min / r.gp >= st.min && (!q || fold(nameOf(r.name).first + ' ' + nameOf(r.name).sur + ' ' + r.name).includes(q)))
       .map(r => ({r, s: cell(r, st.sort)})).filter(x => !st.qual || x.s.q)
       .sort((a, b) => (b.s.q - a.s.q) || (+(b.s.v == null) - +(a.s.v == null)) || (a.s.v != null && b.s.v != null && a.s.v !== b.s.v ? (a.s.v - b.s.v) * st.dir : 0) || (b.r.gp - a.r.gp) || (a.r.min - b.r.min) || a.r.pid.localeCompare(b.r.pid));
