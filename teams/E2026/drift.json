@@ -1,6 +1,8 @@
 {
- "checked": "2026-11-17 01:35 UTC",
+ "checked": "2026-11-17 05:59 UTC",
  "against": "2026-11-17 01:35 UTC",
  "failures": [],
- "warnings": []
+ "warnings": [
+  "3 player line(s) gone: BALDWIN, KAMAR (MUN), SILVA, CHRIS (ULK), LAUVERGNE, JOFFREY (PAR)"
+ ]
 }
