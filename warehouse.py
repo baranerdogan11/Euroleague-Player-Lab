@@ -37,7 +37,6 @@ def date_only(s):
 # ---- clubs
 clubs = [{"club": c["code"], "name": c["name"], "short": c.get("abbreviatedName") or c["name"], "country": (c.get("country") or {}).get("name"), "city": c.get("city")}
          for c in load("clubs.json")]
-club_codes = {c["club"] for c in clubs}
 
 # ---- players and roster stints (one row per person per club registration)
 players, stints = {}, []
@@ -61,7 +60,6 @@ for g in load("games_latest.json"):
     games.append({"game": g["code"], "round": g["round"]["round"], "phase": g["phaseType"]["code"], "date_utc": g["date"],
                   "date": date_only(g["date"]), "home": g["home"]["code"], "away": g["away"]["code"], "home_score": hs, "away_score": as_,
                   "played": g.get("status") == "result", "status": g.get("status")})
-game_teams = {g["game"]: (g["home"], g["away"]) for g in games}
 
 # ---- box score lines and shots, both teams of every cached game
 box, shots = [], []
