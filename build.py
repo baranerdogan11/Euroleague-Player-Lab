@@ -54,6 +54,28 @@ if os.path.exists(prof_path):
 priors_path = os.path.join(ROOT, "model", "shooting_priors.json")
 PRIORS = json.load(open(priors_path)) if os.path.exists(priors_path) else None
 rows = lambda q, *a: [dict(zip([d[0] for d in con.description], r)) for r in con.execute(q, a).fetchall()]
+# who set up whom (events.py pairs every assist with its basket): the club page's passing network and a player's assist partners
+as_path = os.path.join(W, "assists.parquet")
+con.execute(f"create view assists as select * from read_parquet('{as_path}')" if os.path.exists(as_path) else "create view assists as select null::int game, null::varchar club, null::varchar passer, null::varchar scorer where false")
+PNAME = dict(con.execute("select player, name from players").fetchall())
+ACTIVE_CLUB = dict(con.execute("select player, club from roster_stints where active").fetchall())
+
+
+def assist_partners(player, ast):
+    """A player's season assist links, most first: to = the teammates he set up, from = the teammates who set him up, each
+    [pid, name, assists, club page]. x = his assists the play-by-play does not tie to a basket, so to + x = his box-score assists."""
+    ent = lambda q: [["P" + r[0], PNAME.get(r[0]), r[1], ACTIVE_CLUB.get(r[0])] for r in con.execute(q, [player]).fetchall()]
+    to = ent("select scorer, count(*) n from assists where passer = ? and scorer is not null group by 1 order by n desc, 1")
+    frm = ent("select passer, count(*) n from assists where scorer = ? group by 1 order by n desc, 1")
+    return {"to": to, "from": frm, "x": ast - sum(e[2] for e in to)} if to or frm else None
+
+
+def club_assists(code):
+    """The club's passing network this season: [passer pid, scorer pid, assists] for every pair, with every name it needs
+    (a player who has left still appears), and the assists not tied to a basket."""
+    pairs = con.execute("select passer, scorer, count(*) n from assists where club = ? and scorer is not null group by 1, 2 order by n desc, 1, 2", [code]).fetchall()
+    loose = con.execute("select count(*) from assists where club = ? and scorer is null", [code]).fetchone()[0]
+    return {"pairs": [["P" + a, "P" + b, n] for a, b, n in pairs], "names": {"P" + p: PNAME.get(p) for a, b, _ in pairs for p in (a, b)}, "x": loose} if pairs else None
 
 
 def profile_of(player, gidx):
@@ -281,7 +303,8 @@ for c in clubs:
         players.append({"pid": "P" + r["player"], "name": r["name"], "dorsal": r["dorsal"], "position": r["position"], "height": r["height_cm"], "weight": r["weight_kg"], "career": career_of(r["player"], code), "career_src": "wikipedia" if r["player"] in WIKI else "euroleague",
                         "birth": str(r["birth_date"]) if r["birth_date"] else None, "country": r["country"],
                         "photo": f"photos/{r['player']}.webp" if os.path.exists(os.path.join(ROOT, "photos", f"{r['player']}.webp")) else None,
-                        "cur": {"tot": tot, "log": log, "absent": absent, "shots": shots, "games": games, "xfg": xfg, "profile": profile_of(r["player"], gidx), "role": role, "role_g": role_g, "pos_group": pos_group(r["position"])}})
+                        "cur": {"tot": tot, "log": log, "absent": absent, "shots": shots, "games": games, "xfg": xfg, "profile": profile_of(r["player"], gidx), "role": role, "role_g": role_g, "pos_group": pos_group(r["position"]),
+                                "partners": assist_partners(r["player"], tot["ast"])}})
     collected[code] = players
 
 # league percentiles among rotation players (3+ games, 10+ minutes a game), per game and per 40 minutes; turnovers inverted so higher is better
@@ -362,7 +385,7 @@ for code, players in collected.items():
         p["cur"]["per40"] = {k: round(tot[k] * 40 / tot["min"], 1) for k in COUNTING} if tot["min"] else None
     played = con.execute("select count(*) from games where played and ? in (home, away)", [code]).fetchone()[0]
     upcoming = rows("select game as code, round, cast(date as varchar) as date, home, away, phase from games where not played and ? in (home, away) order by date limit 10", code)
-    json.dump({"code": code, "season": SEASON, "label": label(SEASON), "games_played": played, "upcoming": upcoming, "players": players, "real_code": code},
+    json.dump({"code": code, "season": SEASON, "label": label(SEASON), "games_played": played, "upcoming": upcoming, "players": players, "assists": club_assists(code), "real_code": code},
               open(os.path.join(OUT, f"{code}.json"), "w"), separators=(",", ":"), ensure_ascii=False)
     summary.append((code, len(players), played, sum(len(p["cur"]["shots"]) for p in players)))
 # share stubs: the app is one hash-routed page, which link previews cannot read, so every player gets a static p/<pid>.html carrying his

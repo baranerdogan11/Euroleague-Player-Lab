@@ -16,7 +16,9 @@ for t in ["clubs", "players", "roster_stints", "games", "box", "shots"]:
     con.execute(f"create view {t} as select * from read_parquet('{os.path.join(W, t + '.parquet')}')")
 for t in ["events", "shot_context"]:      # play-by-play layer, present once events.py has run
     p = os.path.join(W, t + ".parquet")
-    con.execute(f"create view {t} as select * from read_parquet('{p}')" if os.path.exists(p) else f"create view {t} as select null::int game, null::int seq, null::varchar club, null::varchar playtype where false")
+    con.execute(f"create view {t} as select * from read_parquet('{p}')" if os.path.exists(p) else f"create view {t} as select null::int game, null::int seq, null::varchar club, null::varchar playtype, null::int assisted where false")
+p = os.path.join(W, "assists.parquet")
+con.execute(f"create view assists as select * from read_parquet('{p}')" if os.path.exists(p) else "create view assists as select null::int game, null::int seq, null::varchar club, null::varchar passer, null::varchar scorer, null::int shot_seq, null::int pts where false")
 p = os.path.join(W, "stints.parquet")      # lineup layer (lineups.py)
 con.execute(f"create view stints as select * from read_parquet('{p}')" if os.path.exists(p) else "create view stints as select null::int game, null::varchar club, null::int stint, null::varchar[] players, null::int sec, null::int pts, null::int opp_pts where false")
 p = os.path.join(W, "oncourt.parquet")
@@ -71,6 +73,17 @@ TESTS = [
         select count(*) from (
           select e.game, e.club, count(*) filter (where e.playtype = 'AS') as a, (select sum(ast) from box b where b.game = e.game and b.club = e.club) as b
           from events e where e.club is not null group by e.game, e.club having a != b)"""),
+    ("assists: per passer per game reconcile with the box score", """
+        select count(*) from (
+          select b.game, b.player, b.ast, count(a.game) n from box b left join assists a on a.game = b.game and a.passer = b.player
+          where b.game in (select distinct game from events) group by all having n != b.ast)"""),
+    ("assists: the scorer is a teammate of the passer in that game, never the passer", """
+        select count(*) from assists a left join box b on b.game = a.game and b.player = a.scorer
+        where a.scorer is not null and (b.club is distinct from a.club or a.scorer = a.passer)"""),
+    ("assists: a basket is set up by one pass at most", "select count(*) - count(distinct (game, shot_seq)) from assists where shot_seq is not null"),
+    ("assists: shot charts mark as assisted exactly the made shots an assist points to", """
+        select count(*) from shot_context c join shots s using (game, seq) full join (select game, shot_seq seq from assists where pts > 1) a using (game, seq)
+        where (a.game is not null) != coalesce(c.assisted = 1, false)"""),
     ("events: every shot in a game with play-by-play has a context row", "select count(*) from shots s left join shot_context c using (game, seq) where s.game in (select distinct game from events) and c.game is null"),
     ("stints: five players on the floor in every stint", "select count(*) from stints where len(players) != 5"),
     ("stints: points per club per game reconcile with the final score", """
@@ -87,6 +100,8 @@ WARNINGS = [
     ("oncourt: reconstructed minutes agree with the box score within a minute", "select count(*) from oncourt where abs(sec / 60.0 - box_min) > 1.0"),
     # the game's box score and shots still publish; it rejoins the lineups once the feed is corrected and re-fetched
     ("lineups: no game left out because its play-by-play disagrees with the box score", "select count(*) from lineups_skipped"),
+    # a typo in one clock (an assist logged at 01:00 for a basket at 00:01) leaves a pass without its basket; the passer still counts
+    ("assists: at most 1% of assists not matched to the basket they set up", "select greatest(count(*) filter (where scorer is null) - count(*) // 100, 0) from assists"),
     ("shots: shot value consistent with distance (3s from 6.4 m out, 2s inside 7 m)", "select count(*) from shots where (pts = 3 and sqrt(x*x + y*y) < 640) or (pts = 2 and sqrt(x*x + y*y) > 700)"),
 ]
 if "--no-lineups" in sys.argv:   # older substitution logs do not always reconstruct five on the floor; nothing built from them is kept

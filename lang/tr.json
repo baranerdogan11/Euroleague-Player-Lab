@@ -622,5 +622,11 @@
  "{w} led by as many as {n} and won it {s}.": "{w} farkı {n} sayıya kadar açtı ve maçı {s} kazandı.",
  "{l} never led; {w} won it {s}.": "{l} hiç öne geçemedi; {w} maçı {s} kazandı.",
  "{w} won it {s}.": "{w} maçı {s} kazandı.",
- "{w} hold off {l}": "{w}, {l} karşısında geri dönüşe izin vermedi"
+ "{w} hold off {l}": "{w}, {l} karşısında geri dönüşe izin vermedi",
+ "Passing network": "Pas ağı",
+ "Who set up whom this season, passer to scorer.": "Bu sezon kim kime asist yaptı: pası verenden sayıyı atana.",
+ "Assist partners": "Asist ortakları",
+ "He set up": "Asist yaptıkları",
+ "Set him up": "Ona asist yapanlar",
+ "Passer → scorer": "Pasör → sayı"
 }
