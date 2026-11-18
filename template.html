@@ -2301,13 +2301,13 @@ function renderPlayer(){
   $('#roster').querySelectorAll('a').forEach(a => a.classList.toggle('cur', +a.dataset.i === state.player));
   renderChart(true);
 }
-// assist partners (build.py assist_partners): the teammates he set up most and those who set him up most, season to date; the
+// assist partners (build.py assist_partners): every teammate he set up and every one who set him up, most first, season to date; the
 // "to" counts plus the few assists the play-by-play cannot tie to a basket make his box-score assists, as on the club's passing network
 function renderPartners(p, tot){
   const P = p.cur && p.cur.partners, show = !!(P && tot.gp);
   $('#ap-cap').hidden = $('#ap').hidden = !show; if (!show) return;
   $('#ap-cap').textContent = t('Assist partners');
-  const col = (list, head, total) => { const top = list.slice(0, 5), mx = Math.max(1, ...top.map(e => e[2]));
+  const col = (list, head, total) => { const top = list, mx = Math.max(1, ...top.map(e => e[2]));
     return `<div class="ap-col"><div class="ap-h"><span>${head}</span><b>${total}</b></div>${top.length ? top.map(([pid, raw, n, page]) => { const nm = raw ? nameOf(raw) : {first: '', sur: pid}, who = `${nm.first ? nm.first[0] + '. ' : ''}${nm.sur}`;
       return `<div class="ap-r" data-pid="${pid}"><span class="ap-n">${page && CLUBS[page] ? `<a href="#${page}/${pid}" lang="en">${who}</a>` : `<span lang="en">${who}</span>`}</span><span class="ap-b"><i style="width:${(100 * n / mx).toFixed(0)}%"></i></span><b>${n}</b></div>`; }).join('') : `<p class="ap-none">–</p>`}</div>`; };
   $('#ap').setAttribute('style', assistInk(state.team));
@@ -3680,17 +3680,18 @@ const CLUB = (() => {
       <div class="cb-wrap scroll"><table class="cb-tab"><thead><tr><th>#</th><th>${t('Player')}</th><th class="k"${def('minon')}>${t('Min')}</th><th class="k"${def('neton')}>${t('On')}</th><th class="k"${def('netoff')}>${t('Off')}</th><th class="k"${def('onoff')}>${t('On − off')}</th></tr></thead><tbody>${ooRows || `<tr><td colspan="6">${t('No games yet')}</td></tr>`}</tbody></table></div></div>
       ${seeAll(code)}`;
   }
-  // passing network (build.py club_assists, from events.py's assist-to-basket links): the ten players most involved, on a ring,
-  // an arrow from passer to scorer for every pair among them, thicker for more assists; tapping a player keeps only his arrows
+  // passing network (build.py club_assists, from events.py's assist-to-basket links): every player who has played for the club
+  // this season on a ring, an arrow from passer to scorer for every pair, thicker for more assists; tapping a player keeps only his arrows
   function network(code){
     const A = team().assists; if (!A || !A.pairs.length) return '';
     const inv = {}; for (const [a, b, n] of A.pairs) { inv[a] = (inv[a] || 0) + n; inv[b] = (inv[b] || 0) + n; }
-    const nodes = Object.keys(inv).sort((a, b) => inv[b] - inv[a] || a.localeCompare(b)).slice(0, 10);
+    for (const p of team().players) if (p.cur && p.cur.tot && p.cur.tot.gp && !(p.pid in inv)) inv[p.pid] = 0;   // no assist link yet still has his square
+    const nodes = Object.keys(inv);
     const given = {}; for (const [a, , n] of A.pairs) given[a] = (given[a] || 0) + n;
     nodes.sort((a, b) => (given[b] || 0) - (given[a] || 0) || a.localeCompare(b));
     const roster = {}; for (const p of team().players) roster[p.pid] = p;
     const sur = pid => nameOf(A.names[pid] || (roster[pid] || {}).name || pid).sur;
-    const W = 960, H = 620, cx = W / 2, cy = H / 2, RX = 230, RY = 232, S = 22;   // S: half the side of a player's square; room either side for the names
+    const many = nodes.length > 12, S = many ? 19 : 22, RX = 230, RY = many ? 268 : 232, W = 960, H = 2 * RY + 200, cx = W / 2, cy = H / 2;   // S: half the side of a player's square; room either side for the names
     const pos = {}; nodes.forEach((pid, i) => { const a = -Math.PI / 2 + 2 * Math.PI * i / nodes.length; pos[pid] = [cx + RX * Math.cos(a), cy + RY * Math.sin(a), a]; });
     const pairs = A.pairs.filter(([a, b]) => pos[a] && pos[b]), max = Math.max(...pairs.map(p => p[2]));
     const r1 = v => Math.round(v * 10) / 10;
