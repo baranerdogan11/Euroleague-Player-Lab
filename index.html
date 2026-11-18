@@ -1746,6 +1746,7 @@ html[data-look] .cv-board a.cv-game.fl{box-shadow:inset 0 4px 0 var(--gc,#f26f21
 .cv-board .up .tm em{min-height:1.05em}
 .cv-lower{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr) minmax(0,1fr);gap:14px;padding:18px;border-top:1px solid var(--cvink)}
 .cv-next{scroll-margin-top:72px}
+@media (min-width:1001px){.cv-lower{grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);grid-template-rows:auto 1fr}.cv-lower>.cv-stand{grid-row:span 2}.cv-lower>.cv-lead:last-child{grid-row:span 2}}   /* the leaders over the next round, beside the table: no tall empty boxes */
 .cv-fix{display:grid}
 .cv-fix small{display:block;font-size:10.5px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--cvink3);padding:10px 0 4px}
 .cv-fix small:first-child{padding-top:0}
@@ -3043,7 +3044,7 @@ const COVER = (() => {
   el.addEventListener('pointerdown', e => { const b = e.target.closest('a.cv-card, .cv-card.tap, .cv-go'); if (!b) return; b.classList.add('down'); const up = () => { b.classList.remove('down'); removeEventListener('pointerup', up); removeEventListener('pointercancel', up); }; addEventListener('pointerup', up); addEventListener('pointercancel', up); });
   return {
     render,
-    show(){ applyPalette({base: '#1f2b47', accent: '#f26f21'}); document.body.classList.add('cv-on'); el.hidden = false; document.title = 'Euroleague Player Lab'; scrollTo(0, 0); },
+    show(){ applyPalette({base: '#1f2b47', accent: '#f26f21'}); document.body.classList.add('cv-on'); el.hidden = false; render(); document.title = 'Euroleague Player Lab'; scrollTo(0, 0); },
     hide(){ document.body.classList.remove('cv-on'); el.hidden = true; }
   };
 })();
@@ -3805,7 +3806,7 @@ if ('serviceWorker' in navigator && location.protocol === 'https:') addEventList
   // the roster after the first page is up: search, compare and the leaderboard names switch on when it lands
   try { ROSTER.list = await (await fetch(`${META.path}roster.json?v=${encodeURIComponent(META.built || '')}`)).json(); } catch (e) { ROSTER.list = []; }
   ROSTER.byPid = Object.fromEntries(ROSTER.list.map(r => [r.pid, r])); ROSTER.loaded = true; indexRoster();
-  if (document.body.classList.contains('cv-on')) COVER.render();   // the scoring leaders tile shows names once the roster is in
+  if (document.body.classList.contains('cv-on')) COVER.render();   // the scoring leaders tile shows names once the roster is in; a later visit to the cover redraws it in show()
   if (state.data) { renderCompareOptions(); }
   checkFresh(); setInterval(checkFresh, 15 * 60e3);
   const dbg = +new URLSearchParams(location.search).get('debug3d');
