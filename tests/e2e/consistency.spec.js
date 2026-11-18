@@ -21,7 +21,7 @@ test("last night's players agree across game, player, club and leaders pages", a
 
   await page.goto('./');
   await settled(page);
-  const games = await page.evaluate(() => [...document.querySelectorAll('#cv-games a.cv-game')].map(a => a.getAttribute('href')));
+  const games = await page.evaluate(() => [...document.querySelectorAll('#cv-games a.cv-game:not(.up)')].map(a => a.getAttribute('href')));
   expect(games.length, "the opening page's Last night strip").toBeGreaterThan(0);
 
   // the leaders table, every player: qualifiers off, all positions, all clubs

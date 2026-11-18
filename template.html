@@ -1710,12 +1710,13 @@ html[data-look] .cv a.cv-story{display:flex;gap:14px;align-items:baseline;paddin
 .cv-story .cv-th{margin:0;flex:none}
 .cv-story b{font-family:var(--disp);font-weight:400;font-size:21px;line-height:1.1;text-transform:uppercase;letter-spacing:.01em;margin-right:8px}
 .cv-story:hover b{color:var(--cvblue)}
-.cv-board{display:grid;grid-template-columns:repeat(5,minmax(0,1fr))}
-html[data-look] .cv-board a.cv-game{display:grid;grid-template-rows:auto auto auto 1fr;gap:0;padding:0;border:0;border-radius:0;border-right:2px solid var(--cvink);border-bottom:2px solid var(--cvink);background:transparent;color:var(--cvink);min-width:0;transition:background .2s}
-.cv-board a.cv-game:nth-child(5n){border-right:0}
+/* every card draws its right and bottom rule; the board reaches 2px past its frame and clips them, so a short last row still closes */
+.cv-board{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));margin:0 -2px -2px 0;clip-path:inset(0 2px 2px 0)}
+html[data-look] .cv-board a.cv-game{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto auto 1fr;gap:0;padding:0;border:0;border-radius:0;border-right:2px solid var(--cvink);border-bottom:2px solid var(--cvink);background:transparent;color:var(--cvink);min-width:0;transition:background .2s}
 .cv-board a.cv-game:hover{background:var(--cvfill)}
 .cv-board .mt{display:flex;justify-content:space-between;gap:6px;padding:10px 12px 4px;font-size:10px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--cvink3);white-space:nowrap}
-.cv-board .mt i{font-style:normal;color:var(--cvblue);overflow:hidden;text-overflow:ellipsis}
+.cv-board .mt>span{flex:none}
+.cv-board .mt i{font-style:normal;color:var(--cvblue);min-width:0;overflow:hidden;text-overflow:ellipsis}
 .cv-board .cv-game .tm{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:8px;align-items:center;padding:3px 12px;color:var(--cvink3)}
 .cv-board .cv-game .tm b{font-family:var(--sysf);font-weight:500;font-size:13.5px;letter-spacing:0;text-transform:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--cvink)}
 .cv-board .cv-game .tm em{font-family:var(--disp);font-weight:400;font-size:30px;line-height:1.05;font-style:normal;font-variant-numeric:tabular-nums}
@@ -1733,8 +1734,10 @@ html[data-theme="dark"] .cv-board a.cv-game.gor{background:#d92f2c}
 .cv-board .gor .who .ph{background:#c41f1c}
 .cv-board .gor .who img{filter:url(#pl-duo)!important}
 html[data-look] .cv-board a.cv-game.fl{box-shadow:inset 0 4px 0 var(--gc,#f26f21)}
+/* a game of the round still to play: names only, the score boxes empty */
+.cv-board .up .tm b{font-weight:500;color:var(--cvink2)}
+.cv-board .up .tm em{min-height:1.05em}
 .cv-lower{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr) minmax(0,1fr);gap:14px;padding:18px;border-top:1px solid var(--cvink)}
-.cv-board a.cv-game:nth-last-child(-n+5){border-bottom:0}
 .cv-next{scroll-margin-top:72px}
 .cv-fix{display:grid}
 .cv-fix small{display:block;font-size:10.5px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--cvink3);padding:10px 0 4px}
@@ -1745,7 +1748,7 @@ html[data-look] .cv-fix a{display:grid;grid-template-columns:minmax(0,1fr) auto 
 .cv-fix a span:last-child{justify-content:flex-end}
 .cv-fix a i{font-style:normal;color:var(--cvink3);font-size:11px}
 .cv-fix a:hover{background:var(--cvfill)}
-@media (max-width:1000px){.cv-board{grid-template-columns:repeat(2,minmax(0,1fr))}.cv-board a.cv-game:nth-child(5n){border-right:2px solid var(--cvink)}.cv-board a.cv-game:nth-child(2n){border-right:0}.cv-board a.cv-game:nth-last-child(-n+5){border-bottom:2px solid var(--cvink)}.cv-board a.cv-game:last-child,.cv-board a.cv-game:nth-last-child(2):nth-child(odd){border-bottom:0}.cv-lower{grid-template-columns:1fr 1fr}.cv-lower>:first-child{grid-column:1/-1}}
+@media (max-width:1000px){.cv-board{grid-template-columns:repeat(2,minmax(0,1fr))}.cv-lower{grid-template-columns:1fr 1fr}.cv-lower>:first-child{grid-column:1/-1}}
 @media (max-width:760px){
   .cv-bar{height:52px}.cv-bar .cv-id{font-size:20px}
   html[data-look] .cv .cv-h1{font-size:56px}
@@ -1754,8 +1757,7 @@ html[data-look] .cv-fix a{display:grid;grid-template-columns:minmax(0,1fr) auto 
   .cv-tonight{min-width:0}
   html[data-look] .cv a.cv-story{display:block;padding:12px 14px;font-size:14px}.cv-story .cv-th{margin-bottom:8px}.cv-story b{display:block;margin:0 0 4px}
   .cv-board{grid-template-columns:1fr}
-  html[data-look] .cv-board a.cv-game{border-right:0!important;border-bottom:2px solid var(--cvink)!important;grid-template-columns:minmax(0,1fr) 108px;grid-template-rows:auto auto auto;padding-bottom:8px}
-  html[data-look] .cv-board a.cv-game:last-child{border-bottom:0!important}
+  html[data-look] .cv-board a.cv-game{grid-template-columns:minmax(0,1fr) 108px;grid-template-rows:auto auto auto;padding-bottom:8px}
   .cv-board .mt{grid-column:1/-1}
   .cv-board .cv-game .tm{grid-column:1}
   .cv-board .cv-game .tm em{font-size:25px}
@@ -2912,6 +2914,8 @@ const COVER = (() => {
   const last = (() => { try { return JSON.parse(localStorage.getItem('pl-last')); } catch (e) { return null; } })();
   // META.games rows are compact, newest first: [code, round, date, home, away, hs, as, best name, pts, PIR, photo]
   const ALL = META.games || [], R = ALL.length ? Math.max(...ALL.map(g => g[1])) : 0, ROUND = ALL.filter(g => g[1] === R);
+  // the round's games still to play (META.round_rest); while any is due (META.round_open) the round is not over
+  const REST = (META.round_rest || []).filter(g => g[1] === R).sort((a, b) => a[2] < b[2] ? -1 : a[2] > b[2] ? 1 : a[0] - b[0]), OPEN = !!META.round_open;
   const crest = (c, s = 22) => { const k = CLUBS[c] || {}; return `<img class="cv-crest" src="${k.logo || ''}" alt="" width="${s}" height="${s}" loading="lazy" style="--s:${s}px">`; };
   const day = (iso, o) => new Date(iso + 'T12:00:00').toLocaleDateString(LOCALE(), o);
   const full = raw => { const n = nameOf(raw); return `${n.first} ${n.sur}`.trim(); };
@@ -2922,9 +2926,11 @@ const COVER = (() => {
   // each club card carries its own colourway (--cb base, --ca accent) for its ring; followed clubs come first with the star
   const clubs = () => { const F = FOLLOW.clubs(); $('#cv-clubs').innerHTML = [...META.clubs].sort((a, b) => Number(F.includes(b.code)) - Number(F.includes(a.code))).map(c => `<a href="#${c.code}" title="${c.name}"${F.includes(c.code) ? ' class="fl"' : ''} style="--cb:${c.base || '#1f2b47'};--ca:${c.accent || '#f26f21'}"><span class="medal"><img src="${c.logo || ''}" alt="" width="20" height="20" loading="lazy" decoding="async"></span><span class="txt"><span class="nm" lang="en">${c.short || c.code}</span><span class="co">${t(c.country || '')}</span></span>${F.includes(c.code) ? `<i class="fl-star" aria-label="${t('Following')}">${STAR(true)}</i>` : ''}</a>`).join(''); };
 
-  // the game of the round: the closest finish of the latest round, told in one line built from its shape: overtime, the
-  // winner's lowest win chance, each side's biggest lead and the lead changes (g[11..15], from build.py)
-  const feature = ROUND.length ? [...ROUND].sort((a, b) => Math.abs(a[5] - a[6]) - Math.abs(b[5] - b[6]) || b[0] - a[0])[0] : null;
+  // the game of the round: the closest finish of a finished round, told in one line built from its shape: overtime, the
+  // winner's lowest win chance, each side's biggest lead and the lead changes (g[11..15], from build.py). It is named only
+  // once the round is over; while the latest round is still being played the line tells the previous round's
+  const DONE = OPEN ? R - 1 : R, DG = ALL.filter(g => g[1] === DONE);
+  const feature = DG.length ? [...DG].sort((a, b) => Math.abs(a[5] - a[6]) - Math.abs(b[5] - b[6]) || b[0] - a[0])[0] : null;
   const RUN = [...ROUND].sort((a, b) => a[2] < b[2] ? -1 : a[2] > b[2] ? 1 : a[0] - b[0]);
   function story(g){
     const w = winner(g), l = loser(g), v = {w: shortName(w), l: shortName(l), s: score(g).replace('–', '\u2060–\u2060')}, m = Math.abs(g[5] - g[6]);
@@ -2939,7 +2945,8 @@ const COVER = (() => {
       : !home ? t('{w} win at {l}', v) : t('{w} beat {l}', v);
     // the second line: the first fact the headline has not told already
     const said = ot ? 'ot' : upL >= 10 ? 'back' : m >= 15 ? 'big' : upL === 0 ? 'wire' : '';
-    const tail = low != null && low <= 25 && upL > 0 ? t('{w} were down to {p}% win probability before closing it out {s}.', {...v, p: low})
+    const tail = low === 0 && upL > 0 ? t('{w} were down to under 1% win probability before closing it out {s}.', v)
+      : low != null && low <= 25 && upL > 0 ? t('{w} were down to {p}% win probability before closing it out {s}.', {...v, p: low})
       : flips >= 8 ? t('The lead changed hands {n} times before {w} won it {s}.', {...v, n: flips})
       : upL >= 10 && said !== 'back' ? t('{l} led by {n} at one point, but {w} won it {s}.', {...v, n: upL})
       : upW >= 15 && (said !== 'big' || upW > m) ? t('{w} led by as many as {n} and won it {s}.', {...v, n: upW})
@@ -2949,15 +2956,17 @@ const COVER = (() => {
   }
   const standings = () => { const S = (META.standings || []).slice(0, 10); if (!S.length) return '';
     return `<div class="cv-card cv-stand">${th(t('Standings'), `<a href="#standings">${t('Full table')}</a>`)}<table class="cv-tbl"><thead><tr><th></th><th class="l">${t('Club')}</th><th>${t('W')}–${t('L')}</th><th>+/−</th><th>${t('Form')}</th></tr></thead><tbody>${S.map(r => `<tr><td class="n">${r.pos}</td><td class="l"><a class="cv-tl" href="#${r.code}" title="${(CLUBS[r.code] || {}).name || r.code}">${crest(r.code, 22)}<span lang="en">${shortName(r.code)}</span></a></td><td>${r.w}–${r.l}</td><td>${r.diff > 0 ? '+' : ''}${r.diff}</td><td><span class="cv-form">${r.form.map(x => `<i class="${x ? 'w' : 'l'}"></i>`).join('')}</span></td></tr>`).join('')}</tbody></table></div>`; };
-  // the board: one card per game of the round in date order, the score and the game's best line; the game of the round prints red,
-  // overtime and a comeback from a low win chance are tagged, and a followed club's game carries the orange edge
+  // the board: one card per game of the round in date order, the score and the game's best line, then the games still to play
+  // with names only; the game of the round prints red once the round is over, overtime and a comeback from a low win chance are
+  // tagged, and a followed club's game carries the orange edge
   function scores(){
-    const P = FOLLOW.players(), F = new Set([...FOLLOW.clubs(), ...P.map(p => p.club)]), mine = g => F.has(g[3]) || F.has(g[4]);
+    const P = FOLLOW.players(), F = new Set([...FOLLOW.clubs(), ...P.map(p => p.club)]), mine = g => F.has(g[3]) || F.has(g[4]), today = new Date().toLocaleDateString('en-CA');
     const tm = (c, pts, win) => `<span class="tm${win ? ' win' : ''}">${crest(c, 20)}<b lang="en">${shortName(c)}</b><em>${pts}</em></span>`;
-    const tag = g => g === feature ? t('Game of the round') : g[11] ? t('OT') : g[12] != null && g[12] <= 15 ? t('Won from {p}%', {p: g[12]}) : '';
+    const tag = g => g === feature ? t('Game of the round') : g[11] ? t('OT') : g[12] === 0 ? t('Won from under 1%') : g[12] != null && g[12] <= 15 ? t('Won from {p}%', {p: g[12]}) : '';
     return RUN.map(g => { const n = g[7] ? nameOf(g[7]) : null;
       return `<a class="cv-game${g === feature ? ' gor' : ''}${mine(g) ? ' fl' : ''}" href="#game/${g[0]}" aria-label="${shortName(g[3])} ${g[5]}, ${shortName(g[4])} ${g[6]}"><span class="mt"><span>${day(g[2], {weekday: 'short', day: 'numeric', month: 'short'})}</span><i>${tag(g)}</i></span>${tm(g[3], g[5], g[5] > g[6])}${tm(g[4], g[6], g[6] > g[5])}`
-        + (n ? `<span class="who"><span class="ph"><img src="${g[10] || PLACEHOLDER}" alt="" width="64" height="74" loading="lazy"></span><span><b lang="en">${n.first ? n.first[0] + '. ' : ''}${n.sur}</b>${g[8]} ${t('pts')} · ${g[9]} PIR</span></span>` : '') + `</a>`; }).join('');
+        + (n ? `<span class="who"><span class="ph"><img src="${g[10] || PLACEHOLDER}" alt="" width="64" height="74" loading="lazy"></span><span><b lang="en">${n.first ? n.first[0] + '. ' : ''}${n.sur}</b>${g[8]} ${t('pts')} · ${g[9]} PIR</span></span>` : '') + `</a>`; }).join('')
+      + REST.map(g => `<a class="cv-game up${mine(g) ? ' fl' : ''}" href="#${g[3]}" aria-label="${shortName(g[3])} – ${shortName(g[4])}"><span class="mt"><span>${day(g[2], {weekday: 'short', day: 'numeric', month: 'short'})}</span><i>${g[2] === today ? t('tonight') : ''}</i></span>${tm(g[3], '', false)}${tm(g[4], '', false)}</a>`).join('');
   }
   // the scoring leaders: names and clubs from the roster, which lands after the first paint (the board is redrawn then)
   const leaders = () => { const L = (META.leaders && META.leaders.pts || []).slice(0, 5); if (!L.length) return '';
@@ -2977,9 +2986,9 @@ const COVER = (() => {
   function board(){
     const sec = $('#cv-last');
     if (!ROUND.length) { sec.hidden = true; $('#cv-games').innerHTML = $('#cv-lower').innerHTML = ''; return; }
-    const x = story(feature), a = $('#cv-story');
-    a.href = `#game/${feature[0]}`;
-    a.innerHTML = `${th(t('Game of the round'))}<span><b>${x.head}</b>${x.lede}</span>`;
+    const a = $('#cv-story');
+    a.hidden = !feature;
+    if (feature) { const x = story(feature); a.href = `#game/${feature[0]}`; a.innerHTML = `${th(DONE === R ? t('Game of the round') : t('Game of round {n}', {n: DONE}))}<span><b>${x.head}</b>${x.lede}</span>`; }
     $('#cv-games').innerHTML = scores();
     $('#cv-lower').innerHTML = standings() + leaders() + next();
     sec.hidden = false;
