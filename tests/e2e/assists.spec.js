@@ -33,6 +33,10 @@ test.describe('desktop', () => {
     expect(bad).toEqual([]);
     for (const club of ['MAD', 'ULK', 'PAN']) {
       await go(page, `#${club}`, () => document.querySelectorAll('#an .an-n').length > 1);
+      // every player who has played for the club, and everyone in its pairs, has a square on the ring
+      const missing = await page.evaluate(() => { const on = new Set([...document.querySelectorAll('#an .an-n')].map(n => n.dataset.p)), d = team();
+        return [...d.players.filter(p => p.cur.tot.gp).map(p => p.pid), ...d.assists.pairs.flatMap(q => [q[0], q[1]])].filter(pid => !on.has(pid)); });
+      expect(missing, `${club}: players missing from the network`).toEqual([]);
       const first = await page.evaluate(() => { const r = document.querySelector('#an-top tbody tr'); return {a: r.dataset.a, b: r.dataset.b, n: r.querySelector('td.k').textContent.trim()}; });
       // tapping the passer keeps only his arrows, each labelled with its count; his top pair among them
       await page.click(`#an .an-n[data-p="${first.a}"]`);
