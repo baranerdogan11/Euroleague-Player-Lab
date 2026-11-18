@@ -17,6 +17,7 @@ const PAGES = [
   ['leaders', '#leaders', () => document.querySelectorAll('#ld-wrap tbody tr').length >= 10],
   ['compare', '#compare', () => document.querySelector('#cmp-panel')?.getBoundingClientRect().height > 200],
   ['lineups', '#lineups', () => document.querySelector('#lineups')?.getBoundingClientRect().height > 300],
+  ['glossary', '#glossary', () => document.body.classList.contains('gl-on') && document.querySelectorAll('#gl [data-id]').length > 50],
 ];
 
 for (const [device, opts] of [['phone', PHONE], ['desktop', DESKTOP]]) {
