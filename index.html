@@ -4020,8 +4020,11 @@ async function route(){
       queued = false;
       let h = location.hash.replace('#', '').split('/');
       // a fresh visit opens on the main page whatever the address carried (a phone often restores the last player it
-      // showed); once the reader has entered the app in this tab, reloads and back/forward keep their place
+      // showed); once the reader has entered the app in this tab, reloads and back/forward keep their place. A link
+      // opened in a new tab from one of our own pages starts with an empty sessionStorage but came from the site, so it
+      // opens the page it names
       let entered = false; try { entered = !!sessionStorage.getItem('pl-in'); } catch (e) {}
+      if (!entered && !booted) { try { entered = new URL(document.referrer).origin === location.origin && performance.getEntriesByType('navigation').every(n => /** @type {PerformanceNavigationTiming} */ (n).type === 'navigate'); } catch (e) {} }
       if (!booted && CLUBS[h[0]] && !entered) { history.replaceState(null, '', location.pathname + location.search); h = ['']; }
       const PAGES = {standings: 'st-on', lineups: 'ln-on', compare: 'cmp-on', leaders: 'ld-on', game: 'gm-on', games: 'gs-on', glossary: 'gl-on'}, cur = Object.keys(PAGES).find(k => document.body.classList.contains(PAGES[k])) || null;
       const toStand = !!PAGES[h[0]], onStand = !!cur;
