@@ -71,6 +71,7 @@ html[data-look="club"] .dd-list{background:var(--panel);border:1px solid var(--l
 html[data-look="club"] .dd-list li{font-family:var(--sans);font-weight:600;font-size:15px;letter-spacing:0;text-transform:none;color:var(--ink2)}
 html[data-look="club"] .dd-list li:hover,html[data-look="club"] .dd-list li.hi{background:var(--panel2);color:var(--ink)}
 html[data-look="club"] .dd-list li[aria-selected="true"]{color:var(--club);border-left-color:var(--club2)}
+html[data-look="club"][data-theme="dark"] .dd-list li[aria-selected="true"]{color:var(--ink)}   /* a dark club colour on the dark panel could not be read */
 html[data-look="club"] .search input{font-family:var(--sans);font-weight:500;font-size:16px;letter-spacing:0;text-transform:none;min-height:44px;padding:8px 36px 8px 12px;border:1px solid var(--line);border-radius:999px;background:var(--panel);color:var(--ink)}
 html[data-look="club"] .search input:focus{border-color:var(--cold);outline:none;box-shadow:0 0 0 2px var(--cold)}
 html[data-look="club"] .search input:focus-visible{outline:none}
@@ -328,7 +329,8 @@ html[data-look="club"] .cmp-empty{background:var(--panel);border:1px solid var(-
   html[data-look="club"] .cmp-hero>.cmp-side.l{grid-area:1/1}html[data-look="club"] .cmp-hero>.cmp-side.r{grid-area:2/1}   /* both placed by hand, so the badge sharing row 2 opens no second column */
   html[data-look="club"] .cmp-vs{width:44px;height:44px;font-size:20px;position:relative;left:auto;top:auto;grid-row:2;grid-column:1;justify-self:center;align-self:start;transform:translateY(-50%)}   /* stacked sides: the badge sits on the seam, whatever the left side holds */
   html[data-look="club"] body.cmp-on .cmp-sel{flex:1 1 auto;max-width:none;min-width:0}
-  html[data-look="club"] body.cmp-on .cmp-picks{grid-template-columns:max-content minmax(0,1fr)}
+  html[data-look="club"] body.cmp-on .cmp-picks{grid-template-columns:minmax(0,1fr);gap:6px}   /* labels above the pickers: the long Turkish labels left the club names cut short */
+  html[data-look="club"] body.cmp-on .cmp-picks .cmp-pick+.cmp-pick .cmp-lab{margin-top:8px}
   html[data-look="club"] .cmp-h2h{padding:12px 10px}
   html[data-look="club"] .cmp-m{grid-template-columns:58px minmax(0,1fr) 58px;gap:8px}
   html[data-look="club"] .cmp-m .v{font-size:22px}
@@ -337,11 +339,16 @@ html[data-look="club"] .cmp-empty{background:var(--panel);border:1px solid var(-
 /* Game Center look · compare: the two sides meet on a dark board in their club colours, square controls, the head to head and the shot diets on square cards */
 html[data-look="club"] body.cmp-on #cmp-panel>h2{display:flex;align-items:center;gap:12px;font-family:var(--cond);font-size:40px}
 html[data-look="club"] body.cmp-on #cmp-panel>h2::before{width:6px;height:30px;background:var(--gc);border-radius:0}
-html[data-look="club"] .cmp-hero{border-radius:0;background:#05080f;isolation:isolate}
-html[data-look="club"] .cmp-side.l,html[data-look="club"] .cmp-side.r{position:relative;border-radius:0;color:#fff;isolation:isolate}
-html[data-look="club"] .cmp-side.l{background:var(--cb1);clip-path:polygon(0 0,100% 0,calc(100% - 28px) 100%,0 100%);margin-right:-28px;z-index:1}
-html[data-look="club"] .cmp-side.r{background:var(--cb2);padding-left:58px}
-html[data-look="club"] .cmp-side::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(120% 100% at 50% 0%,transparent 40%,rgba(0,0,0,.5) 100%),linear-gradient(180deg,rgba(0,0,0,.08),rgba(0,0,0,.4))}
+html[data-look="club"] .cmp-hero{border-radius:0;background:#05080f;isolation:isolate;z-index:4}   /* above the head to head below it, so an open list hangs over it */
+html[data-look="club"] .cmp-side.l,html[data-look="club"] .cmp-side.r{position:relative;border-radius:0;color:#fff;background:none}   /* no stacking context of their own: an open list then rises over the other side and the VS badge */
+html[data-look="club"] .cmp-side.l{margin-right:-28px}
+/* each side is painted on two layers behind its content, the right side lowest; the left slant is cut on its layers only, since a clip on the side itself would cut off its open club and player lists */
+html[data-look="club"] .cmp-side::before,html[data-look="club"] .cmp-side::after{content:"";position:absolute;inset:0;pointer-events:none}
+html[data-look="club"] .cmp-side.r::before{z-index:-4;background:var(--cb2)}html[data-look="club"] .cmp-side.r::after{z-index:-3}
+html[data-look="club"] .cmp-side.l::before{z-index:-2;background:var(--cb1)}html[data-look="club"] .cmp-side.l::after{z-index:-1}
+html[data-look="club"] .cmp-side.l::before,html[data-look="club"] .cmp-side.l::after{clip-path:polygon(0 0,100% 0,calc(100% - 28px) 100%,0 100%)}
+html[data-look="club"] .cmp-side.r{padding-left:58px}
+html[data-look="club"] .cmp-side::after{background:radial-gradient(120% 100% at 50% 0%,transparent 40%,rgba(0,0,0,.5) 100%),linear-gradient(180deg,rgba(0,0,0,.08),rgba(0,0,0,.4))}
 html[data-look="club"] .cmp-club{font-family:var(--cond);font-weight:var(--cond-w);font-size:16px;letter-spacing:.12em}
 html[data-look="club"] .cmp-club .medal{border-radius:50%}
 html[data-look="club"] .cmp-line{font-family:var(--sans);font-weight:600;font-size:14px;letter-spacing:.06em;text-transform:uppercase;opacity:.8}
@@ -367,7 +374,7 @@ html[data-look="club"] .cmp-empty{border-radius:0;border-bottom:3px solid var(--
 html[data-look="club"] .cmp-open{border-radius:0;font-family:var(--cond);font-weight:var(--cond-w);font-size:16px;letter-spacing:.08em;text-transform:uppercase}
 @media (max-width:760px){
   html[data-look="club"] body.cmp-on #cmp-panel>h2{font-size:32px}
-  html[data-look="club"] .cmp-side.l{clip-path:none;margin-right:0}
+  html[data-look="club"] .cmp-side.l{margin-right:0}html[data-look="club"] .cmp-side.l::before,html[data-look="club"] .cmp-side.l::after{clip-path:none}
   html[data-look="club"] .cmp-side.r{padding-left:16px;padding-top:30px}
   html[data-look="club"] .cmp-h2h{padding:4px 10px 8px}
   html[data-look="club"] .cmp-vs{width:44px;height:44px;font-size:18px}
@@ -2724,6 +2731,16 @@ const Shot3D = (() => {
 })();
 $('#f-cam').querySelectorAll('button').forEach(b => b.addEventListener('click', () => { $('#f-cam').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b)); Shot3D.preset(b.dataset.v); }));
 
+// an open list stays on screen, clear of the phone tab bar: shortened to the room below, or opened upwards when there is more room above
+const fitRoom = list => {
+  list.style.maxHeight = list.style.top = list.style.bottom = '';
+  const tb = document.querySelector('.tabbar'), hd = document.querySelector('.top'), r = list.getBoundingClientRect(), b = list.parentElement.getBoundingClientRect();
+  const floor = (tb && getComputedStyle(tb).display !== 'none' ? tb.getBoundingClientRect().top : innerHeight) - 8;
+  if (r.bottom <= floor) return;
+  const below = floor - r.top, ceil = (hd && !hd.contains(list) && getComputedStyle(hd).position === 'sticky' ? Math.max(0, hd.getBoundingClientRect().bottom) : 0) + 8, above = b.top - 1 - ceil;
+  if (below >= Math.min(220, r.height) || below >= above) { list.style.maxHeight = `${Math.max(120, below)}px`; return; }
+  list.style.top = 'auto'; list.style.bottom = 'calc(100% + 1px)'; list.style.maxHeight = `${Math.min(above, r.height)}px`;
+};
 // ---- custom dropdowns over the native selects (the select keeps the value and fires change; the menu is drawn in the house style)
 function Dropdown(sel, item){
   const dd = document.createElement('div'); dd.className = 'dd'; dd.setAttribute('aria-expanded', 'false');
@@ -2734,7 +2751,7 @@ function Dropdown(sel, item){
   const opts = () => [...sel.options];
   const refresh = () => { const o = opts(); val.innerHTML = o.length && sel.selectedIndex >= 0 ? item(o[sel.selectedIndex], true) : sel.dataset.ph ? `<span class="ph">${esc(sel.dataset.ph)}</span>` : ''; list.innerHTML = o.map((op, i) => `<li role="option" id="${sel.id}-opt-${i}" data-i="${i}" aria-selected="${i === sel.selectedIndex}">${item(op, false)}</li>`).join(''); btn.disabled = sel.disabled; dd.classList.toggle('na', sel.disabled); };
   const close = () => { dd.setAttribute('aria-expanded', 'false'); btn.setAttribute('aria-expanded', 'false'); btn.removeAttribute('aria-activedescendant'); list.hidden = true; hi = -1; };
-  const open = () => { if (sel.disabled) return; document.querySelectorAll('.dd[aria-expanded="true"]').forEach(d => d !== dd && d.dispatchEvent(new Event('dd-close'))); refresh(); dd.setAttribute('aria-expanded', 'true'); btn.setAttribute('aria-expanded', 'true'); list.hidden = false; fitList(list); hi = sel.selectedIndex; mark(); const cur = list.children[hi]; if (cur) cur.scrollIntoView({block: 'nearest'}); };
+  const open = () => { if (sel.disabled) return; document.querySelectorAll('.dd[aria-expanded="true"]').forEach(d => d !== dd && d.dispatchEvent(new Event('dd-close'))); refresh(); dd.setAttribute('aria-expanded', 'true'); btn.setAttribute('aria-expanded', 'true'); list.hidden = false; fitList(list); fitRoom(list); hi = sel.selectedIndex; mark(); const cur = list.children[hi]; if (cur) cur.scrollIntoView({block: 'nearest'}); };
   const mark = () => { [...list.children].forEach((li, i) => li.classList.toggle('hi', i === hi)); if (hi >= 0 && !list.hidden) btn.setAttribute('aria-activedescendant', `${sel.id}-opt-${hi}`); };
   const choose = i => { if (i < 0 || i >= sel.options.length) return; if (sel.selectedIndex !== i) { sel.selectedIndex = i; sel.dispatchEvent(new Event('change', {bubbles: true})); } refresh(); close(); btn.focus(); };
   btn.addEventListener('click', () => list.hidden ? open() : close());
