@@ -794,6 +794,14 @@ def club_lineups(out):
 BYGAME = {}
 
 
+def game_star(g, lines):
+    """The game's best player, named on the cover's board and story line: the winner's best line by PIR, then points, then name,
+    so the player named never comes from the losing side. None when no winner's player had minutes."""
+    win = g["home"] if g["home_score"] > g["away_score"] else g["away"]
+    ls = [b for b in lines if b["club"] == win and b["minutes"]]
+    return min(ls, key=lambda b: (-b["pir"], -b["pts"], b["name"])) if ls else None
+
+
 def round_state(played, todo):
     """The latest round with a final: its unplayed games, the Next tile's games and whether the round is still open. The round is
     over, and its game of the round can be named, once every game is final; a game moved past the next round's first date (or
@@ -848,7 +856,7 @@ def games_json():
             wp_events.setdefault(r["game"], []).append(r)
     wp_strength = winprob.strengths(played)
     keys = ("minutes", "pts", "fgm2", "fga2", "fgm3", "fga3", "ftm", "fta", "oreb", "dreb", "reb", "ast", "stl", "tov", "blk", "blka", "pf", "fd", "pir", "plusminus")
-    tops, story, n_lines = {}, {}, 0
+    tops, stars, story, n_lines = {}, {}, {}, 0
     for g in played:
         code, sides = g["game"], (g["home"], g["away"])
         score = {g["home"]: g["home_score"], g["away"]: g["away_score"]}
@@ -901,7 +909,11 @@ def games_json():
             story[code][2:] = [max([0, *ms]), max([0, *(-m for m in ms)]), sum(1 for a, b in zip(leads, leads[1:]) if (a > 0) != (b > 0))]
         # three standout lines: PIR, the league's own efficiency figure, then points
         top = sorted((b for b in lines if b["minutes"]), key=lambda b: (-b["pir"], -b["pts"], b["name"]))[:3]
-        tops[code] = [["P" + b["player"], b["name"], b["club"], b["pts"], b["reb"], b["ast"], b["pir"], page_club.get(b["player"]), photo(b["player"])] for b in top]
+        line = lambda b: ["P" + b["player"], b["name"], b["club"], b["pts"], b["reb"], b["ast"], b["pir"], page_club.get(b["player"]), photo(b["player"])]
+        tops[code] = [line(b) for b in top]
+        # the game's best player for the cover comes from the winning club only
+        star = game_star(g, lines)
+        stars[code] = line(star) if star else None
         fives = {c: next((x for x in BYGAME.get(c, []) if x["code"] == code), None) for c in sides}
         out = {"season": SEASON, "code": code, "round": g["round"], "phase": g["phase"], "date": g["date"], "home": g["home"], "away": g["away"], "hs": g["home_score"], "as": g["away_score"],
                "q": q, "wp": wp, "box": box, "tot": tot, "shots": shots, "top": tops[code], "poss": game_poss(code),
@@ -912,12 +924,12 @@ def games_json():
     day = [g for g in played if g["date"] == last_date]
     # every played game for the cover's Games section, newest first, kept compact because it rides in the page:
     # [game, round, date, home, away, home score, away score, best line's name, points, PIR, photo,
-    #  overtime, winner's lowest win chance %, winner's biggest lead, loser's biggest lead, lead changes]
-    best = lambda code: (lambda b: [b[1], b[3], b[6], b[8]] if b else [None] * 4)(tops[code][0] if tops[code] else None)
+    #  overtime, winner's lowest win chance %, winner's biggest lead, loser's biggest lead, lead changes]; the best line is the winner's
+    best = lambda code: (lambda b: [b[1], b[3], b[6], b[8]] if b else [None] * 4)(stars[code])
     every = [[g["game"], g["round"], g["date"], g["home"], g["away"], g["home_score"], g["away_score"], *best(g["game"]), *story[g["game"]]] for g in reversed(played)]
     todo = rows("select game, round, cast(date as varchar) as date, home, away from games where not played order by round, date, game")
     rest, nxt, still = round_state(played, todo)
-    return {"n": len(played), "lines": n_lines, "every": every, "next": nxt, "rest": rest, "open": still, "last": {"date": last_date, "games": [{"code": g["game"], "round": g["round"], "home": g["home"], "away": g["away"], "hs": g["home_score"], "as": g["away_score"], "top": tops[g["game"]][0] if tops[g["game"]] else None} for g in day]}}
+    return {"n": len(played), "lines": n_lines, "every": every, "next": nxt, "rest": rest, "open": still, "last": {"date": last_date, "games": [{"code": g["game"], "round": g["round"], "home": g["home"], "away": g["away"], "hs": g["home_score"], "as": g["away_score"], "top": stars[g["game"]]} for g in day]}}
 
 
 def leaders_json():
