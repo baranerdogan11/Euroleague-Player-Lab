@@ -1,17 +1,17 @@
 {
  "season": "E2026",
- "generated_at": "2026-11-21 03:35 UTC",
+ "generated_at": "2026-11-22 04:31 UTC",
  "pipeline": {
   "last": {
-   "date": "2026-11-21",
-   "at": "2026-11-21T03:35:29Z",
+   "date": "2026-11-22",
+   "at": "2026-11-22T04:31:15Z",
    "ok": true,
    "games": 130,
    "shots": 17169,
    "players": 345,
    "failures": 0,
    "ci": true,
-   "run_id": "44861685802"
+   "run_id": "44985215461"
   },
   "history": [
    {
@@ -651,6 +651,17 @@
     "failures": 0,
     "ci": true,
     "run_id": "44861685802"
+   },
+   {
+    "date": "2026-11-22",
+    "at": "2026-11-22T04:31:15Z",
+    "ok": true,
+    "games": 130,
+    "shots": 17169,
+    "players": 345,
+    "failures": 0,
+    "ci": true,
+    "run_id": "44985215461"
    }
   ],
   "tests": 35,
@@ -675,7 +686,7 @@
   "last_played_date": "2026-11-20",
   "next_game_date": "2026-11-24",
   "last_round": 13,
-  "days_since_last_game": 1,
+  "days_since_last_game": 2,
   "rounds": [
    {
     "round": 1,
@@ -995,9 +1006,9 @@
     "round": 13,
     "shots": 1332,
     "actual": 0.47,
-    "predicted": 0.4761,
-    "pae_ctx": 9.58,
-    "logloss": 0.6264,
+    "predicted": 0.476,
+    "pae_ctx": 10.04,
+    "logloss": 0.6262,
     "brier": 0.2194,
     "logloss_constant": 0.6914
    }
@@ -1009,12 +1020,12 @@
     "actual": 0.292
    },
    {
-    "n": 1720,
+    "n": 1715,
     "predicted": 0.344,
     "actual": 0.333
    },
    {
-    "n": 1718,
+    "n": 1723,
     "predicted": 0.368,
     "actual": 0.372
    },
@@ -1029,14 +1040,14 @@
     "actual": 0.42
    },
    {
-    "n": 1714,
+    "n": 1712,
     "predicted": 0.431,
-    "actual": 0.413
+    "actual": 0.414
    },
    {
-    "n": 1712,
+    "n": 1714,
     "predicted": 0.472,
-    "actual": 0.451
+    "actual": 0.45
    },
    {
     "n": 1719,
@@ -1059,7 +1070,7 @@
    "logloss": 0.6258,
    "brier": 0.2196,
    "actual": 0.4708,
-   "predicted": 0.4762,
+   "predicted": 0.4761,
    "logloss_constant": 0.6914,
    "pae_ctx_per100": 0.48
   },
@@ -1507,8 +1518,8 @@
  "api": {
   "url": "https://euroleague-xfg.onrender.com",
   "reachable": true,
-  "latency_ms": 86,
-  "cold_start_ms": 62179,
+  "latency_ms": 88,
+  "cold_start_ms": 52153,
   "model_version": "2026-10-16",
   "model_sha256": "595a07c6039c"
  },
