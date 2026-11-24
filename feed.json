@@ -6,6 +6,13 @@
  "description": "One entry per rebuild that added games or shots.",
  "items": [
   {
+   "id": "45477990414",
+   "url": "https://elplayerlab.com/",
+   "title": "Update 2026-11-24 20:11 UTC: 131 games, 17,302 shots",
+   "content_text": "131 games in, 17,302 shots charted, 348 players with stats.",
+   "date_published": "2026-11-24T20:11:24Z"
+  },
+  {
    "id": "44827440782",
    "url": "https://elplayerlab.com/",
    "title": "Update 2026-11-20 22:17 UTC: 130 games, 17,169 shots",
