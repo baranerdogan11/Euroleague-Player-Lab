@@ -1,11 +1,11 @@
 {
  "season": "E2026",
- "checked_at": "2026-11-25T21:56:47Z",
+ "checked_at": "2026-11-25T22:06:52Z",
  "clubs": 20,
  "players": 348,
- "games": 139,
- "shots": 18338,
- "box_lines": 3326,
+ "games": 140,
+ "shots": 18476,
+ "box_lines": 3350,
  "tests": 35,
  "failures": 0,
  "warnings": 3,
@@ -20,7 +20,7 @@
   },
   {
    "check": "shots: shot value consistent with distance (3s from 6.4 m out, 2s inside 7 m)",
-   "rows": 6
+   "rows": 7
   }
  ],
  "ok": true
