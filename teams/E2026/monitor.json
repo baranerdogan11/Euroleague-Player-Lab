@@ -1,17 +1,17 @@
 {
  "season": "E2026",
- "generated_at": "2026-11-25 18:17 UTC",
+ "generated_at": "2026-11-25 21:17 UTC",
  "pipeline": {
   "last": {
    "date": "2026-11-25",
-   "at": "2026-11-25T18:17:50Z",
+   "at": "2026-11-25T21:17:53Z",
    "ok": true,
-   "games": 137,
-   "shots": 18087,
+   "games": 138,
+   "shots": 18210,
    "players": 348,
    "failures": 0,
    "ci": true,
-   "run_id": "45673278890"
+   "run_id": "45702658201"
   },
   "history": [
    {
@@ -665,14 +665,14 @@
    },
    {
     "date": "2026-11-25",
-    "at": "2026-11-25T18:17:50Z",
+    "at": "2026-11-25T21:17:53Z",
     "ok": true,
-    "games": 137,
-    "shots": 18087,
+    "games": 138,
+    "shots": 18210,
     "players": 348,
     "failures": 0,
     "ci": true,
-    "run_id": "45673278890"
+    "run_id": "45702658201"
    }
   ],
   "tests": 35,
@@ -693,7 +693,7 @@
  },
  "freshness": {
   "scheduled": 380,
-  "played": 137,
+  "played": 138,
   "last_played_date": "2026-11-25",
   "next_game_date": "2026-11-25",
   "last_round": 14,
@@ -767,7 +767,7 @@
    {
     "round": 14,
     "scheduled": 10,
-    "played": 7
+    "played": 8
    },
    {
     "round": 15,
@@ -1025,75 +1025,75 @@
    },
    {
     "round": 14,
-    "shots": 918,
-    "actual": 0.4662,
-    "predicted": 0.4746,
-    "pae_ctx": -11.08,
-    "logloss": 0.6177,
-    "brier": 0.2147,
-    "logloss_constant": 0.691
+    "shots": 1041,
+    "actual": 0.4726,
+    "predicted": 0.4764,
+    "pae_ctx": 2.47,
+    "logloss": 0.6178,
+    "brier": 0.2148,
+    "logloss_constant": 0.6917
    }
   ],
   "live_deciles": [
    {
-    "n": 1810,
+    "n": 1826,
     "predicted": 0.283,
     "actual": 0.29
    },
    {
-    "n": 1813,
+    "n": 1817,
     "predicted": 0.344,
-    "actual": 0.331
+    "actual": 0.332
    },
    {
-    "n": 1807,
+    "n": 1823,
     "predicted": 0.368,
-    "actual": 0.373
+    "actual": 0.371
    },
    {
-    "n": 1811,
+    "n": 1824,
     "predicted": 0.387,
-    "actual": 0.351
+    "actual": 0.353
    },
    {
-    "n": 1810,
+    "n": 1823,
     "predicted": 0.407,
     "actual": 0.416
    },
    {
-    "n": 1801,
+    "n": 1813,
     "predicted": 0.431,
     "actual": 0.414
    },
    {
-    "n": 1809,
-    "predicted": 0.472,
-    "actual": 0.449
+    "n": 1822,
+    "predicted": 0.473,
+    "actual": 0.448
    },
    {
-    "n": 1809,
-    "predicted": 0.553,
-    "actual": 0.552
+    "n": 1820,
+    "predicted": 0.554,
+    "actual": 0.553
    },
    {
-    "n": 1810,
+    "n": 1821,
     "predicted": 0.653,
-    "actual": 0.654
+    "actual": 0.656
    },
    {
-    "n": 1807,
-    "predicted": 0.863,
-    "actual": 0.877
+    "n": 1821,
+    "predicted": 0.864,
+    "actual": 0.876
    }
   ],
   "live_summary": {
-   "shots": 18087,
+   "shots": 18210,
    "logloss": 0.6254,
-   "brier": 0.2194,
-   "actual": 0.4706,
-   "predicted": 0.4761,
-   "logloss_constant": 0.6914,
-   "pae_ctx_per100": 0.4
+   "brier": 0.2193,
+   "actual": 0.4709,
+   "predicted": 0.4762,
+   "logloss_constant": 0.6915,
+   "pae_ctx_per100": 0.47
   },
   "reference_rounds": [
    {
@@ -1533,14 +1533,14 @@
   "constant_baseline": 0.474
  },
  "shooter_coverage": {
-  "shots": 18087,
-  "known_shooter_share": 0.766
+  "shots": 18210,
+  "known_shooter_share": 0.767
  },
  "api": {
   "url": "https://euroleague-xfg.onrender.com",
   "reachable": true,
-  "latency_ms": 198,
-  "cold_start_ms": 52281,
+  "latency_ms": 279,
+  "cold_start_ms": 57369,
   "model_version": "2026-10-16",
   "model_sha256": "595a07c6039c"
  },
