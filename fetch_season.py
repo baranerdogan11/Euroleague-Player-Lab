@@ -108,7 +108,8 @@ def save_image(url, out_path, height=None, fmt="WEBP"):
 
 
 # ---- clubs and crests
-clubs = cached("clubs.json", lambda: get(f"{FEEDS}/{SEASON}/clubs")["data"])
+# re-pulled like rosters, so a sponsor rename or new crest mid-season reaches the site (the cached copy is kept if the feed fails)
+clubs = cached("clubs.json", lambda: get(f"{FEEDS}/{SEASON}/clubs")["data"], refresh=True)
 index = []
 for c in clubs:
     crest = (c.get("images") or {}).get("crest")
