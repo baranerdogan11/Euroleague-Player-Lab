@@ -1689,6 +1689,7 @@ html[data-look] .cv-th a{color:var(--cvblue);letter-spacing:.14em}
 .cv-tbl th{letter-spacing:.14em;text-transform:uppercase;font-size:10.5px;color:var(--cvink2)}
 .cv-tbl td{border-top-color:var(--cvsep)}
 .cv-tbl tr:nth-child(-n+4) td.n{color:var(--cvred);font-family:var(--disp);font-size:17px}
+html[data-look] .cv-stand .cv-tbl td{padding-top:5px;padding-bottom:5px}   /* all twenty clubs: tighter rows, so the table ends level with the leaders and next round beside it */
 .cv-form i{background:var(--cvink)}.cv-form i.l{background:transparent;box-shadow:inset 0 0 0 1.5px var(--cvink3)}
 .cv-list em{font-family:var(--disp);font-weight:400;font-size:19px;letter-spacing:.01em}
 .cv-list em small{font-family:var(--sysf)}
@@ -3213,7 +3214,7 @@ const COVER = (() => {
       : t('{w} won it {s}.', v);
     return {head, lede: (g[7] ? t('{p}: {pts} points and {pir} PIR, the line of the game.', {p: full(g[7]), pts: g[8], pir: g[9]}) + ' ' : '') + tail};
   }
-  const standings = () => { const S = (META.standings || []).slice(0, 10); if (!S.length) return '';
+  const standings = () => { const S = META.standings || []; if (!S.length) return '';
     return `<div class="cv-card cv-stand">${th(t('Standings'), `<a href="#standings">${t('Full table')}</a>`)}<table class="cv-tbl"><thead><tr><th></th><th class="l">${t('Club')}</th><th${def('w l')}>${t('W')}–${t('L')}</th><th${def('diff')}>+/−</th><th${def('last5')}>${t('Form')}</th></tr></thead><tbody>${S.map(r => `<tr><td class="n">${r.pos}</td><td class="l"><a class="cv-tl" href="#${r.code}" title="${(CLUBS[r.code] || {}).name || r.code}">${crest(r.code, 22)}<span lang="en">${shortName(r.code)}</span></a></td><td>${r.w}–${r.l}</td><td>${r.diff > 0 ? '+' : ''}${r.diff}</td><td><span class="cv-form">${r.form.map(x => `<i class="${x ? 'w' : 'l'}"></i>`).join('')}</span></td></tr>`).join('')}</tbody></table></div>`; };
   // the board: one card per game of the round in date order, the score and the game's best line, then the games still to play
   // with names only; the game of the round prints red once the round is over, overtime and a comeback from a low win chance are
