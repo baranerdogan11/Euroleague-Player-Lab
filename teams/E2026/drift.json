@@ -1,6 +1,20 @@
 {
- "checked": "2026-11-26 11:59 UTC",
- "against": "2026-11-26 06:18 UTC",
+ "checked": "2026-11-27 06:08 UTC",
+ "against": "2026-11-26 11:59 UTC",
  "failures": [],
- "warnings": []
+ "warnings": [
+  "BLAKENEY, ANTONIO (HTA): rapm 0.3 -> 0.4 with no new game in the league",
+  "BRYANT, ELIJAH (HTA): rapm 0.5 -> 0.6 with no new game in the league",
+  "SATORANSKY, TOMAS (HTA): rapm 0.0 -> 0.1 with no new game in the league",
+  "LEDAY, ZACH (HTA): rapm 1.7 -> 1.8 with no new game in the league",
+  "ODIASE, TAI (HTA): rapm 0.6 -> 0.7 with no new game in the league",
+  "MICIC, VASILIJE (HTA): rapm -0.4 -> -0.5 with no new game in the league",
+  "WARD, TYSON (OLY): rapm 1.7 -> 1.6 with no new game in the league",
+  "NETZIPOGLOU, OMIROS (OLY): rapm 0.5 -> 0.4 with no new game in the league",
+  "ROGKAVOPOULOS, NIKOLAOS (PAN): rapm 1.1 -> 1.2 with no new game in the league",
+  "FALL, MOUSTAPHA (PAN): rapm 0.1 -> 0.2 with no new game in the league",
+  "SHORTS, TJ (PAM): fga2 corrected 149 -> 150 (0 new game(s))",
+  "SHORTS, TJ (PAM): pax corrected 19.43 -> 19.09 (0 new game(s))",
+  "CARDENAS, ALVARO (PAM): rapm 0.4 -> 0.3 with no new game in the league"
+ ]
 }
