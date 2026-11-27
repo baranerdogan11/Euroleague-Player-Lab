@@ -1,10 +1,21 @@
-// The cover's standings tile: every row opens its own club, wherever on the row the reader taps, on a laptop and a phone.
+// The cover's standings tile: it lists every club in table order, and every row opens its own club, wherever on the row the reader taps, on a laptop and a phone.
 // Nothing laid over the tile may catch a row's tap: Safari once let the last row's link cover every row (all went to #VIR).
 import {test, expect} from '@playwright/test';
 import {DESKTOP, PHONE, prepare, settled} from './site.js';
 
 for (const [name, view] of [['desktop', DESKTOP], ['phone', PHONE]]) test.describe(name, () => {
   test.use(view);
+  test('the standings tile lists every club, in table order', async ({page}) => {
+    const problems = await prepare(page);
+    await page.goto('./');
+    await settled(page);
+    const want = await page.evaluate(() => META.standings.map(r => `${r.pos} #${r.code} ${r.w}–${r.l}`));
+    expect(want.length, 'a full league table').toBeGreaterThanOrEqual(18);
+    const got = await page.locator('.cv-stand tbody tr').evaluateAll(rs => rs.map(r => `${r.cells[0].textContent} ${r.querySelector('a.cv-tl').getAttribute('href')} ${r.cells[2].textContent}`));
+    expect(got).toEqual(want);
+    await expect(page.locator('.cv-stand a[href="#standings"]'), 'the Full table link stays').toBeVisible();
+    expect(problems, 'the page reported errors').toEqual([]);
+  });
   test('a tap anywhere on a standings row opens that club', async ({page}) => {
     const problems = await prepare(page);
     await page.goto('./');
